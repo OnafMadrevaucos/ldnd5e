@@ -1,0 +1,33 @@
+{
+    "name": "ldnd5e",
+    "title":  "Lemurian Dungeons & Dragons 5th Edition",
+    "description": "Some homebrew systems to Dungeons & Dragons 5th Edition.",
+    "author": "Onaf Madrevaucos",
+    "version": "0.0.1",
+    "minimumCoreVersion": "0.9",
+
+    "system": ["dnd5e"],
+    "dependencies": [
+        {
+            "name": "dnd5e",
+            "type": "system"
+        },
+        {
+            "name": "more-hooks-5e"
+        }
+    ],
+    "esmodules": ["ldnd5e.js"],
+    "styles": ["ldnd5e.css"],
+    "languages": [
+        {
+          "lang": "pt-br",
+          "name": "Português (Brasil)",
+          "path": "lang/pt-br.json"
+        },
+        {
+          "lang": "en",
+          "name": "English",
+          "path": "lang/en.json"
+        }
+    ]    
+}
