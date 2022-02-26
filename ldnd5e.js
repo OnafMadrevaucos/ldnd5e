@@ -25,10 +25,27 @@ Hooks.once("init", function() {
 
 Hooks.on(`renderActorSheet`, (app, html, data) => {
 
+    // Update the nav menu
+    let lanLabel = $('<span class="spell-dc"> / Lan ' + data.data.attributes.ac.lan.toString() + '</span>');
+    let lanSpan = html.find('.spell-dc');
+    lanSpan.append(lanLabel);
 });
 
 
 Hooks.on(`renderItemSheet`, (app, html, data) => {
 
-    const d = data;
+    // Get the Item's data
+    const itemData = data.item.data;
+
+
+    if ( data.item.type === "equipment" ) {
+        let l = '<ol class="properties-list"><li>';
+        for(let i = 0; i < itemData.armor.RealDL; ++i) {
+            l += '<i class="fas fa-shield-alt"></i>';
+        }
+        l += "</li></ol>";
+
+        let prop = html.find('.item-properties');
+        prop.append(l);
+    }
 });
