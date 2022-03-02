@@ -1,4 +1,4 @@
-import Item5e from "../../../systems/dnd5e/module/item/entity.js";
+import Item5e from "../../../../systems/dnd5e/module/item/entity.js";
 
 /**
  * Sobrescreve e amplia a implementação padrão do Sistema DnD5e.

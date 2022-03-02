@@ -1,4 +1,12 @@
-export const addLanOnToolTip = async function (html, data) {
+/**
+    * Preloads templates for partials
+    */
+ export const preloadTemplates = function()
+ {
+    let templates = [
+       "templates/partials/pcs-list.hbs"
+    ];
 
-    let i = 0;
-}
+    templates = templates.map((t) => `modules/ldnd5e/${t}`);
+    loadTemplates(templates);
+ }

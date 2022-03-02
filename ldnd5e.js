@@ -1,12 +1,10 @@
-import ItemL5e from "./classes/ItemL5e.js";
-import ActorL5e from "./classes/ActorL5e.js";
+import ItemL5e from "./models/entities/ItemL5e.js";
+import ActorL5e from "./models/entities/ActorL5e.js";
 
-import ActorSheetL5e from "./classes/sheets/ActorSheetL5e.js";
+import { preloadTemplates } from "./scripts/templates.js";
 
-import ActorSheet5eCharacter from "../../../systems/dnd5e/module/actor/sheets/character.js";
-import ActorSheetL5eCharacter from "./classes/sheets/ActorSheetL5eCharacter.js";
+import { constants, gmControl } from "./scripts/constants.js";
 
-import * as templates from "./scripts/templates.js";
 
 Hooks.once("init", function() {
     console.log("LDnD5e | Inicializando o Módulo Lemurian D&D 5th Edition...");
@@ -21,16 +19,8 @@ Hooks.once("init", function() {
     //    makeDefault: true,
     //   label: "DND5E.SheetClassCharacter" + " (L)"
     //});
+    preloadTemplates();
 });
-
-Hooks.on(`renderActorSheet`, (app, html, data) => {
-
-    // Update the nav menu
-    let lanLabel = $('<span class="spell-dc"> / Lan ' + data.data.attributes.ac.lan.toString() + '</span>');
-    let lanSpan = html.find('.spell-dc');
-    lanSpan.append(lanLabel);
-});
-
 
 Hooks.on(`renderItemSheet`, (app, html, data) => {
 
@@ -47,5 +37,14 @@ Hooks.on(`renderItemSheet`, (app, html, data) => {
 
         let prop = html.find('.item-properties');
         prop.append(l);
+    }
+});
+
+Hooks.on('getSceneControlButtons', (controls) => {
+
+    if (game.user.isGM)
+    {
+        const token = controls.find((c) => c.name === 'token');
+        if (token) { token.tools.push(...gmControl); }
     }
 });
