@@ -2,15 +2,22 @@ import { constants, i18nStrings } from "../scripts/constants.js";
 
 export default class adControl extends Application {
 
-    constructor(data = {}, options = {})
-    {
-       super(options);
+   constructor( options = {} ) {
+      super(options);
 
-       this.pcs = data;
-    }
+      this.data = options.data;
+   }
 
-    static get defaultOptions()
-    {
+   /**@override */
+   getData() {
+      const data = this.data;
+
+      // Retorna data para a tela.
+      return data;
+   }
+
+   static get defaultOptions()
+   {
       return foundry.utils.mergeObject(super.defaultOptions, {
          id: constants.moduleName,
          classes: [constants.moduleName],
@@ -22,5 +29,5 @@ export default class adControl extends Application {
          title: game.i18n.localize(i18nStrings.title),
          tabs: [{ navSelector: '.log-tabs', contentSelector: '.log-body', initial: 'active' }]
       });
-    }
+   }
 }

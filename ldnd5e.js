@@ -1,9 +1,11 @@
 import ItemL5e from "./models/entities/ItemL5e.js";
 import ActorL5e from "./models/entities/ActorL5e.js";
 
+import { Debugger } from "./scripts/helpers.js";
 import { preloadTemplates } from "./scripts/templates.js";
 
-import { constants, gmControl } from "./scripts/constants.js";
+import { gmControl } from "./scripts/constants.js";
+import adControl from "./models/adControl.js";
 
 
 Hooks.once("init", function() {
@@ -20,6 +22,8 @@ Hooks.once("init", function() {
     //   label: "DND5E.SheetClassCharacter" + " (L)"
     //});
     preloadTemplates();
+
+    Handlebars.registerHelper('debug', Debugger);
 });
 
 Hooks.on(`renderItemSheet`, (app, html, data) => {
@@ -43,8 +47,28 @@ Hooks.on(`renderItemSheet`, (app, html, data) => {
 Hooks.on('getSceneControlButtons', (controls) => {
 
     if (game.user.isGM)
-    {
+    {  
+        gmControl[0].onClick = renderControl;
+
         const token = controls.find((c) => c.name === 'token');
         if (token) { token.tools.push(...gmControl); }
     }
 });
+
+function renderControl()
+{
+    const actorsData = getPCsActorsData();
+    const adTemplate = new adControl({data: actorsData});
+    adTemplate.render(true, {focus: true})
+}
+
+function getPCsActorsData()
+{
+    const actorsData = [];
+
+    for(let actor of game.actors) {
+        if(actor.type == "character") actorsData.push(actor.data);
+    }
+
+    return actorsData;
+}
