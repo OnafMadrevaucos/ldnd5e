@@ -14,34 +14,15 @@ Hooks.once("init", function() {
     CONFIG.Item.documentClass = ItemL5e;
     CONFIG.Actor.documentClass = ActorL5e;
 
-    // Register sheet application classes
-    //Actors.unregisterSheet("dnd5e", ActorSheet5eCharacter);
-    //Actors.registerSheet("dnd5e", ActorSheetL5eCharacter, {
-    //    types: ["character"],
-    //    makeDefault: true,
-    //   label: "DND5E.SheetClassCharacter" + " (L)"
-    //});
     preloadTemplates();
 
     Handlebars.registerHelper('debug', Debugger);
 });
 
-Hooks.on(`renderItemSheet`, (app, html, data) => {
+Hooks.on(`renderActorSheet`, (app, html, data) => {
 
-    // Get the Item's data
-    const itemData = data.item.data;
+    
 
-
-    if ( data.item.type === "equipment" ) {
-        let l = '<ol class="properties-list"><li>';
-        for(let i = 0; i < itemData.armor.RealDL; ++i) {
-            l += '<i class="fas fa-shield-alt"></i>';
-        }
-        l += "</li></ol>";
-
-        let prop = html.find('.item-properties');
-        prop.append(l);
-    }
 });
 
 Hooks.on('getSceneControlButtons', (controls) => {
@@ -57,18 +38,39 @@ Hooks.on('getSceneControlButtons', (controls) => {
 
 function renderControl()
 {
-    const actorsData = getPCsActorsData();
-    const adTemplate = new adControl({data: actorsData});
-    adTemplate.render(true, {focus: true})
+    const data = computePCArmorData();
+    const form = new adControl(data);
+    
+    return form.render(true);
 }
 
-function getPCsActorsData()
-{
-    const actorsData = [];
+function computePCArmorData() {
+
+    const data = {
+        armor: { label: "ldnd5e.armorLabel", items: [], owner: {}, tipoShield: false, dataset: {type: "equipament", subtype: "", armorType: ""} },
+        shield: { label: "ldnd5e.shieldLabel", items: [], owner: {}, tipoShield: true, dataset: {type: "equipament", subtype: "", armorType: ""} }
+    };
 
     for(let actor of game.actors) {
-        if(actor.type == "character") actorsData.push(actor.data);
+        if(actor.type == "character") {
+
+            let [items] = actor.items.reduce((arr, item) => {
+
+                if(item.type === "equipment") {
+                    item.owner = actor;
+                    item.armorType = item.data.data.armor.type;  
+                    item.subtype =  (item.armorType === "shield" ? "shield" : "armor");                     
+                    arr[0].push(item); 
+                }
+                return arr;
+            }, [[]]);
+
+            // Organize items
+            for ( let i of items ) {             
+                data[i.subtype].items.push(i);
+            }
+        }
     }
 
-    return actorsData;
+    return data;
 }

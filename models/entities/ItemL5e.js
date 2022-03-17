@@ -20,44 +20,30 @@ export default class ItemL5e extends Item5e {
         const itemData = this.data;
         const data = itemData.data;
 
+        const armorData = this.getFlag("ldnd5e", "armorSchema");
+
         // Armor Damage Level
-        data.armor.DL = {
+        data.armor.DL = armorData?.DL ?? {
             bldg: 0,
             pierc: 0,
             slsh: 0
         }
 
-        data.armor.RealDL = this._getRealDamageLevel(data.armor.DL);
+        data.armor.RealDL = armorData?.RealDL ?? 0;
 
         // Armor Absorved Damage.
-        data.armor.AD = {
+        data.armor.AD = armorData?.AD ?? {
             bldg: 0,
             pierc: 0,
             slsh: 0
         }
     
-        data.armor.HalfAD = {
+        data.armor.HalfAD = armorData?.HalfAD ?? {
             bldg: false,
             pierc: false,
             slsh: false
         }
     
-        data.armor.ACPenalty = null;
-
-        
-    }
-
-    /**
-    * Obtain the real (max) Damage Level of a armor.
-    * @param {object} damageLavels          The Damage Level for all damage types.
-    * @param {number} realDamageLevel       The max Damage Level between all damage types.
-    */
-    _getRealDamageLevel(damageLevels) {
-
-        let realDamageLevel = damageLevels.bldg;
-        if(damageLevels.pierc > realDamageLevel) realDamageLevel = damageLevels.pierc;
-        if(damageLevels.slsh > realDamageLevel) realDamageLevel = damageLevels.slsh;
-
-        return realDamageLevel;
+        data.armor.ACPenalty = armorData?.ACPenalty ?? 0;        
     }
 }

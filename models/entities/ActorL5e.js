@@ -11,5 +11,17 @@ export default class ActorL5e extends Actor5e {
         const data = actorData.data;
 
         data.attributes.ac.lan = das.prepareLAN(data);
+        data.attributes.ac.ldo = das.prepareLDO(data);
+    }
+
+    _computeArmorClass(data) {
+        const ac = super._computeArmorClass(data);
+        const equipArmor = data.attributes.ac.equippedArmor;
+
+        if(equipArmor) {            
+            this.applyActiveEffects();
+        }
+
+        return ac;
     }
 }

@@ -1,5 +1,34 @@
 {
     "ldnd5e" : {
-        "title" : "Controle de Dano Absorvido"
+        "title" : "Controle de Dano Absorvido",
+        "armorLabel": "Armaduras",
+        "shieldLabel": "Escudos",
+        "itemOwner": "Dono",
+        "ownerLan": "Lan",
+        "ownerLdo": "Ldo",
+
+        "pdTitle": "Dano Perf.",
+        "sdTitle": "Dano Cort.",
+        "bdTitle": "Dano Cont.",
+        "tdTitle": "Total",
+
+        "dlControlTitle": "Controle de Danos",
+        "dlControlItemLabel": "Item Avariado",
+        "dlControlDamageType": "Tipo de Dano",
+
+        "addBtn": "Dano Absorvido",
+        "halfBtn": "Acerto de Raspão",
+        "subBtn": "Remover Avaria",
+        "zerarBtn": "Zerar Avarias",
+
+        "damageTypes": {
+            "pierc": "Perfurante",
+            "slsh": "Cortante",
+            "bldg": "Contundente"
+        },
+
+        "messages": {
+            "halDmgShield": "Escudos não podem receber Acertos de Raspão."
+        }
     }
 }
