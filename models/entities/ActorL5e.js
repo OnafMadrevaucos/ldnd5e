@@ -1,6 +1,6 @@
 import Actor5e from "../../../../systems/dnd5e/module/actor/entity.js";
 import * as das from "../../scripts/DASystem.js";
-import { i18nStrings } from "../../scripts/constants.js";
+import { constants, i18nStrings } from "../../scripts/constants.js";
 
 const ACTIVE_EFFECT_MODES = CONST.ACTIVE_EFFECT_MODES;
 const ADD = ACTIVE_EFFECT_MODES.ADD;
@@ -32,6 +32,18 @@ export default class ActorL5e extends Actor5e {
         return ac;
     } 
 
+    _onDeleteEmbeddedDocuments(embeddedName, documents, result, options, userId) {
+
+        for(let document of documents){
+
+            const armorString = game.i18n.localize(i18nStrings.activeEffectLabel);
+            const shieldString = game.i18n.localize(i18nStrings.activeEffectShieldLabel);
+
+            if(armorString.includes(document.data.label)) this.setFlag("ldnd5e", "armorEffect", null);
+            if(shieldString.includes(document.data.label)) this.setFlag("ldnd5e", "sourceShield", null);
+        }
+    }
+
     async _computeActiveEffectsfromArmors(data) {
 
         const equipArmor = data.attributes.ac.equippedArmor;
@@ -42,16 +54,13 @@ export default class ActorL5e extends Actor5e {
         if(armorEffect) {
             if(!equipArmor) { 
                 await this.deleteEmbeddedDocuments("ActiveEffect", [armorEffect._id]);
-                await this.setFlag("ldnd5e", "armorEffect", null);
             } else {
                 const armor = this.items.get(armorEffect.sourceArmor);
 
                 if(!armor) { 
                     await this.deleteEmbeddedDocuments("ActiveEffect", [armorEffect._id]);
-                    await this.setFlag("ldnd5e", "armorEffect", null); 
                 } else if(equipArmor.data._id !== armor.data._id){
                     await this.deleteEmbeddedDocuments("ActiveEffect", [armorEffect._id]);
-                    await this.setFlag("ldnd5e", "armorEffect", null);
                 }
             }
         }
@@ -60,17 +69,14 @@ export default class ActorL5e extends Actor5e {
 
         if(shieldEffect) {
             if(!equipShield) { 
-                await this.deleteEmbeddedDocuments("ActiveEffect", [shieldEffect]._id);
-                await this.setFlag("ldnd5e", "sourceShield", null);
+                await this.deleteEmbeddedDocuments("ActiveEffect", [shieldEffect]._id);                
             } else {
                 const shield = this.items.get(shieldEffect.sourceShield);
 
                 if(!shield) { 
                     await this.deleteEmbeddedDocuments("ActiveEffect", [shieldEffect]._id);
-                    await this.setFlag("ldnd5e", "sourceShield", null);
                 } else if(equipShield.data._id !== shield.data._id){
                     await this.deleteEmbeddedDocuments("ActiveEffect", [shieldEffect]._id);
-                    await this.setFlag("ldnd5e", "sourceShield", null);
                 }
             }
         }
