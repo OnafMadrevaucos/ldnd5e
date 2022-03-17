@@ -7,6 +7,8 @@
         "ownerLan": "Lan",
         "ownerLdo": "Ldo",
 
+        "refreshBtn": "Recarregar Dados de PJs",
+
         "pdTitle": "Dano Perf.",
         "sdTitle": "Dano Cort.",
         "bdTitle": "Dano Cont.",
@@ -15,11 +17,16 @@
         "dlControlTitle": "Controle de Danos",
         "dlControlItemLabel": "Item Avariado",
         "dlControlDamageType": "Tipo de Dano",
+        "dlControlDamageBtn": "Avaria",
+        "dlControlRepairsBtn": "Reparo",
 
-        "addBtn": "Dano Absorvido",
-        "halfBtn": "Acerto de Raspão",
-        "subBtn": "Remover Avaria",
-        "zerarBtn": "Zerar Avarias",
+        "activeEffectLabel": "Avaria na Armadura",
+        "activeEffectShieldLabel": "Avaria no Escudo",
+
+        "addBtn": "Normal",
+        "halfBtn": "Raspão",
+        "subBtn": "Simples",
+        "zerarBtn": "Completo",
 
         "damageTypes": {
             "pierc": "Perfurante",
@@ -28,6 +35,8 @@
         },
 
         "messages": {
+            "bldgDmgLightArmor": "Armaduras Leves são imunes a avarias causadas por Dano Contundente.",
+            "slshDmgHeavyArmor": "Armaduras Pesadas são imunes a avarias causadas por Dano Cortante.",
             "halDmgShield": "Escudos não podem receber Acertos de Raspão."
         }
     }

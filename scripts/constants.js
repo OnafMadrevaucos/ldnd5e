@@ -23,6 +23,8 @@ import adControl from "../models/adControl.js";
    ownerLan: "ldnd5e.ownerLan",
    ownerLdo: "ldnd5e.ownerLdo",
 
+   refreshBtn: "ldnd5e.refreshBtn",
+
    pdTitle: "ldnd5e.pdTitle",
    sdTitle: "ldnd5e.sdTitle",
    bdTitle: "ldnd5e.bdTitle",
@@ -31,6 +33,11 @@ import adControl from "../models/adControl.js";
    dlControlTitle: "ldnd5e.dlControlTitle",
    dlControlItemLabel: "ldnd5e.dlControlItemLabel",
    dlControlDamageType: "ldnd5e.dlControlDamageType",
+   dlControlDamageBtn: "ldnd5e.dllControlDamageBtn",
+   dlControlRepairsBtn: "ldnd5e.dllControlRepairsBtn",
+
+   activeEffectLabel: "ldnd5e.activeEffectLabel",
+   activeEffectShieldLabel: "ldnd5e.activeEffectShieldLabel",
 
    addBtn: "ldnd5e.addBtn",
    halfBtn: "ldnd5e.halfBtn",
@@ -44,7 +51,9 @@ import adControl from "../models/adControl.js";
    },
 
    messages: {
-     halDmgShield: "ldnd5e.messages.halDmgShield"
+      bldgDmgLightArmor: "ldnd5e.messages.bldgDmgLightArmor",
+      slshDmgHeavyArmor: "ldnd5e.messages.slshDmgHeavyArmor",
+      halDmgShield: "ldnd5e.messages.halDmgShield"
    }
  };
 

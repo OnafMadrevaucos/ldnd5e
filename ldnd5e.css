@@ -66,6 +66,23 @@
 .flexcol .flex4 {
   flex: 4;
 }
+
+.window-app .window-content .dialog-buttons-title {
+  text-align: center;
+  padding-left: 5px;
+  font-family: "Modesto Condensed", "Palatino Linotype", serif;
+  font-size: 20px;
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 1px;
+  border: 2px groove #eeede0;
+  border-radius: 2px;
+  border-collapse: collapse;
+}
+.window-app .window-content .dialog-buttons-title label:last-child {
+  border-left: 2px groove #eeede0;
+  align-self: center;
+}
 /* ----------------------------------------- */
 /*  All ldnd5e Apps                           */
 /* ----------------------------------------- */
@@ -78,6 +95,9 @@
 }
 .ldnd5e .window-content {
   font-size: 13px;
+}
+.ldnd5e .window-content .pcs-list {
+  flex: 100%;
 }
 .ldnd5e input[type="text"],
 .ldnd5e input[type="number"],
@@ -460,6 +480,9 @@
   margin: 0;
   white-space: nowrap;
   overflow-x: hidden;
+}
+.ldnd5e.app .items-list .item-name h4.item-desequip {
+  color: #c9c7b8;
 }
 .ldnd5e.app .items-list .item-controls {
   flex: 0 0 60px;
@@ -1083,6 +1106,9 @@
 .ldnd5e.app.window-app .inventory-list .item .item-detail.dl-control.half-dl {
   color: darkred;
   font-weight: bold;
+}
+.ldnd5e.app.window-app .inventory-list .item .item-detail.item-desequip {
+  color: #c9c7b8;
 }
 
 .ldnd5e.app.window-app .inventory-list .item .item-name.rollable:hover .item-image {

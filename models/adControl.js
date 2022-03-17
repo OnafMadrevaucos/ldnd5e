@@ -1,5 +1,5 @@
 import { constants, i18nStrings } from "../scripts/constants.js";
-import { computaDA, computaHALF, computaSUB } from "../scripts/DASystem.js";
+import { computaDA, computaHALF, computaSUB, computaZERAR } from "../scripts/DASystem.js";
 
 const ACTIVE_EFFECT_MODES = CONST.ACTIVE_EFFECT_MODES;
 const ADD = ACTIVE_EFFECT_MODES.ADD;
@@ -52,7 +52,8 @@ export default class adControl extends Application {
 
           // Clicks sem Rolagem
           html.find(".owner-image").click(this._onOwnerImageClick.bind(this));
-          html.find(".dl-control").click(this._onDLControlClick.bind(this));     
+          html.find(".dl-control").click(this._onDLControlClick.bind(this));  
+          html.find(".refresh-pcs").click(this._onRefreshPCsClick.bind(this));     
       }
 
       super.activateListeners(html);
@@ -70,7 +71,7 @@ export default class adControl extends Application {
   async _onDLControlClick(event) {
       event.preventDefault();
 
-      const dlType = event.currentTarget.closest(".dl-control").dataset.dlType
+      const dlType = event.currentTarget.closest(".dl-control").dataset.dlType;
       const itemID = event.currentTarget.closest(".item").dataset.itemId;
       const ownerID = event.currentTarget.closest(".item").dataset.ownerId;
 
@@ -90,8 +91,17 @@ export default class adControl extends Application {
       
       this.render(true);
 
-      return item
+      return item;
   }
+
+  _onRefreshPCsClick(event) {
+
+   this.data = adControl.computePCArmorData();
+
+   this.render(false);
+  }
+
+  /* -------------------------------------------- */
 
   async _configureDialog({title, data, template}={}, options={}) {
 
@@ -147,89 +157,122 @@ export default class adControl extends Application {
       const owner = data.owner;
       const tipoDano = data.damageType;
 
+      let result = {};
+
       switch(action) {
          case adControl.ACTION_TYPE.DA: {
-            const result = await computaDA(item, owner, tipoDano);   
-            item.setFlag("ldnd5e", "armorSchema", item.data.data.armor); 
-
-            const effect = {
-               _id: randomID(),
-               label: "AC Damage Penalty",
-               icon: item.data.img,
-               origin: data.owner.uuid,
-               changes: [{ key: "data.attributes.ac.bonus", mode: ADD, priority: 50, value: item.data.data.armor.ACPenalty }], 
-               duration: {}
-            };
-
-            if(result.temMudanca) {
-               if(!result.fazUpdate) await owner.createEmbeddedDocuments("ActiveEffect", [effect]);
-               else { 
-                  effect._id = result.fazUpdate;
-                  await owner.updateEmbeddedDocuments("ActiveEffect", [effect]);   
-               }
-               
-               data.owner.applyActiveEffects();
-            }            
+            result = computaDA(item, owner, tipoDano);   
+            this._prepareActiveEffects(item, owner, result);            
          } 
          break;
 
          case adControl.ACTION_TYPE.HALF: {
-            const result = await computaHALF(item, owner, tipoDano);   
-            item.setFlag("ldnd5e", "armorSchema", item.data.data.armor); 
-
-            const effect = {
-               _id: randomID(),
-               label: "AC Damage Penalty",
-               icon: item.data.img,
-               origin: data.owner.uuid,
-               changes: [{ key: "data.attributes.ac.bonus", mode: ADD, priority: 50, value: item.data.data.armor.ACPenalty }], 
-               duration: {}
-            };
-
-            if(result.temMudanca) {
-               if(!result.fazUpdate) await owner.createEmbeddedDocuments("ActiveEffect", [effect]);
-               else { 
-                  effect._id = result.fazUpdate;
-                  await owner.updateEmbeddedDocuments("ActiveEffect", [effect]);   
-               }
-               
-               data.owner.applyActiveEffects();
-            }
+            result = computaHALF(item, owner, tipoDano);   
+            this._prepareActiveEffects(item, owner, result);
          } 
          break;
 
          case adControl.ACTION_TYPE.SUB: {
-            const result = await computaSUB(item, owner, tipoDano);   
-            item.setFlag("ldnd5e", "armorSchema", item.data.data.armor); 
-
-            const effect = {
-               _id: randomID(),
-               label: "AC Damage Penalty",
-               icon: item.data.img,
-               origin: data.owner.uuid,
-               changes: [{ key: "data.attributes.ac.bonus", mode: ADD, priority: 50, value: item.data.data.armor.ACPenalty }], 
-               duration: {}
-            };
-
-            if(result.temMudanca) {
-               if(!result.fazUpdate) await owner.createEmbeddedDocuments("ActiveEffect", [effect]);
-               else { 
-                  effect._id = result.fazUpdate;
-                  await owner.updateEmbeddedDocuments("ActiveEffect", [effect]);   
-               }
-               
-               data.owner.applyActiveEffects();
-            }
+            result = computaSUB(item, owner, tipoDano); 
+            this._prepareActiveEffects(item, owner, result);
          } 
          break;
 
          case adControl.ACTION_TYPE.ZERAR: {
-
+            result = computaZERAR(item, owner);
+            this._prepareActiveEffects(item,owner, result);
          } 
          break;
          default: return null;
       }     
 
       return this;
+   }
+
+   async _prepareActiveEffects(item, owner, result) {
+      await item.setFlag("ldnd5e", "armorSchema", item.data.data.armor); 
+
+      //@TODO: Implementar controle para que as armaduras ao serem desequipadas parem de tentar apagar o Efeito mesmo quando ele já foi apagado.
+      //       Implementar um controle para mostrar mensagens no chat quando certos Níveis de Avaraias é atingido.
+   
+      const effect = {
+         _id: randomID(),
+         label: game.i18n.localize(i18nStrings.activeEffectLabel),
+         icon: item.data.img,
+         origin: owner.uuid,
+         changes: [{ key: "data.attributes.ac.bonus", mode: ADD, priority: 50, value: item.data.data.armor.ACPenalty }], 
+         duration: {}
+      };
+   
+      const shieldEffect = {
+         _id: randomID(),
+         label: game.i18n.localize(i18nStrings.activeEffectShieldLabel),
+         icon: item.data.img,
+         origin: owner.uuid,
+         changes: [{ key: "data.attributes.ac.bonus", mode: ADD, priority: 51, value: item.data.data.armor.ACPenalty }], 
+         duration: {}
+      };
+   
+      if(result.temMudanca.normal) {
+         if(!result.fazUpdate.normal && effect.changes[0].value !== "0") {
+            const createdEffect = await owner.createEmbeddedDocuments("ActiveEffect", [effect]);
+            effect._id = createdEffect[0].data._id;
+            effect.sourceArmor = item.data._id;
+            await owner.setFlag("ldnd5e", "armorEffect", effect);
+         } else { 
+            effect._id = result.fazUpdate.normal;
+            if(effect.changes[0].value !== "0")                
+               await owner.updateEmbeddedDocuments("ActiveEffect", [effect]);   
+            else 
+               await owner.deleteEmbeddedDocuments("ActiveEffect", [effect._id]);
+         }     
+      } else if(result.temMudanca.escudo) {
+         if(!result.fazUpdate.escudo.value) {
+            const createdEffect = await owner.createEmbeddedDocuments("ActiveEffect", [shieldEffect]);
+            shieldEffect._id = createdEffect[0].data._id;
+            shieldEffect.sourceShield = item.data._id;
+            await owner.setFlag("ldnd5e", "shieldEffect", shieldEffect);
+         } else { 
+            shieldEffect._id = result.fazUpdate.escudo.value;
+            if(!result.fazUpdate.escudo.delete)
+               await owner.updateEmbeddedDocuments("ActiveEffect", [shieldEffect]);  
+            else
+               await owner.deleteEmbeddedDocuments("ActiveEffect", [shieldEffect._id]);
+         }
+      }  
+   }
+   
+   static computePCArmorData() {
+   
+      const data = {
+          armor: { label: "ldnd5e.armorLabel", items: [], owner: {}, tipoShield: false, dataset: {type: "equipament", subtype: "", armorType: ""} },
+          shield: { label: "ldnd5e.shieldLabel", items: [], owner: {}, tipoShield: true, dataset: {type: "equipament", subtype: "", armorType: ""} }
+      };
+   
+      for(let actor of game.actors) {
+          if(actor.type == "character") {
+   
+              let [items] = actor.items.reduce((arr, item) => {
+   
+                  if(item.type === "equipment") {
+
+                     item.equipped = (item.actor.data.data.attributes.ac.equippedArmor?.id === item.id ||
+                        item.actor.data.data.attributes.ac.equippedShield?.id === item.id);
+                     item.owner = actor;
+                     item.armorType = item.data.data.armor.type;  
+                     item.subtype =  (item.armorType === "shield" ? "shield" : "armor");                     
+                     arr[0].push(item); 
+                  }
+                  return arr;
+              }, [[]]);
+   
+              // Organize items
+              for ( let i of items ) {             
+                  data[i.subtype].items.push(i);
+              }
+          }
+      }
+   
+      return data;
    }
 }

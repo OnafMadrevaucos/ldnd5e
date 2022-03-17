@@ -21,8 +21,6 @@ Hooks.once("init", function() {
 
 Hooks.on(`renderActorSheet`, (app, html, data) => {
 
-    
-
 });
 
 Hooks.on('getSceneControlButtons', (controls) => {
@@ -38,39 +36,8 @@ Hooks.on('getSceneControlButtons', (controls) => {
 
 function renderControl()
 {
-    const data = computePCArmorData();
+    const data = adControl.computePCArmorData();
     const form = new adControl(data);
     
     return form.render(true);
-}
-
-function computePCArmorData() {
-
-    const data = {
-        armor: { label: "ldnd5e.armorLabel", items: [], owner: {}, tipoShield: false, dataset: {type: "equipament", subtype: "", armorType: ""} },
-        shield: { label: "ldnd5e.shieldLabel", items: [], owner: {}, tipoShield: true, dataset: {type: "equipament", subtype: "", armorType: ""} }
-    };
-
-    for(let actor of game.actors) {
-        if(actor.type == "character") {
-
-            let [items] = actor.items.reduce((arr, item) => {
-
-                if(item.type === "equipment") {
-                    item.owner = actor;
-                    item.armorType = item.data.data.armor.type;  
-                    item.subtype =  (item.armorType === "shield" ? "shield" : "armor");                     
-                    arr[0].push(item); 
-                }
-                return arr;
-            }, [[]]);
-
-            // Organize items
-            for ( let i of items ) {             
-                data[i.subtype].items.push(i);
-            }
-        }
-    }
-
-    return data;
 }

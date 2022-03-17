@@ -3,10 +3,12 @@
     <li class="items-header flexrow">
         <h3 class="item-name flexrow">{{localize section.label}}</h3>    
 
-        {{#if section.tipoShield}}
-            <div class="item-detail lan-title">{{localize "ldnd5e.ownerLdo"}}</div>
-        {{else}}
-            <div class="item-detail lan-title">{{localize "ldnd5e.ownerLan"}}</div>
+        {{#if item.equipped}}
+            {{#if section.tipoShield}}
+                <div class="item-detail lan-title">{{localize "ldnd5e.ownerLdo"}}</div>
+            {{else}}
+                <div class="item-detail lan-title">{{localize "ldnd5e.ownerLan"}}</div>
+            {{/if}}
         {{/if}}
         <div class="item-detail">{{localize "ldnd5e.pdTitle"}}</div>
         <div class="item-detail">{{localize "ldnd5e.sdTitle"}}</div>
@@ -21,16 +23,18 @@
             data-owner-id="{{item.owner.id}}">
             <div class="item-name flexrow">                
                 <div class="item-image" tabindex="0" role="button" aria-label="{{item.name}}" style="background-image: url('{{item.img}}')"></div>
-                <h4>
-                    {{item.name~}}
+                <h4 {{#unless item.equipped}}class="item-desequip"{{/unless}}>
+                    {{item.name~}} 
                 </h4>
-                <div class="item-detail lan-value">{{#if section.tipoShield}}{{item.owner.data.data.attributes.ac.ldo}}{{else}}{{item.owner.data.data.attributes.ac.lan}}{{/if}}</div>
+                {{#if item.equipped}}
+                    <div class="item-detail lan-value">{{#if section.tipoShield}}{{item.owner.data.data.attributes.ac.ldo}}{{else}}{{item.owner.data.data.attributes.ac.lan}}{{/if}}</div>
+                {{/if}}
                 <div class="item-image owner-image" tabindex="0" role="button" title="{{item.owner.name}}" aria-label="{{item.owner.name}}" style="background-image: url('{{item.owner.img}}')"></div>
             </div>  
 
-            <div class="item-detail dl-control {{#if item.data.data.armor.HalfAD.pierc}}half-dl{{/if}}" data-dl-type="pierc">{{item.data.data.armor.DL.pierc}} ({{item.data.data.armor.AD.pierc}})</div>
-            <div class="item-detail dl-control {{#if item.data.data.armor.HalfAD.slsh}}half-dl{{/if}}" data-dl-type="slsh">{{item.data.data.armor.DL.slsh}} ({{item.data.data.armor.AD.slsh}})</div>
-            <div class="item-detail dl-control {{#if item.data.data.armor.HalfAD.bldg}}half-dl{{/if}}" data-dl-type="bldg">{{item.data.data.armor.DL.bldg}} ({{item.data.data.armor.AD.bldg}})</div>
+            <div class="item-detail {{#if item.equipped}}dl-control {{#if item.data.data.armor.HalfAD.pierc}}half-dl{{/if}} {{/if}}{{#unless item.equipped}}item-desequip{{/unless}}" data-dl-type="pierc">{{item.data.data.armor.DL.pierc}} ({{item.data.data.armor.AD.pierc}})</div>
+            <div class="item-detail {{#if item.equipped}}dl-control {{#if item.data.data.armor.HalfAD.slsh}}half-dl{{/if}} {{/if}}{{#unless item.equipped}}item-desequip{{/unless}}" data-dl-type="slsh">{{item.data.data.armor.DL.slsh}} ({{item.data.data.armor.AD.slsh}})</div>
+            <div class="item-detail {{#if item.equipped}}dl-control {{#if item.data.data.armor.HalfAD.bldg}}half-dl{{/if}} {{/if}}{{#unless item.equipped}}item-desequip{{/unless}}" data-dl-type="bldg">{{item.data.data.armor.DL.bldg}} ({{item.data.data.armor.AD.bldg}})</div>
             <div class="item-detail total-damage">{{item.data.data.armor.RealDL}}</div>   
         </li>
     {{/each}}
