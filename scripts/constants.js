@@ -12,6 +12,11 @@ import adControl from "../models/adControl.js";
     templates: {
         mainTemplate: 'modules/ldnd5e/templates/mainControl.hbs',
         dlControlTemplate: 'modules/ldnd5e/templates/control-dialog.hbs'
+    },
+
+    images: {
+       armorEffectDefault: "icons/equipment/chest/breastplate-helmet-metal.webp",
+       shieldEffectDefault: "icons/equipment/shield/heater-crystal-blue.webp"
     }
  };
 
@@ -22,6 +27,7 @@ import adControl from "../models/adControl.js";
    itemOwner:"ldnd5e.itemOwner",
    ownerLan: "ldnd5e.ownerLan",
    ownerLdo: "ldnd5e.ownerLdo",
+   damageSystem: "ldnd5e.damageSystem",
 
    refreshBtn: "ldnd5e.refreshBtn",
 

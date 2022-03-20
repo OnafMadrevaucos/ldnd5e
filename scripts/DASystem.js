@@ -65,7 +65,16 @@ export const prepareLDO = function(data) {
 export const computaDA = function(item, owner, tipoDano) {      
     const itemData = item.data.data;
     const tipoArmor = itemData.armor.type;
-    const result = {temMudanca: {normal: false, escudo: false}, fazUpdate: {normal: null, escudo: {value: null, delete: false}}};
+    const result = {
+        temMudanca: {
+            normal: false, 
+            escudo: false
+        }, 
+        effectsID: {
+            normal: null, 
+            escudo: null            
+        }
+    };
 
     if(itemData.armor.DL[tipoDano] < 6) {
         if(tipoArmor === "light") {
@@ -121,13 +130,12 @@ export const computaDA = function(item, owner, tipoDano) {
                 itemData.armor.RealDL = itemData.armor.DL[tipoDano];            
                 itemData.armor.ACPenalty = (itemData.armor.type === "shield"? NIVEL_DA_ESCUDO[itemData.armor.RealDL-1].mod : NIVEL_DA[itemData.armor.RealDL-1].mod);           
 
-                let novoEfeito = null;
                 if(result.temMudanca.normal) {
-                    novoEfeito = owner.effects.find(e => [game.i18n.localize(i18nStrings.activeEffectLabel)].includes(e.data.label));
-                    if(novoEfeito) result.fazUpdate.normal = novoEfeito.data._id;
+                    const armorEffect = owner.getFlag("ldnd5e", "armorEffect");
+                    if(armorEffect) result.effectsID.normal = armorEffect.effectID;
                 } else if(result.temMudanca.escudo) {
-                    novoEfeito = owner.effects.find(e => [game.i18n.localize(i18nStrings.activeEffectShieldLabel)].includes(e.data.label));
-                    if(novoEfeito) result.fazUpdate.escudo.value = novoEfeito.data._id;            
+                    const shieldEffect = owner.getFlag("ldnd5e", "shieldEffect");
+                    if(shieldEffect) result.effectsID.escudo = shieldEffect.effectID;            
                 }            
             }
         }
@@ -145,7 +153,13 @@ export const computaDA = function(item, owner, tipoDano) {
 export const computaHALF = function(item, owner, tipoDano) {      
     const itemData = item.data.data;
     const tipoArmor = itemData.armor.type;
-    const result = {temMudanca: {normal: false, escudo: false}, fazUpdate: {normal: null, escudo: {value: null, delete: false}}};
+    const result = {
+        temMudanca: {normal: false, escudo: false}, 
+        effectsID: {
+            normal: null, 
+            escudo: null            
+        }
+    };
 
     if(itemData.armor.DL[tipoDano] < 6) {
         if(tipoArmor === "light") {
@@ -215,13 +229,12 @@ export const computaHALF = function(item, owner, tipoDano) {
                 itemData.armor.RealDL = itemData.armor.DL[tipoDano];            
                 itemData.armor.ACPenalty = (itemData.armor.type === "shield"? NIVEL_DA_ESCUDO[itemData.armor.RealDL-1].mod : NIVEL_DA[itemData.armor.RealDL-1].mod);           
 
-                let novoEfeito = null;
                 if(result.temMudanca.normal) {
-                    novoEfeito = owner.effects.find(e => [game.i18n.localize(i18nStrings.activeEffectLabel)].includes(e.data.label));
-                    if(novoEfeito) result.fazUpdate.normal = novoEfeito.data._id;
+                    const armorEffect = owner.getFlag("ldnd5e", "armorEffect");
+                    if(armorEffect) result.effectsID.normal = armorEffect.effectID;
                 } else if(result.temMudanca.escudo) {
-                    novoEfeito = owner.effects.find(e => [game.i18n.localize(i18nStrings.activeEffectShieldLabel)].includes(e.data.label));
-                    if(novoEfeito) result.fazUpdate.escudo.value = novoEfeito.data._id;            
+                    const shieldEffect = owner.getFlag("ldnd5e", "shieldEffect");
+                    if(shieldEffect) result.effectsID.escudo = shieldEffect.effectID;            
                 }
             }
         }
@@ -239,7 +252,16 @@ export const computaHALF = function(item, owner, tipoDano) {
 export const computaSUB = function(item, owner, damageType) {      
     const itemData = item.data.data;
     const tipoArmor = itemData.armor.type;
-    const result = {temMudanca: {normal: false, escudo: false}, fazUpdate: {normal: null, escudo: {value: null, delete: false}}};
+    const result = {
+        temMudanca: {
+            normal: false, 
+            escudo: false
+        }, 
+        effectsID: {
+            normal: null, 
+            escudo: null            
+        }
+    };
 
     let tipoDano = damageType;
     if(itemData.armor.RealDL > 0 && itemData.armor.DL[tipoDano] > 0) {
@@ -273,18 +295,15 @@ export const computaSUB = function(item, owner, damageType) {
         itemData.armor.HalfAD.slsh = false;
         itemData.armor.HalfAD.pierc = false;    
         
-        itemData.armor.ACPenalty = (itemData.armor.type === "shield" ? (NIVEL_DA_ESCUDO[novoIndex]?.mod ?? "0") : (NIVEL_DA[novoIndex]?.mod ?? "0"));  
+        itemData.armor.ACPenalty = (itemData.armor.type === "shield" ? (NIVEL_DA_ESCUDO[novoIndex]?.mod ?? "0") : (NIVEL_DA[novoIndex]?.mod ?? "0"));
 
-        result.fazUpdate.escudo.delete = (itemData.armor.RealDL === 0);
-
-        let novoEfeito = null;
         if(result.temMudanca.normal) {
-            novoEfeito = owner.effects.find(e => [game.i18n.localize(i18nStrings.activeEffectLabel)].includes(e.data.label));
-            if(novoEfeito) result.fazUpdate.normal = novoEfeito.data._id;
+            const armorEffect = owner.getFlag("ldnd5e", "armorEffect");
+            if(armorEffect) result.effectsID.normal = armorEffect.effectID;
         } else if(result.temMudanca.escudo) {
-            novoEfeito = owner.effects.find(e => [game.i18n.localize(i18nStrings.activeEffectShieldLabel)].includes(e.data.label));
-            if(novoEfeito) result.fazUpdate.escudo.value = novoEfeito.data._id;            
-        }            
+            const shieldEffect = owner.getFlag("ldnd5e", "shieldEffect");
+            if(shieldEffect) result.effectsID.escudo = shieldEffect.effectID;            
+        }          
     }
 
     return result;
@@ -299,7 +318,16 @@ export const computaSUB = function(item, owner, damageType) {
 export const computaZERAR = function(item, owner) {      
     const itemData = item.data.data;
     const tipoArmor = itemData.armor.type;
-    const result = {temMudanca: {normal: false, escudo: false}, fazUpdate: {normal: null, escudo: {value: null, delete: false}}};
+    const result = {
+        temMudanca: {
+            normal: false, 
+            escudo: false
+        }, 
+        effectsID: {
+            normal: null, 
+            escudo: null            
+        }
+    };
      
     if(tipoArmor === "shield") result.temMudanca.escudo = true;
     else result.temMudanca.normal = true;
@@ -319,15 +347,13 @@ export const computaZERAR = function(item, owner) {
     itemData.armor.HalfAD.pierc = false;    
         
     itemData.armor.ACPenalty = "0";
-    result.fazUpdate.escudo.delete = true;
 
-    let novoEfeito = null;
     if(result.temMudanca.normal) {
-        novoEfeito = owner.effects.find(e => [game.i18n.localize(i18nStrings.activeEffectLabel)].includes(e.data.label));
-        if(novoEfeito) result.fazUpdate.normal = novoEfeito.data._id;
+        const armorEffect = owner.getFlag("ldnd5e", "armorEffect");
+        if(armorEffect) result.effectsID.normal = armorEffect.effectID;
     } else if(result.temMudanca.escudo) {
-        novoEfeito = owner.effects.find(e => [game.i18n.localize(i18nStrings.activeEffectShieldLabel)].includes(e.data.label));
-        if(novoEfeito) result.fazUpdate.escudo.value = novoEfeito.data._id;            
+        const shieldEffect = owner.getFlag("ldnd5e", "shieldEffect");
+        if(shieldEffect) result.effectsID.escudo = shieldEffect.effectID;            
     }
 
     return result;

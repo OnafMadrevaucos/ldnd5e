@@ -190,56 +190,25 @@ export default class adControl extends Application {
    }
 
    async _prepareActiveEffects(item, owner, result) {
+      // Salvo as alterações nos valores de avarias do Item.
       await item.setFlag("ldnd5e", "armorSchema", item.data.data.armor); 
 
       //@TODO: Implementar controle para que as armaduras ao serem desequipadas parem de tentar apagar o Efeito mesmo quando ele já foi apagado.
       //       Implementar um controle para mostrar mensagens no chat quando certos Níveis de Avaraias é atingido.
-   
-      const effect = {
-         _id: randomID(),
-         label: game.i18n.localize(i18nStrings.activeEffectLabel),
-         icon: item.data.img,
-         origin: owner.uuid,
-         changes: [{ key: "data.attributes.ac.bonus", mode: ADD, priority: 50, value: item.data.data.armor.ACPenalty }], 
-         duration: {}
-      };
-   
-      const shieldEffect = {
-         _id: randomID(),
-         label: game.i18n.localize(i18nStrings.activeEffectShieldLabel),
-         icon: item.data.img,
-         origin: owner.uuid,
-         changes: [{ key: "data.attributes.ac.bonus", mode: ADD, priority: 51, value: item.data.data.armor.ACPenalty }], 
-         duration: {}
-      };
-   
+      
+      //
+      let effect = null;
+      const ACPenalty = item.data.data.armor.ACPenalty;  
+
       if(result.temMudanca.normal) {
-         if(!result.fazUpdate.normal && effect.changes[0].value !== "0") {
-            const createdEffect = await owner.createEmbeddedDocuments("ActiveEffect", [effect]);
-            effect._id = createdEffect[0].data._id;
-            effect.sourceArmor = item.data._id;
-            await owner.setFlag("ldnd5e", "armorEffect", effect);
-         } else { 
-            effect._id = result.fazUpdate.normal;
-            if(effect.changes[0].value !== "0")                
-               await owner.updateEmbeddedDocuments("ActiveEffect", [effect]);   
-            else 
-               await owner.deleteEmbeddedDocuments("ActiveEffect", [effect._id]);
-         }     
+         effect = owner.effects.get(result.effectsID.normal);
+         effect._id = result.effectsID.normal;       
       } else if(result.temMudanca.escudo) {
-         if(!result.fazUpdate.escudo.value) {
-            const createdEffect = await owner.createEmbeddedDocuments("ActiveEffect", [shieldEffect]);
-            shieldEffect._id = createdEffect[0].data._id;
-            shieldEffect.sourceShield = item.data._id;
-            await owner.setFlag("ldnd5e", "shieldEffect", shieldEffect);
-         } else { 
-            shieldEffect._id = result.fazUpdate.escudo.value;
-            if(!result.fazUpdate.escudo.delete)
-               await owner.updateEmbeddedDocuments("ActiveEffect", [shieldEffect]);  
-            else
-               await owner.deleteEmbeddedDocuments("ActiveEffect", [shieldEffect._id]);
-         }
+         effect = owner.effects.get(result.effectsID.escudo);
+         effect._id = result.effectsID.escudo; 
       }  
+
+      if(effect) await owner.updateArmorDamageEffects(effect.data, ACPenalty);
    }
    
    static computePCArmorData() {
