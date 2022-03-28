@@ -22,6 +22,7 @@ import adControl from "../models/adControl.js";
 
  const i18nStrings = {
    title : "ldnd5e.title",
+   sheetTitle: "ldnd5e.sheetTitle",
    armorLabel: "ldnd5e.armorLabel",
    shieldLabel: "ldnd5e.shieldLabel",
    itemOwner:"ldnd5e.itemOwner",

@@ -6,10 +6,29 @@ const ADD = ACTIVE_EFFECT_MODES.ADD;
 
 export default class adControl extends Application {
 
-   constructor( data, options = {} ) {
+   constructor( options = {} ) {
       super(options);
 
-      this.data = data;
+      // Vincula todas as Sheets de PJs ao Controle do AD System.
+      for(let actor of game.actors) {
+         if(actor.type == "character") {            
+            actor.apps[this.appId] = this;
+            actor.setFlag("ldnd5e", "adControlID", this.appId);
+         }
+      }
+      this.data = this.computePCArmorData();    
+   }
+
+   // Desvincula as Sheets dos PJs do Controle do AD System.
+   /**@override */
+   async close() {
+      for(let actor of game.actors) {
+         if(actor.type == "character") {
+            delete actor.apps[this.appId];
+            actor.setFlag("ldnd5e", "adControlID");
+         }
+      } 
+      return super.close();
    }
 
    /**
@@ -24,8 +43,8 @@ export default class adControl extends Application {
   }
 
    /**@override */
-   getData() {
-
+   getData() {    
+      
       // Retorna data para a tela.
       return this.data;
    }
@@ -94,9 +113,15 @@ export default class adControl extends Application {
       return item;
   }
 
+  refresh(force) {
+   this.data = this.computePCArmorData();
+
+   this.render(force);
+  }
+
   _onRefreshPCsClick(event) {
 
-   this.data = adControl.computePCArmorData();
+   this.data = this.computePCArmorData();
 
    this.render(false);
   }
@@ -211,7 +236,7 @@ export default class adControl extends Application {
       if(effect) await owner.updateArmorDamageEffects(effect.data, ACPenalty);
    }
    
-   static computePCArmorData() {
+   computePCArmorData() {
    
       const data = {
           armor: { label: "ldnd5e.armorLabel", items: [], owner: {}, tipoShield: false, dataset: {type: "equipament", subtype: "", armorType: ""} },
@@ -226,7 +251,7 @@ export default class adControl extends Application {
                   if(item.type === "equipment") {
 
                      item.equipped = (item.actor.data.data.attributes.ac.equippedArmor?.id === item.id ||
-                        item.actor.data.data.attributes.ac.equippedShield?.id === item.id);
+                                      item.actor.data.data.attributes.ac.equippedShield?.id === item.id);
                      item.owner = actor;
                      item.armorType = item.data.data.armor.type;  
                      item.subtype =  (item.armorType === "shield" ? "shield" : "armor");                     

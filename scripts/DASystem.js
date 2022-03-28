@@ -1,4 +1,4 @@
-import { i18nStrings} from "./constants.js";
+import { i18nStrings } from "./constants.js";
 
 const NIVEL_DA = [
     {valor: 2, mod: "-1"},

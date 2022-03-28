@@ -7,12 +7,23 @@ import { preloadTemplates } from "./scripts/templates.js";
 import { gmControl } from "./scripts/constants.js";
 import adControl from "./models/adControl.js";
 
+import ActorSheet5eCharacter from "../../systems/dnd5e/module/actor/sheets/character.js";
+import ActorSheetL5eCharacter from "./models/sheets/ActorSheetL5eCharacter.js";
+
 
 Hooks.once("init", function() {
     console.log("LDnD5e | Inicializando o Módulo Lemurian D&D 5th Edition...");
 
     CONFIG.Item.documentClass = ItemL5e;
     CONFIG.Actor.documentClass = ActorL5e;
+
+    // Register sheet application classes
+    Actors.unregisterSheet("dnd5e", ActorSheet5eCharacter);
+    Actors.registerSheet("dnd5e", ActorSheetL5eCharacter, {
+        types: ["character"],
+        makeDefault: true,
+        label: "ldnd5e.sheetTitle"
+    });
 
     preloadTemplates();
 
@@ -36,8 +47,8 @@ Hooks.on('getSceneControlButtons', (controls) => {
 
 function renderControl()
 {
-    const data = adControl.computePCArmorData();
-    const form = new adControl(data);
+    //const data = adControl.computePCArmorData();
+    const form = new adControl();
     
     return form.render(true);
 }

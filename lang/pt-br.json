@@ -1,6 +1,7 @@
 {
     "ldnd5e" : {
         "title" : "Controle de Dano Absorvido",
+        "sheetTitle": "LDnD5e Character Sheet",
         "armorLabel": "Armaduras",
         "shieldLabel": "Escudos",
         "itemOwner": "Dono",
