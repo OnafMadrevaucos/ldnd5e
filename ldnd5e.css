@@ -1553,6 +1553,15 @@
   -ms-user-select: text;
   user-select: text;
 }
+
+.ldnd5e.chat-card .damage-content {
+  font-weight: 600;
+  font-style: italic;
+  margin: 0.5em 0;
+  padding-bottom: 0.5em;
+  border-bottom: 2px groove #eeede0;
+}
+
 .ldnd5e.chat-card .card-buttons {
   margin: 5px 0;
 }

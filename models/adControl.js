@@ -219,21 +219,60 @@ export default class adControl extends Application {
       await item.setFlag("ldnd5e", "armorSchema", item.data.data.armor); 
 
       //@TODO: Implementar controle para que as armaduras ao serem desequipadas parem de tentar apagar o Efeito mesmo quando ele já foi apagado.
-      //       Implementar um controle para mostrar mensagens no chat quando certos Níveis de Avaraias é atingido.
-      
+      //       Implementar um controle para mostrar mensagens no chat quando certos Níveis de Avaraias é atingido.      
       //
       let effect = null;
-      const ACPenalty = item.data.data.armor.ACPenalty;  
+      const itemData = item.data.data; 
+      const NivelDL = itemData.armor.RealDL;
+      const ACPenalty = itemData.armor.ACPenalty;
+
+      let extraMessage = "";
+
+      if(NivelDL === 5) extraMessage = game.i18n.localize(i18nStrings.messages.fithDLMessage);
+      else if(NivelDL === 6){ 
+         extraMessage = game.i18n.localize(i18nStrings.messages.sixthDLMessage);
+         const attr = "data.equipped";
+         await item.update({[attr]: !getProperty(item.data, attr)});
+      }
+
+      const messageData = {
+         data: item.data.data,
+         info: game.i18n.format(i18nStrings.messages.newDLMessage, {item: item.data.name, penalty: ACPenalty.toString(), extra: extraMessage}),
+         item: item,
+         owner: owner
+      };
 
       if(result.temMudanca.normal) {
          effect = owner.effects.get(result.effectsID.normal);
-         effect._id = result.effectsID.normal;       
+         effect._id = result.effectsID.normal;        
+         
+         if(result.temMudanca.mensagem)
+            await this.toMessage(messageData);
       } else if(result.temMudanca.escudo) {
          effect = owner.effects.get(result.effectsID.escudo);
          effect._id = result.effectsID.escudo; 
+
+         if(result.temMudanca.mensagem)
+            await this.toMessage(messageData);
       }  
 
       if(effect) await owner.updateArmorDamageEffects(effect.data, ACPenalty);
+   }
+
+   /** @inheritdoc */
+   async toMessage(messageData={}) {
+      const html = await renderTemplate(constants.templates.newDLTemplate, messageData);
+
+      // Create the ChatMessage data object
+      const chatData = {
+         user: game.user.data._id,
+         type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+         content: html,
+         speaker: ChatMessage.getSpeaker(),
+         flags: {"core.canPopout": true}
+      };
+
+      ChatMessage.create(chatData, {});
    }
    
    computePCArmorData() {

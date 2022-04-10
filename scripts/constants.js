@@ -7,11 +7,12 @@ import adControl from "../models/adControl.js";
  */
  const constants = {
     moduleName: 'ldnd5e',
-    moduleLabel: `Lemurian Dungeons & Dragons 5th Edition`,
+    moduleLabel: 'Lemurian Dungeons & Dragons 5th Edition',
     
     templates: {
         mainTemplate: 'modules/ldnd5e/templates/mainControl.hbs',
-        dlControlTemplate: 'modules/ldnd5e/templates/control-dialog.hbs'
+        dlControlTemplate: 'modules/ldnd5e/templates/control-dialog.hbs',
+        newDLTemplate: 'modules/ldnd5e/templates/newDL-template.hbs'
     },
 
     images: {
@@ -60,7 +61,11 @@ import adControl from "../models/adControl.js";
    messages: {
       bldgDmgLightArmor: "ldnd5e.messages.bldgDmgLightArmor",
       slshDmgHeavyArmor: "ldnd5e.messages.slshDmgHeavyArmor",
-      halDmgShield: "ldnd5e.messages.halDmgShield"
+      halDmgShield: "ldnd5e.messages.halDmgShield",
+      newDLMessage: "ldnd5e.messages.newDLMessage",
+      maxDLMessage: "ldnd5e.messages.maxDLMessage",
+      fithDLMessage: "ldnd5e.messages.fithDLMessage",
+      sixthDLMessage: "ldnd5e.messages.sixthDLMessage"
    }
  };
 

@@ -68,7 +68,9 @@ export const computaDA = function(item, owner, tipoDano) {
     const result = {
         temMudanca: {
             normal: false, 
-            escudo: false
+            escudo: false,
+            mensagem: false,
+            itemDestruido: false
         }, 
         effectsID: {
             normal: null, 
@@ -124,6 +126,8 @@ export const computaDA = function(item, owner, tipoDano) {
             itemData.armor.DL[tipoDano]++;
             itemData.armor.AD[tipoDano] = 0;
             if(itemData.armor.DL[tipoDano] > itemData.armor.RealDL) {
+                result.temMudanca.mensagem = true;
+
                 if(tipoArmor === "shield") result.temMudanca.escudo = true;
                 else result.temMudanca.normal = true;
 
@@ -139,6 +143,9 @@ export const computaDA = function(item, owner, tipoDano) {
                 }            
             }
         }
+    } else {
+        ui.notifications.info(game.i18n.format(i18nStrings.messages.maxDLMessage, {item: item.data.name}));
+        result.temMudanca.itemDestruido = true;
     }
 
     return result;
@@ -154,7 +161,12 @@ export const computaHALF = function(item, owner, tipoDano) {
     const itemData = item.data.data;
     const tipoArmor = itemData.armor.type;
     const result = {
-        temMudanca: {normal: false, escudo: false}, 
+        temMudanca: {
+            normal: false, 
+            escudo: false, 
+            mensagem: false,
+            itemDestruido: false
+        }, 
         effectsID: {
             normal: null, 
             escudo: null            
@@ -223,6 +235,9 @@ export const computaHALF = function(item, owner, tipoDano) {
             itemData.armor.DL[tipoDano]++;
             itemData.armor.AD[tipoDano] = 0;
             if(itemData.armor.DL[tipoDano] > itemData.armor.RealDL) {
+
+                result.temMudanca.mensagem = true;
+
                 if(tipoArmor === "shield") result.temMudanca.escudo = true;
                 else result.temMudanca.normal = true;
 
@@ -236,8 +251,11 @@ export const computaHALF = function(item, owner, tipoDano) {
                     const shieldEffect = owner.getFlag("ldnd5e", "shieldEffect");
                     if(shieldEffect) result.effectsID.escudo = shieldEffect.effectID;            
                 }
-            }
+            } 
         }
+    } else {
+        ui.notifications.info(game.i18n.format(i18nStrings.messages.maxDLMessage, {item: item.data.name}));
+        result.temMudanca.itemDestruido = true;
     }
 
     return result;
@@ -255,7 +273,8 @@ export const computaSUB = function(item, owner, damageType) {
     const result = {
         temMudanca: {
             normal: false, 
-            escudo: false
+            escudo: false,
+            mensagem: false
         }, 
         effectsID: {
             normal: null, 
@@ -321,7 +340,8 @@ export const computaZERAR = function(item, owner) {
     const result = {
         temMudanca: {
             normal: false, 
-            escudo: false
+            escudo: false,
+            mensagem: false
         }, 
         effectsID: {
             normal: null, 
