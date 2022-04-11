@@ -1,4 +1,5 @@
 import Item5e from "../../../../systems/dnd5e/module/item/entity.js";
+import { i18nStrings } from "../../scripts/constants.js";
 
 /**
  * Sobrescreve e amplia a implementação padrão do Sistema DnD5e.
@@ -13,6 +14,7 @@ export default class ItemL5e extends Item5e {
     /* -------------------------------------------- */
 
     /**
+    * @override
     * Augment the basic Item data model with additional dynamic data.
     */
     prepareDerivedData() {
@@ -49,6 +51,19 @@ export default class ItemL5e extends Item5e {
             }
     
             data.armor.ACPenalty = armorData?.ACPenalty ?? 0; 
+
+            data.armor.Destroyed = armorData?.Destroyed ?? false;
         }       
+    }
+
+    /**@override */
+    getChatData(htmlOptions={}) {
+        const data = super.getChatData(htmlOptions);
+        const itemData = this.data.data;
+
+        if(this.isArmor && itemData.armor.Destroyed)
+            data.properties.push(game.i18n.localize(i18nStrings.itemDestroyed));
+
+        return data;
     }
 }

@@ -12,6 +12,7 @@ import adControl from "../models/adControl.js";
     templates: {
         mainTemplate: 'modules/ldnd5e/templates/mainControl.hbs',
         dlControlTemplate: 'modules/ldnd5e/templates/control-dialog.hbs',
+        frControlTemplate: 'modules/ldnd5e/templates/full-repair-dialog.hbs',
         newDLTemplate: 'modules/ldnd5e/templates/newDL-template.hbs'
     },
 
@@ -44,6 +45,11 @@ import adControl from "../models/adControl.js";
    dlControlDamageBtn: "ldnd5e.dllControlDamageBtn",
    dlControlRepairsBtn: "ldnd5e.dllControlRepairsBtn",
 
+   frControlTitle: "ldnd5e.frControlTitle",
+   frControlItemLabel: "ldnd5e.frControlItemLabel",
+   frControlItemPrice: "ldnd5e.frControlItemPrice",
+   frControlMessage: "ldnd5e.frControlMessage",
+
    activeEffectLabel: "ldnd5e.activeEffectLabel",
    activeEffectShieldLabel: "ldnd5e.activeEffectShieldLabel",
 
@@ -52,20 +58,27 @@ import adControl from "../models/adControl.js";
    subBtn: "ldnd5e.subBtn",
    zerarBtn: "ldnd5e.zerarBtn",
 
+   yesBtn: "ldnd5e.yesBtn",
+   noBtn: "ldnd5e.noBtn",
+
    damageTypes: {
     pierc: "ldnd5e.damageTypes.pierc",
     slsh: "ldnd5e.damageTypes.slsh",
     bldg: "ldnd5e.damageTypes.bldg"
    },
 
+   itemDestroyed: "ldnd5e.itemDestroyed",
+
    messages: {
       bldgDmgLightArmor: "ldnd5e.messages.bldgDmgLightArmor",
-      slshDmgHeavyArmor: "ldnd5e.messages.slshDmgHeavyArmor",
+      slshDmgHeavyArmor: "ldnd5e.messages.slshDmgHeavyArmor",      
       halDmgShield: "ldnd5e.messages.halDmgShield",
       newDLMessage: "ldnd5e.messages.newDLMessage",
       maxDLMessage: "ldnd5e.messages.maxDLMessage",
       fithDLMessage: "ldnd5e.messages.fithDLMessage",
-      sixthDLMessage: "ldnd5e.messages.sixthDLMessage"
+      sixthDLMessage: "ldnd5e.messages.sixthDLMessage",
+      itemDestroyed :"ldnd5e.messages.itemDestroyed",
+      repairToExpensive: "ldnd5e.messages.repairToExpensive"
    }
  };
 

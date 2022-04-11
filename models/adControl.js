@@ -72,6 +72,7 @@ export default class adControl extends Application {
           // Clicks sem Rolagem
           html.find(".owner-image").click(this._onOwnerImageClick.bind(this));
           html.find(".dl-control").click(this._onDLControlClick.bind(this));  
+          html.find(".full-repair-control").click(this._onFullRepairControlClick.bind(this));  
           html.find(".refresh-pcs").click(this._onRefreshPCsClick.bind(this));     
       }
 
@@ -100,12 +101,35 @@ export default class adControl extends Application {
       const configured = await this._configureDialog({
          title: game.i18n.localize("ldnd5e.dlControlTitle"),
          data: {
-           damageType: dlType,
+           info: dlType,
            owner: owner,
            item: item
          },
          template: constants.templates.dlControlTemplate
       });
+      if ( configured === null ) return null;   
+      
+      this.render(true);
+
+      return item;
+  }
+
+  async _onFullRepairControlClick(event) {
+      event.preventDefault();
+
+      const itemID = event.currentTarget.closest(".item").dataset.itemId;
+      const ownerID = event.currentTarget.closest(".item").dataset.ownerId;
+      const owner = game.actors.get(ownerID);
+      const item = owner.items.get(itemID);
+      const configured = await this._configureDialog({
+         title: game.i18n.localize("ldnd5e.frControlTitle"),
+         data: {
+           info: item.data.data.price * 2,
+           owner: owner,
+           item: item
+         },
+         template: constants.templates.frControlTemplate
+      }, {fullRepair: true});
       if ( configured === null ) return null;   
       
       this.render(true);
@@ -130,40 +154,70 @@ export default class adControl extends Application {
 
   async _configureDialog({title, data, template}={}, options={}) {
 
-   // Render the Dialog inner HTML
-   const content = await renderTemplate(template, {
-      item: data.item, 
-      owner: data.owner,
-      damageType: game.i18n.localize(`ldnd5e.damageTypes.${data.damageType}`)
-   });
-   
-   return new Promise(resolve => {
-      new Dialog({
-         title,
-         content,
-         buttons: {
-            da: {
-               label: game.i18n.localize(i18nStrings.addBtn),
-               callback: html => resolve(this._onDialogSubmit(html, data, adControl.ACTION_TYPE.DA))
-            },
-            half: {
-               label: game.i18n.localize(i18nStrings.halfBtn),
-               callback: html => resolve(this._onDialogSubmit(html, data, adControl.ACTION_TYPE.HALF))
-            },
-            sub: {
-               label: game.i18n.localize(i18nStrings.subBtn),
-               callback: html => resolve(this._onDialogSubmit(html, data, adControl.ACTION_TYPE.SUB))
-            },
-            zerar: {
-               label: game.i18n.localize(i18nStrings.zerarBtn),
-               callback: html => resolve(this._onDialogSubmit(html, data, adControl.ACTION_TYPE.ZERAR))
-            }
-         },
-         default: "da",
-         close: () => resolve(null)
-      }, options).render(true);
+   let content = null;
+
+   if(!options.fullRepair) {
+      // Render the Dialog inner HTML
+      content = await renderTemplate(template, {
+         item: data.item, 
+         owner: data.owner,
+         damageType: game.i18n.localize(`ldnd5e.damageTypes.${data.info}`)
       });
-   }
+
+      return new Promise(resolve => {
+         new Dialog({
+            title,
+            content,
+            buttons: {
+               da: {
+                  label: game.i18n.localize(i18nStrings.addBtn),
+                  callback: html => resolve(this._onDialogSubmit(html, data, adControl.ACTION_TYPE.DA))
+               },
+               half: {
+                  label: game.i18n.localize(i18nStrings.halfBtn),
+                  callback: html => resolve(this._onDialogSubmit(html, data, adControl.ACTION_TYPE.HALF))
+               },
+               sub: {
+                  label: game.i18n.localize(i18nStrings.subBtn),
+                  callback: html => resolve(this._onDialogSubmit(html, data, adControl.ACTION_TYPE.SUB))
+               },
+               zerar: {
+                  label: game.i18n.localize(i18nStrings.zerarBtn),
+                  callback: html => resolve(this._onDialogSubmit(html, data, adControl.ACTION_TYPE.ZERAR))
+               }
+            },
+            default: "da",
+            close: () => resolve(null)
+         }, options).render(true);
+      });
+   } else {
+      // Render the Dialog inner HTML
+      content = await renderTemplate(template, {
+         item: data.item, 
+         owner: data.owner,
+         price: data.info.toString()
+      });
+
+      return new Promise(resolve => {
+         new Dialog({
+            title,
+            content,
+            buttons: {
+               yes: {
+                  label: game.i18n.localize(i18nStrings.yesBtn),
+                  callback: html => resolve(this._onDialogSubmit(html, data, adControl.ACTION_TYPE.ZERAR, {fullRepair: options.fullRepair, price: data.info}))
+               },
+               no: {
+                  label: game.i18n.localize(i18nStrings.noBtn),
+                  callback: html => resolve(this._onDialogSubmit(html, data, 99))
+               }
+            },
+            default: "no",
+            close: () => resolve(null)
+         }, options).render(true);
+      });
+   }    
+  }
 
    /* -------------------------------------------- */
 
@@ -175,12 +229,12 @@ export default class adControl extends Application {
    * @returns {D20Roll}              This damage roll.
    * @private
    */
-   async _onDialogSubmit(html, data, action) {
+   async _onDialogSubmit(html, data, action, options={}) {
       const form = html[0].querySelector("form");
 
       const item = data.item;
       const owner = data.owner;
-      const tipoDano = data.damageType;
+      const tipoDano = data.info;
 
       let result = {};
 
@@ -204,19 +258,33 @@ export default class adControl extends Application {
          break;
 
          case adControl.ACTION_TYPE.ZERAR: {
+
+            if(options?.fullRepair) {
+               const curr = this._convertCurrency(owner);
+               const price = this._convertRawCurrency(options?.price);
+      
+               const toExpensive = (price.total > curr.total);
+      
+               if(toExpensive) {
+                  ui.notifications.warn(game.i18n.format(i18nStrings.messages.repairToExpensive, {actor: owner.data.name}));
+                  return;
+               } else {
+                  options.curr = curr;
+                  options.price = price;
+               }
+            }
+
             result = computaZERAR(item, owner);
-            this._prepareActiveEffects(item,owner, result);
+            this._prepareActiveEffects(item, owner, result, options);
          } 
-         break;
+         break;       
          default: return null;
       }     
 
       return this;
    }
 
-   async _prepareActiveEffects(item, owner, result) {
-      // Salvo as alterações nos valores de avarias do Item.
-      await item.setFlag("ldnd5e", "armorSchema", item.data.data.armor); 
+   async _prepareActiveEffects(item, owner, result, options={}) {     
 
       //@TODO: Implementar controle para que as armaduras ao serem desequipadas parem de tentar apagar o Efeito mesmo quando ele já foi apagado.
       //       Implementar um controle para mostrar mensagens no chat quando certos Níveis de Avaraias é atingido.      
@@ -224,39 +292,51 @@ export default class adControl extends Application {
       let effect = null;
       const itemData = item.data.data; 
       const NivelDL = itemData.armor.RealDL;
-      const ACPenalty = itemData.armor.ACPenalty;
+      const ACPenalty = itemData.armor.ACPenalty;        
+
+      if(result.temMudanca.normal) {
+         effect = owner.effects.get(result.effectsID.normal);
+         effect._id = result.effectsID.normal;  
+      } else if(result.temMudanca.escudo) {
+         effect = owner.effects.get(result.effectsID.escudo);
+         effect._id = result.effectsID.escudo;          
+      } 
 
       let extraMessage = "";
+      let desequipItem = false;
 
       if(NivelDL === 5) extraMessage = game.i18n.localize(i18nStrings.messages.fithDLMessage);
       else if(NivelDL === 6){ 
          extraMessage = game.i18n.localize(i18nStrings.messages.sixthDLMessage);
-         const attr = "data.equipped";
-         await item.update({[attr]: !getProperty(item.data, attr)});
+         desequipItem = true;
+         item.data.data.armor.Destroyed = true;
       }
 
+      // Realiza reparo completo.
+      if(options?.fullRepair) {
+
+         item.data.data.armor.Destroyed = false;
+      }
+
+      // Salva as alterações nos valores de avarias do Item.
+      await item.setFlag("ldnd5e", "armorSchema", item.data.data.armor);
+
+      if(effect) await owner.updateArmorDamageEffects(effect.data, ACPenalty);
+
       const messageData = {
-         data: item.data.data,
+         data: itemData,
          info: game.i18n.format(i18nStrings.messages.newDLMessage, {item: item.data.name, penalty: ACPenalty.toString(), extra: extraMessage}),
          item: item,
          owner: owner
       };
 
-      if(result.temMudanca.normal) {
-         effect = owner.effects.get(result.effectsID.normal);
-         effect._id = result.effectsID.normal;        
-         
-         if(result.temMudanca.mensagem)
+      if(result.temMudanca.mensagem)
             await this.toMessage(messageData);
-      } else if(result.temMudanca.escudo) {
-         effect = owner.effects.get(result.effectsID.escudo);
-         effect._id = result.effectsID.escudo; 
 
-         if(result.temMudanca.mensagem)
-            await this.toMessage(messageData);
-      }  
+      if(desequipItem)
+         await item.update({["data.equipped"]: !getProperty(item.data, "data.equipped")});
 
-      if(effect) await owner.updateArmorDamageEffects(effect.data, ACPenalty);
+      
    }
 
    /** @inheritdoc */
@@ -292,7 +372,8 @@ export default class adControl extends Application {
                      item.equipped = (item.actor.data.data.attributes.ac.equippedArmor?.id === item.id ||
                                       item.actor.data.data.attributes.ac.equippedShield?.id === item.id);
                      item.owner = actor;
-                     item.armorType = item.data.data.armor.type;  
+                     item.armorType = item.data.data.armor.type; 
+                     item.destroyed = item.data.data.armor.Destroyed; 
                      item.subtype =  (item.armorType === "shield" ? "shield" : "armor");                     
                      arr[0].push(item); 
                   }
@@ -307,5 +388,40 @@ export default class adControl extends Application {
       }
    
       return data;
+   }
+
+   _convertCurrency(actor) {
+      const curr = foundry.utils.deepClone(actor.data.data.currency);
+      const conversion = Object.entries(CONFIG.DND5E.currencies);
+      conversion.reverse();
+      for ( let [c, data] of conversion ) {
+        const t = data.conversion;
+        if ( !t ) continue;
+        let change = Math.floor(curr[c] / t.each);
+        curr[c] -= (change * t.each);
+        curr[t.into] += change;
+      }
+      return {total: (curr.pp*0.1 + curr.gp + curr.ep*2 + curr.sp*10 + curr.cp*100), curr: curr};
+   }
+
+   _convertRawCurrency(GPvalue) {
+      const curr = {
+         pp: 0,
+         gp: GPvalue,
+         ep: 0,
+         sp: 0,
+         cp: 0
+       };
+
+      const conversion = Object.entries(CONFIG.DND5E.currencies);
+      conversion.reverse();
+      for ( let [c, data] of conversion ) {
+        const t = data.conversion;
+        if ( !t ) continue;
+        let change = Math.floor(curr[c] / t.each);
+        curr[c] -= (change * t.each);
+        curr[t.into] += change;
+      }
+      return {total: (curr.pp*0.1 + curr.gp + curr.ep*2 + curr.sp*10 + curr.cp*100), curr: curr};
    }
 }

@@ -142,6 +142,11 @@
   color: #4b4a44;
   font-weight: bold;
 }
+
+.repair-message p {
+  font-weight: bold;
+}
+
 .ldnd5e .form-group .form-fields {
   display: flex;
   flex-direction: row;
@@ -1094,11 +1099,13 @@
   padding: 0 5px;
 }
 
+.ldnd5e.app.window-app .inventory-list .item .item-detail.full-repair-control,
 .ldnd5e.app.window-app .inventory-list .item .item-detail.dl-control,
 .ldnd5e.app.window-app .inventory-list .item .item-name .item-image.owner-image {
   cursor: pointer;
 }
 
+.ldnd5e.app.window-app .inventory-list .item .item-detail.full-repair-control:hover,
 .ldnd5e.app.window-app .inventory-list .item .item-detail.dl-control:hover {
   color: #000;
   text-shadow: 0 0 10px red;

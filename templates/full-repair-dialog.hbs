@@ -1,0 +1,16 @@
+<form>
+    <div class="form-group">
+        <label>{{ localize "ldnd5e.frControlItemLabel" }}</label>
+        <input type="text" name="name" value="{{item.name}}" disabled/>
+    </div>
+
+    {{#debug this}}{{/debug}}
+    <div class="form-group">
+        <label>{{ localize "ldnd5e.frControlItemPrice" }}</label>
+        <input type="number" name="price" value="{{price}}" disabled/>
+    </div> 
+
+    <div class="form-group repair-message">
+        <p>{{ localize "ldnd5e.frControlMessage" }}</p>   
+    </div>
+</form>

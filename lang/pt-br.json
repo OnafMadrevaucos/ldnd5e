@@ -22,6 +22,11 @@
         "dlControlDamageBtn": "Avaria",
         "dlControlRepairsBtn": "Reparo",
 
+        "frControlTitle": "Reparo de Item Destruído",
+        "frControlItemLabel": "Item Destruído",
+        "frControlItemPrice": "Preço do Serviço (POs)",
+        "frControlMessage": "Como o item foi totalmente destruído, para repará-lo será necessário pagar o dobro do seu valor original. Deseja repará-lo mesmo assim?",
+
         "activeEffectLabel": "Avaria Armadura",
         "activeEffectShieldLabel": "Avaria Escudo",
 
@@ -30,11 +35,16 @@
         "subBtn": "Simples",
         "zerarBtn": "Completo",
 
+        "yesBtn": "Sim",
+        "noBtn": "Não",
+
         "damageTypes": {
             "pierc": "Perfurante",
             "slsh": "Cortante",
             "bldg": "Contundente"
         },
+
+        "itemDestroyed": "Destruído",
 
         "messages": {
             "bldgDmgLightArmor": "Armaduras Leves são imunes a avarias causadas por Dano Contundente.",
@@ -43,7 +53,9 @@
             "newDLMessage": "Novo Nível de Avaria. Esse item agora tem {penalty} de penalidade na CA. {extra}",
             "maxDLMessage": "{item} já chegou ao seu nível de avaria máxima e foi destruído.",
             "fithDLMessage": "Atacantes agora possuem vantagem em jogadas de ataque contra você.",
-            "sixthDLMessage": "O ITEM FOI DESTRUÍDO."
+            "sixthDLMessage": "O ITEM FOI DESTRUÍDO.",
+            "itemDestroyed": "{item} está muito avariado para ser equipado.",
+            "repairToExpensive": "{actor} não possui dinheiro o suficiente para realizar esse reparo."
         }
     }
 }

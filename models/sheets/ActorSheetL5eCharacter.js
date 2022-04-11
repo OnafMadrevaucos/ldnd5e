@@ -1,4 +1,5 @@
 import ActorSheet5eCharacter from "../../../../systems/dnd5e/module/actor/sheets/character.js";
+import { i18nStrings } from "../../scripts/constants.js";
 
 export default class ActorSheetL5eCharacter extends ActorSheet5eCharacter {
 
@@ -30,6 +31,11 @@ export default class ActorSheetL5eCharacter extends ActorSheet5eCharacter {
         const itemId = event.currentTarget.closest(".item").dataset.itemId;
         const item = actor.items.get(itemId);
         const data = actor.data.data;        
+
+        if(item.data.data.armor?.Destroyed) {
+            ui.notifications.warn(game.i18n.format(i18nStrings.messages.itemDestroyed, {item: item.data.name}));
+            return;
+        }
 
         if(!["spell"].includes(item?.type))
             await this._computeEquipArmorShield(data, item, this.ACTION_TYPE.UPDATE);
