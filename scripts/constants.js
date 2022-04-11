@@ -19,7 +19,10 @@ import adControl from "../models/adControl.js";
     images: {
        armorEffectDefault: "icons/equipment/chest/breastplate-helmet-metal.webp",
        shieldEffectDefault: "icons/equipment/shield/heater-crystal-blue.webp"
-    }
+    },
+
+    repairFee: 0.1,
+    fullRepairFee: 2
  };
 
  const i18nStrings = {
@@ -42,6 +45,7 @@ import adControl from "../models/adControl.js";
    dlControlTitle: "ldnd5e.dlControlTitle",
    dlControlItemLabel: "ldnd5e.dlControlItemLabel",
    dlControlDamageType: "ldnd5e.dlControlDamageType",
+   dlControlRepairLvl: "ldnd5e.dlControlRepairLvl",
    dlControlDamageBtn: "ldnd5e.dllControlDamageBtn",
    dlControlRepairsBtn: "ldnd5e.dllControlRepairsBtn",
 
@@ -78,7 +82,10 @@ import adControl from "../models/adControl.js";
       fithDLMessage: "ldnd5e.messages.fithDLMessage",
       sixthDLMessage: "ldnd5e.messages.sixthDLMessage",
       itemDestroyed :"ldnd5e.messages.itemDestroyed",
-      repairToExpensive: "ldnd5e.messages.repairToExpensive"
+      repairToExpensive: "ldnd5e.messages.repairToExpensive",
+      repairMessage: "ldnd5e.messages.repairMessage",
+      reconstructedMessage: "ldnd5e.messages.reconstructedMessage",
+      repairFailed: "ldnd5e.messages.repairFailed"
    }
  };
 

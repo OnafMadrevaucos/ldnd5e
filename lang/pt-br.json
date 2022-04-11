@@ -19,6 +19,7 @@
         "dlControlTitle": "Controle de Danos",
         "dlControlItemLabel": "Item Avariado",
         "dlControlDamageType": "Tipo de Dano",
+        "dlControlRepairLvl": "# Nível Reparado",
         "dlControlDamageBtn": "Avaria",
         "dlControlRepairsBtn": "Reparo",
 
@@ -50,12 +51,15 @@
             "bldgDmgLightArmor": "Armaduras Leves são imunes a avarias causadas por Dano Contundente.",
             "slshDmgHeavyArmor": "Armaduras Pesadas são imunes a avarias causadas por Dano Cortante.",
             "halDmgShield": "Escudos não podem receber Acertos de Raspão.",
-            "newDLMessage": "Novo Nível de Avaria. Esse item agora tem {penalty} de penalidade na CA. {extra}",
+            "newDLMessage": "Novo Nível de Avaria em um equipamento de {owner}. Esse item agora tem {penalty} de penalidade na CA. {extra}",
             "maxDLMessage": "{item} já chegou ao seu nível de avaria máxima e foi destruído.",
-            "fithDLMessage": "Atacantes agora possuem vantagem em jogadas de ataque contra você.",
+            "fithDLMessage": "Atacantes agora possuem vantagem em jogadas de ataque contra {owner}.",
             "sixthDLMessage": "O ITEM FOI DESTRUÍDO.",
             "itemDestroyed": "{item} está muito avariado para ser equipado.",
-            "repairToExpensive": "{actor} não possui dinheiro o suficiente para realizar esse reparo."
+            "repairToExpensive": "{actor} não possui dinheiro o suficiente para realizar esse reparo.",
+            "repairMessage": "{item} foi reparado com sucesso. Esse item agora tem {penalty} de penalidade na CA.",
+            "reconstructedMessage": "{item} foi reconstruído com sucesso.",
+            "repairFailed": "{item} não pode ser reparado. O custo separado para o reparo foi perdido."
         }
     }
 }

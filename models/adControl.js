@@ -1,5 +1,7 @@
 import { constants, i18nStrings } from "../scripts/constants.js";
 import { computaDA, computaHALF, computaSUB, computaZERAR } from "../scripts/DASystem.js";
+import { d20Roll } from "../../../systems/dnd5e/module/dice.js";
+import { DND5E } from "../../../systems/dnd5e/module/config.js";
 
 const ACTIVE_EFFECT_MODES = CONST.ACTIVE_EFFECT_MODES;
 const ADD = ACTIVE_EFFECT_MODES.ADD;
@@ -32,7 +34,7 @@ export default class adControl extends Application {
    }
 
    /**
-    * Advantage mode of a 5e d20 roll
+    * Tipo de Ação no Controle de Avaria
     * @enum {number}
     */
     static ACTION_TYPE = {
@@ -40,7 +42,20 @@ export default class adControl extends Application {
       HALF: 0,        
       DA: 1,
       ZERAR: 2
-  }
+   }
+
+   /**
+    * Repair DC by Item Rarity
+    * @enum {number}
+    */
+    static DC_REPAIR = {
+      common: 10,
+      uncommon: 15,
+      rare: 20,
+      veryRare: 25,
+      legendary: 30,
+      artifact: 30
+   }
 
    /**@override */
    getData() {    
@@ -101,7 +116,8 @@ export default class adControl extends Application {
       const configured = await this._configureDialog({
          title: game.i18n.localize("ldnd5e.dlControlTitle"),
          data: {
-           info: dlType,
+           damageType: dlType,
+           price: item.data.data.price,
            owner: owner,
            item: item
          },
@@ -124,7 +140,7 @@ export default class adControl extends Application {
       const configured = await this._configureDialog({
          title: game.i18n.localize("ldnd5e.frControlTitle"),
          data: {
-           info: item.data.data.price * 2,
+           price: item.data.data.price * constants.fullRepairFee,
            owner: owner,
            item: item
          },
@@ -161,7 +177,9 @@ export default class adControl extends Application {
       content = await renderTemplate(template, {
          item: data.item, 
          owner: data.owner,
-         damageType: game.i18n.localize(`ldnd5e.damageTypes.${data.info}`)
+         damageType: game.i18n.localize(`ldnd5e.damageTypes.${data.damageType}`),
+         price: data.price.toString(),
+         fee: constants.repairFee
       });
 
       return new Promise(resolve => {
@@ -195,7 +213,7 @@ export default class adControl extends Application {
       content = await renderTemplate(template, {
          item: data.item, 
          owner: data.owner,
-         price: data.info.toString()
+         price: data.price.toString()
       });
 
       return new Promise(resolve => {
@@ -205,7 +223,7 @@ export default class adControl extends Application {
             buttons: {
                yes: {
                   label: game.i18n.localize(i18nStrings.yesBtn),
-                  callback: html => resolve(this._onDialogSubmit(html, data, adControl.ACTION_TYPE.ZERAR, {fullRepair: options.fullRepair, price: data.info}))
+                  callback: html => resolve(this._onDialogSubmit(html, data, adControl.ACTION_TYPE.ZERAR, {fullRepair: options.fullRepair, price: data.price}))
                },
                no: {
                   label: game.i18n.localize(i18nStrings.noBtn),
@@ -234,7 +252,7 @@ export default class adControl extends Application {
 
       const item = data.item;
       const owner = data.owner;
-      const tipoDano = data.info;
+      const tipoDano = data.damageType;
 
       let result = {};
 
@@ -252,27 +270,36 @@ export default class adControl extends Application {
          break;
 
          case adControl.ACTION_TYPE.SUB: {
-            result = computaSUB(item, owner, tipoDano); 
-            this._prepareActiveEffects(item, owner, result);
+            options.repair = true;
+            options.price = parseInt(form.repairLvlPrice.value);
+            options.repairLvl = parseInt(form.repairLvlSlider.value);
+
+            if(options.repairLvl === 0) return;
+
+            const toExpensive = this._verifyRepairCost(((options?.price ?? 0)), owner);      
+            if(toExpensive) {
+               ui.notifications.warn(game.i18n.format(i18nStrings.messages.repairToExpensive, {actor: owner.data.name}));
+               return;
+            }
+
+            result = computaSUB(item, owner, tipoDano, options); 
+            this._prepareActiveEffects(item, owner, result, options);
          } 
          break;
 
          case adControl.ACTION_TYPE.ZERAR: {
+            options.repair = true;
 
-            if(options?.fullRepair) {
-               const curr = this._convertCurrency(owner);
-               const price = this._convertRawCurrency(options?.price);
-      
-               const toExpensive = (price.total > curr.total);
-      
-               if(toExpensive) {
-                  ui.notifications.warn(game.i18n.format(i18nStrings.messages.repairToExpensive, {actor: owner.data.name}));
-                  return;
-               } else {
-                  options.curr = curr;
-                  options.price = price;
-               }
-            }
+            if(options?.fullRepair) 
+               options.price = data.price;
+            else                 
+               options.price = data.price * constants.repairFee * item.data.data.armor.RealDL;   
+               
+            const toExpensive = this._verifyRepairCost(((options?.price ?? 0)), owner);      
+            if(toExpensive) {
+               ui.notifications.warn(game.i18n.format(i18nStrings.messages.repairToExpensive, {actor: owner.data.name}));
+               return;
+            } 
 
             result = computaZERAR(item, owner);
             this._prepareActiveEffects(item, owner, result, options);
@@ -290,7 +317,7 @@ export default class adControl extends Application {
       //       Implementar um controle para mostrar mensagens no chat quando certos Níveis de Avaraias é atingido.      
       //
       let effect = null;
-      const itemData = item.data.data; 
+      const itemData = foundry.utils.deepClone(item.data.data); 
       const NivelDL = itemData.armor.RealDL;
       const ACPenalty = itemData.armor.ACPenalty;        
 
@@ -302,40 +329,56 @@ export default class adControl extends Application {
          effect._id = result.effectsID.escudo;          
       } 
 
+      let info = "";
       let extraMessage = "";
-      let desequipItem = false;
+      let desequipItem = false;     
 
-      if(NivelDL === 5) extraMessage = game.i18n.localize(i18nStrings.messages.fithDLMessage);
-      else if(NivelDL === 6){ 
-         extraMessage = game.i18n.localize(i18nStrings.messages.sixthDLMessage);
+      // Contabiliza qual mensagem enviar ao chat para informar o usuário sobre a condição de seu equipamento.
+      if(NivelDL === 6) { 
+         info = game.i18n.localize(i18nStrings.messages.sixthDLMessage);
          desequipItem = true;
-         item.data.data.armor.Destroyed = true;
+         itemData.armor.Destroyed = true;
+      } else { 
+         if(NivelDL === 5) extraMessage = game.i18n.format(i18nStrings.messages.fithDLMessage, {owner: owner.data.name});
+         info = game.i18n.format(i18nStrings.messages.newDLMessage, {item: item.data.name, owner: owner.data.name, penalty: ACPenalty.toString(), extra: extraMessage});         
       }
 
-      // Realiza reparo completo.
-      if(options?.fullRepair) {
+      let repairSucess = false;
+      // Realiza reparo no item.
+      if(options?.repair) {         
+         this._computeRepairCost(options?.price, owner);
 
-         item.data.data.armor.Destroyed = false;
+         repairSucess = await this._rollRepair(item, owner);
+         if(!repairSucess) { 
+            info = game.i18n.format(i18nStrings.messages.repairFailed, {item: item.data.name});
+         } else {         
+            if(options?.fullRepair) {
+               info = game.i18n.format(i18nStrings.messages.reconstructedMessage, {item: item.data.name});
+               item.data.data.armor.Destroyed = false;
+            }else 
+               info = game.i18n.format(i18nStrings.messages.repairMessage, {item: item.data.name, penalty: ACPenalty.toString()});  
+         }       
       }
-
-      // Salva as alterações nos valores de avarias do Item.
-      await item.setFlag("ldnd5e", "armorSchema", item.data.data.armor);
-
-      if(effect) await owner.updateArmorDamageEffects(effect.data, ACPenalty);
 
       const messageData = {
          data: itemData,
-         info: game.i18n.format(i18nStrings.messages.newDLMessage, {item: item.data.name, penalty: ACPenalty.toString(), extra: extraMessage}),
+         info: info,
          item: item,
          owner: owner
       };
 
-      if(result.temMudanca.mensagem)
-            await this.toMessage(messageData);
+      if(result.temMudanca.mensagem || options?.repair)
+            await this.toMessage(messageData); 
 
-      if(desequipItem)
-         await item.update({["data.equipped"]: !getProperty(item.data, "data.equipped")});
+      if(!options?.repair || (options?.repair && repairSucess)) {            
+         // Salva as alterações nos valores de avarias do Item.
+         await item.setFlag("ldnd5e", "armorSchema", itemData.armor);
 
+         if(effect) await owner.updateArmorDamageEffects(effect.data, ACPenalty);
+
+         if(desequipItem)
+            await item.update({["data.equipped"]: !getProperty(item.data, "data.equipped")});
+      }
       
    }
 
@@ -367,7 +410,7 @@ export default class adControl extends Application {
    
               let [items] = actor.items.reduce((arr, item) => {
    
-                  if(item.type === "equipment") {
+                  if(item.type === "equipment" && DND5E.armorTypes[item.data.data.armor?.type]) {
 
                      item.equipped = (item.actor.data.data.attributes.ac.equippedArmor?.id === item.id ||
                                       item.actor.data.data.attributes.ac.equippedShield?.id === item.id);
@@ -390,8 +433,7 @@ export default class adControl extends Application {
       return data;
    }
 
-   _convertCurrency(actor) {
-      const curr = foundry.utils.deepClone(actor.data.data.currency);
+   _convertCurrency(curr) {
       const conversion = Object.entries(CONFIG.DND5E.currencies);
       conversion.reverse();
       for ( let [c, data] of conversion ) {
@@ -401,27 +443,100 @@ export default class adControl extends Application {
         curr[c] -= (change * t.each);
         curr[t.into] += change;
       }
-      return {total: (curr.pp*0.1 + curr.gp + curr.ep*2 + curr.sp*10 + curr.cp*100), curr: curr};
+      return {total: (curr.pp + curr.gp/10 + curr.ep/2 + curr.sp/10 + curr.cp/100), curr: curr};
+   }  
+
+   _verifyRepairCost(cost, owner) {
+      const curr = this._convertCurrency(foundry.utils.deepClone(owner.data.data.currency));
+      const price = this._convertCurrency({pp: 0, gp: cost, ep: 0, sp: 0, cp: 0});
+      
+      return (price.total > curr.total);
    }
 
-   _convertRawCurrency(GPvalue) {
-      const curr = {
-         pp: 0,
-         gp: GPvalue,
-         ep: 0,
-         sp: 0,
-         cp: 0
-       };
-
+   async _computeRepairCost(cost, actor) {
       const conversion = Object.entries(CONFIG.DND5E.currencies);
-      conversion.reverse();
-      for ( let [c, data] of conversion ) {
-        const t = data.conversion;
-        if ( !t ) continue;
-        let change = Math.floor(curr[c] / t.each);
-        curr[c] -= (change * t.each);
-        curr[t.into] += change;
+
+      const curr = this._convertCurrency(foundry.utils.deepClone(actor.data.data.currency));
+      const price = this._convertCurrency({pp: 0, gp: cost, ep: 0, sp: 0, cp: 0});
+      const newCurr = foundry.utils.deepClone(actor.data.data.currency);
+
+      var change = curr.total - price.total;
+      for (let [c, data] of conversion) {
+         const t = data.conversion;
+         if ( !t ) { 
+            if(c === "pp"){ 
+               var wholeChange = Math.trunc(change);
+               var decimalChange = change - wholeChange;
+               newCurr[c] = wholeChange;
+               change = decimalChange;             
+            }
+            continue; 
+         }
+
+         change *= data.conversion.each;
+         var wholeChange = Math.trunc(change);
+         var decimalChange = change - wholeChange;         
+         newCurr[c] = wholeChange;
+
+         if(decimalChange === 0) break;
+         else change = decimalChange;
       }
-      return {total: (curr.pp*0.1 + curr.gp + curr.ep*2 + curr.sp*10 + curr.cp*100), curr: curr};
+
+      await actor.update({ [`data.currency`]: newCurr});
+   }
+
+   async _rollRepair(item, owner, options={}) {
+      const label = CONFIG.DND5E.abilities.dex;
+      const abl = owner.data.data.abilities.dex;
+      const abilityId = "dex";
+
+      const parts = [];
+      const data = owner.getRollData();
+      const ownerData = owner.data.data;
+
+      // Add ability modifier
+      parts.push("@mod");
+      data.mod = abl.mod;
+
+      // Include proficiency bonus
+      if ( ownerData.traits.toolProf.value.includes('smith') ) {
+         parts.push("@prof");
+         data.prof = ownerData.attributes.prof;
+      }
+
+      // Add ability-specific check bonus
+      if ( abl.bonuses?.check ) {
+         const checkBonusKey = `${abilityId}CheckBonus`;
+         parts.push(`@${checkBonusKey}`);
+         data[checkBonusKey] = Roll.replaceFormulaData(abl.bonuses.check, data);
+      }
+
+      // Add global actor bonus
+      const bonuses = getProperty(owner.data.data, "bonuses.abilities") || {};
+      if ( bonuses.check ) {
+         parts.push("@checkBonus");
+         data.checkBonus = Roll.replaceFormulaData(bonuses.check, data);
+      }
+
+      // Add provided extra roll parts now because they will get clobbered by mergeObject below
+      if (options.parts?.length > 0) {
+         parts.push(...options.parts);
+      }
+
+      // Roll and return
+      const rollData = foundry.utils.mergeObject(options, {
+         parts: parts,
+         data: data,
+         title: `${game.i18n.format("DND5E.AbilityPromptTitle", {ability: label})}: ${owner.name}`,
+         halflingLucky: owner.getFlag("dnd5e", "halflingLucky"),
+         messageData: {
+            speaker: options.speaker || ChatMessage.getSpeaker({actor: owner}),
+            "flags.dnd5e.roll": {type: "ability", abilityId }
+         }
+      });
+      const roll = await d20Roll(rollData);
+      if(!roll) return false;
+
+      return (roll._total >= adControl.DC_REPAIR[item.data.data.rarity.toLowerCase()]);
    }
 }

@@ -94,7 +94,10 @@
   /* Tags */
 }
 .ldnd5e .window-content {
-  font-size: 13px;
+  font-size: 13px;  
+}
+.ldnd5e .window-content .main-control {
+  overflow: scroll;
 }
 .ldnd5e .window-content .pcs-list {
   flex: 100%;

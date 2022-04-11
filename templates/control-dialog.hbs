@@ -7,8 +7,34 @@
         <label>{{ localize "ldnd5e.dlControlDamageType" }}</label>
         <input type="text" name="damageType" value="{{ damageType }}" disabled/>
     </div>
+    <div class="form-group">
+        <label>{{ localize "ldnd5e.dlControlRepairLvl" }}: <span id="repairLvlValue"></span></label>
+        <input name="repairLvlSlider" type="range" min="0" max="{{item.data.data.armor.RealDL}}" value="0" id="repairLvlControl">
+    </div>
+    <div class="form-group">
+        <label>{{ localize "ldnd5e.frControlItemPrice"}}</label>
+        <input type="number" name="repairLvlPrice" id="repairLvlPrice" data-price="{{price}}" data-fee="{{fee}}" disabled/>
+    </div>
     <div class="dialog-buttons-title flexrow">
         <label>{{ localize "ldnd5e.dlControlDamageBtn" }}</label>
         <label>{{ localize "ldnd5e.dlControlRepairsBtn" }}</label>
     </div>
 </form>
+
+<script>
+    var slider = document.getElementById("repairLvlControl");
+    var output = document.getElementById("repairLvlValue");
+
+    var priceInput = document.getElementById("repairLvlPrice");
+    priceInput.value = 0;
+
+    var price = priceInput.getAttribute('data-price');
+    var fee = priceInput.getAttribute('data-fee');
+
+    output.innerHTML = slider.value;
+
+    slider.oninput = function() {
+        output.innerHTML = this.value;
+        priceInput.value = price * fee * slider.value;        
+    }
+</script>

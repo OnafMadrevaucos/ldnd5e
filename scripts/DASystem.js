@@ -267,7 +267,7 @@ export const computaHALF = function(item, owner, tipoDano) {
  * @returns {number<LAN>}   Valor do Lan.
  * @public
 */
-export const computaSUB = function(item, owner, damageType) {      
+export const computaSUB = function(item, owner, damageType, options={}) {      
     const itemData = item.data.data;
     const tipoArmor = itemData.armor.type;
     const result = {
@@ -294,16 +294,29 @@ export const computaSUB = function(item, owner, damageType) {
             tipoDano = key;
         }
 
-        itemData.armor.DL[tipoDano]--;
+        if(!options?.repairLvl) {
+            itemData.armor.DL[tipoDano]--;
 
-        for(let [dlkey, dlValue] of Object.entries(itemData.armor.DL)) {
-            if(dlValue > itemData.armor.DL[tipoDano]) itemData.armor.DL[dlkey] = itemData.armor.DL[tipoDano];
-        }        
+            for(let [dlkey, dlValue] of Object.entries(itemData.armor.DL)) {
+                if(dlValue > itemData.armor.DL[tipoDano]) itemData.armor.DL[dlkey] = itemData.armor.DL[tipoDano];
+            } 
 
-        if((itemData.armor.DL.bldg < itemData.armor.RealDL) &&
-           (itemData.armor.DL.slsh < itemData.armor.RealDL) &&
-           (itemData.armor.DL.pierc < itemData.armor.RealDL)) itemData.armor.RealDL--;
-        
+            if((itemData.armor.DL.bldg < itemData.armor.RealDL) &&
+                (itemData.armor.DL.slsh < itemData.armor.RealDL) &&
+                (itemData.armor.DL.pierc < itemData.armor.RealDL)) itemData.armor.RealDL--;       
+            
+        } else {
+            itemData.armor.DL[tipoDano] -= options.repairLvl;
+
+            for(let [dlkey, dlValue] of Object.entries(itemData.armor.DL)) {
+                if(dlValue > itemData.armor.DL[tipoDano]) itemData.armor.DL[dlkey] = itemData.armor.DL[tipoDano];
+            }
+
+            if((itemData.armor.DL.bldg < itemData.armor.RealDL) &&
+                (itemData.armor.DL.slsh < itemData.armor.RealDL) &&
+                (itemData.armor.DL.pierc < itemData.armor.RealDL)) itemData.armor.RealDL-= options.repairLvl; 
+        }
+
         const novoIndex = itemData.armor.RealDL-1;
 
         itemData.armor.AD.bldg = 0;
