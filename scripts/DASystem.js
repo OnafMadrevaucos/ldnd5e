@@ -46,8 +46,8 @@ export const prepareLAN = function(data) {
     if(armor.equippedArmor) {   
         const equipArmorData = armor.equippedArmor.data.data;
 
-        if(!armorProf.value.includes(DND5E.armorProficienciesMap[armorType])) {
-            if(!armorProf.value.includes(equipArmorData.baseItem)) {
+        if(!armorProf?.value.includes(DND5E.armorProficienciesMap[armorType])) {
+            if(!armorProf?.value.includes(equipArmorData.baseItem)) {
                 lan -= Math.floor(6/data.prof.flat); 
             }    
         }

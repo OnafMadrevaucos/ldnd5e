@@ -30,10 +30,6 @@ Hooks.once("init", function() {
     Handlebars.registerHelper('debug', Debugger);
 });
 
-Hooks.on(`renderActorSheet`, (app, html, data) => {
-
-});
-
 Hooks.on('getSceneControlButtons', (controls) => {
 
     if (game.user.isGM)
