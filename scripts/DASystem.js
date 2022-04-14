@@ -1,4 +1,5 @@
 import { i18nStrings } from "./constants.js";
+import { DND5E } from "../../../systems/dnd5e/module/config.js";
 
 const NIVEL_DA = [
     {valor: 2, mod: "-1"},
@@ -28,6 +29,7 @@ export const prepareLAN = function(data) {
 
     const armor = data.attributes.ac;
     const armorType = armor.equippedArmor?.data.data.armor.type;
+    const armorProf = data.traits.armorProf;
     
     let lan = null;
     if(armorType) {
@@ -38,6 +40,16 @@ export const prepareLAN = function(data) {
                 break;
             case "heavy": lan = Math.floor((0.5 * armor.base)) + data.abilities.dex.mod;
                 break;
+        }
+    }
+
+    if(armor.equippedArmor) {   
+        const equipArmorData = armor.equippedArmor.data.data;
+
+        if(!armorProf.value.includes(DND5E.armorProficienciesMap[armorType])) {
+            if(!armorProf.value.includes(equipArmorData.baseItem)) {
+                lan -= Math.floor(6/data.prof.flat); 
+            }    
         }
     }
 
