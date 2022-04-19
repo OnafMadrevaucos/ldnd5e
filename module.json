@@ -1,9 +1,9 @@
 {
     "name": "ldnd5e",
     "title":  "Lemurian Dungeons & Dragons 5th Edition",
-    "description": "Some homebrew systems to Dungeons & Dragons 5th Edition.",
+    "description": "Some homebrew systems for Dungeons & Dragons 5th Edition.",
     "author": "Onaf Madrevaucos",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "minimumCoreVersion": "0.9",
 
     "system": ["dnd5e"],
@@ -11,6 +11,9 @@
         {
             "name": "dnd5e",
             "type": "system"
+        },        
+        {
+            "name": "more-hooks-5e"
         }
     ],
     "esmodules": ["ldnd5e.js"],
@@ -25,6 +28,110 @@
           "lang": "en",
           "name": "English",
           "path": "lang/en.json"
+        }
+    ],
+    "packs": [
+        {
+          "name": "playlists",
+          "label": "LD&D 5e - Playlists",
+          "path": "packs/playlists.db",
+          "system": "dnd5e",
+          "entity": "Playlist",
+          "type": "Playlist",
+          "module": "ldnd5e"
+        },
+        {
+          "name": "items",
+          "label": "LD&D 5e - Itens",
+          "path": "packs/items.db",
+          "system": "dnd5e",
+          "entity": "Item",
+          "type": "Item",
+          "module": "ldnd5e"
+        },
+        {
+          "name": "items-magicos",
+          "label": "LD&D 5e - Itens Mágicos",
+          "path": "packs/items-magicos.db",
+          "system": "dnd5e",
+          "entity": "Item",
+          "type": "Item",
+          "module": "ldnd5e"
+        },
+        {
+          "label": "LD&D 5e - Magias",
+          "type": "Item",
+          "name": "magias-extras",
+          "path": "packs/magias-extras.db",
+          "system": "dnd5e",
+          "entity": "Item",
+          "private": false,
+          "module": "ldnd5e"
+        },
+        {
+          "label": "LD&D 5e - Habilidades",
+          "type": "Item",
+          "name": "habilidades",
+          "path": "packs/habilidades.db",
+          "system": "dnd5e",
+          "entity": "Item",
+          "private": false,
+          "module": "ldnd5e"
+        },
+        {
+          "name": "talentos",
+          "label": "LD&D 5e - Talentos",
+          "path": "packs/talentos.db",
+          "system": "dnd5e",
+          "entity": "Item",
+          "type": "Item",
+          "module": "ldnd5e"
+        },
+        {
+          "name": "pnjs",
+          "label": "LD&D 5e - PnJs",
+          "path": "packs/pnjs.db",
+          "system": "dnd5e",
+          "entity": "Actor",
+          "type": "Actor",
+          "module": "ldnd5e"
+        },
+        {
+          "name": "criatures",
+          "label": "LD&D 5e - Criaturas",
+          "path": "packs/criatures.db",
+          "system": "dnd5e",
+          "entity": "Actor",
+          "type": "Actor",
+          "module": "ldnd5e"
+        },
+        {
+          "name": "pjs",
+          "label": "LD&D 5e - PJs",
+          "path": "packs/pjs.db",
+          "system": "dnd5e",
+          "entity": "Actor",
+          "type": "Actor",
+          "module": "ldnd5e"
+        },
+        {
+          "label": "LD&D 5e - Documentos e Imagens",
+          "type": "JournalEntry",
+          "name": "documentos-e-imagens",
+          "path": "packs/documentos-e-imagens.db",
+          "system": "dnd5e",
+          "entity": "JournalEntry",
+          "private": false,
+          "module": "ldnd5e"
+        },
+        {
+          "name": "maps",
+          "label": "LD&D 5e - Mapas",
+          "path": "packs/scenes.db",
+          "system": "dnd5e",
+          "entity": "Scene",
+          "type": "Scene",
+          "module": "ldnd5e"
         }
     ]    
 }

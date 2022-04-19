@@ -1,5 +1,6 @@
 import ActorSheet5eCharacter from "../../../../systems/dnd5e/module/actor/sheets/character.js";
 import { i18nStrings } from "../../scripts/constants.js";
+import ActiveEffectL5e from "../activeEffect.js";
 
 export default class ActorSheetL5eCharacter extends ActorSheet5eCharacter {
 
@@ -20,6 +21,8 @@ export default class ActorSheetL5eCharacter extends ActorSheet5eCharacter {
     /**@override */
     getData() {
         const sheetData = super.getData();
+
+        sheetData.effects = ActiveEffectL5e.prepareActiveEffectCategories(sheetData);
 
         return sheetData;
     }
@@ -255,13 +258,8 @@ export default class ActorSheetL5eCharacter extends ActorSheet5eCharacter {
                     await this.actor.setFlag("ldnd5e", "shieldEffect", {effectID: flags.shield.effectID, shieldID: item.id});       
                 }         
             }
-        }
+        }  
         
-        if(this.actor.apps) {
-            const adControl = this.actor.getFlag("ldnd5e", "adControlID");
-            this.actor.apps[adControl]?.refresh(true);
-        }
-
         this.actor.applyActiveEffects();
     }   
 }

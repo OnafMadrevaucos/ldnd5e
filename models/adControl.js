@@ -13,12 +13,15 @@ export default class adControl extends Application {
 
       // Vincula todas as Sheets de PJs ao Controle do AD System.
       for(let actor of game.actors) {
-         if(actor.type == "character") {            
-            actor.apps[this.appId] = this;
-            actor.setFlag("ldnd5e", "adControlID", this.appId);
+         if(actor.type == "character") {
+            const app = this;
+            const appId = this.appId;
+
+            actor.apps[appId] = app;
+            actor.setFlag("ldnd5e", "adControlID", appId);
          }
       }
-      this.data = this.computePCArmorData();    
+      this.data = this.computePCArmorData();
    }
 
    // Desvincula as Sheets dos PJs do Controle do AD System.
@@ -27,9 +30,10 @@ export default class adControl extends Application {
       for(let actor of game.actors) {
          if(actor.type == "character") {
             delete actor.apps[this.appId];
-            actor.setFlag("ldnd5e", "adControlID");
+            actor.unsetFlag("ldnd5e", "adControlID");
          }
       } 
+
       return super.close();
    }
 
