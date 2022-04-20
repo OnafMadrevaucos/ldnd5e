@@ -25,10 +25,8 @@ export default class ActorL5e extends Actor5e {
         data.attributes.ac.lan = das.prepareLAN(data);
         data.attributes.ac.ldo = das.prepareLDO(data); 
 
-        const adControl = this.getFlag("ldnd5e", "adControlID");
-
-        if(this.apps && adControl) {
-            this.apps[adControl]?.refresh(true);
+        if(CONFIG.adControl && (["character"].includes(this.type))) {
+            CONFIG.adControl.refresh(true);
         }
     } 
 

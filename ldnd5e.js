@@ -7,7 +7,6 @@ import { preloadTemplates } from "./scripts/templates.js";
 import { gmControl } from "./scripts/constants.js";
 import adControl from "./models/adControl.js";
 
-import ActorSheet5eCharacter from "../../systems/dnd5e/module/actor/sheets/character.js";
 import ActorSheetL5eCharacter from "./models/sheets/ActorSheetL5eCharacter.js";
 
 Hooks.once("init", function() {
