@@ -3,6 +3,8 @@ import * as das from "../../scripts/DASystem.js";
 import { constants, i18nStrings } from "../../scripts/constants.js";
 import adControl from "../adControl.js";
 
+import { DND5E } from "../../../../systems/dnd5e/module/config.js";
+
 const ACTIVE_EFFECT_MODES = CONST.ACTIVE_EFFECT_MODES;
 const ADD = ACTIVE_EFFECT_MODES.ADD;
 
@@ -29,6 +31,23 @@ export default class ActorL5e extends Actor5e {
             CONFIG.adControl.refresh(true);
         }
     } 
+
+    configArmorData() {
+        return this.items.reduce((arr, item) => {
+   
+            if(item.type === "equipment" && DND5E.armorTypes[item.data.data.armor?.type]) {
+
+               item.equipped = (item.actor.data.data.attributes.ac.equippedArmor?.id === item.id ||
+                                item.actor.data.data.attributes.ac.equippedShield?.id === item.id);
+               
+               item.armorType = item.data.data.armor.type; 
+               item.destroyed = item.data.data.armor.destroyed; 
+               item.subtype =  (item.armorType === "shield" ? "shield" : "armor");                     
+               arr.push(item); 
+            }
+            return arr;
+        }, []);
+    }
 
     configL5e() {
         const armorFlag = this.getFlag("ldnd5e", "armorEffect");

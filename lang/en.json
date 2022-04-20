@@ -23,6 +23,11 @@
         "dlControlDamageBtn": "Avaria",
         "dlControlRepairsBtn": "Reparo",
 
+        "dlControlSmithRepair": "Reparo por Ferreiro",
+        "dlControlNotSmithRepair": "Reparo Próprio",
+
+        "dlControlRepairDC": "Repair DC",
+
         "frControlTitle": "Reparo de Item Destruído",
         "frControlItemLabel": "Item Destruído",
         "frControlItemPrice": "Preço do Serviço (POs)",

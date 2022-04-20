@@ -1,7 +1,8 @@
 <div class="ldnd5e chat-card new-dl-card" data-actor-id="{{owner._id}}" data-item-id="{{item._id}}">
-    <header class="card-header flexrow">
+    <header class="ad-card-header flexrow">
         <img src="{{item.img}}" title="{{item.name}}" width="36" height="36"/>
-        <h3 class="item-name">{{item.name}}</h3>
+        <h3>{{item.name}}</h3>
+        <div class="ac-display" title="{{localize 'ldnd5e.dlControlRepairDC'}}">{{repairDC}}</div>
     </header>
 
     <div class="damage-content">

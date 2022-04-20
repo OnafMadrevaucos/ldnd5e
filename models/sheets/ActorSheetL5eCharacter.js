@@ -1,8 +1,7 @@
-import ActorSheet5eCharacter from "../../../../systems/dnd5e/module/actor/sheets/character.js";
-import { i18nStrings } from "../../scripts/constants.js";
+import { constants, i18nStrings } from "../../scripts/constants.js";
 import ActiveEffectL5e from "../activeEffect.js";
 
-export default class ActorSheetL5eCharacter extends ActorSheet5eCharacter {
+export default class ActorSheetL5eCharacter extends constants.ActorSheet5eCharacter {
 
     /**
     * Advantage mode of a 5e d20 roll
@@ -21,6 +20,9 @@ export default class ActorSheetL5eCharacter extends ActorSheet5eCharacter {
     /**@override */
     getData() {
         const sheetData = super.getData();
+        const actor = this.actor;
+
+        if(!CONFIG.adControl && actor.type == "character") actor.configArmorData(actor);
 
         sheetData.effects = ActiveEffectL5e.prepareActiveEffectCategories(sheetData);
 
@@ -35,7 +37,7 @@ export default class ActorSheetL5eCharacter extends ActorSheet5eCharacter {
         const item = actor.items.get(itemId);
         const data = actor.data.data;        
 
-        if(item.data.data.armor?.Destroyed) {
+        if(item.data.data.armor?.destroyed) {
             ui.notifications.warn(game.i18n.format(i18nStrings.messages.itemDestroyed, {item: item.data.name}));
             return;
         }
@@ -110,9 +112,13 @@ export default class ActorSheetL5eCharacter extends ActorSheet5eCharacter {
         return atrib;
     }
 
-    /* -------------------------------------------- */
+    /* -------------------------------------------- */    
 
     async _computeEquipArmorShield(data, item, action) {
+
+        if(this.token) {
+
+        }
 
         const equip = { armor: data.attributes.ac.equippedArmor,
                         shield: data.attributes.ac.equippedShield};

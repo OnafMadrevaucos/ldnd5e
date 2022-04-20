@@ -28,6 +28,7 @@ export default class ItemL5e extends Item5e {
 
         // Expand Armor/Shields item schema with Damage Absorvition properties.
         if(this.isArmor) {
+
             // Armor Damage Level
             data.armor.DL = armorData?.DL ?? {
                 bldg: 0,
@@ -50,9 +51,9 @@ export default class ItemL5e extends Item5e {
                 slsh: false
             }
     
-            data.armor.ACPenalty = armorData?.ACPenalty ?? 0; 
+            data.armor.ACPenalty = armorData?.ACPenalty ?? "0"; 
 
-            data.armor.Destroyed = armorData?.Destroyed ?? false;
+            data.armor.destroyed = armorData?.destroyed ?? false;
         }       
     }
 
@@ -61,7 +62,7 @@ export default class ItemL5e extends Item5e {
         const data = super.getChatData(htmlOptions);
         const itemData = this.data.data;
 
-        if(this.isArmor && itemData.armor.Destroyed)
+        if(this.isArmor && itemData.armor.destroyed)
             data.properties.push(game.i18n.localize(i18nStrings.itemDestroyed));
 
         return data;

@@ -79,9 +79,23 @@
   border-radius: 2px;
   border-collapse: collapse;
 }
-.window-app .window-content .dialog-buttons-title label:last-child {
+.window-app .window-content .dialog-buttons-title div:last-child {
   border-left: 2px groove #eeede0;
   align-self: center;
+}
+.window-app .window-content .dialog-buttons-title .repair-click label:hover {
+  color: #000;
+  text-shadow: 0 0 10px red;
+  
+}
+.window-app .window-content .dialog-buttons-title .repair-click label:hover {
+  cursor: pointer;  
+}
+.window-app .window-content .dialog-buttons-title .repair-click i {
+  font-size: 12px;
+}
+.window-app .window-content .dialog-buttons-title .repair-click i.not-smith {
+  color: #7a7971; 
 }
 /* ----------------------------------------- */
 /*  All ldnd5e Apps                           */
@@ -1527,17 +1541,20 @@
   font-style: normal;
   font-size: 12px;
 }
+.ldnd5e.chat-card .ad-card-header,
 .ldnd5e.chat-card .card-header {
   padding: 3px 0;
   border-top: 2px groove #FFF;
   border-bottom: 2px groove #FFF;
 }
+.ldnd5e.chat-card .ad-card-header img,
 .ldnd5e.chat-card .card-header img {
   flex: 0 0 36px;
   margin-right: 5px;
 }
+.ldnd5e.chat-card .ad-card-header h3,
 .ldnd5e.chat-card .card-header h3 {
-  flex: 1;
+  flex: 7;
   margin: 0;
   line-height: 36px;
   font-family: "Modesto Condensed", "Palatino Linotype", serif;
@@ -1548,6 +1565,18 @@
 .ldnd5e.chat-card .card-header h3:hover {
   color: #111;
   text-shadow: 0 0 10px red;
+}
+.ldnd5e.chat-card .ad-card-header .ac-display {
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  place-content: center;
+  place-items: center;
+  font-size: 1.4em;
+  line-height: 0.8;
+  height: 28px;
+  margin-top: 5px;
+  padding-bottom: 0.2em;
+  border-radius: 50% 50% 50% 50% / 12% 12% 88% 88%
 }
 .ldnd5e.chat-card .card-content {
   margin: 5px 0;

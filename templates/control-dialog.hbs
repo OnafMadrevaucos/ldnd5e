@@ -16,8 +16,13 @@
         <input type="number" name="repairLvlPrice" id="repairLvlPrice" data-price="{{price}}" data-fee="{{fee}}" disabled/>
     </div>
     <div class="dialog-buttons-title flexrow">
-        <label>{{ localize "ldnd5e.dlControlDamageBtn" }}</label>
-        <label>{{ localize "ldnd5e.dlControlRepairsBtn" }}</label>
+        <div class="dialog-button-header">
+            <label>{{ localize "ldnd5e.dlControlDamageBtn" }}</label>
+        </div>
+        <div class="dialog-button-header repair-click" id="repairHeader">
+            <label>{{ localize "ldnd5e.dlControlRepairsBtn" }}</label>
+            <i class="fas fa-hammer not-smith" title="{{repairsToolTips.notSmith}}" id="smithIcon" data-smith-tooltip="{{repairsToolTips.smith}}" data-not-smith-tooltip="{{repairsToolTips.notSmith}}"></i>
+        </div>
     </div>
 </form>
 
@@ -36,5 +41,12 @@
     slider.oninput = function() {
         output.innerHTML = this.value;
         priceInput.value = price * fee * slider.value;        
+    }
+
+    var repairHeader = document.getElementById("repairHeader");
+    repairHeader.onclick = function() {
+        var smithIcon = document.getElementById("smithIcon");
+        smithIcon.classList.toggle('not-smith');
+        smithIcon.setAttribute("title", (smithIcon.classList.contains('not-smith') ? smithIcon.dataset.notSmithTooltip : smithIcon.dataset.smithTooltip));
     }
 </script>

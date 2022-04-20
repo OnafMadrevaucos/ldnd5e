@@ -4,10 +4,11 @@ import ActorL5e from "./models/entities/ActorL5e.js";
 import { Debugger } from "./scripts/helpers.js";
 import { preloadTemplates } from "./scripts/templates.js";
 
-import { gmControl } from "./scripts/constants.js";
+import { constants, gmControl } from "./scripts/constants.js";
 import adControl from "./models/adControl.js";
 
 import ActorSheetL5eCharacter from "./models/sheets/ActorSheetL5eCharacter.js";
+import { ActorSheet5eCharacter as ActorSheetBR} from "../dnd5e_pt-BR/main.js";
 
 Hooks.once("init", function() {
     console.log("LDnD5e | Inicializando o Módulo Lemurian D&D 5th Edition...");
@@ -15,16 +16,25 @@ Hooks.once("init", function() {
     CONFIG.Item.documentClass = ItemL5e;
     CONFIG.Actor.documentClass = ActorL5e;
 
+    if(game.modules.get('dnd5e_pt-BR')?.active) {
+        constants.ActorSheet5eCharacter = ActorSheetBR;
+    }    
+
+    preloadTemplates();
+
+    Handlebars.registerHelper('debug', Debugger);
+});
+
+Hooks.once('ready', () => {
+    if(!game.modules.get('lib-wrapper')?.active && game.user.isGM)
+        ui.notifications.error("LD&D 5e requires the 'libWrapper' module. Please install and activate it.");  
+        
     // Register sheet application classes
     Actors.registerSheet("dnd5e", ActorSheetL5eCharacter, {
         types: ["character"],
         makeDefault: true,
         label: "ldnd5e.sheetTitle"
     });
-
-    preloadTemplates();
-
-    Handlebars.registerHelper('debug', Debugger);
 });
 
 Hooks.on(`renderActorSheet`, (app, html, data) => {

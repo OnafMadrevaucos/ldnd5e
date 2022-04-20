@@ -1,5 +1,4 @@
-import adControl from "../models/adControl.js";
-
+import { default as ActorSheetORIGINAL } from "../../../systems/dnd5e/module/actor/sheets/character.js";
 /**
  * Defines the main FQL constants for module name and the DB flag.
  *
@@ -8,6 +7,8 @@ import adControl from "../models/adControl.js";
  const constants = {
     moduleName: 'ldnd5e',
     moduleLabel: 'Lemurian Dungeons & Dragons 5th Edition',
+
+    ActorSheet5eCharacter: ActorSheetORIGINAL,
     
     templates: {
         mainTemplate: 'modules/ldnd5e/templates/mainControl.hbs',
@@ -48,6 +49,11 @@ import adControl from "../models/adControl.js";
    dlControlRepairLvl: "ldnd5e.dlControlRepairLvl",
    dlControlDamageBtn: "ldnd5e.dllControlDamageBtn",
    dlControlRepairsBtn: "ldnd5e.dllControlRepairsBtn",
+
+   dlControlSmithRepair: "ldnd5e.dlControlSmithRepair",
+   dlControlNotSmithRepair: "ldnd5e.dlControlNotSmithRepair",
+
+   dlControlRepairDC: "ldnd5e.dlControlRepairDC",
 
    frControlTitle: "ldnd5e.frControlTitle",
    frControlItemLabel: "ldnd5e.frControlItemLabel",

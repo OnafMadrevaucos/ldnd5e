@@ -1,7 +1,6 @@
 import { constants, i18nStrings } from "../scripts/constants.js";
 import { computaDA, computaHALF, computaSUB, computaZERAR } from "../scripts/DASystem.js";
 import { d20Roll } from "../../../systems/dnd5e/module/dice.js";
-import { DND5E } from "../../../systems/dnd5e/module/config.js";
 
 const ACTIVE_EFFECT_MODES = CONST.ACTIVE_EFFECT_MODES;
 const ADD = ACTIVE_EFFECT_MODES.ADD;
@@ -167,6 +166,7 @@ export default class adControl extends Application {
          item: data.item, 
          owner: data.owner,
          damageType: game.i18n.localize(`ldnd5e.damageTypes.${data.damageType}`),
+         repairsToolTips: {smith: game.i18n.localize(i18nStrings.dlControlSmithRepair), notSmith: game.i18n.localize(i18nStrings.dlControlNotSmithRepair)},
          price: data.price.toString(),
          fee: constants.repairFee
       });
@@ -198,11 +198,13 @@ export default class adControl extends Application {
          }, options).render(true);
       });
    } else {
+      var smithRepair = false;
       // Render the Dialog inner HTML
       content = await renderTemplate(template, {
          item: data.item, 
          owner: data.owner,
-         price: data.price.toString()
+         price: data.price.toString(),
+         smithRepair: smithRepair
       });
 
       return new Promise(resolve => {
@@ -271,6 +273,8 @@ export default class adControl extends Application {
                return;
             }
 
+            options.smithRepairChk = form.querySelector('.not-smith') ? false : true;
+
             result = computaSUB(item, owner, tipoDano, options); 
             this._prepareActiveEffects(item, owner, result, options);
          } 
@@ -279,16 +283,20 @@ export default class adControl extends Application {
          case adControl.ACTION_TYPE.ZERAR: {
             options.repair = true;
 
-            if(options?.fullRepair) 
+            if(options?.fullRepair) {
                options.price = data.price;
-            else                 
+               options.smithRepairChk = form.querySelector('.smith-repair')?.checked ?? false;
+            }
+            else {               
                options.price = data.price * constants.repairFee * item.data.data.armor.RealDL;   
+               options.smithRepairChk = form.querySelector('.not-smith') ? false : true;
+            }
                
             const toExpensive = this._verifyRepairCost(((options?.price ?? 0)), owner);      
             if(toExpensive) {
                ui.notifications.warn(game.i18n.format(i18nStrings.messages.repairToExpensive, {actor: owner.data.name}));
                return;
-            } 
+            }             
 
             result = computaZERAR(item, owner);
             this._prepareActiveEffects(item, owner, result, options);
@@ -326,7 +334,7 @@ export default class adControl extends Application {
       if(NivelDL === 6) { 
          info = game.i18n.localize(i18nStrings.messages.sixthDLMessage);
          desequipItem = true;
-         itemData.armor.Destroyed = true;
+         itemData.armor.destroyed = true;
       } else { 
          if(NivelDL === 5) extraMessage = game.i18n.format(i18nStrings.messages.fithDLMessage, {owner: owner.data.name});
          info = game.i18n.format(i18nStrings.messages.newDLMessage, {item: item.data.name, owner: owner.data.name, penalty: ACPenalty.toString(), extra: extraMessage});         
@@ -337,13 +345,15 @@ export default class adControl extends Application {
       if(options?.repair) {         
          this._computeRepairCost(options?.price, owner);
 
-         repairSucess = await this._rollRepair(item, owner);
+         repairSucess = await this._rollRepair(item, owner, options);
+         if(repairSucess == null) return;
+         
          if(!repairSucess) { 
             info = game.i18n.format(i18nStrings.messages.repairFailed, {item: item.data.name});
-         } else {         
+         } else {
             if(options?.fullRepair) {
                info = game.i18n.format(i18nStrings.messages.reconstructedMessage, {item: item.data.name});
-               item.data.data.armor.Destroyed = false;
+               itemData.armor.destroyed = false;
             }else 
                info = game.i18n.format(i18nStrings.messages.repairMessage, {item: item.data.name, penalty: ACPenalty.toString()});  
          }       
@@ -353,7 +363,8 @@ export default class adControl extends Application {
          data: itemData,
          info: info,
          item: item,
-         owner: owner
+         owner: owner,
+         repairDC: (adControl.DC_REPAIR[item.data.data.rarity.toLowerCase()]) ?? 10
       };
 
       if(result.temMudanca.mensagem || options?.repair)
@@ -363,12 +374,11 @@ export default class adControl extends Application {
          // Salva as alterações nos valores de avarias do Item.
          await item.setFlag("ldnd5e", "armorSchema", itemData.armor);
 
-         if(effect) await owner.updateArmorDamageEffects(effect.data, ACPenalty);
+         if(effect) await owner.updateArmorDamageEffects(effect.data, ACPenalty.toString());
 
          if(desequipItem)
             await item.update({["data.equipped"]: !getProperty(item.data, "data.equipped")});
-      }
-      
+      }      
    }
 
    /** @inheritdoc */
@@ -390,27 +400,14 @@ export default class adControl extends Application {
    computePCArmorData() {
    
       const data = {
-          armor: { label: "ldnd5e.armorLabel", items: [], owner: {}, tipoShield: false, dataset: {type: "equipament", subtype: "", armorType: ""} },
-          shield: { label: "ldnd5e.shieldLabel", items: [], owner: {}, tipoShield: true, dataset: {type: "equipament", subtype: "", armorType: ""} }
+          armor: { label: "ldnd5e.armorLabel", items: [], tipoShield: false, dataset: {type: "equipament", subtype: "", armorType: ""} },
+          shield: { label: "ldnd5e.shieldLabel", items: [], tipoShield: true, dataset: {type: "equipament", subtype: "", armorType: ""} }
       };
    
       for(let actor of game.actors) {
           if(actor.type == "character") {
    
-              let [items] = actor.items.reduce((arr, item) => {
-   
-                  if(item.type === "equipment" && DND5E.armorTypes[item.data.data.armor?.type]) {
-
-                     item.equipped = (item.actor.data.data.attributes.ac.equippedArmor?.id === item.id ||
-                                      item.actor.data.data.attributes.ac.equippedShield?.id === item.id);
-                     item.owner = actor;
-                     item.armorType = item.data.data.armor.type; 
-                     item.destroyed = item.data.data.armor.Destroyed; 
-                     item.subtype =  (item.armorType === "shield" ? "shield" : "armor");                     
-                     arr[0].push(item); 
-                  }
-                  return arr;
-              }, [[]]);
+              const items = actor.configArmorData();
    
               // Organize items
               for ( let i of items ) {             
@@ -475,57 +472,71 @@ export default class adControl extends Application {
    }
 
    async _rollRepair(item, owner, options={}) {
-      const label = CONFIG.DND5E.abilities.dex;
-      const abl = owner.data.data.abilities.dex;
-      const abilityId = "dex";
+      if(!options.smithRepairChk) {
+         const label = CONFIG.DND5E.abilities.dex;
+         const abl = owner.data.data.abilities.dex;
+         const abilityId = "dex";
 
-      const parts = [];
-      const data = owner.getRollData();
-      const ownerData = owner.data.data;
+         const parts = [];
+         const data = owner.getRollData();
+         const ownerData = owner.data.data;
 
-      // Add ability modifier
-      parts.push("@mod");
-      data.mod = abl.mod;
+         // Add ability modifier
+         parts.push("@mod");
+         data.mod = abl.mod;
 
-      // Include proficiency bonus
-      if ( ownerData.traits.toolProf.value.includes('smith') ) {
-         parts.push("@prof");
-         data.prof = ownerData.attributes.prof;
-      }
-
-      // Add ability-specific check bonus
-      if ( abl.bonuses?.check ) {
-         const checkBonusKey = `${abilityId}CheckBonus`;
-         parts.push(`@${checkBonusKey}`);
-         data[checkBonusKey] = Roll.replaceFormulaData(abl.bonuses.check, data);
-      }
-
-      // Add global actor bonus
-      const bonuses = getProperty(owner.data.data, "bonuses.abilities") || {};
-      if ( bonuses.check ) {
-         parts.push("@checkBonus");
-         data.checkBonus = Roll.replaceFormulaData(bonuses.check, data);
-      }
-
-      // Add provided extra roll parts now because they will get clobbered by mergeObject below
-      if (options.parts?.length > 0) {
-         parts.push(...options.parts);
-      }
-
-      // Roll and return
-      const rollData = foundry.utils.mergeObject(options, {
-         parts: parts,
-         data: data,
-         title: `${game.i18n.format("DND5E.AbilityPromptTitle", {ability: label})}: ${owner.name}`,
-         halflingLucky: owner.getFlag("dnd5e", "halflingLucky"),
-         messageData: {
-            speaker: options.speaker || ChatMessage.getSpeaker({actor: owner}),
-            "flags.dnd5e.roll": {type: "ability", abilityId }
+         // Include proficiency bonus
+         if ( ownerData.traits.toolProf.value.includes('smith') ) {
+            parts.push("@prof");
+            data.prof = ownerData.attributes.prof;
          }
-      });
-      const roll = await d20Roll(rollData);
-      if(!roll) return false;
 
-      return (roll._total >= adControl.DC_REPAIR[item.data.data.rarity.toLowerCase()]);
+         // Add ability-specific check bonus
+         if ( abl.bonuses?.check ) {
+            const checkBonusKey = `${abilityId}CheckBonus`;
+            parts.push(`@${checkBonusKey}`);
+            data[checkBonusKey] = Roll.replaceFormulaData(abl.bonuses.check, data);
+         }
+
+         // Add global actor bonus
+         const bonuses = getProperty(owner.data.data, "bonuses.abilities") || {};
+         if ( bonuses.check ) {
+            parts.push("@checkBonus");
+            data.checkBonus = Roll.replaceFormulaData(bonuses.check, data);
+         } 
+
+         // Add provided extra roll parts now because they will get clobbered by mergeObject below
+         if (options.parts?.length > 0) {
+            parts.push(...options.parts);
+         }
+
+         // Roll and return
+         const rollData = foundry.utils.mergeObject(options, {
+            parts: parts,
+            data: data,
+            title: `${game.i18n.format("DND5E.AbilityPromptTitle", {ability: label})}: ${owner.name}`,
+            halflingLucky: owner.getFlag("dnd5e", "halflingLucky"),
+            messageData: {
+               speaker: options.speaker || ChatMessage.getSpeaker({actor: owner}),
+               "flags.dnd5e.roll": {type: "ability", abilityId }
+            }
+         });
+         const roll = await d20Roll(rollData);
+         if(!roll) return null;
+
+         return (roll._total >= (adControl.DC_REPAIR[item.data.data.rarity.toLowerCase()] ?? 10));
+      } else return true;
+   }
+
+   async _playWAV(preset) {
+      var audio = null;
+
+      switch(preset) {
+         case "RS": {
+            audio = new Audio("modules/ldnd5e/sfx/repair-sucess.mp3");
+            audio.playbackRate = 2;
+         } break;
+      } 
+      await audio?.play();
    }
 }
