@@ -49,6 +49,7 @@
           "system": "dnd5e",
           "entity": "Playlist",
           "type": "Playlist",
+          "private": true,
           "module": "ldnd5e"
         },
         {
@@ -67,6 +68,7 @@
           "system": "dnd5e",
           "entity": "Item",
           "type": "Item",
+          "private": true,
           "module": "ldnd5e"
         },
         {
@@ -76,7 +78,7 @@
           "path": "packs/magias-extras.db",
           "system": "dnd5e",
           "entity": "Item",
-          "private": false,
+          "private": true,
           "module": "ldnd5e"
         },
         {
@@ -86,7 +88,7 @@
           "path": "packs/habilidades.db",
           "system": "dnd5e",
           "entity": "Item",
-          "private": false,
+          "private": true,
           "module": "ldnd5e"
         },
         {
@@ -96,6 +98,7 @@
           "system": "dnd5e",
           "entity": "Item",
           "type": "Item",
+          "private": false,
           "module": "ldnd5e"
         },
         {
@@ -105,6 +108,7 @@
           "system": "dnd5e",
           "entity": "Actor",
           "type": "Actor",
+          "private": true,
           "module": "ldnd5e"
         },
         {
@@ -114,6 +118,7 @@
           "system": "dnd5e",
           "entity": "Actor",
           "type": "Actor",
+          "private": true,
           "module": "ldnd5e"
         },
         {
@@ -123,6 +128,7 @@
           "system": "dnd5e",
           "entity": "Actor",
           "type": "Actor",
+          "private": false,
           "module": "ldnd5e"
         },
         {
@@ -132,8 +138,17 @@
           "path": "packs/documentos-e-imagens.db",
           "system": "dnd5e",
           "entity": "JournalEntry",
-          "private": false,
+          "private": true,
           "module": "ldnd5e"
+        },        
+        {
+          "name": "tables",
+		      "label": "LD&D 5e - Tables",
+		      "system": "dnd5e",
+		      "path": "packs/tables.db",
+          "private": true,
+		      "entity": "RollTable",
+          "type": "RollTable"
         },
         {
           "name": "maps",
@@ -142,6 +157,17 @@
           "system": "dnd5e",
           "entity": "Scene",
           "type": "Scene",
+          "private": true,
+          "module": "ldnd5e"
+        },
+        {
+          "name": "macros",
+          "label": "LD&D 5e - Macros",
+          "path": "packs/macros.db",
+          "system": "dnd5e",
+          "entity": "Macro",
+          "type": "Macro",
+          "private": true,
           "module": "ldnd5e"
         }
     ]    
