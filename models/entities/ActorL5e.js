@@ -81,10 +81,8 @@ export default class ActorL5e extends Actor5e {
                 // Cria flgas para armazenar e gerênciar os ids tanto dos Active Effect quanto das Armaduras/Escudos.
                 this.setFlag("ldnd5e", "armorEffect", {effectID: createdEffects[0].data._id, armorID: "none"});
                 this.setFlag("ldnd5e", "shieldEffect", {effectID: createdEffects[1].data._id, shieldID: "none"});
-                
-            });
-
-            this.setFlag("ldnd5e", "L5eConfigured", true);
+                this.setFlag("ldnd5e", "L5eConfigured", true);
+            });            
         }
     }
 
