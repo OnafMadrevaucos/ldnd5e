@@ -11,10 +11,10 @@ const ADD = ACTIVE_EFFECT_MODES.ADD;
 export default class ActorL5e extends Actor5e { 
 
     /** @override */
-    _onCreate(data, options, user) {
+    async _onCreate(data, options, user) {
         super._onCreate(data, options, user); 
 
-        if(["character"].includes(data.type)) this.configL5e();     
+        if(["character"].includes(data.type)) await this.configL5e();     
     }
 
     /** @override */
@@ -49,7 +49,7 @@ export default class ActorL5e extends Actor5e {
         }, []);
     }
 
-    configL5e() {
+    async configL5e() {
         const armorFlag = this.getFlag("ldnd5e", "armorEffect");
         const shieldFlag = this.getFlag("ldnd5e", "shieldEffect");
 
@@ -80,9 +80,10 @@ export default class ActorL5e extends Actor5e {
             createEffectsPromise.then((createdEffects) => {
                 // Cria flgas para armazenar e gerênciar os ids tanto dos Active Effect quanto das Armaduras/Escudos.
                 this.setFlag("ldnd5e", "armorEffect", {effectID: createdEffects[0].data._id, armorID: "none"});
-                this.setFlag("ldnd5e", "shieldEffect", {effectID: createdEffects[1].data._id, shieldID: "none"});
-                this.setFlag("ldnd5e", "L5eConfigured", true);
-            });            
+                this.setFlag("ldnd5e", "shieldEffect", {effectID: createdEffects[1].data._id, shieldID: "none"});                
+            }); 
+            
+            this.setFlag("ldnd5e", "L5eConfigured", true);
         }
     }
 

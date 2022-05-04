@@ -41,7 +41,7 @@ Hooks.on(`renderActorSheet`, (app, html, data) => {
     const actor = app.actor;
     const isActorL5e = actor.getFlag("ldnd5e", "L5eConfigured");
 
-    if(!isActorL5e && ["character"].includes(actor.type)) actor.configL5e();   
+    if(isActorL5e != undefined && (!isActorL5e && ["character"].includes(actor.type))) actor.configL5e();   
     if (!game.user.isGM) hideEffects(actor, html);    
 });
 
