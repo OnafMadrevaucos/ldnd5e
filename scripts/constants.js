@@ -13,8 +13,9 @@ import { default as ActorSheetORIGINAL } from "../../../systems/dnd5e/module/act
     templates: {
         mainTemplate: 'modules/ldnd5e/templates/mainControl.hbs',
         dlControlTemplate: 'modules/ldnd5e/templates/control-dialog.hbs',
+        arControlTemplate: 'modules/ldnd5e/templates/confirm-dialog.hbs',
         frControlTemplate: 'modules/ldnd5e/templates/full-repair-dialog.hbs',
-        newDLTemplate: 'modules/ldnd5e/templates/newDL-template.hbs'
+        newDLTemplate: 'modules/ldnd5e/templates/newDL-template.hbs',
     },
 
     images: {
@@ -28,6 +29,9 @@ import { default as ActorSheetORIGINAL } from "../../../systems/dnd5e/module/act
 
  const i18nStrings = {
    title : "ldnd5e.title",
+   adSystemTitle: "ldnd5e.adSystemTitle",
+   arSystemTitle: "ldnd5e.arSystemTitle",
+
    sheetTitle: "ldnd5e.sheetTitle",
    armorLabel: "ldnd5e.armorLabel",
    shieldLabel: "ldnd5e.shieldLabel",
@@ -42,6 +46,13 @@ import { default as ActorSheetORIGINAL } from "../../../systems/dnd5e/module/act
    sdTitle: "ldnd5e.sdTitle",
    bdTitle: "ldnd5e.bdTitle",
    tdTitle: "ldnd5e.tdTitle",
+
+   profTitle: "ldnd5e.profTitle",
+   conTitle: "ldnd5e.conTitle",
+   penTitle: "ldnd5e.penTitle",
+   ftTitle: "ldnd5e.ftTitle",
+
+   arControlTitle:"ldnd5e.arControlTitle",   
 
    dlControlTitle: "ldnd5e.dlControlTitle",
    dlControlItemLabel: "ldnd5e.dlControlItemLabel",
@@ -78,6 +89,7 @@ import { default as ActorSheetORIGINAL } from "../../../systems/dnd5e/module/act
    },
 
    itemDestroyed: "ldnd5e.itemDestroyed",
+   groupRolls:"ldnd5e.groupRolls",
 
    messages: {
       bldgDmgLightArmor: "ldnd5e.messages.bldgDmgLightArmor",
@@ -91,7 +103,11 @@ import { default as ActorSheetORIGINAL } from "../../../systems/dnd5e/module/act
       repairToExpensive: "ldnd5e.messages.repairToExpensive",
       repairMessage: "ldnd5e.messages.repairMessage",
       reconstructedMessage: "ldnd5e.messages.reconstructedMessage",
-      repairFailed: "ldnd5e.messages.repairFailed"
+      repairFailed: "ldnd5e.messages.repairFailed",
+
+      arControlLabel: "ldnd5e.messages.arControlLabel",
+      arControlLabelObs: "ldnd5e.messages.arControlLabelObs",
+      arMaxedOut:"ldnd5e.messages.arMaxedOut"
    }
  };
 

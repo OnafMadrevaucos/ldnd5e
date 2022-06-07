@@ -1,6 +1,9 @@
 {
     "ldnd5e" : {
-        "title" : "Controle de Dano Absorvido",
+        "title" : "Controle D&D 5º Ed. - Lemúria",
+        "adSystemTitle" : "Sistema de Danos Absorvidos",
+        "arSystemTitle" : "Sistema de Reação Ágil",
+
         "sheetTitle": "LDnD5e Character Sheet",
         "armorLabel": "Armaduras",
         "shieldLabel": "Escudos",
@@ -15,6 +18,13 @@
         "sdTitle": "Dano Cort.",
         "bdTitle": "Dano Cont.",
         "tdTitle": "Total",
+
+        "profTitle": "Bônus Prof.",
+        "conTitle": "Mod. Const.",
+        "penTitle": "Penalidade",
+        "ftTitle": "IEC",
+
+        "arControlTitle": "Execução de Reação Ágil",        
 
         "dlControlTitle": "Controle de Danos",
         "dlControlItemLabel": "Item Avariado",
@@ -51,6 +61,7 @@
         },
 
         "itemDestroyed": "Destruído",
+        "groupRolls": "Rolagem Extra",
 
         "messages": {
             "bldgDmgLightArmor": "Armaduras Leves são imunes a avarias causadas por Dano Contundente.",
@@ -64,7 +75,11 @@
             "repairToExpensive": "{actor} não possui dinheiro o suficiente para realizar esse reparo.",
             "repairMessage": "{item} foi reparado com sucesso. Esse item agora tem {penalty} de penalidade na CA.",
             "reconstructedMessage": "{item} foi reconstruído com sucesso.",
-            "repairFailed": "{item} não pode ser reparado. O custo separado para o reparo foi perdido."
+            "repairFailed": "{item} não pode ser reparado. O custo separado para o reparo foi perdido.",
+
+            "arControlLabel": "Deseja {action} em {value} ponto de penalidade a todos os testes do(a) {actor}?",
+            "arControlLabelObs": "OBS.: A penalidade apenas aumenta o limiar de Falha Crítica.",
+            "arMaxedOut": "O limiar de Falha Crítica de {actor} já se encontra no máximo."
         }
     }
 }

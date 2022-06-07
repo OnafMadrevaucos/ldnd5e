@@ -1,5 +1,6 @@
 <ol class="items-list inventory-list"> 
 {{#each sections as |section sid|}}
+    {{#if section.ad}}
     <li class="items-header flexrow">
         <h3 class="item-name flexrow">{{localize section.label}}</h3>
 
@@ -38,5 +39,6 @@
         </li>
     {{/each}}
     </ol>
+    {{/if}}
 {{/each}}
 </ol>

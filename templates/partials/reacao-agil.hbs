@@ -1,0 +1,30 @@
+<ol class="actors-list inventory-list">
+{{#each sections as |section sid|}}
+    {{#if section.ar}} 
+    <li class="actors-header flexrow">
+        <h3 class="actor-name flexrow">{{localize section.label}}</h3>
+        
+        <div class="actor-detail">{{localize "ldnd5e.profTitle"}}</div>
+        <div class="actor-detail">{{localize "ldnd5e.conTitle"}}</div>
+        <div class="actor-detail">{{localize "ldnd5e.penTitle"}}</div>
+        <div class="actor-detail total-penalty">{{localize "ldnd5e.ftTitle"}}</div>       
+    </li>
+
+    <ol class="actor-list">
+    {{#each section.actors as |actor aid|}}
+        <li class="actor flexrow {{section.css}}"
+            data-actor-id="{{actor.id}}">
+            <div class="actor-name flexrow">    
+                <div class="actor-image" tabindex="0" role="button" aria-label="{{actor.name}}" style="background-image: url('{{actor.img}}')"></div>
+                <h4 class="ar-control">{{actor.name~}}</h4>                                            
+            </div>
+            <div class="actor-detail">{{actor.data.data.profMod}}</div>
+            <div class="actor-detail">{{actor.data.data.abil.con.strMod}}</div>
+            <div class="actor-detail">{{actor.data.data.attributes.rpMod}}</div>
+            <div class="actor-detail">{{actor.data.data.attributes.fumbleRange}}</div>   
+        </li>
+    {{/each}}
+    </ol>
+    {{/if}}
+{{/each}}
+</ol>

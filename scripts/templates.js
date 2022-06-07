@@ -5,6 +5,7 @@
  {
     let templates = [
        "templates/partials/pcs-list.hbs",
+       "templates/partials/reacao-agil.hbs",
        "templates/control-dialog.hbs",
        "templates/mainControl.hbs",
     ];

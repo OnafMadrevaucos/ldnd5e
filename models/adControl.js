@@ -1,5 +1,6 @@
 import { constants, i18nStrings } from "../scripts/constants.js";
 import { computaDA, computaHALF, computaSUB, computaZERAR } from "../scripts/DASystem.js";
+import { updateFumbleRange } from "../scripts/ARSystem.js";
 import { d20Roll } from "../../../systems/dnd5e/module/dice.js";
 
 const ACTIVE_EFFECT_MODES = CONST.ACTIVE_EFFECT_MODES;
@@ -11,7 +12,7 @@ export default class adControl extends Application {
       super(options);
 
       CONFIG.adControl = this;      
-      this.data = this.computePCArmorData();
+      this.data = this.computeData();
    }
 
    // Desvincula as Sheets dos PJs do Controle do AD System.
@@ -29,7 +30,8 @@ export default class adControl extends Application {
       SUB: -1,
       HALF: 0,        
       DA: 1,
-      ZERAR: 2
+      ZERAR: 2,
+      AR: 3
    }
 
    /**
@@ -63,7 +65,7 @@ export default class adControl extends Application {
          minimizable: true,
          resizable: false,
          title: game.i18n.localize(i18nStrings.title),
-         tabs: [{ navSelector: '.log-tabs', contentSelector: '.log-body', initial: 'active' }]
+         tabs: [{ navSelector: '.tabs', contentSelector: '.sheet-body', initial: 'pcs-list' }]
       });
    }
 
@@ -72,11 +74,16 @@ export default class adControl extends Application {
 
       if(game.user.isGM) {
 
-          // Clicks sem Rolagem
+          // Clicks sem Rolagem -------------------------------------------
+          // Listeners do DASystem
           html.find(".owner-image").click(this._onOwnerImageClick.bind(this));
           html.find(".dl-control").click(this._onDLControlClick.bind(this));  
           html.find(".full-repair-control").click(this._onFullRepairControlClick.bind(this));  
-          html.find(".refresh-pcs").click(this._onRefreshPCsClick.bind(this));     
+          html.find(".refresh-pcs").click(this._onRefreshPCsClick.bind(this));  
+          // Listeners do ARSystem
+          html.find(".actor-image").click(this._onActorImageClick.bind(this)); 
+          html.find(".ar-control").click(this._onARControlClick.bind(this));
+          html.find(".ar-control").contextmenu(this._onARControlClick.bind(this));
       }
 
       super.activateListeners(html);
@@ -90,6 +97,14 @@ export default class adControl extends Application {
 
       return owner.sheet.render(true);
   }
+  _onActorImageClick(event){
+   event.preventDefault();
+
+   const actorID = event.currentTarget.closest(".actor").dataset.actorId;
+   const actor = game.actors.get(actorID);
+
+   return actor.sheet.render(true);
+}
 
   async _onDLControlClick(event) {
       event.preventDefault();
@@ -118,6 +133,26 @@ export default class adControl extends Application {
       return item;
   }
 
+  async _onARControlClick(event) {
+     event.preventDefault();
+
+     const rightClick = (event.type === "contextmenu");
+     const actorID = event.currentTarget.closest(".actor").dataset.actorId;
+     const actor = game.actors.get(actorID);
+
+     const configured = await this._configureDialog({
+         title: game.i18n.localize("ldnd5e.arControlTitle"),
+         data: {
+            actor: actor,
+            labelObs: game.i18n.localize(i18nStrings.messages.arControlLabelObs)
+         },
+         template: constants.templates.arControlTemplate
+      },{confirmAR: true, rightClick: rightClick});
+   if ( configured === null ) return null;   
+   
+   this.render(true);
+  }
+
   async _onFullRepairControlClick(event) {
       event.preventDefault();
 
@@ -142,14 +177,14 @@ export default class adControl extends Application {
   }
 
   refresh(force) {
-   this.data = this.computePCArmorData();
+   this.data = this.computeData();
 
    this.render(force);
   }
 
   _onRefreshPCsClick(event) {
 
-   this.data = this.computePCArmorData();
+   this.data = this.computeData();
 
    this.render(false);
   }
@@ -159,6 +194,76 @@ export default class adControl extends Application {
   async _configureDialog({title, data, template}={}, options={}) {
 
    let content = null;
+
+   if(options.confirmAR) {
+      if(!options.rightClick) {
+         if(data.actor.data.data.attributes.fumbleRange < data.actor.data.data.attributes.maxFumbleRange) {
+            const label = game.i18n.format(i18nStrings.messages.arControlLabel, {action: "aumentar",value: data.actor.data.data.attributes.rpMod, actor: data.actor.data.name});           
+
+            // Render the Dialog inner HTML
+            content = await renderTemplate(template, {
+               actor: data.actor, 
+               label: label,   
+               labelObs: data.labelObs,                    
+            });
+
+            data.rightClick = false;  
+
+            return new Promise(resolve => {
+               new Dialog({
+                  title,
+                  content,
+                  buttons: {
+                     yes: {
+                        label: game.i18n.localize(i18nStrings.yesBtn),
+                        callback: html => resolve(this._onDialogSubmit(html, data, adControl.ACTION_TYPE.AR))
+                     },
+                     no: {
+                        label: game.i18n.localize(i18nStrings.noBtn),
+                        callback: html => resolve(this._onDialogSubmit(html, data, 99))
+                     }
+                  },
+                  default: "da",
+                  close: () => resolve(null)
+               }, options).render(true);
+            });
+         } else {
+            ui.notifications.warn(game.i18n.format(i18nStrings.messages.arMaxedOut, {actor: data.actor.data.name}));
+            return null;
+         }     
+      } else {
+         if(data.actor.data.data.attributes.fumbleRange > 1) {
+            const label = game.i18n.format(i18nStrings.messages.arControlLabel, {action: "remover", value: data.actor.data.data.attributes.rpMod, actor: data.actor.data.name}); 
+            // Render the Dialog inner HTML
+            content = await renderTemplate(template, {
+               actor: data.actor, 
+               label: label,   
+               labelObs: data.labelObs   
+            });
+
+            data.rightClick = true; 
+
+            return new Promise(resolve => {
+               new Dialog({
+                  title,
+                  content,
+                  buttons: {
+                     yes: {
+                        label: game.i18n.localize(i18nStrings.yesBtn),
+                        callback: html => resolve(this._onDialogSubmit(html, data, adControl.ACTION_TYPE.AR))
+                     },
+                     no: {
+                        label: game.i18n.localize(i18nStrings.noBtn),
+                        callback: html => resolve(this._onDialogSubmit(html, data, 99))
+                     }
+                  },
+                  default: "da",
+                  close: () => resolve(null)
+               }, options).render(true);
+            });
+         }  
+      }
+   }
 
    if(!options.fullRepair) {
       // Render the Dialog inner HTML
@@ -248,6 +353,11 @@ export default class adControl extends Application {
       let result = {};
 
       switch(action) {
+         case adControl.ACTION_TYPE.AR: {
+            await updateFumbleRange(data);
+         }
+         break;
+
          case adControl.ACTION_TYPE.DA: {
             result = computaDA(item, owner, tipoDano);   
             this._prepareActiveEffects(item, owner, result);            
@@ -397,11 +507,12 @@ export default class adControl extends Application {
       ChatMessage.create(chatData, {});
    }
    
-   computePCArmorData() {
+   computeData() {
    
       const data = {
-          armor: { label: "ldnd5e.armorLabel", items: [], tipoShield: false, dataset: {type: "equipament", subtype: "", armorType: ""} },
-          shield: { label: "ldnd5e.shieldLabel", items: [], tipoShield: true, dataset: {type: "equipament", subtype: "", armorType: ""} }
+          pcs: {label: "Personagens de Jogadores", actors: [], ad: false, ar: true},
+          armor: { label: "ldnd5e.armorLabel", items: [], tipoShield: false, dataset: {type: "equipament", subtype: "", armorType: ""}, ad: true, ar: false },
+          shield: { label: "ldnd5e.shieldLabel", items: [], tipoShield: true, dataset: {type: "equipament", subtype: "", armorType: ""}, ad: true, ar: false }
       };
    
       for(let actor of game.actors) {
@@ -413,6 +524,8 @@ export default class adControl extends Application {
               for ( let i of items ) {             
                   data[i.subtype].items.push(i);
               }
+
+              data.pcs.actors.push(actor);
           }
       }
    

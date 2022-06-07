@@ -1,9 +1,11 @@
 import Actor5e from "../../../../systems/dnd5e/module/actor/entity.js";
+import * as ars from "../../scripts/ARSystem.js";
 import * as das from "../../scripts/DASystem.js";
 import { constants, i18nStrings } from "../../scripts/constants.js";
 import adControl from "../adControl.js";
 
 import { DND5E } from "../../../../systems/dnd5e/module/config.js";
+import { d20Roll } from "../../../../systems/dnd5e/module/dice.js";
 
 const ACTIVE_EFFECT_MODES = CONST.ACTIVE_EFFECT_MODES;
 const ADD = ACTIVE_EFFECT_MODES.ADD;
@@ -24,6 +26,11 @@ export default class ActorL5e extends Actor5e {
         const actorData = this.data;
         const data = actorData.data;
 
+        data.profMod = data.prof.flat > 0 ? `+${data.prof.flat}` : data.prof.flat.toString();
+        data.abil.con.strMod = data.abil.con.mod > 0 ? `+${data.abil.con.mod}` : data.abil.con.mod.toString();
+
+        this._prepareARMods(data);
+
         data.attributes.ac.lan = das.prepareLAN(data);
         data.attributes.ac.ldo = das.prepareLDO(data); 
 
@@ -31,6 +38,202 @@ export default class ActorL5e extends Actor5e {
             CONFIG.adControl.refresh(true);
         }
     } 
+
+    /** @override */
+    rollSkill(skillId, options={}) {
+        const skl = this.data.data.skills[skillId];
+        const abl = this.data.data.abilities[skl.ability];
+        const bonuses = getProperty(this.data.data, "bonuses.abilities") || {};
+    
+        const parts = [];
+        const data = this.getRollData();
+    
+        // Add ability modifier
+        parts.push("@mod");
+        data.mod = skl.mod;
+    
+        // Include proficiency bonus
+        if ( skl.prof.hasProficiency ) {
+          parts.push("@prof");
+          data.prof = skl.prof.term;
+        }
+    
+        // Global ability check bonus
+        if ( bonuses.check ) {
+          parts.push("@checkBonus");
+          data.checkBonus = Roll.replaceFormulaData(bonuses.check, data);
+        }
+    
+        // Ability-specific check bonus
+        if ( abl?.bonuses?.check ) {
+          const checkBonusKey = `${skl.ability}CheckBonus`;
+          parts.push(`@${checkBonusKey}`);
+          data[checkBonusKey] = Roll.replaceFormulaData(abl.bonuses.check, data);
+        }
+    
+        // Skill-specific skill bonus
+        if ( skl.bonuses?.check ) {
+          const checkBonusKey = `${skillId}CheckBonus`;
+          parts.push(`@${checkBonusKey}`);
+          data[checkBonusKey] = Roll.replaceFormulaData(skl.bonuses.check, data);
+        }
+    
+        // Global skill check bonus
+        if ( bonuses.skill ) {
+          parts.push("@skillBonus");
+          data.skillBonus = Roll.replaceFormulaData(bonuses.skill, data);
+        }
+    
+        // Add provided extra roll parts now because they will get clobbered by mergeObject below
+        if (options.parts?.length > 0) {
+          parts.push(...options.parts);
+        }
+    
+        // Reliable Talent applies to any skill check we have full or better proficiency in
+        const reliableTalent = (skl.value >= data.attributes.fumbleRange && this.getFlag("dnd5e", "reliableTalent"));
+
+        // New Fumble Treshold from ARSystem
+        options.fumble = data.attributes.fumbleRange;
+    
+        // Roll and return
+        const rollData = foundry.utils.mergeObject(options, {
+          parts: parts,
+          data: data,
+          title: `${game.i18n.format("DND5E.SkillPromptTitle", {skill: CONFIG.DND5E.skills[skillId]})}: ${this.name}`,
+          halflingLucky: this.getFlag("dnd5e", "halflingLucky"),
+          reliableTalent: reliableTalent,
+          messageData: {
+            speaker: options.speaker || ChatMessage.getSpeaker({actor: this}),
+            "flags.dnd5e.roll": {type: "skill", skillId }
+          }
+        });
+        return d20Roll(rollData);
+    }
+
+    /**@override */
+    rollAbility(abilityId, options={}) {
+        const data = this.getRollData();
+        
+        // New Fumble Treshold from ARSystem
+        options.fumble = data.attributes.fumbleRange;
+
+        super.rollAbility(abilityId, options);
+    }
+
+    async rollDeathSave(options={}) {
+
+        // Display a warning if we are not at zero HP or if we already have reached 3
+        const death = this.data.data.attributes.death;
+        if ( (this.data.data.attributes.hp.value > 0) || (death.failure >= 3) || (death.success >= 3)) {
+          ui.notifications.warn(game.i18n.localize("DND5E.DeathSaveUnnecessary"));
+          return null;
+        }
+    
+        // Evaluate a global saving throw bonus
+        const parts = [];
+        const data = this.getRollData();
+        const speaker = options.speaker || ChatMessage.getSpeaker({actor: this});
+    
+        // Diamond Soul adds proficiency
+        if ( this.getFlag("dnd5e", "diamondSoul") ) {
+          parts.push("@prof");
+          data.prof = new Proficiency(this.data.data.attributes.prof, 1).term;
+        }
+    
+        // Include a global actor ability save bonus
+        const bonuses = foundry.utils.getProperty(this.data.data, "bonuses.abilities") || {};
+        if ( bonuses.save ) {
+          parts.push("@saveBonus");
+          data.saveBonus = Roll.replaceFormulaData(bonuses.save, data);
+        }
+
+        // New Fumble Treshold from ARSystem
+        options.fumble = data.attributes.fumbleRange;
+    
+        // Evaluate the roll
+        const rollData = foundry.utils.mergeObject(options, {
+          parts: parts,
+          data: data,
+          title: `${game.i18n.localize("DND5E.DeathSavingThrow")}: ${this.name}`,
+          halflingLucky: this.getFlag("dnd5e", "halflingLucky"),
+          targetValue: 10,
+          messageData: {
+            speaker: speaker,
+            "flags.dnd5e.roll": {type: "death"}
+          }
+        });
+        const roll = await d20Roll(rollData);
+        if ( !roll ) return null;
+    
+        // Take action depending on the result
+        const success = roll.total >= 10;
+        const d20 = roll.dice[0].total;
+    
+        let chatString;
+    
+        // Save success
+        if ( success ) {
+          let successes = (death.success || 0) + 1;
+    
+          // Critical Success = revive with 1hp
+          if ( d20 === 20 ) {
+            await this.update({
+              "data.attributes.death.success": 0,
+              "data.attributes.death.failure": 0,
+              "data.attributes.hp.value": 1
+            });
+            chatString = "DND5E.DeathSaveCriticalSuccess";
+          }
+    
+          // 3 Successes = survive and reset checks
+          else if ( successes === 3 ) {
+            await this.update({
+              "data.attributes.death.success": 0,
+              "data.attributes.death.failure": 0
+            });
+            chatString = "DND5E.DeathSaveSuccess";
+          }
+    
+          // Increment successes
+          else await this.update({"data.attributes.death.success": Math.clamped(successes, 0, 3)});
+        }
+    
+        // Save failure
+        else {
+          let failures = (death.failure || 0) + (d20 <= data.attributes.fumbleRange ? 2 : 1);
+          await this.update({"data.attributes.death.failure": Math.clamped(failures, 0, 3)});
+          if ( failures >= 3 ) {  // 3 Failures = death
+            chatString = "DND5E.DeathSaveFailure";
+          }
+        }
+    
+        // Display success/failure chat message
+        if ( chatString ) {
+          let chatData = { content: game.i18n.format(chatString, {name: this.name}), speaker };
+          ChatMessage.applyRollMode(chatData, roll.options.rollMode);
+          await ChatMessage.create(chatData);
+        }
+    
+        // Return the rolled result
+        return roll;
+    }
+
+    //------------------------------------------------------
+    //  Funções Novas 
+    // ----------------------------------------------------- 
+    
+    /**
+     * Prepara os Modificadores utilizado pelo ARSystem
+     * @param {object} data        Dados do Actor para preparação dos Modificadores do ARSystem
+     */
+    _prepareARMods(data) {
+
+        data.attributes.rpMod = data.attributes.rpMod ?? ars.prepareRPMod(data);
+        data.attributes.fumbleRange = data.attributes.fumbleRange ?? 1;
+        data.attributes.maxFumbleRange = ars.getMaxFumbleRange(data);
+
+        data.attributes.fumbleRange = data.attributes.fumbleRange > data.attributes.maxFumbleRange ? data.attributes.maxFumbleRange : data.attributes.fumbleRange;
+    }
 
     configArmorData() {
         return this.items.reduce((arr, item) => {

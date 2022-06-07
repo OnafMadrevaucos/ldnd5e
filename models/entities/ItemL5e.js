@@ -67,4 +67,20 @@ export default class ItemL5e extends Item5e {
 
         return data;
     }
+
+    /**@override */
+    async rollAttack(options={}) {
+        // New Fumble Treshold from ARSystem
+        options.fumble = this.actor.data.data.attributes.fumbleRange;
+
+        super.rollAttack(options);
+    }
+
+    /**@override */
+    rollToolCheck(options={}) {
+        // New Fumble Treshold from ARSystem
+        options.fumble = this.actor.data.data.attributes.fumbleRange;
+
+        super.rollToolCheck(options);
+    }
 }
