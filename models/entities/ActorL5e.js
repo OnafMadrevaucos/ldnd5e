@@ -2,7 +2,6 @@ import Actor5e from "../../../../systems/dnd5e/module/actor/entity.js";
 import * as ars from "../../scripts/ARSystem.js";
 import * as das from "../../scripts/DASystem.js";
 import { constants, i18nStrings } from "../../scripts/constants.js";
-import adControl from "../adControl.js";
 
 import { DND5E } from "../../../../systems/dnd5e/module/config.js";
 import { d20Roll } from "../../../../systems/dnd5e/module/dice.js";
@@ -217,6 +216,30 @@ export default class ActorL5e extends Actor5e {
         // Return the rolled result
         return roll;
     }
+
+    /**@override */
+    async shortRest() {
+        const data = {
+            actor: this,
+            rightClick: true,
+            rest: 1
+        };
+        ars.updateFumbleRange(data);
+
+        return super.shortRest();
+    }
+
+    /**@override */
+    async longRest() {
+        const data = {
+            actor: this,
+            rightClick: true,
+            rest: 2
+        };
+        ars.updateFumbleRange(data);
+
+        return super.longRest();
+    }   
 
     //------------------------------------------------------
     //  Funções Novas 

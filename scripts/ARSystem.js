@@ -9,7 +9,10 @@ export const getMaxFumbleRange = function(data) {
 export const updateFumbleRange = async function(data) {
     const actorData = data.actor.data.data;
 
-    let newValue = data.rightClick ? actorData.attributes.fumbleRange - actorData.attributes.rpMod : actorData.attributes.fumbleRange + actorData.attributes.rpMod
+    let valueChange = actorData.attributes.rpMod;
+    if(data.rest) valueChange = (data.rest === 2 ? Math.floor(actorData.attributes.fumbleRange/2) : 1);
+
+    let newValue = data.rightClick ? actorData.attributes.fumbleRange - valueChange : actorData.attributes.fumbleRange + valueChange;
     newValue = (newValue > actorData.attributes.maxFumbleRange && !data.rightClick) ? actorData.attributes.maxFumbleRange : newValue;
     newValue = (newValue < 1 && data.rightClick) ? 1 : newValue;
 
