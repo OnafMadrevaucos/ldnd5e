@@ -7,6 +7,8 @@ import { preloadTemplates } from "./scripts/templates.js";
 import { constants, gmControl } from "./scripts/constants.js";
 import adControl from "./models/adControl.js";
 
+import * as ars from "./scripts/ARSystem.js";
+
 import ActorSheetL5eCharacter from "./models/sheets/ActorSheetL5eCharacter.js";
 import { ActorSheet5eCharacter as ActorSheetBR} from "../dnd5e_pt-BR/main.js";
 
@@ -19,7 +21,7 @@ Hooks.once("init", function() {
     // Verifica se o D&D 5E Português BR está atuivo ou não, para decidir qual Sheet o sistema deve Importar.
     if(game.modules.get('dnd5e_pt-BR')?.active) {
         constants.ActorSheet5eCharacter = ActorSheetBR;
-    }   
+    } 
 
     preloadTemplates();
 
@@ -42,6 +44,17 @@ Hooks.once('ready', () => {
         makeDefault: true,
         label: "ldnd5e.sheetTitle"
     });
+
+    Hooks.on("renderCombatTracker", async (app, html, data) => {
+        // Sair se não tiver Combates ativos.
+        if (!data.combat) return;
+    
+        // Create groups
+        ars.manageGroups(app.popOut);
+    });
+    
+    // Re-render the combat tracker in case the initial render was missed
+    ui.combat.render(true);
 });
 
 Hooks.on('renderActorSheet', (app, html, data) => {
@@ -96,3 +109,4 @@ function hideEffects(actor, html) {
         }
     }
 }
+

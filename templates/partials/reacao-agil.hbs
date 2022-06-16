@@ -6,6 +6,7 @@
         
         <div class="actor-detail">{{localize "ldnd5e.profTitle"}}</div>
         <div class="actor-detail">{{localize "ldnd5e.conTitle"}}</div>
+        <div class="actor-detail">{{localize "ldnd5e.exauTitle"}}</div>
         <div class="actor-detail">{{localize "ldnd5e.penTitle"}}</div>
         <div class="actor-detail total-penalty">{{localize "ldnd5e.ftTitle"}}</div>       
     </li>
@@ -19,7 +20,8 @@
                 <h4 class="ar-control">{{actor.name~}}</h4>                                            
             </div>
             <div class="actor-detail">{{actor.data.data.profMod}}</div>
-            <div class="actor-detail">{{actor.data.data.abil.con.strMod}}</div>
+            <div class="actor-detail">{{actor.data.data.abilities.con.strMod}}</div>
+            <div class="actor-detail">{{actor.data.data.attributes.exhaustion}}</div>
             <div class="actor-detail">{{actor.data.data.attributes.rpMod}}</div>
             <div class="actor-detail">{{actor.data.data.attributes.fumbleRange}}</div>   
         </li>

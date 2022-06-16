@@ -65,6 +65,30 @@
   flex: 4;
 }
 
+.ini25\+ {
+  color:rgb(175, 34, 163);
+}
+.ini24-20 {
+  color: rgb(61, 118, 224);
+}
+.ini19-15 {
+  color:rgb(21, 211, 69);  
+}
+.ini14-10 {
+  color:rgb(221, 235, 33);
+}
+.ini9-5 {
+  color: #c56f1f;
+}
+.ini5- {
+  
+  color:rgb(255, 22, 22);
+}
+
+.defeated {
+  text-decoration: line-through;
+}
+
 .window-app .window-content .dialog-buttons-title {
   text-align: center;
   padding-left: 5px;

@@ -1,6 +1,6 @@
 import { constants, i18nStrings } from "../scripts/constants.js";
 import { computaDA, computaHALF, computaSUB, computaZERAR } from "../scripts/DASystem.js";
-import { updateFumbleRange } from "../scripts/ARSystem.js";
+import { updateFumbleRange, updateExhaustionLevel } from "../scripts/ARSystem.js";
 import { d20Roll } from "../../../systems/dnd5e/module/dice.js";
 
 const ACTIVE_EFFECT_MODES = CONST.ACTIVE_EFFECT_MODES;
@@ -31,7 +31,8 @@ export default class adControl extends Application {
       HALF: 0,        
       DA: 1,
       ZERAR: 2,
-      AR: 3
+      AR: 3,
+      AR_EXAU: 4
    }
 
    /**
@@ -228,7 +229,32 @@ export default class adControl extends Application {
                }, options).render(true);
             });
          } else {
-            ui.notifications.warn(game.i18n.format(i18nStrings.messages.arMaxedOut, {actor: data.actor.data.name}));
+            const label = game.i18n.format(i18nStrings.messages.arMaxedOut, {actor: data.actor.data.name});        
+
+            // Render the Dialog inner HTML
+            content = await renderTemplate(template, {
+               actor: data.actor, 
+               label: label                
+            });
+
+            return new Promise(resolve => {
+               new Dialog({
+                  title,
+                  content,
+                  buttons: {
+                     yes: {
+                        label: game.i18n.localize(i18nStrings.yesBtn),
+                        callback: html => resolve(this._onDialogSubmit(html, data, adControl.ACTION_TYPE.AR_EXAU))
+                     },
+                     no: {
+                        label: game.i18n.localize(i18nStrings.noBtn),
+                        callback: html => resolve(this._onDialogSubmit(html, data, 99))
+                     }
+                  },
+                  default: "da",
+                  close: () => resolve(null)
+               }, options).render(true);
+            });
             return null;
          }     
       } else {
@@ -355,6 +381,11 @@ export default class adControl extends Application {
       switch(action) {
          case adControl.ACTION_TYPE.AR: {
             await updateFumbleRange(data);
+         }
+         break;
+
+         case adControl.ACTION_TYPE.AR_EXAU: {
+            await updateExhaustionLevel(data);
          }
          break;
 

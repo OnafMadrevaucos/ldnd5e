@@ -49,6 +49,7 @@ import { default as ActorSheetORIGINAL } from "../../../systems/dnd5e/module/act
 
    profTitle: "ldnd5e.profTitle",
    conTitle: "ldnd5e.conTitle",
+   exauTitle: "ldnd5e.exauTitle",
    penTitle: "ldnd5e.penTitle",
    ftTitle: "ldnd5e.ftTitle",
 

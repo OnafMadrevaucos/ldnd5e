@@ -3,7 +3,7 @@
     "title":  "Lemurian Dungeons & Dragons 5th Edition",
     "description": "Some homebrew systems for Dungeons & Dragons 5th Edition.",
     "author": "Onaf Madrevaucos",
-    "version": "0.1.7",
+    "version": "0.1.8",
     "minimumCoreVersion": "0.9",
 
     "system": ["dnd5e"],
@@ -25,9 +25,6 @@
         },
         {
           "name": "lib-wrapper"
-        },
-        {
-          "name": "dice-calculator"
         }
     ],
     "esmodules": ["ldnd5e.js"],
