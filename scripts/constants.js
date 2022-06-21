@@ -112,6 +112,10 @@ import { default as ActorSheetORIGINAL } from "../../../systems/dnd5e/module/act
    }
  };
 
+ const feats = {
+   
+ };
+
  const gmControl = [
    {
       name: constants.moduleName,
