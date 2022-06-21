@@ -10,7 +10,7 @@ iniGroup.set("ini9-5", 1);
 iniGroup.set("ini5-", 0);
 
 export const prepareRPMod = function (data) {
-    return Math.floor((25/(data.abilities.con.mod + 10)) - (data.prof.flat/15));
+    return Math.floor((25/(data.abilities.con.mod + 10)) - (data.attributes.prof/15));
 }
 
 export const getMaxFumbleRange = function(data) {

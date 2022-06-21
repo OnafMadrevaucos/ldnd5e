@@ -24,8 +24,8 @@ export default class ActorL5e extends Actor5e {
         
         const actorData = this.data;
         const data = actorData.data;
-
-        data.profMod = data.prof.flat > 0 ? `+${data.prof.flat}` : data.prof.flat.toString();
+        
+        data.profMod = data.attributes.prof > 0 ? `+${data.attributes.prof}` : data.attributes.prof.toString();
         data.abilities.con.strMod = data.abilities.con.mod > 0 ? `+${data.abilities.con.mod}` : data.abilities.con.mod.toString();
 
         this._prepareARMods(data);
