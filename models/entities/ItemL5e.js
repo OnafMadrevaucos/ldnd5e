@@ -1,13 +1,12 @@
 import Item5e from "../../../../systems/dnd5e/module/item/entity.js";
+import { damageRoll } from "../../../../systems/dnd5e/module/dice.js";
 import { i18nStrings } from "../../scripts/constants.js";
 
 /**
  * Sobrescreve e amplia a implementação padrão do Sistema DnD5e.
  * @extends {Item5e}
  */
-export default class ItemL5e extends Item5e {
-
-    
+export default class ItemL5e extends Item5e {   
     
     /* -------------------------------------------- */
     /*  Data Preparation                            */

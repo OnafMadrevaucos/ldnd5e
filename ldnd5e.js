@@ -3,6 +3,7 @@ import ActorL5e from "./models/entities/ActorL5e.js";
 
 import { Debugger } from "./scripts/helpers.js";
 import { preloadTemplates } from "./scripts/templates.js";
+import { registerSystemSettings } from "./scripts/settings.js"
 
 import { constants, gmControl } from "./scripts/constants.js";
 import adControl from "./models/adControl.js";
@@ -24,6 +25,8 @@ Hooks.once("init", function() {
     } 
 
     preloadTemplates();
+    registerSystemSettings();
+    patchRollDamage();
 
     Handlebars.registerHelper('debug', Debugger);
 });
@@ -74,7 +77,7 @@ Hooks.on('getSceneControlButtons', (controls) => {
         const token = controls.find((c) => c.name === 'token');
         if (token) { token.tools.push(...gmControl); }
     }
-});  
+});
 
 /** ---------------------------------------------------- */
 /** Funções Internas                                     */
@@ -110,3 +113,59 @@ function hideEffects(actor, html) {
     }
 }
 
+/** ---------------------------------------------------- */
+/** Funções de Wrapper                                   */
+/** ---------------------------------------------------- */
+function patchRollDamage() {
+    libWrapper.register('ldnd5e', 'CONFIG.Dice.DamageRoll.prototype.configureDamage', async function(wrapper, config, ...rest) {
+        if(this.isCritical && game.settings.get('ldnd5e','criticalDamageModifiers')) {        
+            let flatBonus = 0;
+            
+            // Add powerful critical bonus
+            if ( this.options.powerfulCritical && (flatBonus > 0) ) {
+                this.terms.push(new OperatorTerm({operator: "+"}));
+                this.terms.push(new NumericTerm({number: flatBonus}, {flavor: game.i18n.localize("DND5E.PowerfulCritical")}));
+            }
+
+            // Add extra critical damage term
+            if ( this.isCritical && this.options.criticalBonusDamage ) {
+                const extra = new Roll(this.options.criticalBonusDamage, this.data);
+                if ( !(extra.terms[0] instanceof OperatorTerm) ) this.terms.push(new OperatorTerm({operator: "+"}));
+                this.terms.push(...extra.terms);
+            }
+
+            // Re-compile the underlying formula
+            this._formula = this.constructor.getFormula(this.terms);
+
+            // Mark configuration as complete
+            this.options.configured = true;
+        } else await wrapper(config, ...rest);
+    });
+
+    libWrapper.register('ldnd5e', 'CONFIG.Dice.DamageRoll.prototype.evaluate', async function(wrapper, config, ...rest) {
+        if(game.settings.get('ldnd5e', 'criticalDamageModifiers') && this.isCritical) {
+            let criticalFormula = "";
+            let criticalTerms = [];
+            for (let term of this.terms) {
+                if (term instanceof DiceTerm) {
+                    criticalFormula += `((${term.formula})*2)`;
+                    criticalTerms.push(term);
+                    criticalTerms.push(new OperatorTerm({operator: "*"}));
+                    criticalTerms.push(new NumericTerm({number: 2}));
+                }
+                if (term instanceof OperatorTerm) {
+                    criticalFormula += term.operator;
+                    criticalTerms.push(term);
+                }
+                if (term instanceof NumericTerm) {
+                    criticalFormula += term.number;
+                    criticalTerms.push(term);
+                }
+            }
+            this._formula = criticalFormula;
+            this.terms = criticalTerms;
+            await wrapper(config, ...rest);
+        } else await wrapper(config, ...rest);
+    });
+}
+  

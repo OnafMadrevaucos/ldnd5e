@@ -81,6 +81,11 @@
             "arControlLabel": "Deseja {action} em {value} ponto de penalidade a todos os testes do(a) {actor}?",
             "arControlLabelObs": "OBS.: A penalidade apenas aumenta o limiar de Falha Crítica.",
             "arMaxedOut": "O limiar de Falha Crítica de {actor} já se encontra no máximo. Realizar uma reação ágil agora subirá o seu nível de exaustão em 1."
+        },
+
+        "settings": {
+            "criticalName": "Crítico Multiplica Dados",
+            "criticalHint": "Faz um acerto crítico um pouco mais mortal ao multiplicar os resultados obtidos nos Dados de Dano (ignora qualquer modificador)."
         }
     }
 }

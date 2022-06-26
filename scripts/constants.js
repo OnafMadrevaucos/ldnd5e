@@ -109,6 +109,11 @@ import { default as ActorSheetORIGINAL } from "../../../systems/dnd5e/module/act
       arControlLabel: "ldnd5e.messages.arControlLabel",
       arControlLabelObs: "ldnd5e.messages.arControlLabelObs",
       arMaxedOut:"ldnd5e.messages.arMaxedOut"
+   },
+
+   settings: {
+      criticalName: "ldnd5e.settings.criticalName",
+      criticalHint: "ldnd5e.settings.criticalHint"
    }
  };
 
