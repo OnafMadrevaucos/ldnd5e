@@ -101,7 +101,7 @@ export default class adControl extends Application {
   _onActorImageClick(event){
    event.preventDefault();
 
-   const actorID = event.currentTarget.closest(".actor").dataset.actorId;
+   const actorID = event.currentTarget.closest(".item").dataset.actorId;
    const actor = game.actors.get(actorID);
 
    return actor.sheet.render(true);
@@ -138,7 +138,7 @@ export default class adControl extends Application {
      event.preventDefault();
 
      const rightClick = (event.type === "contextmenu");
-     const actorID = event.currentTarget.closest(".actor").dataset.actorId;
+     const actorID = event.currentTarget.closest(".item").dataset.actorId;
      const actor = game.actors.get(actorID);
 
      const configured = await this._configureDialog({

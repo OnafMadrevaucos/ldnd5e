@@ -22,7 +22,7 @@ Hooks.once("init", function() {
     // Verifica se o D&D 5E Português BR está atuivo ou não, para decidir qual Sheet o sistema deve Importar.
     if(game.modules.get('dnd5e_pt-BR')?.active) {
         constants.ActorSheet5eCharacter = ActorSheetBR;
-    } 
+    }     
 
     preloadTemplates();
     registerSystemSettings();
@@ -34,7 +34,7 @@ Hooks.once("init", function() {
 Hooks.once('ready', () => {
     // Verifica se algums módulos necessários estão ativos.
     if(!game.modules.get('lib-wrapper')?.active && game.user.isGM)
-        ui.notifications.error("LD&D 5e necessita do módulo 'libWrapper'. Favor instalá-lo e ativá-lo.");  
+        ui.notifications.error("LD&D 5e necessita do módulo 'libWrapper'. Favor instalá-lo e ativá-lo.");      
 
     if (!game.settings.get('dice-calculator', 'enableDiceTray')) {
         ui.notifications.error("LD&D 5e necessita do módulo 'Dice Tray'. Favor instalá-lo e ativá-lo."); 
@@ -86,8 +86,12 @@ function renderControl()
 {
     // Cria um instância do Controle de Dano Absorvido
     const form = new adControl();
+
+    if (game.modules.get('rpg-styled-ui')?.active) {
+        form.options.classes.push("dnd5e", "sheet", "actor");
+    }
     
-    return form.render(true);
+    return form._render(true);
 }
 
 /**
