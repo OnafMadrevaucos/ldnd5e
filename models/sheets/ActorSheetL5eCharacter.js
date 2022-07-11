@@ -21,7 +21,7 @@ export default class ActorSheetL5eCharacter extends constants.ActorSheet5eCharac
         return mergeObject(super.defaultOptions, {
             height: Math.max(725, 237 + (Object.keys(CONFIG.DND5E.abilities).length * 70))
         });
-      }
+    }
 
     /**@override */
     getData() {

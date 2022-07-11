@@ -11,7 +11,9 @@ import adControl from "./models/adControl.js";
 import * as ars from "./scripts/ARSystem.js";
 
 import ActorSheetL5eCharacter from "./models/sheets/ActorSheetL5eCharacter.js";
-import { ActorSheet5eCharacter as ActorSheetBR} from "../dnd5e_pt-BR/main.js";
+import ActorSheetL5eNPCs from "./models/sheets/ActorSheetL5eNPCs.js";
+import { ActorSheet5eCharacter as ActorSheetCharacterBR } from "../dnd5e_pt-BR/main.js";
+import { ActorSheet5eNPC as ActorSheetNPCsBR } from "../dnd5e_pt-BR/main.js";
 
 Hooks.once("init", function() {
     console.log("LDnD5e | Inicializando o Módulo Lemurian D&D 5th Edition...");
@@ -21,7 +23,8 @@ Hooks.once("init", function() {
 
     // Verifica se o D&D 5E Português BR está atuivo ou não, para decidir qual Sheet o sistema deve Importar.
     if(game.modules.get('dnd5e_pt-BR')?.active) {
-        constants.ActorSheet5eCharacter = ActorSheetBR;
+        constants.ActorSheet5eCharacter = ActorSheetCharacterBR;
+        constants.ActorSheet5eNPCs = ActorSheetNPCsBR;
     }     
 
     preloadTemplates();
@@ -44,6 +47,13 @@ Hooks.once('ready', () => {
     // Registra a nova classe de ActorSheet na Application.
     Actors.registerSheet("dnd5e", ActorSheetL5eCharacter, {
         types: ["character"],
+        makeDefault: true,
+        label: "ldnd5e.sheetTitle"
+    });
+
+    // Registra a nova classe de ActorSheet na Application.
+    Actors.registerSheet("dnd5e", ActorSheetL5eNPCs, {
+        types: ["npc"],
         makeDefault: true,
         label: "ldnd5e.sheetTitle"
     });
