@@ -1,13 +1,24 @@
+:root {
+  --ini25: #1841c7;
+  --ini24-20: #1a801f;
+  --ini19-15: #bedf2d;
+  --ini14-10: #be9216;
+  --ini9-5: #dd6413;
+  --ini5: #dd1414;
+
+  --defeated: #b32019;
+
+  --overlay-background-color: #eeede0c7;
+  --overlay-text-color: #860d07;
+  --overlay-heal-text-color: #072986;
+}
+
 /* ----------------------------------------- */
 /*  Sheet Styles                             */
 /* ----------------------------------------- */
 /* ----------------------------------------- */
 /*  Flexbox                                  */
 /* ----------------------------------------- */
-.defeated {
-  text-decoration: line-through;
-}
-
 .window-app .window-content .dialog-buttons-title {
   text-align: center;
   padding-left: 5px;
@@ -47,7 +58,39 @@
   border-bottom: 2px groove;
   font-style: italic;
 }
+.window-content .tab {
+  color: var(--main-text-light-color);
+}
 
+.combatant.ini25+ .token-initiative {
+  color: var(--ini25);
+}
+.combatant.ini24-20 .token-initiative {
+  color: var(--ini24-20);
+}
+.combatant.ini19-15 .token-initiative {
+  color: var(--ini19-15);
+}
+.combatant.ini14-10 .token-initiative {
+  color: var(--ini14-10);
+}
+.combatant.ini9-5 .token-initiative {
+  color: var(--ini9-5);
+}
+.combatant.ini5- .token-initiative {
+  color: var(--ini5);
+}
+.combatant.defeated {
+  text-decoration: line-through;
+}
+.combatant.defeated.ini25+ .token-initiative,
+.combatant.defeated.ini24-20 .token-initiative,
+.combatant.defeated.ini19-15 .token-initiative,
+.combatant.defeated.ini14-10 .token-initiative,
+.combatant.defeated.ini9-5 .token-initiative,
+.combatant.defeated.ini5- .token-initiative {
+  color: var(--defeated);
+}
 /* ----------------------------------------- */
 /*  All ldnd5e Apps                           */
 /* ----------------------------------------- */
@@ -632,7 +675,7 @@
   overflow-y: hidden;
 }
 .ldnd5e.app.window-app .inventory-list {
-  padding: 0 5px;
+  padding: 2px 5px;
 }
 
 .ldnd5e.app.window-app.actor .inventory-list .item .item-name {
@@ -690,8 +733,61 @@
   font-size: 14px;
   font-weight: bolder;  
 }
+.ldnd5e.app.window-app .inventory-list .item-list .items-header .item-name{
+  font-size: small;
+  font-style: italic;
+  font-variant-caps: small-caps;
+  font-weight: bold;
+  padding-left: 2px;
+}
+.ldnd5e.app.window-app .inventory-list .item-list .item-name > h5.action-label{
+  margin: 0;
+  color: var(--main-text-light-color);
+}
+
+.ldnd5e.app.window-app .inventory-list .action-detail {
+  border-left: none;
+}
+.ldnd5e.app.window-app .inventory-list .action-detail {
+  flex: 0 0 100px;  
+  font-size: x-small;
+}
+.ldnd5e.app.window-app .inventory-list .action-detail {
+  flex: 0 0 100px;  
+  font-size: x-small;
+}
 .ldnd5e.app.window-app .inventory-list .item-controls {
   flex: 0 0 44px;
+}
+.ldnd5e.app.window-app .inventory-list .item .action-detail{
+  position: relative;
+  height: 30px;
+  line-height: 30px;
+}
+.ldnd5e.app.window-app .inventory-list .item .overlay{
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--overlay-background-color);
+  overflow: hidden;
+  width: 100%;
+  height: 0;
+  transition: .25s ease;
+  
+  padding: 0 2px;
+  border-radius: 0 0 2px 2px;
+  text-align: center;
+  align-items: center;
+  line-height: 30px;
+  color: var(--overlay-text-color);
+}
+.ldnd5e.app.window-app .inventory-list .item .overlay.healing{
+  color: var(--overlay-heal-text-color);
+}
+.ldnd5e.app.window-app .inventory-list .item .action-detail:hover .overlay {
+  bottom: 0;
+  height: 100%;
 }
 /* ----------------------------------------- */
 /*  Chat Cards

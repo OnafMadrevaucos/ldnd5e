@@ -1,0 +1,22 @@
+.gm-screen-app .gm-screen-grid-cell-content-wrapper{
+    color: var(--main-text-light-color);
+}
+
+.ldnd5e.app.window-app .inventory-list .item-list .items-header .item-name{
+    font-size: small;
+    font-style: italic;
+    font-variant-caps: small-caps;
+    font-weight: bold;
+    padding-left: 2px;
+}
+.ldnd5e.app.window-app .inventory-list .item-list .item-name > h5.action-label{
+    margin: 0;
+    color: var(--main-text-light-color);
+} 
+.ldnd5e.app.window-app .inventory-list .action-detail {
+    flex: 0 0 100px;  
+    font-size: x-small;
+}
+.ldnd5e.app.window-app .inventory-list .action-detail {
+    border-left: none;
+}

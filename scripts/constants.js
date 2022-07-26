@@ -31,10 +31,12 @@ import {default as ActorSheetNPCsORIGINAL} from "../../../systems/dnd5e/module/a
 
  const i18nStrings = {
    title : "ldnd5e.title",
+   npcsStatsTitle: "ldnd5e.npcsStatsTitle",
    adSystemTitle: "ldnd5e.adSystemTitle",
    arSystemTitle: "ldnd5e.arSystemTitle",
 
    sheetTitle: "ldnd5e.sheetTitle",
+   pcsLabel: "ldnd5e.pcsLabel",
    armorLabel: "ldnd5e.armorLabel",
    shieldLabel: "ldnd5e.shieldLabel",
    itemOwner:"ldnd5e.itemOwner",

@@ -1,0 +1,142 @@
+<ol class="items-list inventory-list">
+{{#each sections as |section sid|}}
+    {{#if section.npcs}} 
+    {{#with section as |sectionData|}}
+    {{#each sectionData.actors as |actor aid|}}    
+    <ol class="items-header flexrow" data-actor-id="{{actor.data.id}}">
+        <h3 class="item-name flexrow">{{actor.data.name}}</h3>                                           
+                     
+        <div class="item-detail">CA {{actor.data.data.data.attributes.ac.value}}</div>
+        <div class="item-detail">ND {{actor.data.data.data.details.cr}}</div>            
+    </ol>
+
+    <ol class="item-list">         
+    {{#each actor.actions.features as |feature acid|}}
+        <ol class="items-header flexrow">
+            <h4 class="item-name flexrow">{{feature.label}}</h3>
+        </ol> 
+        {{#debug actor.actions}}{{/debug}}
+        {{#each feature.items as |action acid|}}   
+        <li class="item action flexrow" data-actor-id="{{actor.data.id}}" data-item-id="{{action.id}}">
+            <div class="item-name action-name flexrow">    
+                <div class="item-image action-image" tabindex="0" role="button" aria-label="{{action.name}}" style="background-image: url('{{action.img}}')"></div>
+                <h5 class="action-label">{{action.name~}}</h4>                                            
+            </div>   
+            <div class="item-detail action-detail">{{action.labels.activation}}</div> 
+            <div class="item-detail action-detail save-control" data-ability="{{action.data.data.save.ability}}">
+                {{#if action.hasSave}}
+                    {{localize 'Salvaguarda'}}
+                    <div class="overlay">
+                        <a class="roll-overlay" title='{{localize "Salvaguarda"}}'>            
+                            <i class="fas fa-dice-d20"></i> {{action.labels.save}}
+                        </a>
+                    </div>
+                    {{else}}&dash;
+                {{/if}}    
+            </div>            
+            <div class="item-detail action-detail attack-control">
+            {{#if action.hasAttack}}
+                {{localize 'Atacar'}}
+                <div class="overlay">
+                    <a class="roll-overlay" title='{{localize "Ataque"}}'>            
+                        <i class="fas fa-dice-d20"></i> {{action.labels.toHit}}
+                    </a>
+                </div>
+            {{else}}
+                &dash;
+            {{/if}} 
+            </div> 
+            <div class="item-detail action-detail damage-control">
+                {{#if action.hasDamage}}
+                {{#if action.isHealing}}
+                {{localize 'Cura'}}
+                    <div class="overlay healing">
+                        <a class="roll-overlay" title='{{localize "Cura"}}'>            
+                            <i class="fas fa-dice"></i>  {{action.labels.simpleFormula}}
+                        </a>
+                    </div>                        
+                {{else}}
+                {{localize 'Dano'}}
+                <div class="overlay">
+                    <a class="roll-overlay" title='{{localize "Dano"}}'>            
+                        <i class="fas fa-dice"></i>  {{action.labels.simpleFormula}}
+                    </a>
+                </div>
+                {{/if}}
+                {{else}}
+                &dash;
+                {{/if}}
+            </div>
+                                         
+        </li>        
+        {{/each}}   
+    {{/each}}
+    </ol>
+    <ol class="item-list">   
+        <ol class="items-header flexrow">
+            <h4 class="item-name flexrow">{{localize 'Magias'}}</h3>
+        </ol>      
+    {{#each actor.actions.spellbook as |spell sbid|}}         
+        {{#debug actor.actions}}{{/debug}}
+        <li class="item action flexrow" data-actor-id="{{actor.data.id}}" data-item-id="{{spell.id}}">
+            <div class="item-name action-name flexrow">    
+                <div class="item-image action-image" tabindex="0" role="button" aria-label="{{spell.name}}" style="background-image: url('{{spell.img}}')"></div>
+                <h5 class="action-label">{{spell.name~}}</h4>                                            
+            </div>
+            {{#cond spell.data.data.level '>=' 1}}<div class="item-detail action-detail">{{spell.labels.level}}</div>{{/cond}}    
+            {{#cond spell.data.data.level '==' 0}}<div class="item-detail action-detail">{{localize 'Truque'}}</div>{{/cond}}    
+            <div class="item-detail action-detail">{{spell.labels.activation}}</div> 
+            <div class="item-detail action-detail save-control" data-ability="{{spell.data.data.save.ability}}">
+                {{#if spell.hasSave}}
+                    {{localize 'Salvaguarda'}}
+                    <div class="overlay">
+                        <a class="roll-overlay" title='{{localize "Salvaguarda"}}'>            
+                            <i class="fas fa-dice-d20"></i> {{spell.labels.save}}
+                        </a>
+                    </div>
+                {{else}}
+                    &dash;
+                {{/if}}    
+            </div>               
+            <div class="item-detail action-detail attack-control">
+                {{#if spell.hasAttack}}
+                {{localize 'Atacar'}}
+                <div class="overlay">
+                    <a class="roll-overlay" title='{{localize "Ataque"}}'>            
+                        <i class="fas fa-dice-d20"></i>  {{spell.labels.toHit}}
+                    </a>
+                </div>
+                {{else}}
+                    &dash;
+                {{/if}} 
+            </div>
+             
+            <div class="item-detail action-detail damage-control">
+                {{#if spell.hasDamage}}
+                {{#if spell.isHealing}}
+                {{localize 'Cura'}}
+                    <div class="overlay healing">
+                        <a class="roll-overlay" title='{{localize "Cura"}}'>            
+                            <i class="fas fa-dice"></i>  {{spell.labels.simpleFormula}}
+                        </a>
+                    </div>                        
+                {{else}}
+                {{localize 'Dano'}}
+                <div class="overlay">
+                    <a class="roll-overlay" title='{{localize "Dano"}}'>            
+                        <i class="fas fa-dice"></i>  {{spell.labels.simpleFormula}}
+                    </a>
+                </div>
+                {{/if}}
+                {{else}}                    
+                    &dash;
+                {{/if}}
+            </div>     
+        </li> 
+    {{/each}}
+    </ol>
+    {{/each}}
+    {{/with}}
+    {{/if}}
+{{/each}}
+</ol>

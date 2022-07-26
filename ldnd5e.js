@@ -1,7 +1,7 @@
 import ItemL5e from "./models/entities/ItemL5e.js";
 import ActorL5e from "./models/entities/ActorL5e.js";
 
-import { Debugger } from "./scripts/helpers.js";
+import { Debugger, CondHelper } from "./scripts/helpers.js";
 import { preloadTemplates } from "./scripts/templates.js";
 import { registerSystemSettings } from "./scripts/settings.js"
 
@@ -29,21 +29,20 @@ Hooks.once("init", function() {
 
     preloadTemplates();
     registerSystemSettings();
-    patchRollDamage();
+    patchRollDamage();    
+
+    if (game.modules.get('rpg-styled-ui')?.active && game.modules.get('gm-screen')?.active)
+        patchSheetText();    
 
     Handlebars.registerHelper('debug', Debugger);
+    Handlebars.registerHelper('cond', CondHelper);
 });
 
 Hooks.once('ready', () => {
     // Verifica se algums módulos necessários estão ativos.
     if(!game.modules.get('lib-wrapper')?.active && game.user.isGM)
         ui.notifications.error("LD&D 5e necessita do módulo 'libWrapper'. Favor instalá-lo e ativá-lo.");      
-
-    if (!game.settings.get('dice-calculator', 'enableDiceTray')) {
-        ui.notifications.error("LD&D 5e necessita do módulo 'Dice Tray'. Favor instalá-lo e ativá-lo."); 
-        return;
-    }  
-        
+  
     // Registra a nova classe de ActorSheet na Application.
     Actors.registerSheet("dnd5e", ActorSheetL5eCharacter, {
         types: ["character"],
@@ -125,6 +124,16 @@ function hideEffects(actor, html) {
             Array.from(btns).forEach((value) => {value.hidden = true;});
         }
     }
+}
+
+function patchSheetText() {
+    const head = document.getElementsByTagName("head")[0];
+	const mainCss = document.createElement("link");
+	mainCss.setAttribute("rel", "stylesheet")
+	mainCss.setAttribute("type", "text/css")
+	mainCss.setAttribute("href", "modules/ldnd5e/css/rpg-ui.css")
+	mainCss.setAttribute("media", "all")
+	head.insertBefore(mainCss, head.lastChild);
 }
 
 /** ---------------------------------------------------- */

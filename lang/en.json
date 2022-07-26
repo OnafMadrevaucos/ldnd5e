@@ -1,10 +1,12 @@
 {
     "ldnd5e" : {
         "title" : "Controle D&D 5º Ed. - Lemúria",
+        "npcsStatsTitle": "Estatísticas NPCs em Combate",
         "adSystemTitle" : "Sistema de Danos Absorvidos",
         "arSystemTitle" : "Sistema de Reação Ágil",
         
         "sheetTitle": "LDnD5e Character Sheet",
+        "pcsLabel": "Personagens de Jogadores",
         "armorLabel": "Armaduras",
         "shieldLabel": "Escudos",
         "itemOwner": "Dono",

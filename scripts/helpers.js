@@ -4,8 +4,41 @@
  * @returns {HTMLContent}
 */
 export const Debugger = function(data) {
-    console.log("unionV3 | Debugando o sistema Union v3 para Foundry VTT...");
+    console.log("ldnd5e | Debugando o sistema LD&D 5e para Foundry VTT...");
     console.log(data);
+}
+
+/**
+ * Define Helpers para o Handlebar.
+ * Pre-loaded templates are compiled and cached for fast access when rendering
+ * @returns {HTMLContent}
+ */
+ export const CondHelper = function (v1, operator, v2, content) {
+    
+    switch (operator) {
+        case '==':
+            return (v1 == v2) ? content.fn(this) : content.inverse(this);
+        case '===':
+            return (v1 === v2) ? content.fn(this) : content.inverse(this);
+        case '!=':
+            return (v1 != v2) ? content.fn(this) : content.inverse(this);
+        case '!==':
+            return (v1 !== v2) ? content.fn(this) : content.inverse(this);
+        case '<':
+            return (v1 < v2) ? content.fn(this) : content.inverse(this);
+        case '<=':
+            return (v1 <= v2) ? content.fn(this) : content.inverse(this);
+        case '>':
+            return (v1 > v2) ? content.fn(this) : content.inverse(this);
+        case '>=':
+            return (v1 >= v2) ? content.fn(this) : content.inverse(this);
+        case '&&':
+            return (v1 && v2) ? content.fn(this) : content.inverse(this);
+        case '||':
+            return (v1 || v2) ? content.fn(this) : content.inverse(this);
+        default:
+            return content.inverse(this);
+    }
 }
 
 /**

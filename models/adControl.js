@@ -1,7 +1,8 @@
 import { constants, i18nStrings } from "../scripts/constants.js";
 import { computaDA, computaHALF, computaSUB, computaZERAR } from "../scripts/DASystem.js";
 import { updateFumbleRange, updateExhaustionLevel } from "../scripts/ARSystem.js";
-import { d20Roll } from "../../../systems/dnd5e/module/dice.js";
+import { simplifyRollFormula, d20Roll } from "../../../systems/dnd5e/module/dice.js";
+import Item5e from "../../../systems/dnd5e/module/item/entity.js";
 
 const ACTIVE_EFFECT_MODES = CONST.ACTIVE_EFFECT_MODES;
 const ADD = ACTIVE_EFFECT_MODES.ADD;
@@ -61,12 +62,12 @@ export default class adControl extends Application {
          id: constants.moduleName,
          classes: [constants.moduleName],
          template: constants.templates.mainTemplate,
-         width: 700,
-         height: 480,
+         width: 900,
+         height: 650,
          minimizable: true,
          resizable: false,
          title: game.i18n.localize(i18nStrings.title),
-         tabs: [{ navSelector: '.tabs', contentSelector: '.sheet-body', initial: 'pcs-list' }]
+         tabs: [{ navSelector: '.tabs', contentSelector: '.sheet-body', initial: 'npcs-stats' }]
       });
    }
 
@@ -85,29 +86,78 @@ export default class adControl extends Application {
           html.find(".actor-image").click(this._onActorImageClick.bind(this)); 
           html.find(".ar-control").click(this._onARControlClick.bind(this));
           html.find(".ar-control").contextmenu(this._onARControlClick.bind(this));
+          //Listeners de Rolagem de NPCs
+          html.find(".save-control").click(this._onNPCSaveClick.bind(this));
+          html.find(".attack-control").click(this._onNPCRollClick.bind(this));
+          html.find(".damage-control").click(this._onNPCDamageClick.bind(this));
       }
 
       super.activateListeners(html);
   }
 
-  _onOwnerImageClick(event){
+   async _onNPCSaveClick(event) {
+      event.preventDefault();
+
+      const itemID = event.currentTarget.closest(".item").dataset.itemId;
+      const ownerID = event.currentTarget.closest(".item").dataset.actorId;
+      const owner = game.actors.get(ownerID);
+      const item = owner.data.items.get(itemID);
+
+      if(item.hasSave) {  
+         const card = await item.displayCard();
+         const targets = Item5e._getChatCardTargets(card);
+         for ( let token of targets ) {
+            const speaker = ChatMessage.getSpeaker({scene: canvas.scene, token: token});
+            await token.actor.rollAbilitySave(event.currentTarget.dataset.ability, { event, speaker });
+         }
+      }
+   }
+   async _onNPCRollClick(event) {
+      event.preventDefault();
+
+      const itemID = event.currentTarget.closest(".item").dataset.itemId;
+      const ownerID = event.currentTarget.closest(".item").dataset.actorId;
+      const owner = game.actors.get(ownerID);
+      const item = owner.data.items.get(itemID);
+
+      if(item.hasAttack) {  
+         await item.displayCard();
+         item.rollAttack();
+      }
+   }
+
+   async _onNPCDamageClick(event) {
+      event.preventDefault();
+
+      const itemID = event.currentTarget.closest(".item").dataset.itemId;
+      const ownerID = event.currentTarget.closest(".item").dataset.actorId;
+      const owner = game.actors.get(ownerID);
+      const item = owner.data.items.get(itemID);
+
+      if(item.hasDamage) {
+         await item.displayCard();
+         item.rollDamage();
+      }
+   }
+
+   _onOwnerImageClick(event){
       event.preventDefault();
 
       const ownerID = event.currentTarget.closest(".item").dataset.ownerId;
       const owner = game.actors.get(ownerID);
 
       return owner.sheet.render(true);
-  }
-  _onActorImageClick(event){
-   event.preventDefault();
+   }
+   _onActorImageClick(event){
+      event.preventDefault();
 
-   const actorID = event.currentTarget.closest(".item").dataset.actorId;
-   const actor = game.actors.get(actorID);
+      const actorID = event.currentTarget.closest(".item").dataset.actorId;
+      const actor = game.actors.get(actorID);
 
-   return actor.sheet.render(true);
-}
+      return actor.sheet.render(true);
+   }
 
-  async _onDLControlClick(event) {
+   async _onDLControlClick(event) {
       event.preventDefault();
 
       const dlType = event.currentTarget.closest(".dl-control").dataset.dlType;
@@ -132,7 +182,7 @@ export default class adControl extends Application {
       this.render(true);
 
       return item;
-  }
+   }
 
   async _onARControlClick(event) {
      event.preventDefault();
@@ -541,23 +591,42 @@ export default class adControl extends Application {
    computeData() {
    
       const data = {
-          pcs: {label: "Personagens de Jogadores", actors: [], ad: false, ar: true},
-          armor: { label: "ldnd5e.armorLabel", items: [], tipoShield: false, dataset: {type: "equipament", subtype: "", armorType: ""}, ad: true, ar: false },
-          shield: { label: "ldnd5e.shieldLabel", items: [], tipoShield: true, dataset: {type: "equipament", subtype: "", armorType: ""}, ad: true, ar: false }
+          npcs:{ actors: [], npcs: true, ad: false, ar: false },
+          pcs: { label: "ldnd5e.pcsLabel", actors: [], npcs: false, ad: false, ar: true },
+          armor: { label: "ldnd5e.armorLabel", items: [], tipoShield: false, dataset: {type: "equipament", subtype: "", armorType: ""}, npcs: false, ad: true, ar: false },
+          shield: { label: "ldnd5e.shieldLabel", items: [], tipoShield: true, dataset: {type: "equipament", subtype: "", armorType: ""}, npcs: false, ad: true, ar: false }
       };
    
       for(let actor of game.actors) {
-          if(actor.type == "character") {
+          if(actor.type == "character") {   
+               const items = actor.configArmorData();
    
-              const items = actor.configArmorData();
-   
-              // Organize items
-              for ( let i of items ) {             
+               // Organize items
+               for ( let i of items ) {             
                   data[i.subtype].items.push(i);
-              }
+               }
 
-              data.pcs.actors.push(actor);
-          }
+               data.pcs.actors.push(actor);
+          } 
+      }
+
+      for(let token of canvas.tokens.ownedTokens) {
+         const actor = token.actor;
+         if(actor.type == "npc"){
+            const npc = {};
+            npc.data = actor;
+            npc.actions = this.prepareNPCsItems(actor.data);
+
+            let isNew = true;
+            for(let oldNpc of data.npcs.actors) {
+               if(oldNpc.data.id == npc.data.id) {
+                  isNew = false;
+                  break;
+               }
+            }
+
+            if(isNew) data.npcs.actors.push(npc);
+         }
       }
    
       return data;
@@ -672,15 +741,66 @@ export default class adControl extends Application {
       } else return true;
    }
 
-   async _playWAV(preset) {
-      var audio = null;
+   /**
+   * Organize Owned Items for rendering the NPC sheet.
+   * @param {object} data  Copy of the actor data being prepared for displayed. *Will be mutated.*
+   * @private
+   */
+   prepareNPCsItems(data) {
+      const items = {};
+      // Categorize Items as Features and Spells
+      const features = {
+         weapons: { label: game.i18n.localize("DND5E.AttackPl"), items: [], hasActions: true, dataset: {type: "weapon", "weapon-type": "natural"} },
+         actions: { label: game.i18n.localize("DND5E.ActionPl"), items: [], hasActions: true, dataset: {type: "feat", "activation.type": "action"} }
+      };
 
-      switch(preset) {
-         case "RS": {
-            audio = new Audio("modules/ldnd5e/sfx/repair-sucess.mp3");
-            audio.playbackRate = 2;
-         } break;
-      } 
-      await audio?.play();
+      // Start by classifying items into groups for rendering
+      let [spells, other] = data.items.reduce((arr, item) => {
+         if ( item.type === "spell" ) arr[0].push(item);
+         else arr[1].push(item);
+         return arr;
+      }, [[], []]);
+
+      // Organize Features
+      for ( let item of other ) {
+         const itemData = item.data;         
+         if ( item.type === "weapon" ) {
+            item.labels.simpleFormula = this._getSimpleFormula(item); 
+            features.weapons.items.push(item);
+         } else if ( item.type === "feat" ){
+            if ( itemData.data.activation.type ) {
+               item.labels.simpleFormula = this._getSimpleFormula(item); 
+               features.actions.items.push(item);
+            }
+         }
+      }
+
+      // Organize Spells
+      for ( let item of spells ) {      
+         item.labels.simpleFormula = this._getSimpleFormula(item);          
+      }
+
+      // Assign and return
+      items.features = Object.values(features);
+      items.spellbook = spells;
+
+      return items;
+   }
+
+   _getSimpleFormula(item) {
+      const rollData = item.getRollData();
+      const data = item.data.data;
+
+      let formula = "";
+      for ( let damage of data.damage.parts ) {
+         try {
+           const roll = new Roll(damage[0], rollData);
+           if(formula === "") formula = simplifyRollFormula(roll.formula, { preserveFlavor: true })
+           else formula = formula.concat("+", simplifyRollFormula(roll.formula, { preserveFlavor: true }));
+         }
+         catch(err) { console.warn(`Unable to simplify formula for ${this.name}: ${err}`); }
+      }
+
+      return formula.replaceAll(" ","");
    }
 }
