@@ -3,7 +3,7 @@
     "title":  "Lemurian Dungeons & Dragons 5th Edition",
     "description": "Some homebrew systems for Dungeons & Dragons 5th Edition.",
     "author": "Onaf Madrevaucos",
-    "version": "0.2.4",
+    "version": "0.2.5",
     "minimumCoreVersion": "0.9",
 
     "system": ["dnd5e"],

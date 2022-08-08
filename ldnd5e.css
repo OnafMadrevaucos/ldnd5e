@@ -682,6 +682,7 @@
   cursor: default;
 }
 
+.ldnd5e.app.window-app .inventory-list .npc-header .npc-name,
 .ldnd5e.app.window-app .inventory-list .item .item-name .ar-control,
 .ldnd5e.app.window-app .tab:not(.pcs-list) .inventory-list .item .item-name .item-image,
 .ldnd5e.app.window-app .inventory-list .item .item-detail.ar-control,
@@ -691,6 +692,7 @@
   cursor: pointer;
 }
 
+.ldnd5e.app.window-app .inventory-list .npc-header .npc-name:hover,
 .ldnd5e.app.window-app .inventory-list .item .item-name .ar-control:hover,
 .ldnd5e.app.window-app .inventory-list .item .item-detail.ar-control:hover,
 .ldnd5e.app.window-app .inventory-list .item .item-detail.full-repair-control:hover,
@@ -739,6 +741,20 @@
   font-variant-caps: small-caps;
   font-weight: bold;
   padding-left: 2px;
+}
+.ldnd5e.app.window-app .inventory-list .npc-summary {
+  transition: height .5s ease;
+  overflow  : hidden;
+}
+.ldnd5e.app.window-app .inventory-list .npc-header {
+  height: 55px;
+}
+.ldnd5e.app.window-app .inventory-list .npc-header .npc-image{
+  flex: 0 0 30px;
+  height: 30px;
+  width: 30px;
+
+  background-size: 30px;
 }
 .ldnd5e.app.window-app .inventory-list .item-list .item-name > h5.action-label{
   margin: 0;

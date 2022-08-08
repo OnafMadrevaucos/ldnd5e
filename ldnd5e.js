@@ -63,6 +63,9 @@ Hooks.once('ready', () => {
     
         // Create groups
         ars.manageGroups(app.popOut);
+
+        if(CONFIG.adControl)
+            CONFIG.adControl.refresh(true);        
     });
     
     // Re-render the combat tracker in case the initial render was missed
