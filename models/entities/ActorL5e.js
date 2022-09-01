@@ -1,15 +1,12 @@
-import Actor5e from "../../../../systems/dnd5e/module/actor/entity.js";
+import { documents } from "../../../../systems/dnd5e/dnd5e.mjs";
 import * as ars from "../../scripts/ARSystem.js";
 import * as das from "../../scripts/DASystem.js";
 import { constants, i18nStrings } from "../../scripts/constants.js";
 
-import { DND5E } from "../../../../systems/dnd5e/module/config.js";
-import { d20Roll } from "../../../../systems/dnd5e/module/dice.js";
-
 const ACTIVE_EFFECT_MODES = CONST.ACTIVE_EFFECT_MODES;
 const ADD = ACTIVE_EFFECT_MODES.ADD;
 
-export default class ActorL5e extends Actor5e { 
+export default class ActorL5e extends documents.Actor5e { 
 
     /** @override */
     async _onCreate(data, options, user) {
@@ -22,8 +19,8 @@ export default class ActorL5e extends Actor5e {
     prepareDerivedData() {
         super.prepareDerivedData();  
         
-        const actorData = this.data;
-        const data = actorData.data;
+        const actorData = this;
+        const data = actorData.system;
         
         data.profMod = data.attributes.prof > 0 ? `+${data.attributes.prof}` : data.attributes.prof.toString();
         data.abilities.con.strMod = data.abilities.con.mod > 0 ? `+${data.abilities.con.mod}` : data.abilities.con.mod.toString();
@@ -40,9 +37,9 @@ export default class ActorL5e extends Actor5e {
 
     /** @override */
     rollSkill(skillId, options={}) {
-        const skl = this.data.data.skills[skillId];
-        const abl = this.data.data.abilities[skl.ability];
-        const bonuses = getProperty(this.data.data, "bonuses.abilities") || {};
+        const skl = this.system.skills[skillId];
+        const abl = this.system.abilities[skl.ability];
+        const bonuses = getProperty(this.system, "bonuses.abilities") || {};
     
         const parts = [];
         const data = this.getRollData();
@@ -106,7 +103,7 @@ export default class ActorL5e extends Actor5e {
             "flags.dnd5e.roll": {type: "skill", skillId }
           }
         });
-        return d20Roll(rollData);
+        return dnd5e.dice.d20Roll(rollData);
     }
 
     /**@override */
@@ -122,8 +119,8 @@ export default class ActorL5e extends Actor5e {
     async rollDeathSave(options={}) {
 
         // Display a warning if we are not at zero HP or if we already have reached 3
-        const death = this.data.data.attributes.death;
-        if ( (this.data.data.attributes.hp.value > 0) || (death.failure >= 3) || (death.success >= 3)) {
+        const death = this.system.attributes.death;
+        if ( (this.system.attributes.hp.value > 0) || (death.failure >= 3) || (death.success >= 3)) {
           ui.notifications.warn(game.i18n.localize("DND5E.DeathSaveUnnecessary"));
           return null;
         }
@@ -136,11 +133,11 @@ export default class ActorL5e extends Actor5e {
         // Diamond Soul adds proficiency
         if ( this.getFlag("dnd5e", "diamondSoul") ) {
           parts.push("@prof");
-          data.prof = new Proficiency(this.data.data.attributes.prof, 1).term;
+          data.prof = new Proficiency(this.system.attributes.prof, 1).term;
         }
     
         // Include a global actor ability save bonus
-        const bonuses = foundry.utils.getProperty(this.data.data, "bonuses.abilities") || {};
+        const bonuses = foundry.utils.getProperty(this.system, "bonuses.abilities") || {};
         if ( bonuses.save ) {
           parts.push("@saveBonus");
           data.saveBonus = Roll.replaceFormulaData(bonuses.save, data);
@@ -161,7 +158,7 @@ export default class ActorL5e extends Actor5e {
             "flags.dnd5e.roll": {type: "death"}
           }
         });
-        const roll = await d20Roll(rollData);
+        const roll = await dnd5e.dice.d20Roll(rollData);
         if ( !roll ) return null;
     
         // Take action depending on the result
@@ -177,9 +174,9 @@ export default class ActorL5e extends Actor5e {
           // Critical Success = revive with 1hp
           if ( d20 === 20 ) {
             await this.update({
-              "data.attributes.death.success": 0,
-              "data.attributes.death.failure": 0,
-              "data.attributes.hp.value": 1
+              "system.attributes.death.success": 0,
+              "system.attributes.death.failure": 0,
+              "system.attributes.hp.value": 1
             });
             chatString = "DND5E.DeathSaveCriticalSuccess";
           }
@@ -187,20 +184,20 @@ export default class ActorL5e extends Actor5e {
           // 3 Successes = survive and reset checks
           else if ( successes === 3 ) {
             await this.update({
-              "data.attributes.death.success": 0,
-              "data.attributes.death.failure": 0
+              "system.attributes.death.success": 0,
+              "system.attributes.death.failure": 0
             });
             chatString = "DND5E.DeathSaveSuccess";
           }
     
           // Increment successes
-          else await this.update({"data.attributes.death.success": Math.clamped(successes, 0, 3)});
+          else await this.update({"system.attributes.death.success": Math.clamped(successes, 0, 3)});
         }
     
         // Save failure
         else {
           let failures = (death.failure || 0) + (d20 <= data.attributes.fumbleRange ? 2 : 1);
-          await this.update({"data.attributes.death.failure": Math.clamped(failures, 0, 3)});
+          await this.update({"system.attributes.death.failure": Math.clamped(failures, 0, 3)});
           if ( failures >= 3 ) {  // 3 Failures = death
             chatString = "DND5E.DeathSaveFailure";
           }
@@ -261,13 +258,13 @@ export default class ActorL5e extends Actor5e {
     configArmorData() {
         return this.items.reduce((arr, item) => {
    
-            if(item.type === "equipment" && DND5E.armorTypes[item.data.data.armor?.type]) {
+            if(item.type === "equipment" && CONFIG.DND5E.armorTypes[item.system.armor?.type]) {
 
-               item.equipped = (item.actor.data.data.attributes.ac.equippedArmor?.id === item.id ||
-                                item.actor.data.data.attributes.ac.equippedShield?.id === item.id);
+               item.equipped = (item.actor.system.attributes.ac.equippedArmor?.id === item.id ||
+                                item.actor.system.attributes.ac.equippedShield?.id === item.id);
                
-               item.armorType = item.data.data.armor.type; 
-               item.destroyed = item.data.data.armor.destroyed; 
+               item.armorType = item.system.armor.type; 
+               item.destroyed = item.system.armor.destroyed; 
                item.subtype =  (item.armorType === "shield" ? "shield" : "armor");                     
                arr.push(item); 
             }
@@ -287,7 +284,7 @@ export default class ActorL5e extends Actor5e {
                 label: game.i18n.localize(i18nStrings.activeEffectLabel),
                 icon: constants.images.armorEffectDefault,
                 origin: this.uuid,
-                changes: [{ key: "data.attributes.ac.bonus", mode: ADD, priority: 50, value: "0" }], 
+                changes: [{ key: "system.attributes.ac.bonus", mode: ADD, priority: 50, value: "0" }], 
                 duration: {}
             };
       
@@ -297,7 +294,7 @@ export default class ActorL5e extends Actor5e {
                 label: game.i18n.localize(i18nStrings.activeEffectShieldLabel),
                 icon: constants.images.shieldEffectDefault,
                 origin: this.uuid,
-                changes: [{ key: "data.attributes.ac.bonus", mode: ADD, priority: 51, value: "0" }], 
+                changes: [{ key: "system.attributes.ac.bonus", mode: ADD, priority: 51, value: "0" }], 
                 duration: {}
             };
 
@@ -321,7 +318,7 @@ export default class ActorL5e extends Actor5e {
             label: data.label,
             icon: data.icon,
             origin: data.origin,
-            changes: [{ key: "data.attributes.ac.bonus", mode: ADD, priority: 50, value: value }], 
+            changes: [{ key: "system.attributes.ac.bonus", mode: ADD, priority: 50, value: value }], 
             duration: {}
         };
         await this.updateEmbeddedDocuments("ActiveEffect", [newEffect]);

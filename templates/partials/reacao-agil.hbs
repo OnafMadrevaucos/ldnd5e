@@ -19,11 +19,11 @@
                 <div class="item-image actor-portrait" tabindex="0" role="button" aria-label="{{actor.name}}" style="background-image: url('{{actor.img}}')"></div>
                 <h4 class="ar-control">{{actor.name~}}</h4>                                            
             </div>
-            <div class="item-detail">{{actor.data.data.profMod}}</div>
-            <div class="item-detail">{{actor.data.data.abilities.con.strMod}}</div>
-            <div class="item-detail">{{actor.data.data.attributes.exhaustion}}</div>
-            <div class="item-detail">{{actor.data.data.attributes.rpMod}}</div>
-            <div class="item-detail">{{actor.data.data.attributes.fumbleRange}}</div>   
+            <div class="item-detail">{{actor.system.profMod}}</div>
+            <div class="item-detail">{{actor.system.abilities.con.strMod}}</div>
+            <div class="item-detail">{{actor.system.attributes.exhaustion}}</div>
+            <div class="item-detail">{{actor.system.attributes.rpMod}}</div>
+            <div class="item-detail">{{actor.system.attributes.fumbleRange}}</div>   
         </li>
     {{/each}}
     </ol>

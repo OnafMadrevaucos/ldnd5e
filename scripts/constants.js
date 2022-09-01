@@ -1,5 +1,3 @@
-import { default as ActorSheetCharacterORIGINAL } from "../../../systems/dnd5e/module/actor/sheets/character.js";
-import {default as ActorSheetNPCsORIGINAL} from "../../../systems/dnd5e/module/actor/sheets/npc.js";
 /**
  * Defines the main FQL constants for module name and the DB flag.
  *
@@ -9,8 +7,8 @@ import {default as ActorSheetNPCsORIGINAL} from "../../../systems/dnd5e/module/a
     moduleName: 'ldnd5e',
     moduleLabel: 'Lemurian Dungeons & Dragons 5th Edition',
 
-    ActorSheet5eCharacter: ActorSheetCharacterORIGINAL,
-    ActorSheet5eNPCs: ActorSheetNPCsORIGINAL,
+    ActorSheet5eCharacter: dnd5e.applications.actor.ActorSheet5eCharacter,
+    ActorSheet5eNPCs: dnd5e.applications.actor.ActorSheet5eNPC,
     
     templates: {
         mainTemplate: 'modules/ldnd5e/templates/mainControl.hbs',

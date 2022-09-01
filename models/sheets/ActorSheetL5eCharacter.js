@@ -25,8 +25,8 @@ export default class ActorSheetL5eCharacter extends constants.ActorSheet5eCharac
     }
 
     /**@override */
-    getData() {
-        const sheetData = super.getData();
+    async getData() {
+        const sheetData = await super.getData();
         const actor = this.actor;
 
         if(!CONFIG.adControl && actor.type == "character") actor.configArmorData(actor);
@@ -42,10 +42,10 @@ export default class ActorSheetL5eCharacter extends constants.ActorSheet5eCharac
         const actor = this.actor;
         const itemId = event.currentTarget.closest(".item").dataset.itemId;
         const item = actor.items.get(itemId);
-        const data = actor.data.data;        
+        const data = actor.system;        
 
-        if(item.data.data.armor?.destroyed) {
-            ui.notifications.warn(game.i18n.format(i18nStrings.messages.itemDestroyed, {item: item.data.name}));
+        if(!item.equipped && item.system.armor?.destroyed) {
+            ui.notifications.warn(game.i18n.format(i18nStrings.messages.itemDestroyed, {item: item.name}));
             return;
         }
 
@@ -60,7 +60,7 @@ export default class ActorSheetL5eCharacter extends constants.ActorSheet5eCharac
         event.preventDefault();        
         const actor = this.actor;
         const items = await super._onItemCreate(event);
-        const data = actor.data.data;   
+        const data = actor.system;   
 
         for(let item of items) {
             if(["armor", "shield"].includes(item?.subtype) && item?.equipped) {
@@ -88,7 +88,7 @@ export default class ActorSheetL5eCharacter extends constants.ActorSheet5eCharac
         const actor = this.actor;
         const li = event.currentTarget.closest(".item");
         const item = this.actor.items.get(li.dataset.itemId);  
-        const data = actor.data.data; 
+        const data = actor.system; 
         
         if(["armor", "shield"].includes(item?.subtype))
             await this._computeEquipArmorShield(data, item, this.ACTION_TYPE.DELETE);
@@ -100,11 +100,11 @@ export default class ActorSheetL5eCharacter extends constants.ActorSheet5eCharac
     _prepareActiveEffectAttributions(target) {
         let atrib = [];
 
-        if(["data.attributes.ac.bonus"].includes(target)) {
+        if(["system.attributes.ac.bonus"].includes(target)) {
             atrib = this.actor.effects.reduce((arr, e) => {
-                let source = e.data.label;
-                if ( !source || e.data.disabled || e.isSuppressed ) return arr;
-                const value = e.data.changes.reduce((n, change) => {
+                let source = e.label;
+                if ( !source || e.disabled || e.isSuppressed ) return arr;
+                const value = e.changes.reduce((n, change) => {
                   if ( (change.key !== target) || !Number.isNumeric(change.value) ) return n;
                   if ( change.mode !== CONST.ACTIVE_EFFECT_MODES.ADD ) return n;
                   return n + Number(change.value);
@@ -146,7 +146,7 @@ export default class ActorSheetL5eCharacter extends constants.ActorSheet5eCharac
                     // A Armadura alterada é a mesma que está equipada?
                     if(item.id === equip.armor.id) {
                         // Remova o efeito de avaria.
-                        await this.actor.updateArmorDamageEffects(effects.armor.data, "0");
+                        await this.actor.updateArmorDamageEffects(effects.armor, "0");
                         await this.actor.setFlag("ldnd5e", "armorEffect", {effectID: flags.armor.effectID, armorID: "none"});
                     }
                 // Isso é um equip então.
@@ -158,18 +158,18 @@ export default class ActorSheetL5eCharacter extends constants.ActorSheet5eCharac
                         // A Armadura atribuída ao Active Effect não existe mais?
                         if(!armor) {                        
                             // Atribua a Armadura alterada pelo Actor ao Active Effect.
-                            await this.actor.updateArmorDamageEffects(effects.armor.data, item.data.data.armor.ACPenalty);
+                            await this.actor.updateArmorDamageEffects(effects.armor, item.system.armor.ACPenalty);
                             await this.actor.setFlag("ldnd5e", "armorEffect", {effectID: flags.armor.effectID, armorID: item.id});
                             
                         // A Armadura alterada é diferente da Armadura atribuída ao Active Effect.
                         } else if(item.id !== armor.id){
                             // Atribua a Armadura alterada pelo Actor ao Active Effect.
-                            await this.actor.updateArmorDamageEffects(effects.armor.data, item.data.data.armor.ACPenalty);
+                            await this.actor.updateArmorDamageEffects(effects.armor, item.system.armor.ACPenalty);
                             await this.actor.setFlag("ldnd5e", "armorEffect", {effectID: flags.armor.effectID, armorID: item.id});
                         }
                     } else {
                         // Atribua a Armadura alterada pelo Actor ao Active Effect.
-                        await this.actor.updateArmorDamageEffects(effects.armor.data, item.data.data.armor.ACPenalty);
+                        await this.actor.updateArmorDamageEffects(effects.armor, item.system.armor.ACPenalty);
                         await this.actor.setFlag("ldnd5e", "armorEffect", {effectID: flags.armor.effectID, armorID: item.id});                    
                     }
                 }
@@ -182,7 +182,7 @@ export default class ActorSheetL5eCharacter extends constants.ActorSheet5eCharac
                     // O Escudo alterado é o mesmo que está equipado?
                     if(item.id === equip.shield.id) {
                     // Remova o efeito de avaria.
-                        await this.actor.updateArmorDamageEffects(effects.shield.data, "0");
+                        await this.actor.updateArmorDamageEffects(effects.shield, "0");
                         await this.actor.setFlag("ldnd5e", "shieldEffect", {effectID: flags.shield.effectID, shieldID: "none"});
                     }
                 // Isso é um equip então.
@@ -194,17 +194,17 @@ export default class ActorSheetL5eCharacter extends constants.ActorSheet5eCharac
                         // O Escudo atribuído ao Active Effect não existe mais?
                         if(!shield) {
                             // Atribua o Escudo alterado pelo Actor ao Active Effect.
-                            await this.actor.updateArmorDamageEffects(effects.shield.data, item.data.data.armor.ACPenalty);
+                            await this.actor.updateArmorDamageEffects(effects.shield, item.system.armor.ACPenalty);
                             await this.actor.setFlag("ldnd5e", "shieldEffect", {effectID: flags.shield.effectID, shieldID: item.id});
                         // O Escudo alterado é diferente do Escudo atribuído ao Active Effect.
                         } else if(item.id !== shield.id){
                         // Atribua o Escudo alterado pelo Actor ao Active Effect.
-                            await this.actor.updateArmorDamageEffects(effects.shield.data, item.data.data.armor.ACPenalty);
+                            await this.actor.updateArmorDamageEffects(effects.shield, item.system.armor.ACPenalty);
                             await this.actor.setFlag("ldnd5e", "shieldEffect", {effectID: flags.shield.effectID, shieldID: item.id});
                         }
                     } else {
                         // Atribua o Escudo alterado pelo Actor ao Active Effect.
-                        await this.actor.updateArmorDamageEffects(effects.shield.data, item.data.data.armor.ACPenalty);
+                        await this.actor.updateArmorDamageEffects(effects.shield, item.system.armor.ACPenalty);
                         await this.actor.setFlag("ldnd5e", "shieldEffect", {effectID: flags.shield.effectID, shieldID: item.id});                    
                     }
                 } 
@@ -220,12 +220,12 @@ export default class ActorSheetL5eCharacter extends constants.ActorSheet5eCharac
                     // A Armadura atribuída ao Active Effect ainda existe?
                     if(!armor) {
                         // Remova o efeito de avaria.
-                        await this.actor.updateArmorDamageEffects(effects.armor.data, "0");
+                        await this.actor.updateArmorDamageEffects(effects.armor, "0");
                         await this.actor.setFlag("ldnd5e", "armorEffect", {effectID: flags.armor.effectID, armorID: "none"});
                     // A Armadura deletada é a Armadura atribuída ao Active Effect.
-                    } else if(item.id === armor.data._id){    
+                    } else if(item.id === armor._id){    
                         // Remova o efeito de avaria.
-                        await this.actor.updateArmorDamageEffects(effects.armor.data, "0");
+                        await this.actor.updateArmorDamageEffects(effects.armor, "0");
                         await this.actor.setFlag("ldnd5e", "armorEffect", {effectID: flags.armor.effectID, armorID: "none"});              
                     }
                 }
@@ -240,12 +240,12 @@ export default class ActorSheetL5eCharacter extends constants.ActorSheet5eCharac
                     // O Escudo atribuído ao Active Effect ainda existe?
                     if(!shield) { 
                         // Remova o efeito de avaria.
-                        await this.actor.updateArmorDamageEffects(effects.shield.data, "0");
+                        await this.actor.updateArmorDamageEffects(effects.shield, "0");
                         await this.actor.setFlag("ldnd5e", "shieldEffect", {effectID: flags.shield.effectID, shieldID: "none"});                  
                     // O Escudo deletado é a Armadura atribuída ao Active Effect.
-                    } else if(item.id === shield.data._id){    
+                    } else if(item.id === shield._id){    
                         // Remova o efeito de avaria.
-                        await this.actor.updateArmorDamageEffects(effects.shield.data, "0");
+                        await this.actor.updateArmorDamageEffects(effects.shield, "0");
                         await this.actor.setFlag("ldnd5e", "shieldEffect", {effectID: flags.shield.effectID, shieldID: "none"});              
                     }
                 }
@@ -257,7 +257,7 @@ export default class ActorSheetL5eCharacter extends constants.ActorSheet5eCharac
                 // O Actor não tem uma Armadura equipada?
                 if(!equip.armor) {                
                     // Atribua a Armadura criado pelo Actor ao Active Effect.
-                    await this.actor.updateArmorDamageEffects(effects.armor.data, item.data.data.armor.ACPenalty);
+                    await this.actor.updateArmorDamageEffects(effects.armor, item.system.armor.ACPenalty);
                     await this.actor.setFlag("ldnd5e", "armorEffect", {effectID: flags.armor.effectID, armorID: item.id});  
                 }              
             }
@@ -267,7 +267,7 @@ export default class ActorSheetL5eCharacter extends constants.ActorSheet5eCharac
                 // O Actor não tem um Escudo equipado?
                 if(!equip.shield) {                
                     // Atribua o Escudo criado pelo Actor ao Active Effect.
-                    await this.actor.updateArmorDamageEffects(effects.shield.data, item.data.data.armor.ACPenalty);
+                    await this.actor.updateArmorDamageEffects(effects.shield, item.system.armor.ACPenalty);
                     await this.actor.setFlag("ldnd5e", "shieldEffect", {effectID: flags.shield.effectID, shieldID: item.id});       
                 }         
             }

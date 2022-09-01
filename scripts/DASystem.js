@@ -1,5 +1,5 @@
 import { i18nStrings } from "./constants.js";
-import { DND5E } from "../../../systems/dnd5e/module/config.js";
+import { DND5E } from "../../../systems/dnd5e/dnd5e.mjs";
 
 const NIVEL_DA = [
     {valor: 2, mod: "-1"},
@@ -28,7 +28,7 @@ const NIVEL_DA_ESCUDO = [
 export const prepareLAN = function(data) {   
 
     const armor = data.attributes.ac;
-    const armorType = armor.equippedArmor?.data.data.armor.type;
+    const armorType = armor.equippedArmor?.system.armor.type;
     const armorProf = data.traits.armorProf;
     
     let lan = null;
@@ -44,7 +44,7 @@ export const prepareLAN = function(data) {
     }
 
     if(armor.equippedArmor) {   
-        const equipArmorData = armor.equippedArmor.data.data;
+        const equipArmorData = armor.equippedArmor.system;
 
         if(!armorProf?.value.includes(DND5E.armorProficienciesMap[armorType])) {
             if(!armorProf?.value.includes(equipArmorData.baseItem)) {
@@ -75,7 +75,7 @@ export const prepareLDO = function(data) {
  * @public
 */
 export const computaDA = function(item, owner, tipoDano) {      
-    const itemData = item.data.data;
+    const itemData = item.system;
     const tipoArmor = itemData.armor.type;
     const result = {
         temMudanca: {
@@ -170,7 +170,7 @@ export const computaDA = function(item, owner, tipoDano) {
  * @public
 */
 export const computaHALF = function(item, owner, tipoDano) {      
-    const itemData = item.data.data;
+    const itemData = item.system;
     const tipoArmor = itemData.armor.type;
     const result = {
         temMudanca: {
@@ -280,7 +280,7 @@ export const computaHALF = function(item, owner, tipoDano) {
  * @public
 */
 export const computaSUB = function(item, owner, damageType, options={}) {      
-    const itemData = item.data.data;
+    const itemData = item.system;
     const tipoArmor = itemData.armor.type;
     const result = {
         temMudanca: {
@@ -360,7 +360,7 @@ export const computaSUB = function(item, owner, damageType, options={}) {
  * @public
 */
 export const computaZERAR = function(item, owner) {      
-    const itemData = item.data.data;
+    const itemData = item.system;
     const tipoArmor = itemData.armor.type;
     const result = {
         temMudanca: {

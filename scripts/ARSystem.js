@@ -18,7 +18,7 @@ export const getMaxFumbleRange = function(data) {
 }
 
 export const updateFumbleRange = async function(data) {
-    const actorData = data.actor.data.data;
+    const actorData = data.actor.system;
 
     let valueChange = actorData.attributes.rpMod;
     if(data.rest) valueChange = (data.rest === 2 ? Math.floor(actorData.attributes.fumbleRange/2) : 1);
@@ -31,7 +31,7 @@ export const updateFumbleRange = async function(data) {
 }
 
 export const updateExhaustionLevel = async function(data) {
-    const actorData = data.actor.data.data;    
+    const actorData = data.actor.system;    
 
     if(actorData.attributes.exhaustion + 1 <= 5)
         await data.actor.update({"data.attributes.exhaustion": actorData.attributes.exhaustion + 1});

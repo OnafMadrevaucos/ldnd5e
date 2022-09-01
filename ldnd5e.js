@@ -18,6 +18,8 @@ import { ActorSheet5eNPC as ActorSheetNPCsBR } from "../dnd5e_pt-BR/main.js";
 Hooks.once("init", function() {
     console.log("LDnD5e | Inicializando o Módulo Lemurian D&D 5th Edition...");
 
+    CONFIG.DND5E = dnd5e.config;
+
     CONFIG.Item.documentClass = ItemL5e;
     CONFIG.Actor.documentClass = ActorL5e;
 

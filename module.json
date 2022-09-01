@@ -1,32 +1,49 @@
 {
-    "name": "ldnd5e",
+    "id": "ldnd5e",
     "title":  "Lemurian Dungeons & Dragons 5th Edition",
     "description": "Some homebrew systems for Dungeons & Dragons 5th Edition.",
-    "author": "Onaf Madrevaucos",
-    "version": "0.2.5",
-    "minimumCoreVersion": "0.9",
-
-    "system": ["dnd5e"],
-    "dependencies": [
+    "authors": [
         {
-            "name": "dnd5e",
-            "type": "system"
-        },        
-        {
-            "name": "more-hooks-5e"
-        },
-        {
-          "name": "dnd5e_pt-BR"
-        },
-        {
-          "name": "babele",
-          "manifest": "https://gitlab.com/riccisi/foundryvtt-babele/raw/master/module/module.json",
-          "version": "1.24"
-        },
-        {
-          "name": "lib-wrapper"
+            "name": "Onaf Madrevaucos",
+            "email": "onafmadrevaucos@gmail.com",
+            "url": ""
         }
     ],
+    "version": "0.2.6",
+    "compatibility": {
+      "minimum": "10",
+      "verified": "10"
+    },
+    "system": ["dnd5e"],
+    "relationships": {
+    "requires": [
+        {
+          "id": "dnd5e",
+          "type": "system",
+          "compatibility": {}
+        },
+        {
+          "id": "more-hooks-5e",
+          "type": "module",
+          "compatibility": {}
+        },
+        {
+          "id": "dnd5e_pt-BR",
+          "type": "module",
+          "compatibility": {}
+        },
+        {
+          "id": "babele",
+          "type": "module",
+          "compatibility": {}
+        },
+        {
+          "id": "lib-wrapper",
+          "type": "module",
+          "compatibility": {}
+        }
+      ]
+    },
     "esmodules": ["ldnd5e.js"],
     "styles": ["ldnd5e.css"],
     "languages": [

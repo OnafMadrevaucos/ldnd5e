@@ -1,12 +1,10 @@
-import Item5e from "../../../../systems/dnd5e/module/item/entity.js";
-import { damageRoll } from "../../../../systems/dnd5e/module/dice.js";
 import { i18nStrings } from "../../scripts/constants.js";
 
 /**
  * Sobrescreve e amplia a implementação padrão do Sistema DnD5e.
  * @extends {Item5e}
  */
-export default class ItemL5e extends Item5e {   
+export default class ItemL5e extends dnd5e.documents.Item5e {   
     
     /* -------------------------------------------- */
     /*  Data Preparation                            */
@@ -20,8 +18,8 @@ export default class ItemL5e extends Item5e {
         super.prepareDerivedData();
 
         // Get the Item's data
-        const itemData = this.data;
-        const data = itemData.data;
+        const itemData = this;
+        const data = itemData.system;
 
         const armorData = this.getFlag("ldnd5e", "armorSchema");
 
@@ -59,7 +57,7 @@ export default class ItemL5e extends Item5e {
     /**@override */
     getChatData(htmlOptions={}) {
         const data = super.getChatData(htmlOptions);
-        const itemData = this.data.data;
+        const itemData = this.system;
 
         if(this.isArmor && itemData.armor.destroyed)
             data.properties.push(game.i18n.localize(i18nStrings.itemDestroyed));
@@ -70,7 +68,7 @@ export default class ItemL5e extends Item5e {
     /**@override */
     async rollAttack(options={}) {
         // New Fumble Treshold from ARSystem
-        options.fumble = this.actor.data.data.attributes.fumbleRange;
+        options.fumble = this.actor.system.attributes.fumbleRange;
 
         super.rollAttack(options);
     }
@@ -78,7 +76,7 @@ export default class ItemL5e extends Item5e {
     /**@override */
     rollToolCheck(options={}) {
         // New Fumble Treshold from ARSystem
-        options.fumble = this.actor.data.data.attributes.fumbleRange;
+        options.fumble = this.actor.system.attributes.fumbleRange;
 
         super.rollToolCheck(options);
     }

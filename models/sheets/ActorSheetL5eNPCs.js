@@ -1,4 +1,5 @@
 import { constants } from "../../scripts/constants.js";
+
 export default class ActorSheetL5eNPCs extends constants.ActorSheet5eNPCs {
     
     /* -------------------------------------------- */

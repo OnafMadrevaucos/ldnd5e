@@ -1,8 +1,6 @@
 import { constants, NDs, i18nStrings } from "../scripts/constants.js";
 import { computaDA, computaHALF, computaSUB, computaZERAR } from "../scripts/DASystem.js";
 import { updateFumbleRange, updateExhaustionLevel } from "../scripts/ARSystem.js";
-import { simplifyRollFormula, d20Roll } from "../../../systems/dnd5e/module/dice.js";
-import Item5e from "../../../systems/dnd5e/module/item/entity.js";
 
 const ACTIVE_EFFECT_MODES = CONST.ACTIVE_EFFECT_MODES;
 const ADD = ACTIVE_EFFECT_MODES.ADD;
@@ -101,7 +99,7 @@ export default class adControl extends Application {
             if(actor.type == "npc"){
                const npc = {};
                npc.data = actor;
-               npc.nd = NDs[actor.data.data.details.cr];
+               npc.nd = NDs[actor.system.details.cr];
                npc.actions = this.prepareNPCsItems(actor.data);
 
                let isNew = true;
@@ -189,7 +187,7 @@ export default class adControl extends Application {
 
       if(item.hasSave) {  
          const card = await item.displayCard();
-         const targets = Item5e._getChatCardTargets(card);
+         const targets = dnd5e.documents.Item5e._getChatCardTargets(card);
          for ( let token of targets ) {
             const speaker = ChatMessage.getSpeaker({scene: canvas.scene, token: token});
             await token.actor.rollAbilitySave(event.currentTarget.dataset.ability, { event, speaker });
@@ -202,7 +200,7 @@ export default class adControl extends Application {
       const itemID = event.currentTarget.closest(".item").dataset.itemId;
       const ownerID = event.currentTarget.closest(".item").dataset.actorId;
       const owner = game.actors.get(ownerID);
-      const item = owner.data.items.get(itemID);
+      const item = owner.items.get(itemID);
       
       const rollResult = await item.roll();
 
@@ -217,7 +215,7 @@ export default class adControl extends Application {
       const itemID = event.currentTarget.closest(".item").dataset.itemId;
       const ownerID = event.currentTarget.closest(".item").dataset.actorId;
       const owner = game.actors.get(ownerID);
-      const item = owner.data.items.get(itemID);
+      const item = owner.items.get(itemID);
 
       const rollResult = await item.roll();
 
@@ -232,7 +230,7 @@ export default class adControl extends Application {
       const itemID = event.currentTarget.closest(".item").dataset.itemId;
       const ownerID = event.currentTarget.closest(".item").dataset.actorId;
       const owner = game.actors.get(ownerID);
-      const item = owner.data.items.get(itemID);
+      const item = owner.items.get(itemID);
 
       return item.sheet.render(true);
    }
@@ -268,7 +266,7 @@ export default class adControl extends Application {
          title: game.i18n.localize("ldnd5e.dlControlTitle"),
          data: {
            damageType: dlType,
-           price: item.data.data.price,
+           price: item.system.price,
            owner: owner,
            item: item
          },
@@ -311,7 +309,7 @@ export default class adControl extends Application {
       const configured = await this._configureDialog({
          title: game.i18n.localize("ldnd5e.frControlTitle"),
          data: {
-           price: item.data.data.price * constants.fullRepairFee,
+           price: item.system.price * constants.fullRepairFee,
            owner: owner,
            item: item
          },
@@ -345,8 +343,8 @@ export default class adControl extends Application {
 
    if(options.confirmAR) {
       if(!options.rightClick) {
-         if(data.actor.data.data.attributes.fumbleRange < data.actor.data.data.attributes.maxFumbleRange) {
-            const label = game.i18n.format(i18nStrings.messages.arControlLabel, {action: "aumentar",value: data.actor.data.data.attributes.rpMod, actor: data.actor.data.name});           
+         if(data.actor.system.attributes.fumbleRange < data.actor.system.attributes.maxFumbleRange) {
+            const label = game.i18n.format(i18nStrings.messages.arControlLabel, {action: "aumentar",value: data.actor.system.attributes.rpMod, actor: data.actor.name});           
 
             // Render the Dialog inner HTML
             content = await renderTemplate(template, {
@@ -376,7 +374,7 @@ export default class adControl extends Application {
                }, options).render(true);
             });
          } else {
-            const label = game.i18n.format(i18nStrings.messages.arMaxedOut, {actor: data.actor.data.name});        
+            const label = game.i18n.format(i18nStrings.messages.arMaxedOut, {actor: data.actor.name});        
 
             // Render the Dialog inner HTML
             content = await renderTemplate(template, {
@@ -405,8 +403,8 @@ export default class adControl extends Application {
             return null;
          }     
       } else {
-         if(data.actor.data.data.attributes.fumbleRange > 1) {
-            const label = game.i18n.format(i18nStrings.messages.arControlLabel, {action: "remover", value: data.actor.data.data.attributes.rpMod, actor: data.actor.data.name}); 
+         if(data.actor.system.attributes.fumbleRange > 1) {
+            const label = game.i18n.format(i18nStrings.messages.arControlLabel, {action: "remover", value: data.actor.system.attributes.rpMod, actor: data.actor.data.name}); 
             // Render the Dialog inner HTML
             content = await renderTemplate(template, {
                actor: data.actor, 
@@ -576,7 +574,7 @@ export default class adControl extends Application {
                options.smithRepairChk = form.querySelector('.smith-repair')?.checked ?? false;
             }
             else {               
-               options.price = data.price * constants.repairFee * item.data.data.armor.RealDL;   
+               options.price = data.price * constants.repairFee * item.system.armor.RealDL;   
                options.smithRepairChk = form.querySelector('.not-smith') ? false : true;
             }
                
@@ -601,17 +599,17 @@ export default class adControl extends Application {
       //@TODO: Implementar controle para que as armaduras ao serem desequipadas parem de tentar apagar o Efeito mesmo quando ele já foi apagado.
       //       Implementar um controle para mostrar mensagens no chat quando certos Níveis de Avaraias é atingido.      
       //
-      let effect = null;
-      const itemData = foundry.utils.deepClone(item.data.data); 
+      var effect = null;
+      const itemData = foundry.utils.deepClone(item.system); 
       const NivelDL = itemData.armor.RealDL;
       const ACPenalty = itemData.armor.ACPenalty;        
 
       if(result.temMudanca.normal) {
          effect = owner.effects.get(result.effectsID.normal);
-         effect._id = result.effectsID.normal;  
+         //effect.id = result.effectsID.normal;  
       } else if(result.temMudanca.escudo) {
          effect = owner.effects.get(result.effectsID.escudo);
-         effect._id = result.effectsID.escudo;          
+         //effect.id = result.effectsID.escudo;          
       } 
 
       let info = "";
@@ -624,8 +622,8 @@ export default class adControl extends Application {
          desequipItem = true;
          itemData.armor.destroyed = true;
       } else { 
-         if(NivelDL === 5) extraMessage = game.i18n.format(i18nStrings.messages.fithDLMessage, {owner: owner.data.name});
-         info = game.i18n.format(i18nStrings.messages.newDLMessage, {item: item.data.name, owner: owner.data.name, penalty: ACPenalty.toString(), extra: extraMessage});         
+         if(NivelDL === 5) extraMessage = game.i18n.format(i18nStrings.messages.fithDLMessage, {owner: owner.name});
+         info = game.i18n.format(i18nStrings.messages.newDLMessage, {item: item.name, owner: owner.name, penalty: ACPenalty.toString(), extra: extraMessage});         
       }
 
       let repairSucess = false;
@@ -637,13 +635,13 @@ export default class adControl extends Application {
          if(repairSucess == null) return;
          
          if(!repairSucess) { 
-            info = game.i18n.format(i18nStrings.messages.repairFailed, {item: item.data.name});
+            info = game.i18n.format(i18nStrings.messages.repairFailed, {item: item.name});
          } else {
             if(options?.fullRepair) {
-               info = game.i18n.format(i18nStrings.messages.reconstructedMessage, {item: item.data.name});
+               info = game.i18n.format(i18nStrings.messages.reconstructedMessage, {item: item.name});
                itemData.armor.destroyed = false;
             }else 
-               info = game.i18n.format(i18nStrings.messages.repairMessage, {item: item.data.name, penalty: ACPenalty.toString()});  
+               info = game.i18n.format(i18nStrings.messages.repairMessage, {item: item.name, penalty: ACPenalty.toString()});  
          }       
       }
 
@@ -652,7 +650,7 @@ export default class adControl extends Application {
          info: info,
          item: item,
          owner: owner,
-         repairDC: (adControl.DC_REPAIR[item.data.data.rarity.toLowerCase()]) ?? 10
+         repairDC: (adControl.DC_REPAIR[item.system.rarity.toLowerCase()]) ?? 10
       };
 
       if(result.temMudanca.mensagem || options?.repair)
@@ -662,10 +660,10 @@ export default class adControl extends Application {
          // Salva as alterações nos valores de avarias do Item.
          await item.setFlag("ldnd5e", "armorSchema", itemData.armor);
 
-         if(effect) await owner.updateArmorDamageEffects(effect.data, ACPenalty.toString());
+         if(effect) await owner.updateArmorDamageEffects(effect, ACPenalty.toString());
 
          if(desequipItem)
-            await item.update({["data.equipped"]: !getProperty(item.data, "data.equipped")});
+            await item.update({["system.equipped"]: !getProperty(item.system, "system.equipped")});
       }      
    }
 
@@ -675,7 +673,7 @@ export default class adControl extends Application {
 
       // Create the ChatMessage data object
       const chatData = {
-         user: game.user.data._id,
+         user: game.user._id,
          type: CONST.CHAT_MESSAGE_TYPES.OTHER,
          content: html,
          speaker: ChatMessage.getSpeaker(),
@@ -699,7 +697,7 @@ export default class adControl extends Application {
    }  
 
    _verifyRepairCost(cost, owner) {
-      const curr = this._convertCurrency(foundry.utils.deepClone(owner.data.data.currency));
+      const curr = this._convertCurrency(foundry.utils.deepClone(owner.system.currency));
       const price = this._convertCurrency({pp: 0, gp: cost, ep: 0, sp: 0, cp: 0});
       
       return (price.total > curr.total);
@@ -708,9 +706,9 @@ export default class adControl extends Application {
    async _computeRepairCost(cost, actor) {
       const conversion = Object.entries(CONFIG.DND5E.currencies);
 
-      const curr = this._convertCurrency(foundry.utils.deepClone(actor.data.data.currency));
+      const curr = this._convertCurrency(foundry.utils.deepClone(actor.system.currency));
       const price = this._convertCurrency({pp: 0, gp: cost, ep: 0, sp: 0, cp: 0});
-      const newCurr = foundry.utils.deepClone(actor.data.data.currency);
+      const newCurr = foundry.utils.deepClone(actor.system.currency);
 
       var change = curr.total - price.total;
       for (let [c, data] of conversion) {
@@ -740,12 +738,12 @@ export default class adControl extends Application {
    async _rollRepair(item, owner, options={}) {
       if(!options.smithRepairChk) {
          const label = CONFIG.DND5E.abilities.dex;
-         const abl = owner.data.data.abilities.dex;
+         const abl = owner.system.abilities.dex;
          const abilityId = "dex";
 
          const parts = [];
          const data = owner.getRollData();
-         const ownerData = owner.data.data;
+         const ownerData = owner.system;
 
          // Add ability modifier
          parts.push("@mod");
@@ -765,7 +763,7 @@ export default class adControl extends Application {
          }
 
          // Add global actor bonus
-         const bonuses = getProperty(owner.data.data, "bonuses.abilities") || {};
+         const bonuses = getProperty(owner.system, "bonuses.abilities") || {};
          if ( bonuses.check ) {
             parts.push("@checkBonus");
             data.checkBonus = Roll.replaceFormulaData(bonuses.check, data);
@@ -787,10 +785,10 @@ export default class adControl extends Application {
                "flags.dnd5e.roll": {type: "ability", abilityId }
             }
          });
-         const roll = await d20Roll(rollData);
+         const roll = await dnd5e.dice.d20Roll(rollData);
          if(!roll) return null;
 
-         return (roll._total >= (adControl.DC_REPAIR[item.data.data.rarity.toLowerCase()] ?? 10));
+         return (roll._total >= (adControl.DC_REPAIR[item.system.rarity.toLowerCase()] ?? 10));
       } else return true;
    }
 
@@ -834,7 +832,7 @@ export default class adControl extends Application {
       }
 
       spells.sort(function (a, b) {
-         return a.data.data.level - b.data.data.level;
+         return a.system.level - b.system.level;
       });
 
       // Assign and return
@@ -846,14 +844,14 @@ export default class adControl extends Application {
 
    _getSimpleFormula(item) {
       const rollData = item.getRollData();
-      const data = item.data.data;
+      const data = item.system;
 
       let formula = "";
       for ( let damage of data.damage.parts ) {
          try {
            const roll = new Roll(damage[0], rollData);
-           if(formula === "") formula = simplifyRollFormula(roll.formula, { preserveFlavor: true })
-           else formula = formula.concat("+", simplifyRollFormula(roll.formula, { preserveFlavor: true }));
+           if(formula === "") formula = dnd5e.dice.simplifyRollFormula(roll.formula, { preserveFlavor: true })
+           else formula = formula.concat("+", dnd5e.dice.simplifyRollFormula(roll.formula, { preserveFlavor: true }));
          }
          catch(err) { console.warn(`Unable to simplify formula for ${this.name}: ${err}`); }
       }

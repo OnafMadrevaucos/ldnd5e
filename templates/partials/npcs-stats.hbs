@@ -8,7 +8,7 @@
         <div class="item-image npc-image" tabindex="0" role="button" aria-label="{{actor.data.name}}" style="background-image: url('{{actor.data.img}}')"></div>
         <h3 class="item-name npc-name flexrow">{{actor.data.name}}</h3>                                           
                      
-        <div class="item-detail">{{localize 'CA'}} {{actor.data.data.data.attributes.ac.value}}</div>
+        <div class="item-detail">{{localize 'CA'}} {{actor.system.data.attributes.ac.value}}</div>
         <div class="item-detail">{{localize 'ND'}} {{actor.nd}}</div>            
     </ol>    
     <ol class="item-list feature-list" style="display: none;">         
@@ -22,10 +22,10 @@
                 <div class="item-image action-image" tabindex="0" role="button" aria-label="{{action.name}}" style="background-image: url('{{action.img}}')"></div>
                 <h5 class="action-label">{{action.name~}}</h4>                                            
             </div>
-            <div class="item-detail action-detail">{{#if action.hasLimitedUses}}{{action.data.data.uses.value}} / {{action.data.data.uses.max}}{{else}}&dash;{{/if}}</div>    
+            <div class="item-detail action-detail">{{#if action.hasLimitedUses}}{{action.system.uses.value}} / {{action.system.uses.max}}{{else}}&dash;{{/if}}</div>    
             <div class="item-detail action-detail">{{action.labels.activation}}</div>
-            {{#debug action.data.data}}{{/debug}}            
-            <div class="item-detail action-detail save-control" data-ability="{{action.data.data.save.ability}}">
+            {{#debug action.system}}{{/debug}}            
+            <div class="item-detail action-detail save-control" data-ability="{{action.system.save.ability}}">
                 {{#if action.hasSave}}
                     {{localize 'Salvaguarda'}}
                     <div class="overlay">
@@ -84,15 +84,15 @@
                 <div class="item-image action-image" tabindex="0" role="button" aria-label="{{spell.name}}" style="background-image: url('{{spell.img}}')"></div>
                 <h5 class="action-label">{{spell.name~}}</h4>                                            
             </div>
-            {{#cond spell.data.data.level '>=' 1}}
-                <div class="item-detail action-detail">{{#if spell.hasLimitedUses}}{{spell.data.data.uses.value}} / {{spell.data.data.uses.max}}{{else}}&dash;{{/if}}</div> 
+            {{#cond spell.system.level '>=' 1}}
+                <div class="item-detail action-detail">{{#if spell.hasLimitedUses}}{{spell.system.uses.value}} / {{spell.system.uses.max}}{{else}}&dash;{{/if}}</div> 
                 <div class="item-detail action-detail">{{spell.labels.level}}</div>
             {{/cond}}    
-            {{#cond spell.data.data.level '==' 0}}
+            {{#cond spell.system.level '==' 0}}
                 <div class="item-detail action-detail">{{localize 'Truque'}}</div>
             {{/cond}}    
             <div class="item-detail action-detail">{{spell.labels.activation}}</div> 
-            <div class="item-detail action-detail save-control" data-ability="{{spell.data.data.save.ability}}">
+            <div class="item-detail action-detail save-control" data-ability="{{spell.system.save.ability}}">
                 {{#if spell.hasSave}}
                     {{localize 'Salvaguarda'}}
                     <div class="overlay">
