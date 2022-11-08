@@ -39,6 +39,7 @@ export default class ActorL5e extends documents.Actor5e {
     rollSkill(skillId, options={}) {
         const skl = this.system.skills[skillId];
         const abl = this.system.abilities[skl.ability];
+        const exh = this.system.attributes.exhaustion;
         const bonuses = getProperty(this.system, "bonuses.abilities") || {};
     
         const parts = [];
@@ -79,6 +80,15 @@ export default class ActorL5e extends documents.Actor5e {
           parts.push("@skillBonus");
           data.skillBonus = Roll.replaceFormulaData(bonuses.skill, data);
         }
+
+        // Use Exhaustion One D&D Rule
+        if(game.settings.get('ldnd5e','oneDNDExhaustionRule')) {          
+          // New Rule: '-1' in D20 Rolls for each Exhaustion Level.
+          if(exh > 0) { 
+            parts.push("@exhPenalty");
+            data.exhPenalty = (-1 * exh);
+          }
+        }
     
         // Add provided extra roll parts now because they will get clobbered by mergeObject below
         if (options.parts?.length > 0) {
@@ -92,10 +102,13 @@ export default class ActorL5e extends documents.Actor5e {
         options.fumble = data.attributes.fumbleRange;
     
         // Roll and return
+        const flavor = game.i18n.format("DND5E.SkillPromptTitle", {skill: CONFIG.DND5E.skills[skillId]?.label ?? ""});
         const rollData = foundry.utils.mergeObject(options, {
           parts: parts,
           data: data,
-          title: `${game.i18n.format("DND5E.SkillPromptTitle", {skill: CONFIG.DND5E.skills[skillId]})}: ${this.name}`,
+          title: `${flavor}: ${this.name}`,
+          flavor: flavor,
+          chooseModifier: true,
           halflingLucky: this.getFlag("dnd5e", "halflingLucky"),
           reliableTalent: reliableTalent,
           messageData: {
@@ -107,8 +120,16 @@ export default class ActorL5e extends documents.Actor5e {
     }
 
     /**@override */
-    rollAbility(abilityId, options={}) {
+    rollAbility(abilityId, options={}) {   
+        options.parts = (options.parts ?? []);
+        const exh = this.system.attributes.exhaustion;
         const data = this.getRollData();
+
+        // Use Exhaustion One D&D Rule
+        if(game.settings.get('ldnd5e','oneDNDExhaustionRule')) {          
+          // New Rule: '-1' in D20 Rolls for each Exhaustion Level.
+          if(exh > 0) options.parts.push(-1 * exh);          
+        }
         
         // New Fumble Treshold from ARSystem
         options.fumble = data.attributes.fumbleRange;
@@ -119,12 +140,14 @@ export default class ActorL5e extends documents.Actor5e {
     async rollDeathSave(options={}) {
 
         // Display a warning if we are not at zero HP or if we already have reached 3
-        const death = this.system.attributes.death;
+        const death = this.system.attributes.death;        
         if ( (this.system.attributes.hp.value > 0) || (death.failure >= 3) || (death.success >= 3)) {
           ui.notifications.warn(game.i18n.localize("DND5E.DeathSaveUnnecessary"));
           return null;
         }
-    
+        // Current exhaustion level
+        const exh = this.system.attributes.exhaustion;
+
         // Evaluate a global saving throw bonus
         const parts = [];
         const data = this.getRollData();
@@ -141,6 +164,15 @@ export default class ActorL5e extends documents.Actor5e {
         if ( bonuses.save ) {
           parts.push("@saveBonus");
           data.saveBonus = Roll.replaceFormulaData(bonuses.save, data);
+        }
+
+        // Use Exhaustion One D&D Rule
+        if(game.settings.get('ldnd5e','oneDNDExhaustionRule')) {          
+          // New Rule: '-1' in D20 Rolls for each Exhaustion Level.
+          if(exh > 0) { 
+            parts.push("@exhPenalty");
+            data.exhPenalty = (-1 * exh);
+          }
         }
 
         // New Fumble Treshold from ARSystem

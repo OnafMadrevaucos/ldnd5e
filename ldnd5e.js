@@ -12,8 +12,6 @@ import * as ars from "./scripts/ARSystem.js";
 
 import ActorSheetL5eCharacter from "./models/sheets/ActorSheetL5eCharacter.js";
 import ActorSheetL5eNPCs from "./models/sheets/ActorSheetL5eNPCs.js";
-//import { ActorSheet5eCharacter as ActorSheetCharacterBR } from "../dnd5e_pt-BR/main.js";
-//import { ActorSheet5eNPC as ActorSheetNPCsBR } from "../dnd5e_pt-BR/main.js";
 
 Hooks.once("init", function() {
     console.log("LDnD5e | Inicializando o Módulo Lemurian D&D 5th Edition...");
@@ -22,16 +20,10 @@ Hooks.once("init", function() {
 
     CONFIG.Item.documentClass = ItemL5e;
     CONFIG.Actor.documentClass = ActorL5e;
-
-    // Verifica se o D&D 5E Português BR está atuivo ou não, para decidir qual Sheet o sistema deve Importar.
-    //if(game.modules.get('dnd5e_pt-BR')?.active) {
-    //    constants.ActorSheet5eCharacter = ActorSheetCharacterBR;
-    //    constants.ActorSheet5eNPCs = ActorSheetNPCsBR;
-    //}     
-
+ 
     preloadTemplates();
     registerSystemSettings();
-    patchRollDamage();    
+    patchRollDamage();
 
     if (game.modules.get('rpg-styled-ui')?.active && game.modules.get('gm-screen')?.active)
         patchSheetText();    

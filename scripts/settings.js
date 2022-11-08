@@ -13,4 +13,14 @@ export const registerSystemSettings = function() {
         type: Boolean,
         default: false
     });
+
+    // One D&D New Exhaustion Rule
+    game.settings.register("ldnd5e", "oneDNDExhaustionRule", {
+        name: "ldnd5e.settings.exhaustionName",
+        hint: "ldnd5e.settings.exhaustionHint",
+        scope: "world",
+        config: true,
+        type: Boolean,
+        default: false
+    });
 }

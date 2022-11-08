@@ -152,7 +152,9 @@
 
    settings: {
       criticalName: "ldnd5e.settings.criticalName",
-      criticalHint: "ldnd5e.settings.criticalHint"
+      criticalHint: "ldnd5e.settings.criticalHint",
+      exhaustionName: "ldnd5e.settings.exhaustionName",
+      exhaustionHint: "ldnd5e.settings.exhaustionHint"
    }
  };
 

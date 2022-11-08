@@ -87,7 +87,9 @@
 
         "settings": {
             "criticalName": "Crítico Multiplica Dados",
-            "criticalHint": "Faz um acerto crítico um pouco mais mortal ao multiplicar os resultados obtidos nos Dados de Dano (ignora qualquer modificador)."
+            "criticalHint": "Faz um acerto crítico um pouco mais mortal ao multiplicar os resultados obtidos nos Dados de Dano (ignora qualquer modificador).",
+            "exhaustionName": "Nova Regra de Exaustão (One D&D)",
+            "exhaustionHint": "Utilizar nova regra de Exaustão proposta pelo sistema One D&D. '-1' em rolagems com d20 para cada nível de exaustão."
         }
     }
 }
