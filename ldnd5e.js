@@ -101,6 +101,15 @@ Hooks.on('dnd5e.preRollDeathSave', (actor, rollData) => {
     patchExtraRollRoutines(actor, rollData);
 });
 
+Hooks.on('dnd5e.preRollAttack', (item, rollData) => {
+    const actor = item.actor;
+    patchExtraRollRoutines(actor, rollData);
+});
+Hooks.on('dnd5e.preRollToolCheck', (item, rollData) => {
+    const actor = item.actor;
+    patchExtraRollRoutines(actor, rollData);
+});
+
 Hooks.on('dnd5e.preShortRest', (actor, config) => {
     patchFumbleRangeRoutine(actor);
 });

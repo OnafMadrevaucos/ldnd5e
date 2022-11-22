@@ -41,15 +41,16 @@ export default class ItemL5e extends dnd5e.documents.Item5e {
                 pierc: 0,
                 slsh: 0
             }
-    
+            
+            // Armor Half Absorved Damage.
             data.armor.HalfAD = armorData?.HalfAD ?? {
                 bldg: false,
                 pierc: false,
                 slsh: false
             }
-    
+            
+            // AC Penalty and Armor Destroyed Flag.
             data.armor.ACPenalty = armorData?.ACPenalty ?? "0"; 
-
             data.armor.destroyed = armorData?.destroyed ?? false;
         }       
     }
@@ -63,30 +64,5 @@ export default class ItemL5e extends dnd5e.documents.Item5e {
             data.properties.push(game.i18n.localize(i18nStrings.itemDestroyed));
 
         return data;
-    }
-
-    /**@override */
-    async rollAttack(options={}) {
-        options.parts = (options.parts ?? []);
-        const exh = this.actor.system.attributes.exhaustion;
-
-        // Use Exhaustion One D&D Rule
-        if(game.settings.get('ldnd5e','oneDNDExhaustionRule')) {          
-            // New Rule: '-1' in D20 Rolls for each Exhaustion Level.
-            if(exh > 0) options.parts.push(-1 * exh);          
-        }
-
-        // New Fumble Treshold from ARSystem
-        options.fumble = this.actor.system.attributes.fumbleRange;
-
-        super.rollAttack(options);
-    }
-
-    /**@override */
-    rollToolCheck(options={}) {
-        // New Fumble Treshold from ARSystem
-        options.fumble = this.actor.system.attributes.fumbleRange;
-
-        super.rollToolCheck(options);
     }
 }
