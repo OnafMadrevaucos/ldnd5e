@@ -100,7 +100,7 @@ export default class adControl extends Application {
                const npc = {};
                npc.data = actor;
                npc.nd = NDs[actor.system.details.cr];
-               npc.actions = this.prepareNPCsItems(actor.data);
+               npc.actions = this.prepareNPCsItems(actor);
 
                let isNew = true;
                for(let oldNpc of data.npcs.actors) {
@@ -183,7 +183,7 @@ export default class adControl extends Application {
       const itemID = event.currentTarget.closest(".item").dataset.itemId;
       const ownerID = event.currentTarget.closest(".item").dataset.actorId;
       const owner = game.actors.get(ownerID);
-      const item = owner.data.items.get(itemID);
+      const item = owner.system.items.get(itemID);
 
       if(item.hasSave) {  
          const card = await item.displayCard();
@@ -404,7 +404,7 @@ export default class adControl extends Application {
          }     
       } else {
          if(data.actor.system.attributes.fumbleRange > 1) {
-            const label = game.i18n.format(i18nStrings.messages.arControlLabel, {action: "remover", value: data.actor.system.attributes.rpMod, actor: data.actor.data.name}); 
+            const label = game.i18n.format(i18nStrings.messages.arControlLabel, {action: "remover", value: data.actor.system.attributes.rpMod, actor: data.actor.name}); 
             // Render the Dialog inner HTML
             content = await renderTemplate(template, {
                actor: data.actor, 
@@ -555,7 +555,7 @@ export default class adControl extends Application {
 
             const toExpensive = this._verifyRepairCost(((options?.price ?? 0)), owner);      
             if(toExpensive) {
-               ui.notifications.warn(game.i18n.format(i18nStrings.messages.repairToExpensive, {actor: owner.data.name}));
+               ui.notifications.warn(game.i18n.format(i18nStrings.messages.repairToExpensive, {actor: owner.name}));
                return;
             }
 
@@ -580,7 +580,7 @@ export default class adControl extends Application {
                
             const toExpensive = this._verifyRepairCost(((options?.price ?? 0)), owner);      
             if(toExpensive) {
-               ui.notifications.warn(game.i18n.format(i18nStrings.messages.repairToExpensive, {actor: owner.data.name}));
+               ui.notifications.warn(game.i18n.format(i18nStrings.messages.repairToExpensive, {actor: owner.name}));
                return;
             }             
 
@@ -813,13 +813,12 @@ export default class adControl extends Application {
       }, [[], []]);
 
       // Organize Features
-      for ( let item of other ) {
-         const itemData = item.data;         
+      for ( let item of other ) {        
          if ( item.type === "weapon" ) {
             item.labels.simpleFormula = this._getSimpleFormula(item); 
             features.weapons.items.push(item);
          } else if ( item.type === "feat" ){
-            if ( itemData.data.activation.type ) {
+            if ( item.system.activation.type ) {
                item.labels.simpleFormula = this._getSimpleFormula(item); 
                features.actions.items.push(item);
             }

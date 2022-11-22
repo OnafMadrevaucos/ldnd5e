@@ -23,8 +23,7 @@
                 <h5 class="action-label">{{action.name~}}</h4>                                            
             </div>
             <div class="item-detail action-detail">{{#if action.hasLimitedUses}}{{action.system.uses.value}} / {{action.system.uses.max}}{{else}}&dash;{{/if}}</div>    
-            <div class="item-detail action-detail">{{action.labels.activation}}</div>
-            {{#debug action.system}}{{/debug}}            
+            <div class="item-detail action-detail">{{action.labels.activation}}</div>          
             <div class="item-detail action-detail save-control" data-ability="{{action.system.save.ability}}">
                 {{#if action.hasSave}}
                     {{localize 'Salvaguarda'}}

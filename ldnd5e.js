@@ -86,6 +86,29 @@ Hooks.on('getSceneControlButtons', (controls) => {
 });
 
 /** ---------------------------------------------------- */
+/** Funções do Sistema D&D                               */
+/** ---------------------------------------------------- */
+Hooks.on('dnd5e.preRollSkill', (actor, rollData, skillId) => {
+    patchExtraRollRoutines(actor, rollData);
+});
+Hooks.on('dnd5e.preRollAbilityTest', (actor, rollData, abilityId) => {
+    patchExtraRollRoutines(actor, rollData);
+});
+Hooks.on('dnd5e.preRollAbilitySave', (actor, rollData, abilityId) => {
+    patchExtraRollRoutines(actor, rollData);
+});
+Hooks.on('dnd5e.preRollDeathSave', (actor, rollData) => {
+    patchExtraRollRoutines(actor, rollData);
+});
+
+Hooks.on('dnd5e.preShortRest', (actor, config) => {
+    patchFumbleRangeRoutine(actor);
+});
+Hooks.on('dnd5e.preLongRest', (actor, config) => {
+    patchFumbleRangeRoutine(actor);
+});
+
+/** ---------------------------------------------------- */
 /** Funções Internas                                     */
 /** ---------------------------------------------------- */
 function renderControl()
@@ -98,6 +121,31 @@ function renderControl()
     }
     
     return form._render(true);
+}
+
+function patchExtraRollRoutines(actor, rollData) {
+    const exh = actor.system.attributes.exhaustion;
+    const data = actor.getRollData();
+
+    // Use Exhaustion One D&D Rule
+    if(game.settings.get('ldnd5e','oneDNDExhaustionRule')) {          
+        // New Rule: '-1' in D20 Rolls for each Exhaustion Level.
+        if(exh > 0) { 
+          rollData.parts.push("@exhPenalty");
+          rollData.data.exhPenalty = (-1 * exh);
+        }
+    }
+
+    // New Fumble Treshold from ARSystem
+    rollData.fumble = data.attributes.fumbleRange;
+}
+function patchFumbleRangeRoutine(actor) {
+    const data = {
+        actor: actor,
+        rightClick: true,
+        rest: 2
+    };
+    ars.updateFumbleRange(data);
 }
 
 /**
