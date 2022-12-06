@@ -70,8 +70,15 @@ Hooks.on('renderActorSheet', (app, html, data) => {
     const actor = app.actor;
     const isActorL5e = actor.getFlag("ldnd5e", "L5eConfigured");
 
-    if(isActorL5e != undefined && (!isActorL5e && ["character"].includes(actor.type))) actor.configL5e();   
-    if (!game.user.isGM) hideEffects(actor, html);    
+    if(isActorL5e != undefined && (!isActorL5e && ["character"].includes(actor.type))) actor.configL5e();
+
+    if(game.settings.get('ldnd5e', 'massiveCombatRules')) addMassiveCombatParts(actor, html);
+    
+    /** Esconde os controles dos Active Effects sempre para Jogadores e para o GM
+     *  apenas quando a Opção estiver marcada.
+    */
+    if (game.settings.get('ldnd5e','hideArmorEffectsFromGM') || !game.user.isGM) 
+        hideEffects(actor, html);        
 });
 
 Hooks.on('getSceneControlButtons', (controls) => {
@@ -171,13 +178,53 @@ function hideEffects(actor, html) {
     //Procura os efeitos 
     const effects = html.find('.effect');
     for(var effect of effects) {
-        if(effect.dataset.effectId === armorFlag.effectID || effect.dataset.effectId === shieldFlag.effectID) {
+        if(effect.dataset.effectId === armorFlag?.effectID || effect.dataset.effectId === shieldFlag?.effectID) {
             effect.draggable = false;
             const control = effect.getElementsByClassName("effect-controls");
             const btns = control[0].getElementsByClassName("effect-control");
             Array.from(btns).forEach((value) => {value.hidden = true;});
         }
     }
+}
+
+/**
+ * Adiciona à ficha do Actor as Parts que compõem as Regras de Combate Massivo.
+ * 
+ * @param {object} actor    Ator que terá a Sheet alterada. 
+ * @param {html} html       Tela de ActorSheet.
+ */
+ function addMassiveCombatParts(actor, html) {
+    
+    const centerPane = html.find('.center-pane');
+    const traitsDiv = html.find('.traits');    
+    const cmdDiv = document.createElement("div");
+    cmdDiv.classList.add("counters");
+
+    const div = document.createElement("div");
+    div.classList.add("counter");
+    div.classList.add("flexrow");
+    div.classList.add("commander");
+    
+    const h4 = document.createElement("h4");
+    h4.innerHTML = "Comandante";
+    div.appendChild(h4);
+
+    const valueDiv = document.createElement("div");
+    valueDiv.classList.add("counter-value");    
+    const input = document.createElement("input");
+    input.setAttribute('type', 'checkbox');
+    input.setAttribute('name', 'system.commander');    
+    input.setAttribute('data-dtype', 'Boolean');   
+    input.checked = actor.system.commander;
+    valueDiv.appendChild(input);
+    div.appendChild(valueDiv);
+    cmdDiv.appendChild(div)
+
+    traitsDiv.remove();
+    centerPane[0].appendChild(cmdDiv);
+    centerPane[0].appendChild(traitsDiv[0]);
+
+    const i = 0;
 }
 
 function patchSheetText() {

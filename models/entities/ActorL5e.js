@@ -33,6 +33,10 @@ export default class ActorL5e extends documents.Actor5e {
         if(CONFIG.adControl && (["character"].includes(this.type))) {
             CONFIG.adControl.refresh(true);
         }
+
+        if(game.settings.get('ldnd5e', 'massiveCombatRules')) {
+            data.commander = data.commander ?? false;
+        }
     }  
 
     //------------------------------------------------------

@@ -86,8 +86,12 @@
         },
 
         "settings": {
+            "hideFromGMName": "Esconder Controles de Efeitos do GM",
+            "hideFromGMHint": "Esconde do GM os controles dos Active Effects das Avarias em Armaduras. Por padrão somente o GM possui acesso aos controles.",
             "criticalName": "Crítico Multiplica Dados",
             "criticalHint": "Faz um acerto crítico um pouco mais mortal ao multiplicar os resultados obtidos nos Dados de Dano (ignora qualquer modificador).",
+            "massCombatName": "Regras de Combate Massivo",
+            "massCombatHint": "Habilita as Fichas de Personagens para o Sistema de Combate Massivo.",
             "exhaustionName": "Nova Regra de Exaustão (One D&D)",
             "exhaustionHint": "Utilizar nova regra de Exaustão proposta pelo sistema One D&D. '-1' em rolagems com d20 para cada nível de exaustão."
         }

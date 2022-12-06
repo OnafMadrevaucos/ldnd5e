@@ -4,10 +4,30 @@ export const registerSystemSettings = function() {
 
     const reload = foundry.utils.debounce(() => window.location.reload(), 250);
   
+    // Hide Armor Active Effects from GM
+    game.settings.register("ldnd5e", "hideArmorEffectsFromGM", {
+        name: "ldnd5e.settings.hideFromGMName",
+        hint: "ldnd5e.settings.hideFromGMHint",
+        scope: "world",
+        config: true,
+        type: Boolean,
+        default: false
+    });
+
     // Critical Damage Modifiers
     game.settings.register("ldnd5e", "criticalDamageModifiers", {
         name: "ldnd5e.settings.criticalName",
         hint: "ldnd5e.settings.criticalHint",
+        scope: "world",
+        config: true,
+        type: Boolean,
+        default: false
+    });
+
+    // Massive Combat Rules
+    game.settings.register("ldnd5e", "massiveCombatRules", {
+        name: "ldnd5e.settings.massCombatName",
+        hint: "ldnd5e.settings.massCombatHint",
         scope: "world",
         config: true,
         type: Boolean,

@@ -151,8 +151,12 @@
    },
 
    settings: {
+      hideFromGMName: "ldnd5e.settings.hideFromGMName",
+      hideFromGMHint: "ldnd5e.settings.hideFromGMHint",
       criticalName: "ldnd5e.settings.criticalName",
       criticalHint: "ldnd5e.settings.criticalHint",
+      massCombatName: "ldnd5e.settings.massCombatName",
+      massCombatHint: "ldnd5e.settings.massCombatHint",
       exhaustionName: "ldnd5e.settings.exhaustionName",
       exhaustionHint: "ldnd5e.settings.exhaustionHint"
    }
