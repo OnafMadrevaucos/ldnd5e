@@ -14,6 +14,7 @@
         mainTemplate: 'modules/ldnd5e/templates/mainControl.hbs',
         dlControlTemplate: 'modules/ldnd5e/templates/control-dialog.hbs',
         arControlTemplate: 'modules/ldnd5e/templates/confirm-dialog.hbs',
+        cControlTemplate: 'modules/ldnd5e/templates/cControl.hbs',
         frControlTemplate: 'modules/ldnd5e/templates/full-repair-dialog.hbs',
         newDLTemplate: 'modules/ldnd5e/templates/newDL-template.hbs',
     },
@@ -110,6 +111,11 @@
    frControlItemLabel: "ldnd5e.frControlItemLabel",
    frControlItemPrice: "ldnd5e.frControlItemPrice",
    frControlMessage: "ldnd5e.frControlMessage",
+
+   cControlTitle: "ldnd5e.cControlTitle",
+   cControlLightList: "ldnd5e.cControlLightList",
+   cControlHeavyList: "ldnd5e.cControlHeavyList",
+   cControlSpecialList: "ldnd5e.cControlSpecialList",
 
    activeEffectLabel: "ldnd5e.activeEffectLabel",
    activeEffectShieldLabel: "ldnd5e.activeEffectShieldLabel",

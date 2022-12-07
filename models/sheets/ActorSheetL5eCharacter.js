@@ -95,7 +95,7 @@ export default class ActorSheetL5eCharacter extends constants.ActorSheet5eCharac
         
         super._onItemDelete(event);
     }
-
+    
     /**@override */
     _prepareActiveEffectAttributions(target) {
         let atrib = [];
@@ -274,5 +274,5 @@ export default class ActorSheetL5eCharacter extends constants.ActorSheet5eCharac
         }  
         
         this.actor.applyActiveEffects();
-    }   
+    }      
 }

@@ -134,7 +134,6 @@ export default class adControl extends Application {
    activateListeners(html) {
 
       if(game.user.isGM) {
-
           // Clicks sem Rolagem -------------------------------------------
           // Listeners do DASystem
           html.find(".owner-image").click(this._onOwnerImageClick.bind(this));

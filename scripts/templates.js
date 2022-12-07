@@ -4,6 +4,9 @@
  export const preloadTemplates = function()
  {
     let templates = [
+         "templates/partials/light.hbs",
+         "templates/partials/heavy.hbs",
+         "templates/partials/special.hbs",
          "templates/partials/npcs-stats.hbs", 
          "templates/partials/pcs-list.hbs",
          "templates/partials/reacao-agil.hbs",

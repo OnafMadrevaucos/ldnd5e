@@ -274,6 +274,7 @@
   color: #000;
   text-shadow: 0 0 10px red;
 }
+
 .ldnd5e.app span.sep {
   flex: none;
   margin: 0 1px;
@@ -551,6 +552,14 @@
 .ldnd5e.app .effects .item .effect-controls {
   border: none;
 }
+/* ----------------------------------------- */
+/*  Company Control Classes                  */
+/* ----------------------------------------- */
+.ldnd5e.app .company-control .company-header {
+  flex: 0 0 75px;
+  text-align: center;
+}
+
 /* ----------------------------------------- */
 /*  Property Attribution                     */
 /* ----------------------------------------- */
@@ -903,4 +912,10 @@
 .ldnd5e.chat-card .card-footer span:last-child {
   border-right: none;
   padding-right: 0;
+}
+/* ----------------------------------------- */
+/*  DnD5e Actor Sheets
+/* ----------------------------------------- */
+.dnd5e.actor.sheet .center-pane h4.company{
+  text-align: center;
 }

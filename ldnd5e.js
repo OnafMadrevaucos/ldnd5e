@@ -9,6 +9,7 @@ import { constants, gmControl } from "./scripts/constants.js";
 import adControl from "./models/adControl.js";
 
 import * as ars from "./scripts/ARSystem.js";
+import * as mss from "./scripts/MSSystem.js";
 
 import ActorSheetL5eCharacter from "./models/sheets/ActorSheetL5eCharacter.js";
 import ActorSheetL5eNPCs from "./models/sheets/ActorSheetL5eNPCs.js";
@@ -72,7 +73,11 @@ Hooks.on('renderActorSheet', (app, html, data) => {
 
     if(isActorL5e != undefined && (!isActorL5e && ["character"].includes(actor.type))) actor.configL5e();
 
-    if(game.settings.get('ldnd5e', 'massiveCombatRules')) addMassiveCombatParts(actor, html);
+    if(game.settings.get('ldnd5e', 'massiveCombatRules')) {
+        mss.addMassiveCombatParts(actor, html);
+        if(["character"].includes(actor.type) && actor.system.commander) 
+            mss.setCommanderSection(html, app);
+    }
     
     /** Esconde os controles dos Active Effects sempre para Jogadores e para o GM
      *  apenas quando a Opção estiver marcada.
@@ -185,46 +190,6 @@ function hideEffects(actor, html) {
             Array.from(btns).forEach((value) => {value.hidden = true;});
         }
     }
-}
-
-/**
- * Adiciona à ficha do Actor as Parts que compõem as Regras de Combate Massivo.
- * 
- * @param {object} actor    Ator que terá a Sheet alterada. 
- * @param {html} html       Tela de ActorSheet.
- */
- function addMassiveCombatParts(actor, html) {
-    
-    const centerPane = html.find('.center-pane');
-    const traitsDiv = html.find('.traits');    
-    const cmdDiv = document.createElement("div");
-    cmdDiv.classList.add("counters");
-
-    const div = document.createElement("div");
-    div.classList.add("counter");
-    div.classList.add("flexrow");
-    div.classList.add("commander");
-    
-    const h4 = document.createElement("h4");
-    h4.innerHTML = "Comandante";
-    div.appendChild(h4);
-
-    const valueDiv = document.createElement("div");
-    valueDiv.classList.add("counter-value");    
-    const input = document.createElement("input");
-    input.setAttribute('type', 'checkbox');
-    input.setAttribute('name', 'system.commander');    
-    input.setAttribute('data-dtype', 'Boolean');   
-    input.checked = actor.system.commander;
-    valueDiv.appendChild(input);
-    div.appendChild(valueDiv);
-    cmdDiv.appendChild(div)
-
-    traitsDiv.remove();
-    centerPane[0].appendChild(cmdDiv);
-    centerPane[0].appendChild(traitsDiv[0]);
-
-    const i = 0;
 }
 
 function patchSheetText() {
