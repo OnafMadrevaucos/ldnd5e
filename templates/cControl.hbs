@@ -2,24 +2,25 @@
     <header class="sheet-header company-header flexrow">
         <section class="header-details flexrow">
             <h1 class="charname">
-                Companhia de {{actor.name}}
+                {{#debug this}}{{/debug}}
+                Companhia de {{owner.name}}
             </h1> 
         </section>
     </header>
     <nav class="sheet-navigation tabs" data-group="primary">
-        <a class="item active" data-tab="light-list">{{localize 'ldnd5e.cControlLightList'}}</a>
-        <a class="item" data-tab="heavy-list">{{localize 'ldnd5e.cControlHeavyList'}}</a>
-        <a class="item" data-tab="special-list">{{localize 'ldnd5e.cControlSpecialList'}}</a>
+        <a class="item active" data-tab="light">{{localize 'ldnd5e.cControlLightList'}}</a>
+        <a class="item" data-tab="heavy">{{localize 'ldnd5e.cControlHeavyList'}}</a>
+        <a class="item" data-tab="special">{{localize 'ldnd5e.cControlSpecialList'}}</a>
     </nav>
     <section class="sheet-body">
-        <div class="tab light-list" data-group="primary" data-tab="light-list">
-            {{> "modules/ldnd5e/templates/partials/light.hbs" sections=this.units.light}}
+        <div class="tab unit-list" data-group="primary" data-tab="light">
+            {{> "modules/ldnd5e/templates/partials/unit-list.hbs" unit=this.units.light}}
         </div>
-        <div class="tab heavy-list" data-group="primary" data-tab="heavy-list">
-            {{> "modules/ldnd5e/templates/partials/heavy.hbs" sections=this.units.heavy}}
+        <div class="tab unit-list" data-group="primary" data-tab="heavy">
+            {{> "modules/ldnd5e/templates/partials/unit-list.hbs" unit=this.units.heavy}}
         </div>
-        <div class="tab special-list" data-group="primary" data-tab="special-list">    
-            {{> "modules/ldnd5e/templates/partials/special.hbs" sections=this.units.special}}    
+        <div class="tab unit-list" data-group="primary" data-tab="special">    
+            {{> "modules/ldnd5e/templates/partials/unit-list.hbs" unit=this.units.special}}    
         </div>  
     </section>   
 </form>

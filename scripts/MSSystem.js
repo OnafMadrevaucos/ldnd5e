@@ -56,7 +56,7 @@ export const setCommanderSection = function(html, app) {
     h4.classList.add("company");
     h4.classList.add("box-title");
     h4.classList.add("rollable");
-    h4.innerHTML = "Companhia";
+    h4.innerHTML = "Abrir Companhia";
     h4.onclick = _onCompanyClick;    
     div[0].appendChild(h4);
 }

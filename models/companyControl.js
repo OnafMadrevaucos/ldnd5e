@@ -2,19 +2,16 @@ import { constants, NDs, i18nStrings } from "../scripts/constants.js";
 
 export default class companyControl extends Application{
 
-    constructor( actor, options = {} ) {
+    constructor( owner, options = {} ) {
         super(options);
 
-        this._configureDragDrops();
-
         this.data = {};
-        this.data.actor = actor;
+        this.data.owner = owner;
     }
 
     /**@override */
-    async getData() {   
-
-        this.data.units = this._prepareUnits(this.data.actor);
+    async getData() {           
+        this.data.units = this._prepareUnits();
         // Retorna data para a tela.
         return this.data;
     }
@@ -30,6 +27,7 @@ export default class companyControl extends Application{
          minimizable: true,
          resizable: false,
          title: game.i18n.localize(i18nStrings.cControlTitle),
+         dragDrop: [{dragSelector: null, dropSelector: null}],
          tabs: [{ navSelector: '.tabs', contentSelector: '.sheet-body', initial: 'light-list' }]
       });
     }
@@ -39,24 +37,12 @@ export default class companyControl extends Application{
         super.activateListeners(html);
     }
 
-    _configureDragDrops()
-    {
-        const dragDrop = new DragDrop({
-            dragSelector: null,
-            dropSelector: ".light-list",
-            permissions: { dragstart: false, drop: this._canDragDrop.bind(this) },
-            callbacks: { dragstart: null, drop: this._onDropUnit.bind(this) }
-        });
-        
-        const lightList = document.find('.light-list');
+    _prepareUnits(){   
+        const owner = this.data.owner;
 
-        dragDrop.bind(lightList[0]);
-    }
-
-    _prepareUnits(actor){        
-        const lightUnitID = actor.getFlag("ldnd5e", "lightUnitID");
-        const heavyUnitID = actor.getFlag("ldnd5e", "heavyUnitID");
-        const specialUnitID = actor.getFlag("ldnd5e", "specialUnitID");   
+        const lightUnitID = owner.getFlag("ldnd5e", "lightUnitID");
+        const heavyUnitID = owner.getFlag("ldnd5e", "heavyUnitID");
+        const specialUnitID = owner.getFlag("ldnd5e", "specialUnitID");   
         
         const lightUnit = game.actors.get(lightUnitID);
         const heavyUnit = game.actors.get(heavyUnitID);
@@ -71,9 +57,38 @@ export default class companyControl extends Application{
         return units;
     }
 
-    _onDropUnit(event) {
+    /** @override */
+    async _onDrop(event) {
         super._onDrop(event);
+        const owner = this.data.owner;
+        const data = TextEditor.getDragEventData(event);
 
-        const i = 0;
+        // Apenas Actors podem ser inseridos em um Batalhão.
+        if(!["Actor"].includes(data.type)) return;
+
+        const actorId = data.uuid?.split('.')[1];
+        const actor = game.actors.get(actorId);
+
+        // Apenas NPCs podem ser inseridos em um Batalhão como Unidade.
+        if(["character"].includes(actor.type)) return;
+
+        const activeTab = document.querySelectorAll('.unit-list.active');
+
+        switch(activeTab[0]?.dataset.tab)
+        {
+            case "light":{
+                owner.setFlag("ldnd5e", "lightUnitID", actor.id);
+            }
+            break;
+            case "heavy":{
+                owner.setFlag("ldnd5e", "heavyUnitID", actor.id);
+            }
+            break;
+            case "special":{
+                owner.setFlag("ldnd5e", "specialUnitID", actor.id);
+            }
+            break;
+            default: return;
+        }
     }
 }

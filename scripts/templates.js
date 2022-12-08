@@ -4,7 +4,7 @@
  export const preloadTemplates = function()
  {
     let templates = [
-         "templates/partials/light.hbs",
+         "templates/partials/unit-list.hbs",
          "templates/partials/heavy.hbs",
          "templates/partials/special.hbs",
          "templates/partials/npcs-stats.hbs", 
