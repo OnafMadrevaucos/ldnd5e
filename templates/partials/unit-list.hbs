@@ -1,40 +1,37 @@
-<ol class="unit-header flexrow">
-    <div class="unit-summary flexrow" data-unit-id="{{unit.id}}">
-        <img class="profile" src="{{unit.img}}" title="{{unit.name}}" data-edit="img"/>
+<div class="dnd5e sheet actor npc locked flexcol">
+<ol class="unit-header sheet-header flexrow">
+    <div class="unit-summary flexrow" data-unit-id="{{unit.actor.id}}">
+        <img class="profile" src="{{unit.actor.img}}" title="{{unit.actor.name}}" data-edit="img"/>
         <section class="header-details flexrow">
-            <h1 class="charname">
-                <input name="name" type="text" value="{{unit.name}}" placeholder="{{ localize 'DND5E.Name' }}"/>
+            <h1 class="unit-name charname">
+                {{unit.actor.name}}
             </h1>
 
             <aside class="header-exp flexcol">
                 <div class="cr">
                     <label>{{ localize "DND5E.AbbreviationCR" }}</label>
-                    <input name="system.details.cr" type="text" value="{{labels.cr}}" placeholder="1"/>
-                </div>
-                <div class="experience">
-                    <span>{{system.details.xp.value}} XP</span>
+                    <span>{{unit.labels.cr}}</span>
                 </div>
                 <div class="proficiency">
                     <span>
-                        {{ localize "DND5E.Proficiency" }} {{labels.proficiency}}
+                        {{ localize "DND5E.Proficiency" }} {{unit.actor.system.profMod}}
                     </span>
                 </div>
             </aside>
-
             {{!-- Character Summary --}}
             <ul class="summary flexrow">
                 <li>
-                    <span>{{lookup config.actorSizes system.traits.size}}</span>
+                    <span>{{lookup config.actorSizes unit.actor.system.traits.size}}</span>
                 </li>
                 <li>
-                    <input type="text" name="system.details.alignment" value="{{system.details.alignment}}" placeholder="{{ localize 'DND5E.Alignment' }}"/>
+                    <span title="{{unit.actor.system.details.alignment}}">{{unit.actor.system.details.alignment}}</span>
+                    
                 </li>
                 <li class="creature-type">
-                    <span title="{{labels.type}}">{{labels.type}}</span>
-                    <a class="config-button" data-action="type" title="{{localize 'DND5E.CreatureTypeConfig'}}"><i class="fas fa-cog"></i></a>
+                    <span title="{{unit.labels.type}}">{{unit.labels.type}}</span>                    
                 </li>
                 <li>
-                    <input type="text" name="system.details.source" value="{{system.details.source}}" placeholder="{{ localize 'DND5E.Source' }}"/>
+                    <span title="{{unit.actor.system.details.source}}">{{unit.actor.system.details.source}}</span>
                 </li>
             </ul>
 
@@ -44,51 +41,136 @@
                     <h4 class="attribute-name box-title rollable">{{ localize "DND5E.HitPoints" }}</h4>
                     <div class="attribute-value multiple">
                         <input name="system.attributes.hp.value" type="number" step="any"
-                            value="{{system.attributes.hp.value}}" placeholder="10"
+                            value="{{unit.actor.system.attributes.hp.value}}" placeholder="10"
                             title="{{localize 'DND5E.HitPointsCurrent'}}">
                         <span class="sep"> / </span>
                         <input name="system.attributes.hp.max" type="number" step="any"
-                            value="{{system.attributes.hp.max}}" placeholder="10"
+                            value="{{unit.actor.system.attributes.hp.max}}" placeholder="10"
                             title="{{localize 'DND5E.HitPointsMax'}}">
                     </div>
                     <footer class="attribute-footer flexrow">
-                        <input name="system.attributes.hp.formula" class="hpformula" type="text"
-                            placeholder="{{ localize 'DND5E.HPFormula' }}"
-                            value="{{system.attributes.hp.formula}}"
-                            title="{{localize 'DND5E.HPFormula'}}">
-                        <input name="system.attributes.hp.temp" type="number" step="any" class="temphp"
-                            placeholder="+{{localize 'DND5E.Temp'}}"
-                            value="{{system.attributes.hp.temp}}"
-                            title="{{localize 'DND5E.HitPointsTemp'}}">
+                        <span>{{unit.actor.system.attributes.hp.formula}}</span>
                     </footer>
                 </li>
 
                 <li class="attribute armor">
                     <h4 class="attribute-name box-title">
-                        {{ localize "DND5E.ArmorClass" }}
-                        <a class="config-button" data-action="armor" title="{{localize 'DND5E.ArmorConfig'}}"><i class="fas fa-cog"></i></a>
+                        {{ localize "DND5E.ArmorClass" }}                        
                     </h4>
                     <div class="attribute-value attributable" data-property="attributes.ac">
-                        <span>{{system.attributes.ac.value}}</span>
+                        <span>{{unit.actor.system.attributes.ac.value}}</span>
                     </div>
                     <footer class="attribute-footer">
-                        <span>{{labels.armorType}}</span>
+                        <span>{{unit.labels.armorType}}</span>
                     </footer>
                 </li>
 
                 <li class="attribute movement">
                     <h4 class="attribute-name box-title">
-                        {{ localize "DND5E.Movement" }}
-                        <a class="config-button" data-action="movement" title="{{localize 'DND5E.MovementConfig'}}"><i class="fas fa-cog"></i></a>
+                        {{ localize "DND5E.Movement" }}                        
                     </h4>
                     <div class="attribute-value">
-                        <span>{{movement.primary}}</span>
+                        <span>{{unit.actor.system.attributes.movement.walk}} {{unit.actor.system.attributes.movement.units}}</span>
                     </div>
-                    <footer class="attribute-footer">
-                        <span>{{movement.special}}</span>
-                    </footer>
                 </li>
             </ul>
         </section>
     </div>
 </ol>
+<ol class="items-list inventory-list">
+{{#each unit.features as |section sid|}}
+    <li class="items-header flexrow">
+        <h3 class="item-name flexrow">{{localize section.label}}</h3>
+
+        {{#if section.hasActions}}
+        <div class="item-detail item-uses">{{localize "DND5E.Uses"}}</div>
+        <div class="item-detail item-action">{{localize "DND5E.Usage"}}</div>
+        {{/if}}
+
+        {{#if section.columns}}
+            {{#each section.columns}}
+                <div class="item-detail {{css}}">{{label}}</div>
+            {{/each}}
+        {{/if}}
+
+        {{#if ../owner}}
+        <div class="item-controls flexrow">
+            <a class="item-control item-create" title="{{localize 'DND5E.FeatureAdd'}}" {{#each section.dataset as |v k|}}data-{{k}}="{{v}}"{{/each}}>                
+            </a>
+        </div>
+        {{/if}}
+    </li>
+
+    <ol class="item-list">
+    {{#each section.items as |item iid|}}
+        <li class="item flexrow {{#if isDepleted}}depleted{{/if}}" data-item-id="{{item._id}}">
+            <div class="item-name flexrow rollable">
+                <div class="item-image" tabindex="0" role="button" aria-label="{{item.name}}" style="background-image: url('{{item.img}}')"></div>
+                <h4>
+                    {{#if (eq item.type "subclass")}}&rdsh;{{/if}}
+                    {{item.name}}
+                    {{#if item.system.isOriginalClass}} <i class="original-class fas fa-sun" title="{{localize 'DND5E.ClassOriginal'}}"></i>{{/if}}
+                </h4>
+            </div>
+
+            {{#if section.hasActions}}
+            <div class="item-detail item-uses">
+                {{#if item.isOnCooldown}}
+                    <a class="item-recharge rollable">{{item.labels.recharge}}</a>
+                {{else if item.system.recharge.value}}
+                    {{localize "DND5E.Charged"}}
+                {{else if item.hasUses}}
+                    <input type="text" value="{{item.system.uses.value}}" placeholder="0"/>/ {{item.system.uses.max}}
+                {{/if}}
+            </div>
+            <div class="item-detail item-action">
+                {{#if item.system.activation.type}}
+                    {{item.labels.activation}}
+                {{/if}}
+            </div>
+
+            {{else if (eq item.type "class")}}
+            <div class="item-detail item-action">
+                <select class="level-selector">
+                    {{#select 0}}
+                    {{#each item.availableLevels}}
+                        <option value="{{this.delta}}" {{disabled this.disabled}}>
+                            {{localize "DND5E.LevelNumber" level=this.level}}
+                            {{#if this.delta}}({{numberFormat this.delta sign=true}}){{/if}}
+                        </option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
+            {{/if}}
+
+            {{#if section.columns}}
+                {{#each section.columns}}
+                    <div class="item-detail {{css}}">
+                        {{#if editable}}
+                            <input type="text" value="{{getProperty item property}}" placeholder="&mdash;"
+                                   data-dtype="{{editable}}">
+                        {{else}}
+                            {{getProperty item property}}
+                        {{/if}}
+                    </div>
+                {{/each}}
+            {{/if}}
+
+            {{#if ../../owner}}
+            <div class="item-controls flexrow">
+                {{#if section.crewable}}
+                <a class="item-control item-toggle {{item.toggleClass}}"
+                   title="{{item.toggleTitle}}">
+                    <i class="fas fa-sun"></i>
+                </a>
+                {{/if}}
+                <a class="item-control item-edit" title="{{localize 'DND5E.ItemEdit'}}"><i class="fas fa-edit"></i></a>
+            </div>
+            {{/if}}
+        </li>
+    {{/each}}
+    </ol>
+{{/each}}
+</ol>
+</div>

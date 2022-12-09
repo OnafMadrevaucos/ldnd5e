@@ -560,60 +560,29 @@
   text-align: center;
 }
 
-.ldnd5e.app .unit-list .unit-header {
-  flex: 0 0 100px;
+.ldnd5e.app .unit-list ol {
+  padding: 0 0 0 0.5em;
 }
 
-.ldnd5e.app .unit-list .unit-header .unit-summary img.profile {
-  flex: 0 0 160px;
-  max-width: 160px;
-  height: 160px;
+.ldnd5e.app .unit-list .unit-header .unit-name {
+  text-align: center;
+  font-size: xxx-large;
 }
-.ldnd5e.app .unit-list .unit-header .unit-summary h1.charname {
-  flex: 1;
+
+.ldnd5e.app .unit-list .unit-header .hpbar {
+  flex: 0 0 8px;
+  width: 100%;
+  margin-bottom: 5px;
+  background: #7a7971;
+  border: 1px solid #000;
+  border-radius: 3px;
+}
+
+.ldnd5e.app .unit-list .unit-header .header-exp {
   height: 60px;
-  padding: 0;
 }
-.ldnd5e.app .unit-list .unit-header .unit-summary h1.charname input {
-  height: 40px;
-  margin: 10px 0;
-}
-
-.ldnd5e.app .unit-list .unit-header .unit-summary .header-exp {
-  height: 40px;
-  margin: 10px 0;
-}
-
-.ldnd5e.app .unit-list .unit-header .unit-summary .summary {
-  height: 30px;
-  border-bottom: 2px groove #eeede0;
-  font-size: 18px;
-}
-.ldnd5e.app .unit-list .unit-header .unit-summary .summary input,
-.ldnd5e.app .unit-list .unit-header .unit-summary .summary span {
-  display: block;
-  height: 24px;
-  line-height: 24px;
-}
-.ldnd5e.app .unit-list .unit-header .unit-summary .summary span {
-  margin-inline-start: 4px;
-  border-block-start: 1px solid transparent;
-}
-.ldnd5e.app .unit-list .unit-header .unit-summary .summary select {
-  position: relative;
-  top: -4px;
-}
-
-.ldnd5e.app .unit-list .unit-header .unit-summary .attributes {
-  flex: 0 0 100%;
-  margin: 0;
-}
-.ldnd5e.app .unit-list .unit-header .unit-summary .attributes .attribute {
-  height: 70px;
-  margin: 0;
-  border: none;
-  border-right: 2px groove #eeede0;
-  border-radius: 0;
+.ldnd5e.app .unit-list .unit-header .header-exp .proficiency {
+  margin-top: 0.7em;
 }
 
 /* ----------------------------------------- */

@@ -2,7 +2,6 @@
     <header class="sheet-header company-header flexrow">
         <section class="header-details flexrow">
             <h1 class="charname">
-                {{#debug this}}{{/debug}}
                 Companhia de {{owner.name}}
             </h1> 
         </section>
@@ -14,13 +13,13 @@
     </nav>
     <section class="sheet-body">
         <div class="tab unit-list" data-group="primary" data-tab="light">
-            {{> "modules/ldnd5e/templates/partials/unit-list.hbs" unit=this.units.light}}
+            {{> "modules/ldnd5e/templates/partials/unit-list.hbs" config=this.config unit=this.units.light}}
         </div>
         <div class="tab unit-list" data-group="primary" data-tab="heavy">
-            {{> "modules/ldnd5e/templates/partials/unit-list.hbs" unit=this.units.heavy}}
+            {{> "modules/ldnd5e/templates/partials/unit-list.hbs" config=this.config unit=this.units.heavy}}
         </div>
         <div class="tab unit-list" data-group="primary" data-tab="special">    
-            {{> "modules/ldnd5e/templates/partials/unit-list.hbs" unit=this.units.special}}    
+            {{> "modules/ldnd5e/templates/partials/unit-list.hbs" config=this.config unit=this.units.special}}    
         </div>  
     </section>   
 </form>

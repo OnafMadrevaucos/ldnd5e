@@ -113,6 +113,7 @@
    frControlMessage: "ldnd5e.frControlMessage",
 
    cControlTitle: "ldnd5e.cControlTitle",
+   
    cControlLightList: "ldnd5e.cControlLightList",
    cControlHeavyList: "ldnd5e.cControlHeavyList",
    cControlSpecialList: "ldnd5e.cControlSpecialList",
