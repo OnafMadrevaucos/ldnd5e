@@ -558,6 +558,10 @@
 .ldnd5e.app .company-control .company-header {
   flex: 0 0 75px;
   text-align: center;
+  border-bottom: none;
+}
+.ldnd5e.app .company-control .company-header h1.charname {  
+  font-size: 3em;
 }
 
 .ldnd5e.app .unit-list ol {
@@ -567,6 +571,7 @@
 .ldnd5e.app .unit-list .unit-header .unit-name {
   text-align: center;
   font-size: xxx-large;
+
 }
 
 .ldnd5e.app .unit-list .unit-header .hpbar {
@@ -583,6 +588,30 @@
 }
 .ldnd5e.app .unit-list .unit-header .header-exp .proficiency {
   margin-top: 0.7em;
+}
+
+.ldnd5e.app .unit-list .unit-abilities{
+  flex: none
+}
+.ldnd5e.app .unit-list .unit-abilities .unit-scores{
+  border: none;
+}
+.ldnd5e.app .unit-list .unit-abilities .unit-scores .unit-ability{
+  border-bottom: 2px groove #eeede0;
+}
+.ldnd5e.app .unit-list .unit-abilities .unit-scores .unit-ability .unit-ability-mod{
+  border-left: 2px groove #eeede0;
+}
+.ldnd5e.app .unit-list .unit-abilities .unit-scores .unit-ability .unit-ability-proficiency:hover{
+  color: #b5b3a4;
+  text-shadow: none;
+  cursor: default;
+}
+.ldnd5e.app .unit-list .unit-abilities .unit-scores .unit-ability.proficient .unit-ability-proficiency:hover{
+  color: #4b4a44;
+}
+.ldnd5e.app .unit-list .unit-abilities .unit-scores .unit-ability .unit-ability-save{
+  border-right: 2px groove #eeede0;
 }
 
 /* ----------------------------------------- */
@@ -943,4 +972,5 @@
 /* ----------------------------------------- */
 .dnd5e.actor.sheet .center-pane h4.company{
   text-align: center;
+  border-bottom: none;
 }

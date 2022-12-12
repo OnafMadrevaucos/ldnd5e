@@ -38,6 +38,59 @@ export default class companyControl extends Application{
     /** @override */
     activateListeners(html) {
         super.activateListeners(html);
+
+        // Item Rolling
+        html.find(".rollable .item-image").click(event => this._onItemUse(event));
+
+        const inputs = html.find("input");
+        inputs.focus(ev => ev.currentTarget.select());
+        inputs.addBack().find('[type="number"]').change(this._onChangeInputDelta.bind(this));
+    }
+    
+    /**
+   * Get the font-awesome icon used to display a certain level of skill proficiency.
+   * @param {number} level  A proficiency mode defined in `CONFIG.DND5E.proficiencyLevels`.
+   * @returns {string}      HTML string for the chosen icon.
+   * @private
+   */
+    _getProficiencyIcon(level) {
+        const icons = {
+            0: '<i class="far fa-circle"></i>',
+            0.5: '<i class="fas fa-adjust"></i>',
+            1: '<i class="fas fa-check"></i>',
+            2: '<i class="fas fa-check-double"></i>'
+        };
+        return icons[level] || icons[0];
+    }
+
+     /**
+   * Get active Unit.
+   * @returns {Actor5e}      An Actor5e object of the active Unit.
+   * @private
+   */
+    _getActiveUnit() {
+        const unitsData = this.data.units;
+        const activeTab = document.querySelectorAll('.unit-list.active');
+        const tabName = activeTab[0]?.dataset.tab;
+
+        var unit = undefined;
+        switch(tabName)
+        {
+            case "light":{
+                unit = unitsData.light.actor;
+            }
+            break;
+            case "heavy":{
+                unit = unitsData.heavy.actor;
+            }
+            break;
+            case "special":{
+                unit = unitsData.special.actor;
+            }
+            break;
+            default: return unit;
+        }   
+        return unit;
     }
 
     _prepareUnits(){   
@@ -52,7 +105,7 @@ export default class companyControl extends Application{
         const specialUnit = game.actors.get(specialUnitID);
         
         const units = {
-            light: { 
+            light: {                 
                 actor: (lightUnit ?? null), 
                 features: this._prepareFeatures(lightUnit), 
                 labels: this._prepareLabels(lightUnit)
@@ -114,6 +167,14 @@ export default class companyControl extends Application{
         const cr = parseFloat(unit.system.details.cr ?? 0);
         const crLabels = {0: "0", 0.125: "1/8", 0.25: "1/4", 0.5: "1/2"};
 
+        // Ability Scores
+        for ( const [a, abl] of Object.entries(unit.system.abilities) ) {
+            abl.icon = this._getProficiencyIcon(abl.proficient);
+            abl.hover = CONFIG.DND5E.proficiencyLevels[abl.proficient];
+            abl.label = CONFIG.DND5E.abilities[a];
+            abl.baseProf = unit.system.abilities[a]?.proficient ?? 0;
+        }
+
         return {
               cr: cr >= 1 ? String(cr) : crLabels[cr] ?? 1,
               type: unit.constructor.formatCreatureType(unit.system.details.type),
@@ -166,4 +227,33 @@ export default class companyControl extends Application{
 
         this.render(true);
     }
+    
+    /**
+    * Handle input changes to numeric form fields, allowing them to accept delta-typed inputs
+    * @param {Event} event  Triggering event.
+    * @private
+    */
+    _onChangeInputDelta(event) {
+        const unit = this._getActiveUnit();
+        const input = event.target;
+        const value = input.value;
+        if ( ["+", "-"].includes(value[0]) ) {
+        let delta = parseFloat(value);
+        input.value = foundry.utils.getProperty(unit, input.name) + delta;
+        }
+        else if ( value[0] === "=" ) input.value = value.slice(1);
+    }
+    /**
+    * Handle using an item from the Actor sheet, obtaining the Item instance, and dispatching to its use method.
+    * @param {Event} event  The triggering click event.
+    * @returns {Promise}    Results of the usage.
+    * @protected
+    */
+    _onItemUse(event) {
+        event.preventDefault();
+        const unit = this._getActiveUnit();
+        const itemId = event.currentTarget.closest(".item").dataset.itemId;
+        const item = unit.items.get(itemId);
+        if ( item ) return item.use();
+    }    
 }

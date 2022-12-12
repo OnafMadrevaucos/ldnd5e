@@ -1,4 +1,4 @@
-<div class="dnd5e sheet actor npc locked flexcol">
+<div class="dnd5e sheet actor npc editable flexcol">
 <ol class="unit-header sheet-header flexrow">
     <div class="unit-summary flexrow" data-unit-id="{{unit.actor.id}}">
         <img class="profile" src="{{unit.actor.img}}" title="{{unit.actor.name}}" data-edit="img"/>
@@ -77,6 +77,24 @@
         </section>
     </div>
 </ol>
+<div class="unit-abilities">
+    {{!-- Ability Scores --}}
+    <ul class="unit-scores ability-scores flexrow">
+    {{#each unit.actor.system.abilities as |ability id|}}    
+        <li class="unit-ability ability {{#if ability.proficient}}proficient{{/if}}" data-ability="{{id}}">
+            <h4 class="ability-name box-title rollable">{{ability.label}}</h4>
+            {{numberInput ability.value name=(concat "unit.actor.system.abilities." id ".value")
+                class="ability-score" placeholder="10"}}
+            <div class="ability-modifiers flexrow">
+                <span class="unit-ability-mod ability-mod" title="{{ localize 'DND5E.Modifier' }}">{{numberFormat ability.mod decimals=0 sign=true}}</span>
+                <input type="hidden" name="system.abilities.{{id}}.proficient" value="{{ability.baseProf}}" data-dtype="Number"/>
+                <a class="unit-ability-proficiency proficiency-toggle ability-proficiency" title="{{ localize 'DND5E.Proficiency' }}">{{{ability.icon}}}</a>
+                <span class="unit-ability-save ability-save" title="{{ localize 'DND5E.SavingThrow' }}">{{numberFormat ability.save decimals=0 sign=true}}</span>
+            </div>            
+        </li>
+    {{/each}}
+    </ul>
+</div>
 <ol class="items-list inventory-list">
 {{#each unit.features as |section sid|}}
     <li class="items-header flexrow">
