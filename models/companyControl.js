@@ -1,7 +1,7 @@
 import { DND5E } from "../../../systems/dnd5e/dnd5e.mjs";
 import { constants, NDs, i18nStrings } from "../scripts/constants.js";
 
-export default class companyControl extends Application{
+export default class companyControl extends FormApplication{
 
     constructor( owner, options = {} ) {
         super(options);
@@ -206,6 +206,9 @@ export default class companyControl extends Application{
         // Apenas NPCs podem ser inseridos em um Batalhão como Unidade.
         if(["character"].includes(actor.type)) return;
 
+        // Somente NPCs marcados como Unidades Militares pode inserido em um Batalhão.
+        if(!actor.system.isUnit) return;
+
         const activeTab = document.querySelectorAll('.unit-list.active');
 
         switch(activeTab[0]?.dataset.tab)
@@ -227,7 +230,7 @@ export default class companyControl extends Application{
 
         this.render(true);
     }
-    
+
     /**
     * Handle input changes to numeric form fields, allowing them to accept delta-typed inputs
     * @param {Event} event  Triggering event.
@@ -243,6 +246,21 @@ export default class companyControl extends Application{
         }
         else if ( value[0] === "=" ) input.value = value.slice(1);
     }
+    /**
+    * Handle input changes to numeric form fields.
+    * @param {Event} event  Triggering event.
+    * @private
+    */
+    /**@override */
+    async _onChangeInput(event) {
+        const unit = this._getActiveUnit();    
+        const input = event.target;   
+        await unit.update({[`${input.name}`]: parseInt(input.value)})
+
+        this.render(true);
+    }
+
+
     /**
     * Handle using an item from the Actor sheet, obtaining the Item instance, and dispatching to its use method.
     * @param {Event} event  The triggering click event.

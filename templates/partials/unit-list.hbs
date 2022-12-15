@@ -83,7 +83,7 @@
     {{#each unit.actor.system.abilities as |ability id|}}    
         <li class="unit-ability ability {{#if ability.proficient}}proficient{{/if}}" data-ability="{{id}}">
             <h4 class="ability-name box-title rollable">{{ability.label}}</h4>
-            {{numberInput ability.value name=(concat "unit.actor.system.abilities." id ".value")
+            {{numberInput ability.value name=(concat "system.abilities." id ".value")
                 class="ability-score" placeholder="10"}}
             <div class="ability-modifiers flexrow">
                 <span class="unit-ability-mod ability-mod" title="{{ localize 'DND5E.Modifier' }}">{{numberFormat ability.mod decimals=0 sign=true}}</span>

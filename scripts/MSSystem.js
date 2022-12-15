@@ -19,19 +19,24 @@ import cControl from "../models/companyControl.js";
     div.classList.add("counter");
     div.classList.add("flexrow");
     div.classList.add("commander");
+
+    const label = (["npc"].includes(actor.type) ? "Unidade Militar" : "Comandante");
     
     const h4 = document.createElement("h4");
-    h4.innerHTML = "Comandante";
+    h4.innerHTML = label;
     div.appendChild(h4);
+
+    const checkClass = (["npc"].includes(actor.type) ? "unit-check" : "commander-check");
+    const attribute = (["npc"].includes(actor.type) ? "system.isUnit" : "system.commander");
 
     const valueDiv = document.createElement("div");
     valueDiv.classList.add("counter-value");    
     const input = document.createElement("input");
-    input.classList.add("commander-check");
+    input.classList.add(checkClass);
     input.setAttribute('type', 'checkbox');
-    input.setAttribute('name', 'system.commander');    
+    input.setAttribute('name', attribute);    
     input.setAttribute('data-dtype', 'Boolean');   
-    input.checked = actor.system.commander;
+    input.checked = (["npc"].includes(actor.type) ? actor.system.isUnit : actor.system.commander);
     valueDiv.appendChild(input);
     div.appendChild(valueDiv);
     cmdDiv.appendChild(div)

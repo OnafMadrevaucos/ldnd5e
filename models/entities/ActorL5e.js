@@ -34,11 +34,32 @@ export default class ActorL5e extends documents.Actor5e {
             CONFIG.adControl.refresh(true);
         }
 
-        if(game.settings.get('ldnd5e', 'massiveCombatRules')) {
+        if((["character"].includes(this.type)) && game.settings.get('ldnd5e', 'massiveCombatRules')) {
             data.commander = data.commander ?? false;
+        }
+
+        if((["npc"].includes(this.type)) && game.settings.get('ldnd5e', 'massiveCombatRules')) {
+            data.isUnit = data.isUnit ?? false;
         }
     }  
 
+    /** @override */
+    _prepareBaseAbilities(updates) {
+        super._prepareBaseAbilities(updates);        
+
+        if(["npc"].includes(this.type) && this.system.isUnit && game.settings.get('ldnd5e', 'massiveCombatRules')) {
+            const key = "mrl";
+
+            if(!this.system.abilities[key])
+            {
+                const mrl = foundry.utils.deepClone(game.system.template.Actor.templates.common.abilities.cha);
+                mrl.value = 10;
+                this.system.abilities.mrl = mrl;               
+
+                updates[`system.abilities.${key}`] = foundry.utils.deepClone(mrl);
+            }
+        }
+    }
     //------------------------------------------------------
     //  Funções Novas 
     // ----------------------------------------------------- 
