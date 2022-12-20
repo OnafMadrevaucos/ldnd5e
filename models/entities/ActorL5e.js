@@ -54,6 +54,7 @@ export default class ActorL5e extends documents.Actor5e {
             {
                 const mrl = foundry.utils.deepClone(game.system.template.Actor.templates.common.abilities.cha);
                 mrl.value = 10;
+                mrl.min = 0;
                 this.system.abilities.mrl = mrl;               
 
                 updates[`system.abilities.${key}`] = foundry.utils.deepClone(mrl);

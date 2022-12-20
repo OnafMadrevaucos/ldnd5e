@@ -154,7 +154,12 @@
 
       arControlLabel: "ldnd5e.messages.arControlLabel",
       arControlLabelObs: "ldnd5e.messages.arControlLabelObs",
-      arMaxedOut:"ldnd5e.messages.arMaxedOut"
+      arMaxedOut:"ldnd5e.messages.arMaxedOut",
+
+      addUnitTitle: "ldnd5e.messages.addUnitTitle",
+      addUnitLabel: "ldnd5e.messages.addUnitLabel",
+      dismissUnitTitle: "ldnd5e.messages.dismissUnitTitle",
+      dismissUnitLabel: "ldnd5e.messages.dismissUnitLabel"
    },
 
    settings: {

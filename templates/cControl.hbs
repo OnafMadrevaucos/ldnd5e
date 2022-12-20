@@ -2,27 +2,49 @@
     <header class="company-header sheet-header flexrow">
         <section class="header-details flexrow">
             <h1 class="charname">
-                Companhia de {{owner.name}}
+                {{company.name}}
             </h1> 
         </section>
     </header>
+    <div class="unit-abilities attributes flexrow">
+            {{!-- Ability Scores --}}
+            <ul class="unit-scores ability-scores flexrow">
+            {{#each company.system.abilities as |ability id|}}    
+                <li class="unit-ability ability {{#if ability.proficient}}proficient{{/if}}" data-ability="{{id}}">
+                    <h4 class="ability-name box-title rollable">{{ability.label}}</h4>
+                    {{numberInput ability.value name=(concat "system.abilities." id ".value")
+                    class="ability-score" placeholder="10"}}
+                    <div class="ability-modifiers flexrow">
+                        <span class="unit-ability-mod ability-mod" title="{{ localize 'DND5E.Modifier' }}">{{numberFormat ability.mod decimals=0 sign=true}}</span>
+                        <input type="hidden" name="system.abilities.{{id}}.proficient" value="{{ability.baseProf}}" data-dtype="Number"/>
+                        <a class="unit-ability-proficiency proficiency-toggle ability-proficiency" title="{{ localize 'DND5E.Proficiency' }}">{{{ability.icon}}}</a>
+                        <span class="unit-ability-save ability-save" title="{{ localize 'DND5E.SavingThrow' }}">{{numberFormat ability.save decimals=0 sign=true}}</span>
+                    </div>            
+                </li>
+            {{/each}}
+            </ul>
+    </div>
     <nav class="sheet-navigation tabs" data-group="primary">
         <a class="item active" data-tab="light">{{localize 'ldnd5e.cControlLightList'}}</a>
         <a class="item" data-tab="heavy">{{localize 'ldnd5e.cControlHeavyList'}}</a>
         <a class="item" data-tab="special">{{localize 'ldnd5e.cControlSpecialList'}}</a>
     </nav>
     <section class="sheet-body">
-        <div class="tab unit-list" data-group="primary" data-tab="light">
-            <div class="item-controls flexrow">
-                <a class="item-control item-delete" title='{{localize "DND5E.ItemDelete"}}'><i class="fas fa-trash"></i></a>
-            </div>
-            {{> "modules/ldnd5e/templates/partials/unit-list.hbs" config=this.config unit=this.units.light}}
+        {{#debug this.company}}{{/debug}}
+        <div class="tab unit-list" data-group="primary" data-tab="light">     
+            {{#if company.flags.hasLight}}       
+                {{> "modules/ldnd5e/templates/partials/unit-list.hbs" config=this.config unit=this.company.units.light}}
+            {{/if}}
         </div>
         <div class="tab unit-list" data-group="primary" data-tab="heavy">
-            {{> "modules/ldnd5e/templates/partials/unit-list.hbs" config=this.config unit=this.units.heavy}}
+            {{#if company.flags.hasHeavy}}
+                {{> "modules/ldnd5e/templates/partials/unit-list.hbs" config=this.config unit=this.company.units.heavy}}
+            {{/if}}
         </div>
         <div class="tab unit-list" data-group="primary" data-tab="special">    
-            {{> "modules/ldnd5e/templates/partials/unit-list.hbs" config=this.config unit=this.units.special}}    
+            {{#if company.flags.hasSpecial}}
+                {{> "modules/ldnd5e/templates/partials/unit-list.hbs" config=this.config unit=this.company.units.special}}   
+            {{/if}} 
         </div>  
     </section>  
 </form>

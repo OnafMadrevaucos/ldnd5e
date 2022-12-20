@@ -1,20 +1,24 @@
 import { DND5E } from "../../../systems/dnd5e/dnd5e.mjs";
 import { constants, NDs, i18nStrings } from "../scripts/constants.js";
+import ActorL5e from "./entities/ActorL5e.js";
+import CompanyL5e from "./entities/CompanyL5e.js";
 
 export default class companyControl extends FormApplication{
 
     constructor( owner, options = {} ) {
         super(options);
-        this.owner = owner;
+        this.owner = owner;        
     }
 
     /**@override */
-    async getData() {           
+    async getData() {
+
         this.data = {
             owner: this.owner,
-            units: this._prepareUnits(),
+            company: new CompanyL5e(`Companhia de ${this.owner.name}`, this.owner),
             config: CONFIG.DND5E
         };
+
         // Retorna data para a tela.
         return this.data;
     }
@@ -42,32 +46,22 @@ export default class companyControl extends FormApplication{
         // Item Rolling
         html.find(".rollable .item-image").click(event => this._onItemUse(event));
 
+        // Dismiss an Unit from Company
+        html.find(".dismiss").click(event => this._dismissUnit(event));
+
+        // Ability Checks
+        html.find(".ability-name").click(this._onRollAbilityTest.bind(this));
+
         const inputs = html.find("input");
         inputs.focus(ev => ev.currentTarget.select());
         inputs.addBack().find('[type="number"]').change(this._onChangeInputDelta.bind(this));
     }
-    
-    /**
-   * Get the font-awesome icon used to display a certain level of skill proficiency.
-   * @param {number} level  A proficiency mode defined in `CONFIG.DND5E.proficiencyLevels`.
-   * @returns {string}      HTML string for the chosen icon.
-   * @private
-   */
-    _getProficiencyIcon(level) {
-        const icons = {
-            0: '<i class="far fa-circle"></i>',
-            0.5: '<i class="fas fa-adjust"></i>',
-            1: '<i class="fas fa-check"></i>',
-            2: '<i class="fas fa-check-double"></i>'
-        };
-        return icons[level] || icons[0];
-    }
 
-     /**
-   * Get active Unit.
-   * @returns {Actor5e}      An Actor5e object of the active Unit.
-   * @private
-   */
+    /**
+    * Get active Unit.
+    * @returns {Actor5e}      An Actor5e object of the active Unit.
+    * @private
+    */
     _getActiveUnit() {
         const unitsData = this.data.units;
         const activeTab = document.querySelectorAll('.unit-list.active');
@@ -93,104 +87,6 @@ export default class companyControl extends FormApplication{
         return unit;
     }
 
-    _prepareUnits(){   
-        const owner = this.owner;
-
-        const lightUnitID = owner.getFlag("ldnd5e", "lightUnitID");
-        const heavyUnitID = owner.getFlag("ldnd5e", "heavyUnitID");
-        const specialUnitID = owner.getFlag("ldnd5e", "specialUnitID");   
-        
-        const lightUnit = game.actors.get(lightUnitID);
-        const heavyUnit = game.actors.get(heavyUnitID);
-        const specialUnit = game.actors.get(specialUnitID);
-        
-        const units = {
-            light: {                 
-                actor: (lightUnit ?? null), 
-                features: this._prepareFeatures(lightUnit), 
-                labels: this._prepareLabels(lightUnit)
-            },
-            heavy: { 
-                actor: (heavyUnit ?? null), 
-                features: this._prepareFeatures(heavyUnit), 
-                labels: this._prepareLabels(heavyUnit)
-            },
-            special: { 
-                actor: (specialUnit ?? null),
-                features: this._prepareFeatures(specialUnit),  
-                labels: this._prepareLabels(specialUnit)
-            }
-        }
-
-        return units;
-    }
-
-    _prepareFeatures(unit)
-    {
-        // Categorize Items as Features and Spells
-        const features = {
-            weapons: { label: game.i18n.localize("DND5E.AttackPl"), items: [], hasActions: true,
-                dataset: {type: "weapon", "weapon-type": "natural"} },
-            actions: { label: game.i18n.localize("DND5E.ActionPl"), items: [], hasActions: true,
-                dataset: {type: "feat", "activation.type": "action"} },
-            passive: { label: game.i18n.localize("DND5E.Features"), items: [], dataset: {type: "feat"} },
-            equipment: { label: game.i18n.localize("DND5E.ItemTypeEquipmentPl"), items: [], dataset: {type: "loot"}}
-        };
-
-        // Start by classifying items into groups for rendering
-        let [other] = unit.items.reduce((arr, item) => {
-            const {quantity, uses, recharge, target} = item.system;
-            item.img = item.img || CONST.DEFAULT_TOKEN;
-            item.isStack = Number.isNumeric(quantity) && (quantity !== 1);
-            item.hasUses = uses && (uses.max > 0);
-            item.isOnCooldown = recharge && !!recharge.value && (recharge.charged === false);
-            item.isDepleted = item.isOnCooldown && (uses.per && (uses.value > 0));
-            if ( item.type !== "spell" ) arr[0].push(item);
-            return arr;
-        }, [[]]);
-  
-        // Organize Features
-        for ( let item of other ) {
-            if ( item.type === "weapon" ) features.weapons.items.push(item);
-            else if ( item.type === "feat" ) {
-                if ( item.system.activation.type ) features.actions.items.push(item);
-                else features.passive.items.push(item);
-            }
-            else features.equipment.items.push(item);
-        }
-  
-        // Return and assign
-        return Object.values(features);
-    }
-
-    _prepareLabels(unit) {
-        const cr = parseFloat(unit.system.details.cr ?? 0);
-        const crLabels = {0: "0", 0.125: "1/8", 0.25: "1/4", 0.5: "1/2"};
-
-        // Ability Scores
-        for ( const [a, abl] of Object.entries(unit.system.abilities) ) {
-            abl.icon = this._getProficiencyIcon(abl.proficient);
-            abl.hover = CONFIG.DND5E.proficiencyLevels[abl.proficient];
-            abl.label = CONFIG.DND5E.abilities[a];
-            abl.baseProf = unit.system.abilities[a]?.proficient ?? 0;
-        }
-
-        return {
-              cr: cr >= 1 ? String(cr) : crLabels[cr] ?? 1,
-              type: unit.constructor.formatCreatureType(unit.system.details.type),
-              armorType: this.getArmorLabel(unit)
-            };
-    }
-
-    getArmorLabel(actor) {
-        const ac = actor.system.attributes.ac;
-        const label = [];
-        if ( ac.calc === "default" ) label.push(actor.armor?.name || game.i18n.localize("DND5E.ArmorClassUnarmored"));
-        else label.push(game.i18n.localize(CONFIG.DND5E.armorClasses[ac.calc].label));
-        if ( actor.shield ) label.push(actor.shield.name);
-        return label.filterJoin(", ");
-    }
-
     /** @override */
     async _onDrop(event) {
         super._onDrop(event);
@@ -198,36 +94,36 @@ export default class companyControl extends FormApplication{
         const data = TextEditor.getDragEventData(event);
 
         // Apenas Actors podem ser inseridos em um Batalhão.
-        if(!["Actor"].includes(data.type)) return;
+        if(!["Actor"].includes(data.type)) { 
+            ui.notifications.warn("Apenas Documents do tipo 'Actors' podem ser inseridos em um Batalhão.");
+            return;
+        }
 
         const actorId = data.uuid?.split('.')[1];
         const actor = game.actors.get(actorId);
 
         // Apenas NPCs podem ser inseridos em um Batalhão como Unidade.
-        if(["character"].includes(actor.type)) return;
-
-        // Somente NPCs marcados como Unidades Militares pode inserido em um Batalhão.
-        if(!actor.system.isUnit) return;
-
-        const activeTab = document.querySelectorAll('.unit-list.active');
-
-        switch(activeTab[0]?.dataset.tab)
-        {
-            case "light":{
-                await owner.setFlag("ldnd5e", "lightUnitID", actor.id);
-            }
-            break;
-            case "heavy":{
-                await owner.setFlag("ldnd5e", "heavyUnitID", actor.id);
-            }
-            break;
-            case "special":{
-                await owner.setFlag("ldnd5e", "specialUnitID", actor.id);
-            }
-            break;
-            default: return;
+        if(["character"].includes(actor.type)){ 
+            ui.notifications.warn("Apenas NPCs podem ser inseridos em um Batalhão como Unidade.");
+            return;
         }
 
+        // Somente NPCs marcados como Unidades Militares pode inserido em um Batalhão.
+        if(!actor.system.isUnit) { 
+            ui.notifications.warn("O NPC não é uma Unidade Militar e não pode ser inserido na Companhia.");
+            return;
+        }
+
+        const dialog = new Dialog({
+            title: game.i18n.localize("ldnd5e.messages.addUnitTitle"),
+            content: game.i18n.format("ldnd5e.messages.addUnitLabel", {unit: actor.name}),
+            buttons: {
+              yes: { label: game.i18n.localize("ldnd5e.yesBtn"), callback: this._setUnit.bind(this, actor) },
+              no: { label: game.i18n.localize("ldnd5e.noBtn") }
+            },
+        });
+
+        await dialog.render(true);
         this.render(true);
     }
 
@@ -260,6 +156,40 @@ export default class companyControl extends FormApplication{
         this.render(true);
     }
 
+    /**
+    * Dismiss an Unit from its company.    
+    * @private
+    */
+    async _dismissUnit(event){
+        event.preventDefault();    
+        const summary = event.currentTarget.parentElement.getElementsByClassName("unit-summary");
+        const unitId = summary[0]?.dataset.unitId;
+        const unit = game.actors.get(unitId);
+        
+        const dialog = new Dialog({
+            title: game.i18n.localize("ldnd5e.messages.dismissUnitTitle"),
+            content: game.i18n.format("ldnd5e.messages.dismissUnitLabel", {unit: unit.name}),
+            buttons: {
+              yes: { label: game.i18n.localize("ldnd5e.yesBtn"), callback: this._unsetUnit.bind(this) },
+              no: { label: game.i18n.localize("ldnd5e.noBtn") }
+            },
+        });
+
+        await dialog.render(true);
+    }
+
+    /**
+    * Handle rolling an Ability test or saving throw.
+    * @param {Event} event      The originating click event.
+    * @private
+    */
+    _onRollAbilityTest(event) {
+        event.preventDefault();
+        const ability = event.currentTarget.parentElement.dataset.ability;
+        const unit = this._getActiveUnit();
+
+        unit.rollAbility(ability, {event: event});
+    }
 
     /**
     * Handle using an item from the Actor sheet, obtaining the Item instance, and dispatching to its use method.
@@ -273,5 +203,31 @@ export default class companyControl extends FormApplication{
         const itemId = event.currentTarget.closest(".item").dataset.itemId;
         const item = unit.items.get(itemId);
         if ( item ) return item.use();
-    }    
+    } 
+
+    /**
+    * Set an Unit from a company.    
+    * @private
+    */
+    async _setUnit(actor){
+        const owner = this.data.owner;
+        const activeTab = document.querySelectorAll('.unit-list.active');
+        const activeTabName = activeTab[0]?.dataset.tab;
+
+        await owner.setFlag("ldnd5e", `${activeTabName}UnitID`, actor.id);
+        this.render(true);            
+    }
+    
+    /**
+    * Unset an Unit from a company.    
+    * @private
+    */
+    async _unsetUnit(html){
+        const owner = this.data.owner;
+        const activeTab = document.querySelectorAll('.unit-list.active');
+        const activeTabName = activeTab[0]?.dataset.tab;
+
+        await owner.unsetFlag("ldnd5e", `${activeTabName}UnitID`);
+        this.render(true);            
+    }
 }
