@@ -29,7 +29,9 @@ export default class ActorSheetL5eCharacter extends constants.ActorSheet5eCharac
         const sheetData = await super.getData();
         const actor = this.actor;
 
-        if(!CONFIG.adControl && actor.type == "character") actor.configArmorData(actor);
+        if(!CONFIG.adControl && actor.type == "character") { 
+            actor.configArmorData(actor);
+        }
 
         sheetData.effects = ActiveEffectL5e.prepareActiveEffectCategories(sheetData);
 

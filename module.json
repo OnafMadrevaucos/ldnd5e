@@ -9,10 +9,10 @@
             "url": ""
         }
     ],
-    "version": "1.1.7",
+    "version": "1.2.1",
     "compatibility": {
       "minimum": "10",
-      "verified": "10"
+      "verified": "11"
     },
     "system": ["dnd5e"],
     "relationships": {
@@ -57,5 +57,98 @@
           "name": "English",
           "path": "lang/en.json"
         }
-    ]    
+    ],
+    "documentTypes": {
+      "Actor": {
+        "unit": {
+          "htmlFields": ["details.biography.value", "details.biography.public", "description.full", "description.summary"],
+          "abilities":{
+            "for": {
+              "value": 0,
+              "bonuses": {
+                "check": "",
+                "save": ""
+              }
+            },
+            "mrl": {
+              "value": 0,
+              "max": 0,
+              "temp": "",
+              "tempMax": "",
+              "bonuses": {                
+                "check": "",
+                "save": ""
+              }
+            },
+            "wil": {
+              "value": 0,
+              "bonuses": {
+                "check": "",
+                "save": ""
+              }
+            }
+          },
+          "attributes": {
+            "utype": "light",
+            "isolated": false
+          }
+        },
+        "company": {
+          "htmlFields": ["details.biography.value", "details.biography.public", "description.full", "description.summary"],
+          "prestige": {
+            "value": 10,
+            "mod": "0"
+          },
+          "abilities":{
+            "for": {
+              "value": 0,
+              "bonuses": {
+                "check": "",
+                "save": ""
+              }
+            },
+            "mrl": {
+              "value": 0,
+              "bonuses": {
+                "check": "",
+                "save": ""
+              }
+            },
+            "wil": {
+              "value": 0,
+              "bonuses": {
+                "check": "",
+                "save": ""
+              }
+            }
+          },
+          "members": [],
+          "units": {
+            "light": {},
+            "heavy": {},
+            "merc": {}
+          },         
+          "attributes": {
+            "movement": {
+              "land": 0,
+              "water": 0,
+              "air": 0
+            },
+            "nobleTitle": "",
+            "ctype": "regiment",
+            "isolated": false
+          },
+          "treasure": {
+            "currency": {
+              "pp": 0,
+              "gp": 0,
+              "ep": 0,
+              "sp": 0,
+              "cp": 0
+            },
+            "properties": []
+          }
+        }
+      }
+    }    
 }

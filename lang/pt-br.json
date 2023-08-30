@@ -13,6 +13,7 @@
         "ownerLan": "Lan",
         "ownerLdo": "Ldo",
         "damageSystem": "Sistema de Avarias",
+        "noArmorName": "Defesa Sem Armadura",
 
         "refreshBtn": "Recarregar Dados de PJs",
 
@@ -23,15 +24,14 @@
 
         "profTitle": "Bônus Prof.",
         "conTitle": "Mod. Const.",
-        "exauTitle": "Exaustão",
-        "penTitle": "Penalidade",
-        "ftTitle": "IEC",
+        "exauTitle": "Exaustão",        
 
         "arControlTitle": "Execução de Reação Ágil",        
 
         "dlControlTitle": "Controle de Danos",
         "dlControlItemLabel": "Item Avariado",
         "dlControlDamageType": "Tipo de Dano",
+        "dlControlACPenalty": "Penalidade na CA",
         "dlControlRepairLvl": "# Níveis Reparados",
         "dlControlDamageBtn": "Avaria",
         "dlControlRepairsBtn": "Reparo",
@@ -51,6 +51,9 @@
         "cControlHeavyList": "Batalhão Pesado",
         "cControlSpecialList": "Batalhão Especial",
 
+        "fatigueDialogTitle": "Teste de Fadiga",
+        "fatigueDialogRollBtn": "Rolar",
+
         "activeEffectLabel": "Avaria Armadura",
         "activeEffectShieldLabel": "Avaria Escudo",
 
@@ -61,6 +64,7 @@
 
         "yesBtn": "Sim",
         "noBtn": "Não",
+        "cancelBtn": "Cancelar",
 
         "damageTypes": {
             "pierc": "Perfurante",
@@ -68,8 +72,27 @@
             "bldg": "Contundente"
         },
 
+        "consumableTypes": {
+            "ointment": "Unguento",
+            "elixir": "Elixir"
+        },
+
+        "dcLabel": "CD do Teste",
+
         "itemDestroyed": "Destruído",
         "groupRolls": "Rolagem Extra",
+
+        "unit": "Unidade",
+        "uTypes": {
+            "light": "Leve",
+            "heavy": "Pesada",
+            "merc": "Mercenária"
+        },
+        "uAbilities": {
+            "for": "Fortitude",
+            "mrl": "Moral",
+            "wil": "Vontade"
+        },
 
         "messages": {
             "bldgDmgLightArmor": "Armaduras Leves são imunes a avarias causadas por Dano Contundente.",
@@ -89,10 +112,23 @@
             "arControlLabelObs": "OBS.: A penalidade apenas aumenta o limiar de Falha Crítica.",
             "arMaxedOut": "O limiar de Falha Crítica de {actor} já se encontra no máximo. Realizar uma reação ágil agora subirá o seu nível de exaustão em 1.",
 
+            "fatigueMessage": "{owner} está fadigado e realizou um descanso longo. Verifique se ele conseguiu recuperar um pouco seu fôlego para as próximas batalhas.",
+            "maxFatigueMessage": "{owner} está muito fatigado(a) e sucumbiu ao cansaço. Seus pontos de vida caem para 0, ficando inconsciente.",
+            "fatigueGained": "A batalha está cobrando o preço no corpo de {owner}. O último ataque lhe rendeu 1 ponto de Fadiga. Sua penalidade na CA agora é de {penalty}.",
+            "fatigueLost": "{owner} descansou completamente e perdeu {amount} ponto(s) de Fadiga. Sua penalidade na CA agora é de {penalty}.",
+
             "addUnitTitle": "Adicionar Unidade",
             "addUnitLabel": "Deseja adicionar {unit} em um batalhão da Companhia?",
             "dismissUnitTitle": "Dispensar Unidade",
-            "dismissUnitLabel": "Deseja dispensar {unit} de seu batalhão na Companhia?"
+            "dismissUnitLabel": "Deseja dispensar {unit} de seu batalhão na Companhia?",
+
+            "noActiveCombat": "Não é possível utilizar uma Reação Ágil quando não há combate ativo válido.",
+            "nonCobatantActor": "{actor} não é combatente e não pode usar Reações Ágeis.",
+
+            "noBothEffects": "Ambos os Active Effects (Armadura e Escudo) de {actor} estão com defeito. Active Effects foram recriados.",
+            "noArmorEffect": "O Active Effect para Armaduras de {actor} está com defeito. Active Effect foi recriado.",
+            "noShieldEffect": "O Active Effect para Escudos de {actor} está com defeito. Active Effect foi recriado.",
+            "noEffectErrors": "Nenhum Actor apresentou erros em seus Active Effects."
         },
 
         "settings": {

@@ -1,0 +1,16 @@
+<form id="fatigue-roll" class="dialog-content" onsubmit="event.preventDefault();">
+    <p>{{ label }}</p>
+    <div class="form-group">
+        <label>{{ localize "ldnd5e.dcLabel" }}:</label>
+        <input type="text" name="name" value="{{RollDC}}" disabled/>
+    </div>
+
+    <div class="dialog-buttons">
+        {{#each buttons as |button id|}}
+        <button class="dialog-button" data-button="{{id}}">
+            {{{button.icon}}}
+            {{{button.label}}}
+        </button>
+        {{/each}}
+    </div>
+</form>

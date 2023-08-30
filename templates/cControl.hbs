@@ -6,7 +6,7 @@
             </h1> 
         </section>
     </header>
-    <div class="unit-abilities attributes flexrow">
+    <div class="company-abilities attributes flexcol">
             {{!-- Ability Scores --}}
             <ul class="unit-scores ability-scores flexrow">
             {{#each company.system.abilities as |ability id|}}    
@@ -15,10 +15,10 @@
                     {{numberInput ability.value name=(concat "system.abilities." id ".value")
                     class="ability-score" placeholder="10"}}
                     <div class="ability-modifiers flexrow">
-                        <span class="unit-ability-mod ability-mod" title="{{ localize 'DND5E.Modifier' }}">{{numberFormat ability.mod decimals=0 sign=true}}</span>
+                        <span class="company-ability-mod ability-mod" title="{{ localize 'DND5E.Modifier' }}">{{numberFormat ability.mod decimals=0 sign=true}}</span>
                         <input type="hidden" name="system.abilities.{{id}}.proficient" value="{{ability.baseProf}}" data-dtype="Number"/>
-                        <a class="unit-ability-proficiency proficiency-toggle ability-proficiency" title="{{ localize 'DND5E.Proficiency' }}">{{{ability.icon}}}</a>
-                        <span class="unit-ability-save ability-save" title="{{ localize 'DND5E.SavingThrow' }}">{{numberFormat ability.save decimals=0 sign=true}}</span>
+                        <a class="company-ability-proficiency proficiency-toggle ability-proficiency" title="{{ localize 'DND5E.Proficiency' }}">{{{ability.icon}}}</a>
+                        <span class="company-ability-save ability-save" title="{{ localize 'DND5E.SavingThrow' }}">{{numberFormat ability.save decimals=0 sign=true}}</span>
                     </div>            
                 </li>
             {{/each}}
