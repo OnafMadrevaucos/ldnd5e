@@ -55,14 +55,6 @@
       "flags": {}
     },
     {
-      "label": "Itens Chave",
-      "type": "Item",
-      "name": "itens-chave",
-      "path": "packs/itens-chave",
-      "system": "dnd5e",
-      "flags": {}
-    },
-    {
       "label": "Itens",
       "type": "Item",
       "name": "itens",
@@ -128,7 +120,6 @@
           "color": "#459136",
           "packs": [
             "itens",
-            "itens-chave",
             "itens-magicos"
           ]
         }
