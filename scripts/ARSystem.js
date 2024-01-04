@@ -1,4 +1,5 @@
 import { recursiveGetPropertyConcat } from "./helpers.js";
+import { i18nStrings } from "./constants.js";
 
 export const iniGroup = new Map();
 
@@ -9,37 +10,35 @@ iniGroup.set("ini14-10", 2);
 iniGroup.set("ini9-5", 1);
 iniGroup.set("ini5-", 0);
 
-export const prepareRPMod = function (data) {
-    return Math.floor((25/(data.abilities.con.mod + 10)) - (data.attributes.prof/15));
-}
+export const onNewCombatTurn = function(combat, updateData, updateOptions){
+    const arFlag = combat.getFlag("ldnd5e", "arData");
 
-export const getMaxFumbleRange = function(data) {
-    return data.attributes.rpMod * 5;
-}
+    if(arFlag){        
+        const combatants = combat.turns;
+        const combatant = combatants[combatants?.findIndex(c => c.actorId == arFlag.actorId)];
+        combat.setInitiative(combatant.id, combatant.initiative - 5); 
 
-export const updateFumbleRange = async function(data) {
-    const actorData = data.actor.system;
-
-    let valueChange = actorData.attributes.rpMod;
-    if(data.rest) valueChange = (data.rest === 2 ? Math.floor(actorData.attributes.fumbleRange/2) : 1);
-
-    let newValue = data.rightClick ? actorData.attributes.fumbleRange - valueChange : actorData.attributes.fumbleRange + valueChange;
-    newValue = (newValue > actorData.attributes.maxFumbleRange && !data.rightClick) ? actorData.attributes.maxFumbleRange : newValue;
-    newValue = (newValue < 1 && data.rightClick) ? 1 : newValue;
-
-    await data.actor.update({"data.attributes.fumbleRange": newValue});
+        combat.unsetFlag("ldnd5e", "arData");
+    }
 }
 
 export const updateExhaustionLevel = async function(data) {
-    const actorData = data.actor.system;    
+    const actorData = data.actor.system;  
+    var exhaustionLimit = (game.settings.get('ldnd5e', 'oneDNDExhaustionRule') ? 10 : 6);
 
-    if(actorData.attributes.exhaustion + 1 <= 5)
-        await data.actor.update({"data.attributes.exhaustion": actorData.attributes.exhaustion + 1});
-    else 
-        await data.actor.update({"data.attributes.death.failure": 3, 
-                                 "data.attributes.exhaustion": actorData.attributes.exhaustion + 1,
-                                 "data.attributes.hp.value": 0
-                                });            
+    const isInCombat = await updateARIniciative(data);
+
+    if(isInCombat && actorData.attributes.exhaustion != exhaustionLimit)
+    {
+        // O nível de Exaustão ainda está abaixo do limite máximo.
+        if(actorData.attributes.exhaustion + 1 < exhaustionLimit)
+            await data.actor.update({"data.attributes.exhaustion": actorData.attributes.exhaustion + 1});
+        else // A criatura morreu de exaustão.
+            await data.actor.update({"data.attributes.death.failure": 3, 
+                                     "data.attributes.exhaustion": actorData.attributes.exhaustion + 1,
+                                     "data.attributes.hp.value": 0
+                                    });     
+    }       
 }
 
 /** Manage and create Combat Tracker groups
@@ -72,6 +71,33 @@ export const manageGroups = function (popOut) {
         });
     });
  }
+
+async function updateARIniciative (data){
+    const actorId = data.actor.id; 
+    const combat = game.combat;
+    if(combat && combat.isActive && combat.started)
+    {
+        const combatants = combat.turns;
+        const combatant = combatants[combatants?.findIndex(c => c.actorId == actorId)];
+
+        if(combatant)
+        {
+            await combat.setFlag("ldnd5e", "arData", {actorId: actorId});
+            combat.setInitiative(combatant.id, combatant.initiative + 5);            
+        }
+        else {
+            const actor = game.actors.get(actorId);
+            ui.notifications.warn(game.i18n.format(i18nStrings.messages.nonCobatantActor, {actor: actor.name}));
+            return false;
+        }
+
+        return true;
+    }
+    else {
+        ui.notifications.warn(game.i18n.localize(i18nStrings.messages.noActiveCombat));
+        return false;
+    }
+}
 
 function computeIniciativeGroups() {
     /** @type {Combatant[][]} */

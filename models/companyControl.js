@@ -63,7 +63,7 @@ export default class companyControl extends FormApplication{
     * @private
     */
     _getActiveUnit() {
-        const unitsData = this.data.units;
+        const unitsData = this.data.company.units;
         const activeTab = document.querySelectorAll('.unit-list.active');
         const tabName = activeTab[0]?.dataset.tab;
 

@@ -1,61 +1,150 @@
 {
-    "id": "ldnd5e",
-    "title":  "Lemurian Dungeons & Dragons 5th Edition",
-    "description": "Some homebrew systems for Dungeons & Dragons 5th Edition.",
-    "authors": [
-        {
-            "name": "Onaf Madrevaucos",
-            "email": "onafmadrevaucos@gmail.com",
-            "url": ""
-        }
-    ],
-    "version": "1.1.7",
-    "compatibility": {
-      "minimum": "10",
-      "verified": "10"
-    },
-    "system": ["dnd5e"],
-    "relationships": {
+  "id": "ldnd5e",
+  "title": "Lemurian Dungeons & Dragons 5th Edition",
+  "description": "Some homebrew systems for Dungeons & Dragons 5th Edition.",
+  "authors": [
+    {
+      "name": "Onaf Madrevaucos",
+      "email": "onafmadrevaucos@gmail.com",
+      "url": ""
+    }
+  ],
+  "version": "1.2.5",
+  "compatibility": {
+    "minimum": "10",
+    "verified": "11"
+  },
+  "system": [ "dnd5e" ],
+  "relationships": {
     "requires": [
+      {
+        "id": "dnd5e",
+        "type": "system",
+        "compatibility": {}
+      },
+      {
+        "id": "more-hooks-5e",
+        "type": "module",
+        "compatibility": {}
+      },
+      {
+        "id": "dnd5e_pt-BR",
+        "type": "module",
+        "compatibility": {}
+      },
+      {
+        "id": "babele",
+        "type": "module",
+        "compatibility": {}
+      },
+      {
+        "id": "lib-wrapper",
+        "type": "module",
+        "compatibility": {}
+      }
+    ]
+  },
+  "esmodules": [ "ldnd5e.js" ],
+  "styles": [ "ldnd5e.css" ],
+  "packs": [
+    {
+      "label": "Regras",
+      "type": "JournalEntry",
+      "name": "regras",
+      "path": "packs/regras",
+      "flags": {}
+    },
+    {
+      "label": "Itens",
+      "type": "Item",
+      "name": "itens",
+      "path": "packs/itens",
+      "system": "dnd5e",
+      "flags": {}
+    },
+    {
+      "label": "Magias",
+      "type": "Item",
+      "name": "magias",
+      "path": "packs/magias",
+      "system": "dnd5e",
+      "flags": {}
+    },
+    {
+      "name": "caracteristicas",
+      "label": "Características",
+      "path": "packs/caracteristicas",
+      "type": "Item",
+      "system": "dnd5e",
+      "flags": {}
+    },
+    {
+      "name": "classes",
+      "label": "Classes",
+      "path": "packs/classes",
+      "type": "Item",
+      "system": "dnd5e",
+      "flags": {}
+    },
+    {
+      "name": "talentos",
+      "label": "Talentos",
+      "path": "packs/talentos",
+      "type": "Item",
+      "system": "dnd5e",
+      "flags": {}
+    },
+    {
+      "name": "itens-magicos",
+      "label": "Itens Mágicos",
+      "path": "packs/itens-magicos",
+      "type": "Item",
+      "system": "dnd5e",
+      "flags": {}
+    }
+  ],
+  "packFolders": [
+    {
+      "name": "Módulo LDnD 5e",
+      "sorting": "m",
+      "color": "#459136",
+      "packs": [
+        "regras"
+      ],
+      "folders": [
         {
-          "id": "dnd5e",
-          "type": "system",
-          "compatibility": {}
+          "name": "Habilidades",
+          "sorting": "m",
+          "color": "#459136",
+          "packs": [
+            "caracteristicas",
+	    "classes",
+            "magias",
+            "talentos"
+          ]
         },
         {
-          "id": "more-hooks-5e",
-          "type": "module",
-          "compatibility": {}
-        },
-        {
-          "id": "dnd5e_pt-BR",
-          "type": "module",
-          "compatibility": {}
-        },
-        {
-          "id": "babele",
-          "type": "module",
-          "compatibility": {}
-        },
-        {
-          "id": "lib-wrapper",
-          "type": "module",
-          "compatibility": {}
+          "name": "Itens",
+          "sorting": "m",
+          "color": "#459136",
+          "packs": [
+            "itens",
+            "itens-magicos"
+          ]
         }
       ]
+    }
+  ],
+  "languages": [
+    {
+      "lang": "pt-br",
+      "name": "Português (Brasil)",
+      "path": "lang/pt-br.json"
     },
-    "esmodules": ["ldnd5e.js"],
-    "styles": ["ldnd5e.css"],
-    "languages": [
-        {
-          "lang": "pt-br",
-          "name": "Português (Brasil)",
-          "path": "lang/pt-br.json"
-        },
-        {
-          "lang": "en",
-          "name": "English",
-          "path": "lang/en.json"
-        }
-    ]    
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ]
 }

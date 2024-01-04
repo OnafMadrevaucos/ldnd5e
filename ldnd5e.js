@@ -19,6 +19,15 @@ Hooks.once("init", function() {
 
     CONFIG.DND5E = dnd5e.config;
 
+    CONFIG.LDND5E = {
+        specialArmors: {
+            barbarian: "SZbsNbaxFFGwBpNK",  // Unarmored Defense (Barbarian)
+            monk: "UAvV7N7T4zJhxdfI"        // Unarmored Defense (Monk)          
+        }
+    };
+
+    //preloadSpecialArmors(); // Extra special armors.
+
     CONFIG.Item.documentClass = ItemL5e;
     CONFIG.Actor.documentClass = ActorL5e;
  
@@ -96,6 +105,8 @@ Hooks.on('getSceneControlButtons', (controls) => {
         if (token) { token.tools.push(...gmControl); }
     }
 });
+Hooks.on('combatTurn', ars.onNewCombatTurn);
+Hooks.on('combatRound', ars.onNewCombatTurn);
 
 /** ---------------------------------------------------- */
 /** Funções do Sistema D&D                               */
@@ -120,13 +131,6 @@ Hooks.on('dnd5e.preRollAttack', (item, rollData) => {
 Hooks.on('dnd5e.preRollToolCheck', (item, rollData) => {
     const actor = item.actor;
     patchExtraRollRoutines(actor, rollData);
-});
-
-Hooks.on('dnd5e.preShortRest', (actor, config) => {
-    patchFumbleRangeRoutine(actor);
-});
-Hooks.on('dnd5e.preLongRest', (actor, config) => {
-    patchFumbleRangeRoutine(actor);
 });
 
 /** ---------------------------------------------------- */
@@ -159,14 +163,6 @@ function patchExtraRollRoutines(actor, rollData) {
 
     // New Fumble Treshold from ARSystem
     rollData.fumble = data.attributes.fumbleRange;
-}
-function patchFumbleRangeRoutine(actor) {
-    const data = {
-        actor: actor,
-        rightClick: true,
-        rest: 2
-    };
-    ars.updateFumbleRange(data);
 }
 
 /**

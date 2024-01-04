@@ -118,10 +118,7 @@ export default class CompanyL5e {
 
         // Ability Scores
         for ( const [a, abl] of Object.entries(unit.system.abilities) ) {
-            abl.icon = this._getProficiencyIcon(abl.proficient);
-            abl.hover = CONFIG.DND5E.proficiencyLevels[abl.proficient];
-            abl.label = CONFIG.DND5E.abilities[a];
-            abl.baseProf = unit.system.abilities[a]?.proficient ?? 0;
+            this._getAbilitiesLabels(a, abl, unit.system);
         }
 
         return {
@@ -149,13 +146,25 @@ export default class CompanyL5e {
         const specialData = this.units.special.actor?.system;
         const onwerData = this.owner.system;
 
+        if(!system.abilities["mrl"])
+        {
+            const mrl = foundry.utils.deepClone(game.system.template.Actor.templates.common.abilities.cha);
+            mrl.value = 10;
+            mrl.min = 0;
+            system.abilities.mrl = mrl;
+        }
+
         for ( const [id, abl] of Object.entries(system.abilities) ){
+
             abl.value = (lightData?.abilities[id].mod ?? 0) + 
                         (heavyData?.abilities[id].mod ?? 0) + 
-                        (specialData?.abilities[id].mod ?? 0) +
-                        (onwerData.abilities[id].mod ?? 0)
+                        (specialData?.abilities[id].mod ?? 0);
+            
+            abl.value += (!["mrl"].includes(id) ? (onwerData.abilities[id]?.mod ?? 0) : 0);
                                  
             this._prepareAbilities(abl, system);
+
+            this._getAbilitiesLabels(id, abl, system);
         }       
     }
 
@@ -189,6 +198,13 @@ export default class CompanyL5e {
             2: '<i class="fas fa-check-double"></i>'
         };
         return icons[level] || icons[0];
+    }
+
+    _getAbilitiesLabels(a, abl, system){
+        abl.icon = this._getProficiencyIcon(abl.proficient);
+        abl.hover = CONFIG.DND5E.proficiencyLevels[abl.proficient];
+        abl.label = CONFIG.DND5E.abilities[a];
+        abl.baseProf = system.abilities[a]?.proficient ?? 0;
     }
 
     _getArmorLabel(actor) {

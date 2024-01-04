@@ -1,4 +1,8 @@
-<ol class="items-list inventory-list"> 
+<ol class="items-list inventory-list" onsubmit="event.preventDefault();"> 
+<button class="button-dialog refresh-pcs" data-button="{{id}}">
+    <i class="fas fa-arrows-rotate"></i>
+    {{localize "ldnd5e.refreshBtn"}}
+</button>
 {{#each sections as |section sid|}}
     {{#if section.ad}}
     <li class="items-header flexrow">
@@ -20,7 +24,8 @@
     {{#each section.items as |item iid|}}
         <li class="item flexrow {{section.css}}"
             data-item-id="{{item.id}}"
-            data-owner-id="{{item.actor.id}}">
+            data-owner-id="{{item.actor.id}}"
+            data-unarmored="{{item.unarmored}}">
             <div class="item-name flexrow">                
                 <div class="item-image" tabindex="0" role="button" aria-label="{{item.name}}" style="background-image: url('{{item.img}}')"></div>
                 <h4 {{#unless item.equipped}}class="item-desequip"{{/unless}}>
@@ -30,12 +35,11 @@
                     <div class="item-detail lan-value">{{#if section.tipoShield}}{{item.actor.system.attributes.ac.ldo}}{{else}}{{item.actor.system.attributes.ac.lan}}{{/if}}</div>
                 {{/if}}
                 <div class="item-image owner-image" tabindex="0" role="button" title="{{item.actor.name}}" aria-label="{{item.actor.name}}" style="background-image: url('{{item.actor.img}}')"></div>
-            </div>  
-
+            </div>
             <div class="item-detail {{#if item.equipped}}dl-control {{#if item.system.armor.HalfAD.pierc}}half-dl{{/if}} {{/if}}{{#unless item.equipped}}item-desequip{{/unless}}" data-dl-type="pierc">{{item.system.armor.DL.pierc}} ({{item.system.armor.AD.pierc}})</div>
             <div class="item-detail {{#if item.equipped}}dl-control {{#if item.system.armor.HalfAD.slsh}}half-dl{{/if}} {{/if}}{{#unless item.equipped}}item-desequip{{/unless}}" data-dl-type="slsh">{{item.system.armor.DL.slsh}} ({{item.system.armor.AD.slsh}})</div>
             <div class="item-detail {{#if item.equipped}}dl-control {{#if item.system.armor.HalfAD.bldg}}half-dl{{/if}} {{/if}}{{#unless item.equipped}}item-desequip{{/unless}}" data-dl-type="bldg">{{item.system.armor.DL.bldg}} ({{item.system.armor.AD.bldg}})</div>
-            <div class="item-detail total-damage {{#if item.destroyed}}full-repair-control{{/if}}">{{item.system.armor.RealDL}}</div>   
+            <div class="item-detail total-damage {{#if item.destroyed}}full-repair-control{{/if}}">{{item.system.armor.RealDL}}</div>  
         </li>
     {{/each}}
     </ol>

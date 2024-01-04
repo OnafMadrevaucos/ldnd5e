@@ -1,28 +1,44 @@
-<form>
+<form id="ad-dialog" class="dialog-content" onsubmit="event.preventDefault();">
     <div class="form-group">
-        <label>{{ localize "ldnd5e.dlControlItemLabel" }}</label>
+        <label>{{ localize "ldnd5e.dlControlItemLabel" }}:</label>
         <input type="text" name="name" value="{{item.name}}" disabled/>
     </div>
     <div class="form-group">
-        <label>{{ localize "ldnd5e.dlControlDamageType" }}</label>
+        <label>{{ localize "ldnd5e.dlControlDamageType" }}:</label>
         <input type="text" name="damageType" value="{{ damageType }}" disabled/>
     </div>
     <div class="form-group">
+        <label>{{ localize "ldnd5e.dlControlACPenalty" }}:</label>
+        <input type="text" name="acPenalty" value="{{ ACPenalty }}" disabled/>
+    </div>
+    {{#unless unarmored}}
+    <div class="form-group">
         <label>{{ localize "ldnd5e.dlControlRepairLvl" }}: <span id="repairLvlValue"></span></label>
-        <input name="repairLvlSlider" type="range" min="0" max="{{item.system.armor.RealDL}}" value="0" id="repairLvlControl">
+        <input name="repairLvlSlider" type="range" min="0" max="{{ RealDL }}" value="0" id="repairLvlControl">
     </div>
     <div class="form-group">
         <label>{{ localize "ldnd5e.frControlItemPrice"}}</label>
         <input type="number" name="repairLvlPrice" id="repairLvlPrice" data-price="{{price}}" data-fee="{{fee}}" disabled/>
     </div>
+    {{/unless}}
     <div class="dialog-buttons-title flexrow">
         <div class="dialog-button-header">
             <label>{{ localize "ldnd5e.dlControlDamageBtn" }}</label>
         </div>
+        {{#unless unarmored}}
         <div class="dialog-button-header repair-click" id="repairHeader">
             <label>{{ localize "ldnd5e.dlControlRepairsBtn" }}</label>
             <i class="fas fa-hammer not-smith" title="{{repairsToolTips.notSmith}}" id="smithIcon" data-smith-tooltip="{{repairsToolTips.smith}}" data-not-smith-tooltip="{{repairsToolTips.notSmith}}"></i>
         </div>
+        {{/unless}}
+    </div>
+    <div class="dialog-buttons">
+        {{#each buttons as |button id|}}
+        <button class="dialog-button" data-button="{{id}}">
+            {{{button.icon}}}
+            {{{button.label}}}
+        </button>
+        {{/each}}
     </div>
 </form>
 
@@ -40,7 +56,7 @@
 
     slider.oninput = function() {
         output.innerHTML = this.value;
-        priceInput.value = price * fee * slider.value;        
+        priceInput.value = Number(price) * Number(fee) * Number(slider.value);        
     }
 
     var repairHeader = document.getElementById("repairHeader");
