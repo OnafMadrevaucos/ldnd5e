@@ -58,6 +58,8 @@ export const addWeaponSpecialEffects = async function(data, html, app) {
 
 export const patchRollDamageType = async function(item, rollData) {
     const damageData = rollData.data.item.damage;
+    const isVersatile = item.rolledVersatile;
+
     const rollTerms = [...rollData.terms];
     var i = 0;
 
@@ -66,7 +68,7 @@ export const patchRollDamageType = async function(item, rollData) {
     }
 
     for(const damage of damageData.parts) {
-        const partialRoll = new dice.DamageRoll(damage[0], rollData.data);
+        const partialRoll = new dice.DamageRoll((isVersatile ? damageData.versatile : damage[0]), rollData.data);
         const type = damage[1];
         for(const term of partialRoll.terms) {
             if(!(term instanceof Die)) continue; // Só termos do tipo 'Die' importam.
@@ -90,7 +92,7 @@ export const patchRollDamageType = async function(item, rollData) {
     }
 }
 
-export const patchRollDamage = async function(item, rollData) {
+export const patchRollDamage = function(item, rollData) {
     var causedBleeding = false;
     var hasStunned = false;
 
@@ -117,58 +119,77 @@ export const patchRollDamage = async function(item, rollData) {
     item.system.hasStunned = hasStunned;
 }
 
-export const patchChatMessage = async function(message, html, messageData) {
+export const patchChatUseMessage = function(item, html) {
+    const content = html.find('.message-content')[0];
+    const cardFooter = content.querySelector('.card-footer');
+    const bleedFlag = item.getFlag('ldnd5e', 'bleed');
+    const stunFlag = item.getFlag('ldnd5e', 'stun');
+
+    if(bleedFlag > 0) {
+        const bleedSpan = document.createElement("span");
+        bleedSpan.textContent = game.i18n.format(i18nStrings.bleedFooter, {value: bleedFlag});
+        cardFooter.appendChild(bleedSpan);
+    }
+    if(stunFlag > 0) {
+        const stunSpan = document.createElement("span");
+        stunSpan.textContent = game.i18n.format(i18nStrings.stunFooter, {value: stunFlag});
+        cardFooter.appendChild(stunSpan);
+    }
+}
+export const patchChatDmgMessage = async function(message, html, messageData) {
     const actorId = message.speaker.actor;
     const actor = game.actors.get(actorId);
 
     const rollFlag = message.getFlag("dnd5e", "roll");
     const item = actor.items.get(rollFlag?.itemId); 
+    if(!item) return; // O Actor não possui mais o item selecionado. Abortar rolagem.
 
     const content = html.find('.message-content')[0];
-    
-    if (content.querySelector('.dice-roll') !== null && rollFlag.type == 'damage') {
-        const itemData = item?.system;
+      
+    if(rollFlag.type == 'damage'){   
+        if (content.querySelector('.dice-roll') !== null) {
+            const itemData = item?.system;
 
-        var causedBleeding = message.getFlag("ldnd5e", "causedBleeding");
-        if(causedBleeding == null) {
-            await message.setFlag("ldnd5e", "causedBleeding", (itemData?.causedBleeding ?? false));
-            causedBleeding = false;
-        }
-        var hasStunned = message.getFlag("ldnd5e", "hasStunned");
-        if(hasStunned == null) {
-            await message.setFlag("ldnd5e", "hasStunned", (itemData?.hasStunned ?? false));
-            hasStunned = false;
-        }    
-        const footer = document.createElement("footer");
-        footer.classList.add("extra-conditions");
+            var causedBleeding = message.getFlag("ldnd5e", "causedBleeding");
+            if(causedBleeding == null) {
+                await message.setFlag("ldnd5e", "causedBleeding", (itemData?.causedBleeding ?? false));
+                causedBleeding = false;
+            }
+            var hasStunned = message.getFlag("ldnd5e", "hasStunned");
+            if(hasStunned == null) {
+                await message.setFlag("ldnd5e", "hasStunned", (itemData?.hasStunned ?? false));
+                hasStunned = false;
+            }    
+            const footer = document.createElement("footer");
+            footer.classList.add("extra-conditions");
 
-        if(causedBleeding) {
-            
-            const a = document.createElement("a");    
-            const i = document.createElement("i");
-            i.classList.add("fas");
-            i.classList.add("fa-droplet");
-            a.appendChild(i);
-            const span = document.createElement("span");    
-            span.textContent = game.i18n.localize(i18nStrings.bleedingLabel);
-            footer.appendChild(a);
-            footer.appendChild(span);
+            if(causedBleeding) {
+                const a = document.createElement("a");    
+                const i = document.createElement("i");
+                i.classList.add("fas");
+                i.classList.add("fa-droplet");
+                a.appendChild(i);
+                const span = document.createElement("span");    
+                span.textContent = game.i18n.localize(i18nStrings.bleedingLabel);
+                footer.appendChild(a);
+                footer.appendChild(span);
 
-            content.appendChild(footer);
-        }
+                content.appendChild(footer);
+            }
 
-        if(hasStunned) {
-            const a = document.createElement("a");    
-            const i = document.createElement("i");
-            i.classList.add("fas");
-            i.classList.add("fa-spinner");
-            a.appendChild(i);
-            const span = document.createElement("span");    
-            span.textContent = game.i18n.localize(i18nStrings.stunLabel);
-            footer.appendChild(a);
-            footer.appendChild(span);
+            if(hasStunned) {
+                const a = document.createElement("a");    
+                const i = document.createElement("i");
+                i.classList.add("fas");
+                i.classList.add("fa-spinner");
+                a.appendChild(i);
+                const span = document.createElement("span");    
+                span.textContent = game.i18n.localize(i18nStrings.stunLabel);
+                footer.appendChild(a);
+                footer.appendChild(span);
 
-            content.appendChild(footer);
-        }
-    }
+                content.appendChild(footer);
+            }
+        }  
+    } 
 }

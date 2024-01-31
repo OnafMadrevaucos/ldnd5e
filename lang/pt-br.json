@@ -80,8 +80,10 @@
         "extraConditions": "Condições Extras",
         "bleedCondition": "Sangramento",
         "bleedingLabel": "Sangramento!",
+        "bleedFooter": "Sangramento {value}",
         "stunCondition": "Atordoamento",
         "stunLabel": "Atordoamento!",
+        "stunFooter": "Atordoamento {value}",
 
         "messages": {
             "bldgDmgLightArmor": "Armaduras Leves são imunes a avarias causadas por Dano Contundente.",
