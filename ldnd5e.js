@@ -169,7 +169,6 @@ Hooks.on('dnd5e.preRollToolCheck', (item, rollData) => {
     const actor = item.actor;
     patchExtraRollRoutines(actor, rollData);
 });
-<<<<<<< HEAD
 Hooks.on('dnd5e.preRollDamage', (item, rollData) => {
     const button = rollData.event.currentTarget;
     item.rolledVersatile = (button.dataset.action == 'versatile');
