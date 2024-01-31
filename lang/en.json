@@ -81,8 +81,10 @@
         "extraConditions": "Extra Conditions",
         "bleedCondition": "Bleed Condition",
         "bleedingLabel": "Bleeding!",
+        "bleedFooter": "Bleeding {value}",
         "stunCondition": "Stun Condition",
         "stunLabel": "Stunned!",
+        "stunFooter": "Stunned {value}",
 
         "messages": {
             "bldgDmgLightArmor": "Light Armor is immune to damage caused by Bludgening Damage.",

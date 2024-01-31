@@ -160,8 +160,10 @@
    extraConditions: "ldnd5e.extraConditions",
    bleedCondition: "ldnd5e.bleedCondition",
    bleedingLabel: "ldnd5e.bleedingLabel",
+   bleedFooter: "ldnd5e.bleedFooter",
    stunCondition: "ldnd5e.stunCondition",
    stunLabel: "ldnd5e.stunLabel",
+   stunFooter: "ldnd5e.stunFooter",
 
    addBtn: "ldnd5e.addBtn",
    halfBtn: "ldnd5e.halfBtn",

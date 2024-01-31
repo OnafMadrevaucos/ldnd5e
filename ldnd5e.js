@@ -153,13 +153,25 @@ Hooks.on('dnd5e.preRollToolCheck', (item, rollData) => {
     patchExtraRollRoutines(actor, rollData);
 });
 Hooks.on('dnd5e.preRollDamage', (item, rollData) => {
+    const button = rollData.event.currentTarget;
+    item.rolledVersatile = (button.dataset.action == 'versatile');
+});
+Hooks.on('dnd5e.rollDamage', (item, rollData) => {
     ecs.patchRollDamageType(item, rollData);
+    ecs.patchRollDamage(item, rollData);
 });
-Hooks.on('dnd5e.rollDamage', async (item, rollData) => {
-    await ecs.patchRollDamage(item, rollData);
-});
-Hooks.on('renderChatMessage', async (message, html, messageData) => {
-    await ecs.patchChatMessage(message, html, messageData);
+Hooks.on('renderChatMessage', async (message, html, messageData) => {    
+    const useFlag = message.getFlag("dnd5e", "use"); 
+    if(useFlag) {
+        const item = await fromUuid(useFlag?.itemUuid);    
+        if(!item) return;
+        ecs.patchChatUseMessage(item, html);
+    }     
+     
+    const rollFlag = message.getFlag("dnd5e", "roll");  
+    if(rollFlag?.type == 'damage') {     
+        await ecs.patchChatDmgMessage(message, html, messageData);
+    }
 });
 
 /** ---------------------------------------------------- */
@@ -277,9 +289,10 @@ function patchRollDamage() {
                 }
             }
             this._formula = criticalFormula;
-            this.terms = criticalTerms;
-            await wrapper(config, ...rest);
-        } else await wrapper(config, ...rest);
-    });    
+            this.terms = criticalTerms;            
+        } 
+
+        await wrapper(config, ...rest);
+    });
 }
   
