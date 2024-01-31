@@ -157,6 +157,12 @@
    activeEffectLabel: "ldnd5e.activeEffectLabel",
    activeEffectShieldLabel: "ldnd5e.activeEffectShieldLabel",
 
+   extraConditions: "ldnd5e.extraConditions",
+   bleedCondition: "ldnd5e.bleedCondition",
+   bleedingLabel: "ldnd5e.bleedingLabel",
+   stunCondition: "ldnd5e.stunCondition",
+   stunLabel: "ldnd5e.stunLabel",
+
    addBtn: "ldnd5e.addBtn",
    halfBtn: "ldnd5e.halfBtn",
    subBtn: "ldnd5e.subBtn",

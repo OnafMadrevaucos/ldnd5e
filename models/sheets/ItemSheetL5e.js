@@ -14,8 +14,8 @@ export default class ItemSheetL5e extends constants.ItemSheet5e{
             const bleedFlag = this.item.getFlag('ldnd5e', 'bleed');
             const stunFlag = this.item.getFlag('ldnd5e', 'stun');
 
-            if(bleedFlag == undefined || bleedFlag == null) await item.setFlag('ldnd5e', 'bleed', 0);
-            if(stunFlag == undefined || stunFlag == null) await item.setFlag('ldnd5e', 'stun', 0);           
+            if(bleedFlag == undefined || bleedFlag == null) await this.item.setFlag('ldnd5e', 'bleed', 0);
+            if(stunFlag == undefined || stunFlag == null) await this.item.setFlag('ldnd5e', 'stun', 0);           
         }        
 
         return sheetData;

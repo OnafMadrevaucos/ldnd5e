@@ -1,4 +1,4 @@
-import { constants } from "./constants.js";
+import { constants, i18nStrings } from "./constants.js";
 import { dice } from "../../../../systems/dnd5e/dnd5e.mjs";
 /**
  * Adiciona à ficha do Item da Arma a opção de Condições Especiais.
@@ -16,9 +16,9 @@ export const addWeaponSpecialEffects = async function(data, html, app) {
     request.send(null);
 
     var htmlTxt = request.responseText;
-    htmlTxt = htmlTxt.replaceAll("#header-text", game.i18n.localize("ldnd5e.extraConditions"));
-    htmlTxt = htmlTxt.replaceAll("#bleed-label", game.i18n.localize("ldnd5e.bleedCondition"));
-    htmlTxt = htmlTxt.replaceAll("#stun-label", game.i18n.localize("ldnd5e.stunCondition"));
+    htmlTxt = htmlTxt.replaceAll("#header-text", game.i18n.localize(i18nStrings.extraConditions));
+    htmlTxt = htmlTxt.replaceAll("#bleed-label", game.i18n.localize(i18nStrings.bleedCondition));
+    htmlTxt = htmlTxt.replaceAll("#stun-label", game.i18n.localize(i18nStrings.stunCondition));
 
     // Item pertence a um Actor.
     if(item.actor != null)
@@ -150,7 +150,7 @@ export const patchChatMessage = async function(message, html, messageData) {
             i.classList.add("fa-droplet");
             a.appendChild(i);
             const span = document.createElement("span");    
-            span.textContent = "Sangramento!";
+            span.textContent = game.i18n.localize(i18nStrings.bleedingLabel);
             footer.appendChild(a);
             footer.appendChild(span);
 
@@ -164,7 +164,7 @@ export const patchChatMessage = async function(message, html, messageData) {
             i.classList.add("fa-spinner");
             a.appendChild(i);
             const span = document.createElement("span");    
-            span.textContent = "Atordoamento!";
+            span.textContent = game.i18n.localize(i18nStrings.stunLabel);
             footer.appendChild(a);
             footer.appendChild(span);
 
