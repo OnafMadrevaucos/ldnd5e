@@ -1,11 +1,11 @@
 import ItemL5e from "./models/entities/ItemL5e.js";
 import ActorL5e from "./models/entities/ActorL5e.js";
 
-import { Debugger, CondHelper } from "./scripts/helpers.js";
+import { Debugger, CondHelper, preLocalize, performPreLocalization } from "./scripts/helpers.js";
 import { preloadTemplates } from "./scripts/templates.js";
 import { registerSystemSettings } from "./scripts/settings.js"
 
-import { constants, gmControl } from "./scripts/constants.js";
+import { i18nStrings, gmControl, constants } from "./scripts/constants.js";
 import adControl from "./models/adControl.js";
 
 import * as ars from "./scripts/ARSystem.js";
@@ -15,6 +15,10 @@ import * as ecs from "./scripts/ECSystems.js";
 import ItemSheetL5e from "./models/sheets/ItemSheetL5e.js";
 import ActorSheetL5eCharacter from "./models/sheets/ActorSheetL5eCharacter.js";
 import ActorSheetL5eNPCs from "./models/sheets/ActorSheetL5eNPCs.js";
+import CompanyL5e from "./models/entities/CompanyL5e.js";
+import UnitL5e from "./models/entities/UnitL5e.js";
+import ActorSheetL5eUnit from "./models/sheets/ActorSheetL5eUnit.js";
+import ActorSheetL5eCompany from "./models/sheets/ActorSheetL5eCompany.js";
 
 Hooks.once("init", function() {
     console.log("LDnD5e | Inicializando o Módulo Lemurian D&D 5th Edition...");
@@ -32,9 +36,17 @@ Hooks.once("init", function() {
 
     CONFIG.Item.documentClass = ItemL5e;
     CONFIG.Actor.documentClass = ActorL5e;
+
+    preLocalize("consumableTypes");
+    preLocalize("uTypes", {sort: true});
+    preLocalize("uAbilities", {sort: true});
  
     preloadTemplates();
+
+    registerStrings();
+    registerSubtypes();    
     registerSystemSettings();
+
     patchRollDamage();
 
     if (game.modules.get('rpg-styled-ui')?.active && game.modules.get('gm-screen')?.active)
@@ -84,6 +96,11 @@ Hooks.once('ready', () => {
     // Re-render the combat tracker in case the initial render was missed
     ui.combat.render(true);
 });
+
+/**
+ * Perform one-time pre-localization and sorting of some configuration objects
+ */
+Hooks.once("i18nInit", () => performPreLocalization(i18nStrings));
 
 Hooks.on('renderActorSheet', (app, html, data) => {
     const actor = app.actor;
@@ -152,6 +169,7 @@ Hooks.on('dnd5e.preRollToolCheck', (item, rollData) => {
     const actor = item.actor;
     patchExtraRollRoutines(actor, rollData);
 });
+<<<<<<< HEAD
 Hooks.on('dnd5e.preRollDamage', (item, rollData) => {
     const button = rollData.event.currentTarget;
     item.rolledVersatile = (button.dataset.action == 'versatile');
@@ -173,6 +191,8 @@ Hooks.on('renderChatMessage', async (message, html, messageData) => {
         await ecs.patchChatDmgMessage(message, html, messageData);
     }
 });
+=======
+>>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
 
 /** ---------------------------------------------------- */
 /** Funções Internas                                     */
@@ -189,6 +209,29 @@ function renderControl()
     return form._render(true);
 }
 
+function registerStrings() {
+    CONFIG.DND5E.consumableTypes.ointment = i18nStrings.consumableTypes.ointment;
+    CONFIG.DND5E.consumableTypes.elixir = i18nStrings.consumableTypes.elixir;
+}
+function registerSubtypes(){
+    Object.assign(CONFIG.Actor.dataModels, {
+        "ldnd5e.unit": UnitL5e
+    });
+    Actors.registerSheet("ldnd5e", ActorSheetL5eUnit, {
+        types: ["ldnd5e.unit"],
+        makeDefault: true,
+        label: "ldnd5e.unit"
+    });
+
+    Object.assign(CONFIG.Actor.dataModels, {
+        "ldnd5e.company": CompanyL5e
+    });    
+    Actors.registerSheet("ldnd5e", ActorSheetL5eCompany, {
+        types: ["ldnd5e.company"],
+        makeDefault: true,
+        label: "ldnd5e.sheetTitle"
+    });
+}
 function patchExtraRollRoutines(actor, rollData) {
     const exh = actor.system.attributes.exhaustion;
     const data = actor.getRollData();

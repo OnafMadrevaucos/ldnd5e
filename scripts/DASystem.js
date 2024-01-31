@@ -388,7 +388,11 @@ export const computaSUB = function(item, owner, damageType, options={}) {
         itemData.armor.HalfAD.slsh = false;
         itemData.armor.HalfAD.pierc = false;    
         
+<<<<<<< HEAD
         itemData.armor.ACPenalty = (itemData.armor.type === TIPO_ARMOR.SHIELD ? (NIVEL_DA_ESCUDO[novoIndex]?.mod ?? "+0") : (NIVEL_DA[novoIndex]?.mod ?? "+0"));
+=======
+        itemData.armor.ACPenalty = (itemData.armor.type === TIPO_ARMOR.SHIELD ? (NIVEL_DA_ESCUDO[novoIndex]?.mod ?? "0") : (NIVEL_DA[novoIndex]?.mod ?? "0"));
+>>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
 
         if(result.temMudanca.normal) {
             const armorEffect = owner.getFlag("ldnd5e", "armorEffect");
@@ -513,7 +517,11 @@ export const computaREST = function(item, owner, amountRecovered) {
         itemData.armor.HalfAD.slsh = false;
         itemData.armor.HalfAD.pierc = false;    
         
+<<<<<<< HEAD
         itemData.armor.ACPenalty = (itemData.armor.type === TIPO_ARMOR.SHIELD ? (NIVEL_DA_ESCUDO[novoIndex]?.mod ?? "+0") : (NIVEL_DA[novoIndex]?.mod ?? "+0"));
+=======
+        itemData.armor.ACPenalty = (itemData.armor.type === TIPO_ARMOR.SHIELD ? (NIVEL_DA_ESCUDO[novoIndex]?.mod ?? "0") : (NIVEL_DA[novoIndex]?.mod ?? "0"));
+>>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
 
         if(result.temMudanca.normal) {
             const armorEffect = owner.getFlag("ldnd5e", "armorEffect");
@@ -581,12 +589,21 @@ export const prepareActiveEffects = async function(item, owner, result, options=
     } else { 
         if(!unarmored){
             if(NivelDL === 5) extraMessage = game.i18n.format(i18nStrings.messages.fithDLMessage, {owner: owner.name});
+<<<<<<< HEAD
             info = game.i18n.format(i18nStrings.messages.newDLMessage, {item: item.name, owner: owner.name, penalty: ACPenalty, extra: extraMessage});             
         } else {
             if(isFatigueLost){ 
                 info = game.i18n.format(i18nStrings.messages.fatigueLost, {owner: owner.name, amount: amountRecovered, penalty: ACPenalty});             
             } else {
                 info = game.i18n.format(i18nStrings.messages.fatigueGained, {owner: owner.name, penalty: ACPenalty});             
+=======
+            info = game.i18n.format(i18nStrings.messages.newDLMessage, {item: item.name, owner: owner.name, penalty: ACPenalty.toString(), extra: extraMessage});             
+        } else {
+            if(isFatigueLost){ 
+                info = game.i18n.format(i18nStrings.messages.fatigueLost, {owner: owner.name, amount: amountRecovered, penalty: ACPenalty.toString()});             
+            } else {
+                info = game.i18n.format(i18nStrings.messages.fatigueGained, {owner: owner.name, penalty: ACPenalty.toString()});             
+>>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
             }
         }
     }    
@@ -606,7 +623,11 @@ export const prepareActiveEffects = async function(item, owner, result, options=
              info = game.i18n.format(i18nStrings.messages.reconstructedMessage, {item: item.name});
              itemData.armor.destroyed = false;
           }else 
+<<<<<<< HEAD
              info = game.i18n.format(i18nStrings.messages.repairMessage, {item: item.name, penalty: ACPenalty});  
+=======
+             info = game.i18n.format(i18nStrings.messages.repairMessage, {item: item.name, penalty: ACPenalty.toString()});  
+>>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
        }       
     }
 
@@ -634,7 +655,11 @@ export const prepareActiveEffects = async function(item, owner, result, options=
        }
 
        if(effect) 
+<<<<<<< HEAD
           await owner.updateArmorDamageEffects(effect, ACPenalty);
+=======
+          await owner.updateArmorDamageEffects(effect, ACPenalty.toString());
+>>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
 
        if(desequipItem)
           await item.update({["system.equipped"]: !getProperty(item.system, "system.equipped")});
@@ -685,7 +710,11 @@ export const prepareActiveEffects = async function(item, owner, result, options=
        data.mod = abl.mod;
 
        // Include proficiency bonus
+<<<<<<< HEAD
        if ( ownerData.tools.hasOwnProperty('smith') ) {
+=======
+       if ( ownerData.traits.toolProf.value.has('smith') ) {
+>>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
           parts.push("@prof");
           data.prof = ownerData.attributes.prof;
        }

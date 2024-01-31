@@ -12,8 +12,13 @@
         "itemOwner": "Owner",
         "ownerLan": "Lan",
         "ownerLdo": "Ldo",
+<<<<<<< HEAD
         "damageSystem": "Damage System",
         "noArmorName": "Unarmored Defense",
+=======
+        "damageSystem": "Sistema de Avarias",
+        "noArmorName": "Defesa Sem Armadura",
+>>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
 
         "refreshBtn": "Refresh PCs Data",
 
@@ -22,13 +27,20 @@
         "bdTitle": "Bldg. Dmg",
         "tdTitle": "Total",
 
+<<<<<<< HEAD
         "profTitle": "Prof. Bonus",
         "conTitle": "Const. Mod",
         "exauTitle": "Exaustion", 
+=======
+        "profTitle": "Bônus Prof.",
+        "conTitle": "Mod. Const.",
+        "exauTitle": "Exaustão", 
+>>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
 
         "arControlTitle": "",
         "arControlLabel": "",
 
+<<<<<<< HEAD
         "dlControlTitle": "Damage Control",
         "dlControlItemLabel": "Damaged Item",
         "dlControlDamageType": "Damage Type",
@@ -36,6 +48,15 @@
         "dlControlRepairLvl": "# Repaired Levels",
         "dlControlDamageBtn": "Damage",
         "dlControlRepairsBtn": "Repair",
+=======
+        "dlControlTitle": "Controle de Danos",
+        "dlControlItemLabel": "Item Avariado",
+        "dlControlDamageType": "Tipo de Dano",
+        "dlControlACPenalty": "Penalidade na CA",
+        "dlControlRepairLvl": "# Níveis Reparados",
+        "dlControlDamageBtn": "Avaria",
+        "dlControlRepairsBtn": "Reparo",
+>>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
 
         "dlControlSmithRepair": "Smith Repair",
         "dlControlNotSmithRepair": "Self Repair",
@@ -47,6 +68,7 @@
         "frControlItemPrice": "Service Price (GPs)",
         "frControlMessage": "As this item was completely destroyed, to repair it the price will be double the original price. Want to proceed anyway?",
 
+<<<<<<< HEAD
         "cControlTitle": "Military Company",
         "cControlLightList": "Light Battalion",
         "cControlHeavyList": "Heavy Battalion",
@@ -54,6 +76,15 @@
 
         "fatigueDialogTitle": "Fatigue Test",
         "fatigueDialogRollBtn": "Roll",
+=======
+        "cControlTitle": "Companhia Militar",
+        "cControlLightList": "Batalhão Leve",
+        "cControlHeavyList": "Batalhão Pesado",
+        "cControlSpecialList": "Batalhão Especial",
+
+        "fatigueDialogTitle": "Teste de Fadiga",
+        "fatigueDialogRollBtn": "Rolar",
+>>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
         
         "activeEffectLabel": "Armor Damage",
         "activeEffectShieldLabel": "Shield Damage",
@@ -63,9 +94,15 @@
         "subBtn": "Simple",
         "zerarBtn": "Full",
 
+<<<<<<< HEAD
         "yesBtn": "Yes",
         "noBtn": "No",
         "cancelBtn": "Cancel",
+=======
+        "yesBtn": "Sim",
+        "noBtn": "Não",
+        "cancelBtn": "Cancelar",
+>>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
 
         "damageTypes": {
             "pierc": "Piercing",
@@ -73,6 +110,7 @@
             "bldg": "Bludgening"
         },
 
+<<<<<<< HEAD
         "dcLabel": "Test DC",
 
         "itemDestroyed": "Destroyed",
@@ -85,6 +123,29 @@
         "stunCondition": "Stun Condition",
         "stunLabel": "Stunned!",
         "stunFooter": "Stunned {value}",
+=======
+        "consumableTypes": {
+            "ointment": "Unguento",
+            "elixir": "Elixir"
+        },
+
+        "dcLabel": "Test DC",
+
+        "itemDestroyed": "Destruído",
+        "groupRolls": "Rolagem Extra",
+>>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
+
+        "unit": "Unidade",
+        "uTypes": {
+            "light": "Leve",
+            "heavy": "Pesada",
+            "merc": "Mercenária"
+        },
+        "uAbilities": {
+            "for": "Fortitude",
+            "mrl": "Moral",
+            "wil": "Vontade"
+        },
 
         "messages": {
             "bldgDmgLightArmor": "Light Armor is immune to damage caused by Bludgening Damage.",
@@ -104,6 +165,7 @@
             "arControlLabelObs": "NOTE: The penalty only increases the Critical Failure threshold.",
             "arMaxedOut": "{actor}'s Critical Failure threshold is already at its maximum. Performing an agile reaction will now increase your exhaustion level by 1.",
 
+<<<<<<< HEAD
             "fatigueMessage": "{owner} is fatigued and took a long rest. Check if he managed to catch his breath a little for the next battles.",
             "maxFatigueMessage": "{owner} is very fatigued and has succumbed to tiredness. Your hit points drop to 0, making you unconscious.",
             "fatigueGained": "The battle is taking its toll on {owner}'s body. The last attack earned him 1 Fatigue point. Your AC penalty is now {penalty}.",
@@ -121,6 +183,25 @@
             "noArmorEffect": "{actor}'s Armor Active Effect is malfunctioning. Active Effect has been recreated.",
             "noShieldEffect": "The Active Effect for {actor}'s Shields is malfunctioning. Active Effect has been recreated.",
             "noEffectErrors": "No Actor had errors in their Active Effects."
+=======
+            "fatigueMessage": "{owner} está fadigado e realizou um descanso longo. Verifique se ele conseguiu recuperar um pouco seu fôlego para as próximas batalhas.",
+            "maxFatigueMessage": "{owner} está muito fatigado(a) e sucumbiu ao cansaço. Seus pontos de vida caem para 0, ficando inconsciente.",
+            "fatigueGained": "A batalha está cobrando o preço no corpo de {owner}. O último ataque lhe rendeu 1 ponto de Fadiga. Sua penalidade na CA agora é de {penalty}.",
+            "fatigueLost": "{owner} descansou completamente e perdeu {amount} ponto(s) de Fadiga. Sua penalidade na CA agora é de {penalty}.",
+
+            "addUnitTitle": "Adicionar Unidade",
+            "addUnitLabel": "Deseja adicionar {unit} em um batalhão da Companhia?",
+            "dismissUnitTitle": "Dispensar Unidade",
+            "dismissUnitLabel": "Deseja dispensar {unit} de seu batalhão na Companhia?",
+
+            "noActiveCombat": "Não é possível utilizar uma Reação Ágil quando não há combate ativo válido.",
+            "nonCobatantActor": "{actor} não é combatente e não pode usar Reações Ágeis.",
+
+            "noBothEffects": "Ambos os Active Effects (Armadura e Escudo) de {actor} estão com defeito. Active Effects foram recriados.",
+            "noArmorEffect": "O Active Effect para Armaduras de {actor} está com defeito. Active Effect foi recriado.",
+            "noShieldEffect": "O Active Effect para Escudos de {actor} está com defeito. Active Effect foi recriado.",
+            "noEffectErrors": "Nenhum Actor apresentou erros em seus Active Effects."
+>>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
         },
 
         "settings": {

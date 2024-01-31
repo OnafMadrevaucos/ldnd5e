@@ -72,11 +72,20 @@
             "bldg": "Contundente"
         },
 
+<<<<<<< HEAD
+=======
+        "consumableTypes": {
+            "ointment": "Unguento",
+            "elixir": "Elixir"
+        },
+
+>>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
         "dcLabel": "CD do Teste",
 
         "itemDestroyed": "Destruído",
         "groupRolls": "Rolagem Extra",
 
+<<<<<<< HEAD
         "extraConditions": "Condições Extras",
         "bleedCondition": "Sangramento",
         "bleedingLabel": "Sangramento!",
@@ -84,6 +93,19 @@
         "stunCondition": "Atordoamento",
         "stunLabel": "Atordoamento!",
         "stunFooter": "Atordoamento {value}",
+=======
+        "unit": "Unidade",
+        "uTypes": {
+            "light": "Leve",
+            "heavy": "Pesada",
+            "merc": "Mercenária"
+        },
+        "uAbilities": {
+            "for": "Fortitude",
+            "mrl": "Moral",
+            "wil": "Vontade"
+        },
+>>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
 
         "messages": {
             "bldgDmgLightArmor": "Armaduras Leves são imunes a avarias causadas por Dano Contundente.",

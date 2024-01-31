@@ -177,7 +177,11 @@ export default class ActorL5e extends documents.Actor5e {
                     slsh: false
                 }
 
+<<<<<<< HEAD
                 unarmored.system.armor.ACPenalty = "+0";
+=======
+                unarmored.system.armor.ACPenalty = "0";
+>>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
             }
             else {
                 // Load pre-existing unarmored info.
@@ -235,7 +239,11 @@ export default class ActorL5e extends documents.Actor5e {
                 label: game.i18n.localize(i18nStrings.activeEffectLabel),
                 icon: constants.images.armorEffectDefault,
                 origin: this.uuid,
+<<<<<<< HEAD
                 changes: [{ key: "system.attributes.ac.bonus", mode: ADD, priority: null, value: "+0" }], 
+=======
+                changes: [{ key: "system.attributes.ac.bonus", mode: ADD, priority: 50, value: "0" }], 
+>>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
                 duration: {}
             };
 
@@ -255,7 +263,11 @@ export default class ActorL5e extends documents.Actor5e {
                 label: game.i18n.localize(i18nStrings.activeEffectShieldLabel),
                 icon: constants.images.shieldEffectDefault,
                 origin: this.uuid,
+<<<<<<< HEAD
                 changes: [{ key: "system.attributes.ac.bonus", mode: ADD, priority: null, value: "+0" }], 
+=======
+                changes: [{ key: "system.attributes.ac.bonus", mode: ADD, priority: 51, value: "0" }], 
+>>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
                 duration: {}
             };
 
@@ -301,11 +313,19 @@ export default class ActorL5e extends documents.Actor5e {
                 ui.notifications.warn(game.i18n.format(i18nStrings.messages.noArmorEffect, {actor: this.name}));
                 // Active Effect padrão usado para controlar os efeitos de avaria das Armaduras.
                 const armorEffect = {
+<<<<<<< HEAD
                     _id: armorFlag?.effectID ?? randomID(),
                     label: game.i18n.localize(i18nStrings.activeEffectLabel),
                     icon: constants.images.armorEffectDefault,
                     origin: this.uuid,
                     changes: [{ key: "system.attributes.ac.bonus", mode: ADD, priority: null, value: armorItem.system.armor.ACPenalty ?? "+0" }], 
+=======
+                    _id: armorFlag.effectID ?? randomID(),
+                    label: game.i18n.localize(i18nStrings.activeEffectLabel),
+                    icon: constants.images.armorEffectDefault,
+                    origin: this.uuid,
+                    changes: [{ key: "system.attributes.ac.bonus", mode: ADD, priority: 50, value: armorItem.system.armor.ACPenalty ?? "0" }], 
+>>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
                     duration: {}
                 };
 
@@ -318,11 +338,19 @@ export default class ActorL5e extends documents.Actor5e {
                 ui.notifications.warn(game.i18n.format(i18nStrings.messages.noShieldEffect, {actor: this.name}));
                 // Active Effect padrão usado para controlar os efeitos de avaria dos Escudos.
                 const shieldEffect = {
+<<<<<<< HEAD
                     _id: shieldFlag?.effectID ?? randomID(),
                     label: game.i18n.localize(i18nStrings.activeEffectShieldLabel),
                     icon: constants.images.shieldEffectDefault,
                     origin: this.uuid,
                     changes: [{ key: "system.attributes.ac.bonus", mode: ADD, priority: null, value: shieldItem?.system.armor.ACPenalty ?? "+0" }], 
+=======
+                    _id: shieldFlag.effectID ?? randomID(),
+                    label: game.i18n.localize(i18nStrings.activeEffectShieldLabel),
+                    icon: constants.images.shieldEffectDefault,
+                    origin: this.uuid,
+                    changes: [{ key: "system.attributes.ac.bonus", mode: ADD, priority: 51, value: shieldItem?.system.armor.ACPenalty ?? "0" }], 
+>>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
                     duration: {}
                 };
 

@@ -1,116 +1,75 @@
-import { documents, utils } from "../../../../systems/dnd5e/dnd5e.mjs";
-import { constants, i18nStrings } from "../../scripts/constants.js";
-import ActorL5e from "./ActorL5e.js";
-
-const ACTIVE_EFFECT_MODES = CONST.ACTIVE_EFFECT_MODES;
-const ADD = ACTIVE_EFFECT_MODES.ADD;
-
-export default class CompanyL5e {
-
-    constructor(name, owner) {  
-        this.name = name;        
-        this.owner = owner;
-
-        this.units = this._prepareUnits();        
-        this.system = this._prepareData();
+export default class CompanyL5e extends foundry.abstract.TypeDataModel {
+    static defineSchema() {
+      const fields = foundry.data.fields;
+      return {
+        details: new fields.SchemaField({
+            biography: new fields.SchemaField({
+                value: new fields.HTMLField({required: false, blank: true}),
+                public: new fields.HTMLField({required: false, blank: true})
+            }),
+            description: new fields.SchemaField({
+                full: new fields.HTMLField({required: false, blank: true}),
+                summary: new fields.HTMLField({required: false, blank: true})
+            })
+        }),
+        prestige: new fields.SchemaField({
+            value: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0}),
+            mod: new fields.StringField({required: true, blank: true, initial: ""})
+        }),
+        abilities: new fields.SchemaField({
+            for: new fields.SchemaField({
+                value:  new fields.NumberField({required: true, nullable: false, integer: true, initial: 0}),
+                bonuses: new fields.SchemaField({
+                    check:  new fields.StringField({required: true, blank: true, initial: ""}),
+                    save:  new fields.StringField({required: true, blank: true, initial: ""})
+                })
+            }),
+            mrl: new fields.SchemaField({
+                value:  new fields.NumberField({required: true, nullable: false, integer: true, initial: 0}),
+                bonuses: new fields.SchemaField({
+                    check:  new fields.StringField({required: true, blank: true, initial: ""}),
+                    save:  new fields.StringField({required: true, blank: true, initial: ""})
+                })
+            }),
+            wil: new fields.SchemaField({
+                value:  new fields.NumberField({required: true, nullable: false, integer: true, initial: 0}),
+                bonuses: new fields.SchemaField({
+                    check:  new fields.StringField({required: true, blank: true, initial: ""}),
+                    save:  new fields.StringField({required: true, blank: true, initial: ""})
+                })
+            })
+        }),
+        members: new fields.ArrayField(new fields.StringField()),
+        units: new fields.SchemaField({
+            light: new fields.StringField({required: true, blank: true}),
+            heavy: new fields.StringField({required: true, blank: true}),
+            merc: new fields.StringField({required: true, blank: true})
+        }),
+        attributes: new fields.SchemaField({
+            movement: new fields.SchemaField({
+                normal: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0}),
+                full: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0})
+            }),
+            nobleTitle: new fields.StringField({required: true, blank: true, initial: ""}),
+            ctype:  new fields.StringField({required: true, blank: true, initial: ""}),
+            isolated: new fields.BooleanField({initial: false})
+        }),
+        treasure: new fields.SchemaField({
+            currency: new fields.SchemaField({
+                pp: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0}),
+                gp: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0}),
+                ep: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0}),
+                sp: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0}),
+                cp: new fields.NumberField({required: true, nullable: false, integer: true, initial: 0}),
+            }),
+            properties: new fields.ArrayField(new fields.StringField()),
+        })
+      };
     }
-
-    set units(value){
-
-        if(value == null) return;
-
-        this._units = value;
-
-        const lightUnit = this._units.light.actor ?? null;
-        const heavyUnit = this._units.heavy.actor ?? null;
-        const specialUnit = this._units.special.actor ?? null;
-        
-        this.flags = {
-            hasLight: lightUnit ? true : false,
-            hasHeavy: heavyUnit ? true : false,
-            hasSpecial: specialUnit ? true : false
-        }
-    }
-    get units() {
-        return this._units;
-    }
-
-    set system(value){
-        this._system = value;
-    }
-    get system(){
-        return this._system;
-    }
-
-    _prepareUnits(){   
-        const owner = this.owner;
-
-        const lightUnitID = owner.getFlag("ldnd5e", "lightUnitID");
-        const heavyUnitID = owner.getFlag("ldnd5e", "heavyUnitID");
-        const specialUnitID = owner.getFlag("ldnd5e", "specialUnitID");   
-        
-        const lightUnit = game.actors.get(lightUnitID);
-        const heavyUnit = game.actors.get(heavyUnitID);
-        const specialUnit = game.actors.get(specialUnitID);       
-        
-        const units = {
-            light: {                 
-                actor: (lightUnit ?? null), 
-                features: (lightUnit ? this._prepareFeatures(lightUnit) : null), 
-                labels: (lightUnit ? this._prepareLabels(lightUnit) : null)
-            },
-            heavy: { 
-                actor: (heavyUnit ?? null), 
-                features: (heavyUnit ? this._prepareFeatures(heavyUnit) : null), 
-                labels: (heavyUnit ? this._prepareLabels(heavyUnit) : null)
-            },
-            special: { 
-                actor: (specialUnit ?? null),
-                features: (specialUnit ? this._prepareFeatures(specialUnit) : null),  
-                labels: (specialUnit ? this._prepareLabels(specialUnit) : null)
-            }
-        }
-
-        return units;
-    }
-
-    _prepareFeatures(unit)
-    {
-        // Categorize Items as Features and Spells
-        const features = {
-            weapons: { label: game.i18n.localize("DND5E.AttackPl"), items: [], hasActions: true,
-                dataset: {type: "weapon", "weapon-type": "natural"} },
-            actions: { label: game.i18n.localize("DND5E.ActionPl"), items: [], hasActions: true,
-                dataset: {type: "feat", "activation.type": "action"} },
-            passive: { label: game.i18n.localize("DND5E.Features"), items: [], dataset: {type: "feat"} },
-            equipment: { label: game.i18n.localize("DND5E.ItemTypeEquipmentPl"), items: [], dataset: {type: "loot"}}
-        };
-
-        // Start by classifying items into groups for rendering
-        let [other] = unit.items.reduce((arr, item) => {
-            const {quantity, uses, recharge, target} = item.system;
-            item.img = item.img || CONST.DEFAULT_TOKEN;
-            item.isStack = Number.isNumeric(quantity) && (quantity !== 1);
-            item.hasUses = uses && (uses.max > 0);
-            item.isOnCooldown = recharge && !!recharge.value && (recharge.charged === false);
-            item.isDepleted = item.isOnCooldown && (uses.per && (uses.value > 0));
-            if ( item.type !== "spell" ) arr[0].push(item);
-            return arr;
-        }, [[]]);
   
-        // Organize Features
-        for ( let item of other ) {
-            if ( item.type === "weapon" ) features.weapons.items.push(item);
-            else if ( item.type === "feat" ) {
-                if ( item.system.activation.type ) features.actions.items.push(item);
-                else features.passive.items.push(item);
-            }
-            else features.equipment.items.push(item);
-        }
-  
-        // Return and assign
-        return Object.values(features);
+    prepareDerivedData() {
     }
+<<<<<<< HEAD
 
     _prepareLabels(unit) {
         const cr = parseFloat(unit.system.details.cr ?? 0);
@@ -216,3 +175,6 @@ export default class CompanyL5e {
         return label.filterJoin(", ");
     }
 }
+=======
+  }
+>>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
