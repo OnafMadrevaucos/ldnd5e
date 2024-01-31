@@ -43,4 +43,14 @@ export const registerSystemSettings = function() {
         type: Boolean,
         default: false
     });
+
+    // Critical Damage Modifiers
+    game.settings.register("ldnd5e", "weaponsSpecialEffects", {
+        name: "ldnd5e.settings.extraConditionsName",
+        hint: "ldnd5e.settings.extraConditionsHint",
+        scope: "world",
+        config: true,
+        type: Boolean,
+        default: false
+    });
 }

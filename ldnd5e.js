@@ -10,7 +10,9 @@ import adControl from "./models/adControl.js";
 
 import * as ars from "./scripts/ARSystem.js";
 import * as mss from "./scripts/MSSystem.js";
+import * as ecs from "./scripts/ECSystems.js";
 
+import ItemSheetL5e from "./models/sheets/ItemSheetL5e.js";
 import ActorSheetL5eCharacter from "./models/sheets/ActorSheetL5eCharacter.js";
 import ActorSheetL5eNPCs from "./models/sheets/ActorSheetL5eNPCs.js";
 
@@ -47,6 +49,13 @@ Hooks.once('ready', () => {
     if(!game.modules.get('lib-wrapper')?.active && game.user.isGM)
         ui.notifications.error("LD&D 5e necessita do módulo 'libWrapper'. Favor instalá-lo e ativá-lo.");      
   
+    // Registra a nova classe de ActorSheet na Application.
+    Items.registerSheet("dnd5e", ItemSheetL5e, {
+        types: ["weapon"],
+        makeDefault: true,
+        label: "ldnd5e.sheetTitle"
+    });
+
     // Registra a nova classe de ActorSheet na Application.
     Actors.registerSheet("dnd5e", ActorSheetL5eCharacter, {
         types: ["character"],
@@ -95,6 +104,17 @@ Hooks.on('renderActorSheet', (app, html, data) => {
         hideEffects(actor, html);        
 });
 
+Hooks.on('renderItemSheet', async (app, html, data) => {   
+    if(game.settings.get('ldnd5e', 'weaponsSpecialEffects')) {
+        const itemData = data.data;
+        const item = game.items.get(itemData._id);
+
+        if(["weapon"].includes(itemData.type)) {    
+            ecs.addWeaponSpecialEffects(data, html, app);
+        }
+    }   
+});
+
 Hooks.on('getSceneControlButtons', (controls) => {
 
     if (game.user.isGM)
@@ -131,6 +151,15 @@ Hooks.on('dnd5e.preRollAttack', (item, rollData) => {
 Hooks.on('dnd5e.preRollToolCheck', (item, rollData) => {
     const actor = item.actor;
     patchExtraRollRoutines(actor, rollData);
+});
+Hooks.on('dnd5e.preRollDamage', (item, rollData) => {
+    ecs.patchRollDamageType(item, rollData);
+});
+Hooks.on('dnd5e.rollDamage', async (item, rollData) => {
+    await ecs.patchRollDamage(item, rollData);
+});
+Hooks.on('renderChatMessage', async (message, html, messageData) => {
+    await ecs.patchChatMessage(message, html, messageData);
 });
 
 /** ---------------------------------------------------- */
@@ -251,6 +280,6 @@ function patchRollDamage() {
             this.terms = criticalTerms;
             await wrapper(config, ...rest);
         } else await wrapper(config, ...rest);
-    });
+    });    
 }
   

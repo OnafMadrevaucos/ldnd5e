@@ -78,6 +78,10 @@
         "itemDestroyed": "Destroyed",
         "groupRolls": "Extra Roll",
 
+        "extraConditions": "Extra Conditions",
+        "bleedCondition": "Bleed Condition",
+        "stunCondition": "Stun Condition",
+
         "messages": {
             "bldgDmgLightArmor": "Light Armor is immune to damage caused by Bludgening Damage.",
             "slshDmgHeavyArmor": "Heavy Armor is immune to damage caused by Slashing Damage.",
@@ -123,7 +127,9 @@
             "massCombatName": "Massive Combat Rules",
             "massCombatHint": "Enables Character Sheets for the Massive Combat System.",
             "exhaustionName": "New Exhaustion Rule (One D&D)",
-            "exhaustionHint": "Use new Exhaustion rule proposed by the One D&D system. '-1' on d20 rolls for each level of exhaustion."
+            "exhaustionHint": "Use new Exhaustion rule proposed by the One D&D system. '-1' on d20 rolls for each level of exhaustion.",
+            "extraConditionsName": "Extra Conditions on Weapons",
+            "extraConditionsHint": "Weapons can cause Extra Conditions on sucessful attacks."
         }
     }
 }

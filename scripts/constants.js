@@ -17,6 +17,7 @@
     moduleName: 'ldnd5e',
     moduleLabel: 'Lemurian Dungeons & Dragons 5th Edition',
 
+    ItemSheet5e: dnd5e.applications.item.ItemSheet5e,
     ActorSheet5eCharacter: dnd5e.applications.actor.ActorSheet5eCharacter,
     ActorSheet5eNPCs: dnd5e.applications.actor.ActorSheet5eNPC,
     
@@ -27,7 +28,8 @@
         fatigueDialogTemplate: 'modules/ldnd5e/templates/fatigue-dialog.hbs',
         cControlTemplate: 'modules/ldnd5e/templates/cControl.hbs',
         frControlTemplate: 'modules/ldnd5e/templates/full-repair-dialog.hbs',
-        newDLTemplate: 'modules/ldnd5e/templates/newDL-template.hbs'        
+        newDLTemplate: 'modules/ldnd5e/templates/newDL-template.hbs',
+        specialConditions: "modules/ldnd5e/templates/partials/extra-conditions.hbs"        
     },
 
     images: {
