@@ -191,8 +191,6 @@ Hooks.on('renderChatMessage', async (message, html, messageData) => {
         await ecs.patchChatDmgMessage(message, html, messageData);
     }
 });
-=======
->>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
 
 /** ---------------------------------------------------- */
 /** Funções Internas                                     */

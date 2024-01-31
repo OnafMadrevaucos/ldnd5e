@@ -1,11 +1,7 @@
 /**
  * Defines the main constants for module name and other flags.
  *
-<<<<<<< HEAD
  * @type {{
-=======
- * @enum {{
->>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
  *    moduleName: string, 
  *    moduleLabel: string, 
  *    ActorSheet5eCharacter: Document, 
@@ -33,25 +29,13 @@
         cControlTemplate: 'modules/ldnd5e/templates/cControl.hbs',
         frControlTemplate: 'modules/ldnd5e/templates/full-repair-dialog.hbs',
         newDLTemplate: 'modules/ldnd5e/templates/newDL-template.hbs',
-<<<<<<< HEAD
         specialConditions: "modules/ldnd5e/templates/partials/extra-conditions.hbs"        
-=======
-        unitSheetTemplate: 'modules/ldnd5e/templates/unit-sheet.hbs',
-        companySheetTemplate: 'modules/ldnd5e/templates/company-sheet.hbs'        
->>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
     },
 
     images: {
        armorEffectDefault: "icons/equipment/chest/breastplate-helmet-metal.webp",
        shieldEffectDefault: "icons/equipment/shield/heater-crystal-blue.webp",
        noArmorDefault: "icons/magic/control/silhouette-hold-change-blue.webp"
-<<<<<<< HEAD
-    },
-
-    debugFlags: {
-      ActiveEffectAddFix: true
-=======
->>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
     },
 
     repairFee: 0.1,
@@ -219,14 +203,6 @@ const unitFlags = {
     bldg: "ldnd5e.damageTypes.bldg"
    },
 
-<<<<<<< HEAD
-=======
-   consumableTypes: {
-      ointment: "ldnd5e.consumableTypes.ointment",
-      elixir: "ldnd5e.consumableTypes.elixir"
-   },
-
->>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
    dcLabel: "ldnd5e.dcLabel",
 
    itemDestroyed: "ldnd5e.itemDestroyed",
@@ -306,8 +282,4 @@ const unitFlags = {
    }
  ]; 
 
-<<<<<<< HEAD
  export { constants, UnarmoredClasses, NDs, gmControl, i18nStrings };
-=======
- export { constants, UnarmoredClasses, NDs, unitFlags, gmControl, i18nStrings };
->>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
