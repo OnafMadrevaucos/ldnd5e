@@ -1,9 +1,11 @@
-<div class="ldnd5e chat-card new-dl-card" data-actor-id="{{owner._id}}" data-item-id="{{item._id}}">
-    <header class="ad-card-header flexrow">
-        <img src="{{item.img}}" title="{{item.name}}" width="36" height="36"/>
-        <h3>{{item.name}}</h3>
+<div class="ldnd5e dnd5e2 chat-card new-dl-card" data-actor-id="{{owner._id}}" data-item-id="{{item._id}}">
+    <section class="card-header description">
+    <header class="ad-card-header summary">
+        <img class="gold-icon" src="{{item.img}}" title="{{item.name}}" width="36" height="36"/>
+        <span class="title">{{item.name}}</span>
         <div class="ac-display" title="{{localize 'ldnd5e.dlControlRepairDC'}}">{{repairDC}}</div>
     </header>
+    </section>
 
     <div class="damage-content">
         {{info}}

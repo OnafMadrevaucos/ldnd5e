@@ -1,13 +1,14 @@
 <ol class="items-list inventory-list">
 {{#each sections as |section sid|}}
     {{#if section.ar}} 
-    <li class="items-header flexrow">
+    <div class="items-section card">
+    <div class="items-header header flexrow">
         <h3 class="item-name flexrow">{{localize section.label}}</h3>
         
         <div class="item-detail">{{localize "ldnd5e.profTitle"}}</div>
         <div class="item-detail">{{localize "ldnd5e.conTitle"}}</div>
         <div class="item-detail">{{localize "ldnd5e.exauTitle"}}</div>       
-    </li>
+    </div>
 
     <ol class="item-list">
     {{#each section.actors as |actor aid|}}
@@ -23,6 +24,7 @@
         </li>
     {{/each}}
     </ol>
+    </div>
     {{/if}}
 {{/each}}
 </ol>

@@ -1,16 +1,16 @@
 <form class="main-control flexcol">    
     <nav class="sheet-navigation tabs" data-group="primary">
         <a class="item active" data-tab="pcs-list">{{localize 'ldnd5e.adSystemTitle'}}</a>
-        <a class="item" data-tab="npcs-stats">{{localize 'ldnd5e.npcsStatsTitle'}}</a>
+        {{!-- DESATIVADO <a class="item" data-tab="npcs-stats">{{localize 'ldnd5e.npcsStatsTitle'}}</a>--}}
         <a class="item" data-tab="reacao-agil">{{localize 'ldnd5e.arSystemTitle'}}</a>
     </nav>
     <section class="sheet-body">
         <div class="tab pcs-list" data-group="primary" data-tab="pcs-list">
             {{> "modules/ldnd5e/templates/partials/pcs-list.hbs" sections=this}}
         </div>
-        <div class="tab npcs-stats" data-group="primary" data-tab="npcs-stats">
+        {{!--<div class="tab npcs-stats" data-group="primary" data-tab="npcs-stats">
             {{> "modules/ldnd5e/templates/partials/npcs-stats.hbs" sections=this}}
-        </div>
+        </div>--}}
         <div class="tab reacao-agil" data-group="primary" data-tab="reacao-agil">    
             {{> "modules/ldnd5e/templates/partials/reacao-agil.hbs" sections=this}}    
         </div>  

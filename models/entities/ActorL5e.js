@@ -121,12 +121,12 @@ export default class ActorL5e extends documents.Actor5e {
     
     configArmorData() {
         const armor = this.items.reduce((arr, item) => {   
-            if(item.type === "equipment" && CONFIG.DND5E.armorTypes[item.system.armor?.type]) {
+            if(item.type === "equipment" && CONFIG.DND5E.armorTypes[item.system.type.value]) {
 
                item.equipped = (item.actor.system.attributes.ac.equippedArmor?.id === item.id ||
                                 item.actor.system.attributes.ac.equippedShield?.id === item.id);
                
-               item.armorType = item.system.armor.type; 
+               item.armorType = item.system.type.value; 
                item.destroyed = item.system.armor.destroyed; 
                item.subtype =  (item.armorType === das.TIPO_ARMOR.SHIELD ? "shield" : "armor");     
                item.unarmored = false;
@@ -151,7 +151,7 @@ export default class ActorL5e extends documents.Actor5e {
             }
 
             // Unarmored Defense is always light armor
-            unarmored.system.armor.type = das.TIPO_ARMOR.UNARMORED;
+            unarmored.system.type.value = das.TIPO_ARMOR.UNARMORED;
 
             if(!unarmoredDef){
                 // Armor Damage Level

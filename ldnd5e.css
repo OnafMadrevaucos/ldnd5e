@@ -159,8 +159,10 @@
   font-weight: bold;
 }
 
-.chat-message .message-content .extra-conditions{
-  margin-top: 3px;
+.chat-message .message-content .extra-conditions {
+  margin-top: 0px;
+  margin: 3px;
+  font-size: larger;
 }
 .chat-message .message-content .extra-conditions a{
   cursor: default;
@@ -172,6 +174,7 @@
   padding-left: 5px;
   font-weight: bold;
 }
+
 
 .ldnd5e .form-header {
   margin: 0 0 0.25em 0;
@@ -481,6 +484,10 @@
   white-space: nowrap;
   overflow-x: hidden;
 }
+.ldnd5e.dnd5e2.app .items-list .item-name h3,
+.ldnd5e.dnd5e2.app .items-list .item-name h4 {
+  overflow-x: unset;
+}
 .ldnd5e.app .items-list .item-name h4.item-desequip {
   color: #c9c7b8;
   text-decoration: line-through;
@@ -531,8 +538,8 @@
 .ldnd5e.app .items-list .item .item-name .item-image.owner-image {
   border-radius: 50%;
 }
-.ldnd5e.app .actors-list .actors-header,
-.ldnd5e.app .items-list .items-header {
+.ldnd5e.dnd5e.app .actors-list .actors-header,
+.ldnd5e.dnd5e.app .items-list .items-header {
   height: 28px;
   margin: 2px 0;
   padding: 0;
@@ -540,6 +547,7 @@
   background: rgba(0, 0, 0, 0.05);
   border: 2px groove #eeede0;
   font-weight: bold;
+  border-radius: 5px;
 }
 .ldnd5e.app .actors-list .actors-header > *,
 .ldnd5e.app .items-list .items-header > * {
@@ -550,10 +558,10 @@
 .ldnd5e.app .items-list .items-header h3 {
   padding-left: 5px;
   font-family: "Modesto Condensed", "Palatino Linotype", serif;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   text-align: left;
-  font-size: 16px;
+  border: none;
 }
 .ldnd5e.app .effects .item .effect-source,
 .ldnd5e.app .effects .item .effect-duration,
@@ -565,6 +573,13 @@
 }
 .ldnd5e.app .effects .item .effect-controls {
   border: none;
+}
+
+.ldnd5e.dnd5e2 .items-list .items-section.card{
+  border-radius: 4px;
+  background: var(--dnd5e-color-card);
+  box-shadow: 0 0 6px var(--dnd5e-shadow-45);
+  border: 1px solid var(--dnd5e-color-gold);
 }
 /* ----------------------------------------- */
 /*  Company Control Classes                  */
@@ -846,6 +861,9 @@
 .ldnd5e.app.window-app .inventory-list {
   padding: 2px 5px;
 }
+.ldnd5e.dnd5e2.app.window-app .inventory-list {
+  overflow-x: hidden;
+}
 
 .ldnd5e.app.window-app.actor .inventory-list .item .item-name {
   cursor: default;
@@ -890,6 +908,9 @@
   word-break: break-word;
   white-space: nowrap;
   overflow: hidden;
+}
+.ldnd5e.dnd5e2.app.window-app .inventory-list .header .item-detail {
+  border-right: none;
 }
 .ldnd5e.app.window-app .inventory-list .actor-detail:last-child,
 .ldnd5e.app.window-app .inventory-list .item-detail:last-child {
@@ -977,24 +998,24 @@
 /* ----------------------------------------- */
 /*  Chat Cards
 /* ----------------------------------------- */
-.ldnd5e.chat-card {
+.ldnd5e.dnd5e.chat-card {
   font-style: normal;
   font-size: 12px;
 }
-.ldnd5e.chat-card .ad-card-header,
-.ldnd5e.chat-card .card-header {
+.ldnd5e.dnd5e.chat-card .ad-card-header,
+.ldnd5e.dnd5e.chat-card .card-header {
   padding: 3px 0;
   border-top: 2px groove #FFF;
   border-bottom: 2px groove #FFF;
 }
-.ldnd5e.chat-card .ad-card-header img,
-.ldnd5e.chat-card .card-header img {
+.ldnd5e.dnd5e.chat-card .ad-card-header img,
+.ldnd5e.dnd5e.chat-card .card-header img {
   flex: 0 0 36px;
   margin-right: 5px;
 }
-.ldnd5e.chat-card .roll-group-card-header h3,
-.ldnd5e.chat-card .ad-card-header h3,
-.ldnd5e.chat-card .card-header h3 {
+.ldnd5e.dnd5e.chat-card .roll-group-card-header h3,
+.ldnd5e.dnd5e.chat-card .ad-card-header h3,
+.ldnd5e.dnd5e.chat-card .card-header h3 {
   flex: 7;
   margin: 0;
   line-height: 36px;
@@ -1003,7 +1024,7 @@
   font-weight: 700;
   color: #4b4a44;
 }
-.ldnd5e.chat-card .card-header h3:hover {
+.ldnd5e.dnd5e.chat-card .card-header h3:hover {
   color: #111;
   text-shadow: 0 0 10px red;
 }
@@ -1021,13 +1042,26 @@
   padding-bottom: 0.2em;
   border-radius: 50% 50% 50% 50% / 12% 12% 88% 88%
 }
+.ldnd5e.dnd5e2.chat-card .ad-card-header .ac-display{ 
+  padding: 2px;
+  margin-top: 0;
+  font-weight: bold;
+}
+.ldnd5e.dnd5e2.chat-card .ad-card-header span.title{ 
+  font-family: var(--dnd5e-font-roboto-slab);
+  font-size: var(--font-size-14);
+  font-weight: bold;
+  flex: 65%;
+}
+
 .ldnd5e.chat-card .card-content {
   margin: 5px 0;
 }
-.ldnd5e.chat-card .card-content h3 {
+.ldnd5e.chat-card .ad-card-header h3 {
   font-size: 12px;
   margin: 0;
   font-weight: bold;
+  flex: 65%;
 }
 .ldnd5e.chat-card .card-content > * {
   -webkit-user-select: text;
@@ -1042,6 +1076,10 @@
   margin: 0.5em 0;
   padding-bottom: 0.5em;
   border-bottom: 2px groove #eeede0;
+}
+.ldnd5e.dnd5e2.chat-card .damage-content {
+  font-weight: lighter;
+  text-align: center;
 }
 
 .ldnd5e.chat-card .card-buttons {

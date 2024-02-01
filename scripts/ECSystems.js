@@ -126,14 +126,42 @@ export const patchChatUseMessage = function(item, html) {
     const stunFlag = item.getFlag('ldnd5e', 'stun');
 
     if(bleedFlag > 0) {
+        const li = document.createElement("li");
+        li.classList.add("pill");
+        li.classList.add("pill-sm");
+        li.classList.add("extra-conditions");
+
+        const a = document.createElement("a");    
+        const i = document.createElement("i");
+        i.classList.add("fas");
+        i.classList.add("fa-droplet");
+        a.appendChild(i);
+
         const bleedSpan = document.createElement("span");
-        bleedSpan.textContent = game.i18n.format(i18nStrings.bleedFooter, {value: bleedFlag});
-        cardFooter.appendChild(bleedSpan);
+        bleedSpan.textContent = bleedFlag;
+
+        li.appendChild(a);
+        li.appendChild(bleedSpan);
+        cardFooter.appendChild(li);
     }
-    if(stunFlag > 0) {
+    if(stunFlag > 0) {        
+        const li = document.createElement("li");
+        li.classList.add("pill");
+        li.classList.add("pill-sm");
+        li.classList.add("extra-conditions");
+
+        const a = document.createElement("a");    
+        const i = document.createElement("i");
+        i.classList.add("fas");
+        i.classList.add("fa-spinner");
+        a.appendChild(i);
+        
         const stunSpan = document.createElement("span");
-        stunSpan.textContent = game.i18n.format(i18nStrings.stunFooter, {value: stunFlag});
-        cardFooter.appendChild(stunSpan);
+        stunSpan.textContent = stunFlag;
+
+        li.appendChild(a);
+        li.appendChild(stunSpan);
+        cardFooter.appendChild(li);
     }
 }
 export const patchChatDmgMessage = async function(message, html, messageData) {
@@ -160,8 +188,8 @@ export const patchChatDmgMessage = async function(message, html, messageData) {
                 await message.setFlag("ldnd5e", "hasStunned", (itemData?.hasStunned ?? false));
                 hasStunned = false;
             }    
-            const footer = document.createElement("footer");
-            footer.classList.add("extra-conditions");
+            const div = document.createElement("div");
+            div.classList.add("extra-conditions");
 
             if(causedBleeding) {
                 const a = document.createElement("a");    
@@ -171,10 +199,10 @@ export const patchChatDmgMessage = async function(message, html, messageData) {
                 a.appendChild(i);
                 const span = document.createElement("span");    
                 span.textContent = game.i18n.localize(i18nStrings.bleedingLabel);
-                footer.appendChild(a);
-                footer.appendChild(span);
+                div.appendChild(a);
+                div.appendChild(span);
 
-                content.appendChild(footer);
+                content.appendChild(div);
             }
 
             if(hasStunned) {
@@ -185,10 +213,10 @@ export const patchChatDmgMessage = async function(message, html, messageData) {
                 a.appendChild(i);
                 const span = document.createElement("span");    
                 span.textContent = game.i18n.localize(i18nStrings.stunLabel);
-                footer.appendChild(a);
-                footer.appendChild(span);
+                div.appendChild(a);
+                div.appendChild(span);
 
-                content.appendChild(footer);
+                content.appendChild(div);
             }
         }  
     } 

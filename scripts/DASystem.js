@@ -45,7 +45,7 @@ export const TIPO_DANO = {
 export const prepareLAN = function(data) {   
 
     const armor = data.attributes.ac;
-    const armorType = armor.equippedArmor?.system.armor.type;
+    const armorType = armor.equippedArmor?.system.type.value;
     const armorProf = data.traits.armorProf;
     
     let lan = null;
@@ -97,7 +97,7 @@ export const prepareLDO = function(data) {
 */
 export const computaDA = async function(item, owner, tipoDano) {      
     const itemData = item.system;
-    const tipoArmor = itemData.armor.type;
+    const tipoArmor = itemData.type.value;
     const result = {
         temMudanca: {
             normal: false, 
@@ -165,7 +165,7 @@ export const computaDA = async function(item, owner, tipoDano) {
                 else result.temMudanca.normal = true;
 
                 itemData.armor.RealDL = itemData.armor.DL[tipoDano];            
-                itemData.armor.ACPenalty = (itemData.armor.type === TIPO_ARMOR.SHIELD ? NIVEL_DA_ESCUDO[itemData.armor.RealDL-1].mod : NIVEL_DA[itemData.armor.RealDL-1].mod);           
+                itemData.armor.ACPenalty = (itemData.type.value === TIPO_ARMOR.SHIELD ? NIVEL_DA_ESCUDO[itemData.armor.RealDL-1].mod : NIVEL_DA[itemData.armor.RealDL-1].mod);           
 
                 if(result.temMudanca.normal) {
                     var armorEffect = owner.getFlag("ldnd5e", "armorEffect");
@@ -206,7 +206,7 @@ export const computaDA = async function(item, owner, tipoDano) {
 */
 export const computaHALF = async function(item, owner, tipoDano) {      
     const itemData = item.system;
-    const tipoArmor = itemData.armor.type;
+    const tipoArmor = itemData.type.value;
     const result = {
         temMudanca: {
             normal: false, 
@@ -289,7 +289,7 @@ export const computaHALF = async function(item, owner, tipoDano) {
                 else result.temMudanca.normal = true;
 
                 itemData.armor.RealDL = itemData.armor.DL[tipoDano];            
-                itemData.armor.ACPenalty = (itemData.armor.type === TIPO_ARMOR.SHIELD ? NIVEL_DA_ESCUDO[itemData.armor.RealDL-1].mod : NIVEL_DA[itemData.armor.RealDL-1].mod);           
+                itemData.armor.ACPenalty = (itemData.type.value === TIPO_ARMOR.SHIELD ? NIVEL_DA_ESCUDO[itemData.armor.RealDL-1].mod : NIVEL_DA[itemData.armor.RealDL-1].mod);           
 
                 if(result.temMudanca.normal) {
                     var armorEffect = owner.getFlag("ldnd5e", "armorEffect");
@@ -330,7 +330,7 @@ export const computaHALF = async function(item, owner, tipoDano) {
 */
 export const computaSUB = function(item, owner, damageType, options={}) {      
     const itemData = item.system;
-    const tipoArmor = itemData.armor.type;
+    const tipoArmor = itemData.type.value;
     const result = {
         temMudanca: {
             normal: false, 
@@ -388,7 +388,7 @@ export const computaSUB = function(item, owner, damageType, options={}) {
         itemData.armor.HalfAD.slsh = false;
         itemData.armor.HalfAD.pierc = false;    
         
-        itemData.armor.ACPenalty = (itemData.armor.type === TIPO_ARMOR.SHIELD ? (NIVEL_DA_ESCUDO[novoIndex]?.mod ?? "+0") : (NIVEL_DA[novoIndex]?.mod ?? "+0"));
+        itemData.armor.ACPenalty = (itemData.type.value === TIPO_ARMOR.SHIELD ? (NIVEL_DA_ESCUDO[novoIndex]?.mod ?? "+0") : (NIVEL_DA[novoIndex]?.mod ?? "+0"));
 
         if(result.temMudanca.normal) {
             const armorEffect = owner.getFlag("ldnd5e", "armorEffect");
@@ -410,7 +410,7 @@ export const computaSUB = function(item, owner, damageType, options={}) {
 */
 export const computaZERAR = function(item, owner) {      
     const itemData = item.system;
-    const tipoArmor = itemData.armor.type;
+    const tipoArmor = itemData.type.value;
     const result = {
         temMudanca: {
             normal: false, 
@@ -461,7 +461,7 @@ export const computaZERAR = function(item, owner) {
 */
 export const computaREST = function(item, owner, amountRecovered) {      
     const itemData = item.system;
-    const tipoArmor = itemData.armor.type;
+    const tipoArmor = itemData.type.value;
     const result = {
         temMudanca: {
             normal: false, 
@@ -513,7 +513,7 @@ export const computaREST = function(item, owner, amountRecovered) {
         itemData.armor.HalfAD.slsh = false;
         itemData.armor.HalfAD.pierc = false;    
         
-        itemData.armor.ACPenalty = (itemData.armor.type === TIPO_ARMOR.SHIELD ? (NIVEL_DA_ESCUDO[novoIndex]?.mod ?? "+0") : (NIVEL_DA[novoIndex]?.mod ?? "+0"));
+        itemData.armor.ACPenalty = (itemData.type.value === TIPO_ARMOR.SHIELD ? (NIVEL_DA_ESCUDO[novoIndex]?.mod ?? "+0") : (NIVEL_DA[novoIndex]?.mod ?? "+0"));
 
         if(result.temMudanca.normal) {
             const armorEffect = owner.getFlag("ldnd5e", "armorEffect");

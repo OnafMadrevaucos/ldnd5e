@@ -23,6 +23,22 @@ export default class adControl extends Application {
       return super.close();
    }
 
+   /** @inheritDoc */
+  async _renderOuter() {
+      const html = await super._renderOuter();
+      const header = html[0].querySelector(".window-header");
+
+      // Adjust header buttons.
+      header.querySelectorAll(".header-button").forEach(btn => {
+         const label = btn.querySelector(":scope > i").nextSibling;
+         btn.dataset.tooltip = label.textContent;
+         btn.setAttribute("aria-label", label.textContent);
+         label.remove();
+      });
+
+      return html;
+  }
+
    /**
     * Tipo de Ação no Controle de Avaria
     * @enum {number}
@@ -59,7 +75,7 @@ export default class adControl extends Application {
    {
       return foundry.utils.mergeObject(super.defaultOptions, {
          id: constants.moduleName,
-         classes: [constants.moduleName],
+         classes: [constants.moduleName, "dnd5e2"],
          template: constants.templates.mainTemplate,
          width: 900,
          height: 650,

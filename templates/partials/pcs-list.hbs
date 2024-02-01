@@ -5,7 +5,8 @@
 </button>
 {{#each sections as |section sid|}}
     {{#if section.ad}}
-    <li class="items-header flexrow">
+    <div class="items-section card">
+    <div class="items-header header flexrow">
         <h3 class="item-name flexrow">{{localize section.label}}</h3>
 
         {{#if section.tipoShield}}
@@ -18,7 +19,7 @@
         <div class="item-detail">{{localize "ldnd5e.sdTitle"}}</div>
         <div class="item-detail">{{localize "ldnd5e.bdTitle"}}</div>
         <div class="item-detail total-damage">{{localize "ldnd5e.tdTitle"}}</div>       
-    </li>
+    </div>    
 
     <ol class="item-list">
     {{#each section.items as |item iid|}}
@@ -43,6 +44,7 @@
         </li>
     {{/each}}
     </ol>
+    </div>   
     {{/if}}
 {{/each}}
 </ol>
