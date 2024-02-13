@@ -863,6 +863,8 @@
 }
 .ldnd5e.dnd5e2.app.window-app .inventory-list {
   overflow-x: hidden;
+  overflow-y: scroll;
+  height: inherit;
 }
 
 .ldnd5e.app.window-app.actor .inventory-list .item .item-name {
@@ -916,8 +918,10 @@
 .ldnd5e.app.window-app .inventory-list .item-detail:last-child {
   border-right: none;
 }
-.ldnd5e.app.window-app .inventory-list .item-detail.lan-title{
-  margin-right: 35px;
+.ldnd5e.app.window-app .inventory-list .header .item-detail.owner-portrait {
+  flex: 0 0 47px;
+}
+.ldnd5e.app.window-app .inventory-list .item-detail.lan-title{  
   border-right: 0; 
 }
 .ldnd5e.app.window-app .inventory-list .actor-detail.total-penalty,
