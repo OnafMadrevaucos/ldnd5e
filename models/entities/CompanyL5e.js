@@ -69,7 +69,6 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
   
     prepareDerivedData() {
     }
-<<<<<<< HEAD
 
     _prepareLabels(unit) {
         const cr = parseFloat(unit.system.details.cr ?? 0);
@@ -175,6 +174,3 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
         return label.filterJoin(", ");
     }
 }
-=======
-  }
->>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6

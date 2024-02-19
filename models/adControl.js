@@ -358,21 +358,6 @@ export default class adControl extends Application {
 
    async _onRefreshPCsClick(event) {
       event.preventDefault();
-<<<<<<< HEAD
-            
-      var errorCount = 0;
-      for(let actor of game.actors){
-         if(actor.type == "character") {
-            const hasError = await actor.fullAsyncConfigL5e();
-            if(hasError) errorCount++;
-         }
-      }
-
-      if(errorCount == 0){
-         ui.notifications.info(game.i18n.localize(i18nStrings.messages.noEffectErrors));
-      }
-      
-=======
 
       var errorCount = 0;
       for(let actor of game.actors){
@@ -385,7 +370,6 @@ export default class adControl extends Application {
       if(errorCount == 0){
          ui.notifications.info(game.i18n.localize(i18nStrings.messages.noEffectErrors));
       }
->>>>>>> 978451120924eee7ae985c7ba4064f1d51ed8dc6
   }
 
   /* -------------------------------------------- */
