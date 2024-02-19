@@ -1199,3 +1199,10 @@
   text-align: center;
   border-bottom: none;
 }
+
+/* ----------------------------------------- */
+/*  LDnD5e Unit Sheets
+/* ----------------------------------------- */
+.dnd5e.actor.sheet.actor.unit .sheet-body .ability-scores{
+  flex: 0 0 100%;
+}

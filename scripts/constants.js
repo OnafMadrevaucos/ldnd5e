@@ -39,10 +39,6 @@
        noArmorDefault: "icons/magic/control/silhouette-hold-change-blue.webp"
     },
 
-    debugFlags: {
-      ActiveEffectAddFix: true
-    },
-
     repairFee: 0.1,
     fullRepairFee: 2
  };
@@ -96,6 +92,33 @@
    29: "29",
    30: "30"
  }
+
+ /**
+* Defines the Unit constants.
+*
+* @enum {{
+*    uTypes: object, 
+*    uAbilities: object
+* }}
+*/
+const unitFlags = {
+      /**
+      * Defines the Unit Types constants.      
+      */   
+      uTypes: {
+         light: "light",
+         heavy: "heavy",
+         mercenary: "merc"    
+      },
+      /**
+      * Defines the Unit Abilities constants.      
+      */
+      uAbilities : {
+         for: "for",
+         mrl: "mrl",
+         wil: "wil"    
+      }
+}
 
  const i18nStrings = {
    title : "ldnd5e.title",
@@ -187,6 +210,17 @@
    itemDestroyed: "ldnd5e.itemDestroyed",
    groupRolls:"ldnd5e.groupRolls",
 
+   unitType: "ldnd5e.unit",
+   uTypes: {
+      light: "ldnd5e.uTypes.light",
+      heavy: "ldnd5e.uTypes.heavy",
+      merc: "ldnd5e.uTypes.merc",
+   },  
+   uAbilities: { 
+      for: "ldnd5e.uAbilities.for",
+      mrl: "ldnd5e.uAbilities.mrl",
+      wil: "ldnd5e.uAbilities.wil",
+   },
    messages: {
       bldgDmgLightArmor: "ldnd5e.messages.bldgDmgLightArmor",
       slshDmgHeavyArmor: "ldnd5e.messages.slshDmgHeavyArmor",      
