@@ -12,7 +12,7 @@ const NIVEL_DA = [
 ];
 
 const NIVEL_DA_ESCUDO = [
-    {valor: 2, mod: "0"},
+    {valor: 2, mod: "+0"},
     {valor: 3, mod: "-1"},
     {valor: 4, mod: "-1"},
     {valor: 5, mod: "-1"},
@@ -33,6 +33,16 @@ export const TIPO_DANO = {
     BLDG: "bldg",
     SLSH: "slsh",
     PIERC:"pierc",
+}
+
+/**
+    * Advantage mode of a 5e d20 roll
+    * @enum {number}
+    */
+export const ACTION_TYPE = {
+    DELETE: -1,
+    UPDATE: 0,        
+    NEW: 1
 }
 
 
@@ -654,7 +664,7 @@ export const prepareActiveEffects = async function(item, owner, result, options=
     };
 
     await actor.update({ [`system.currency`]: newCurr});
-    actor.convertCurrency();
+    CONFIG.CurrencyManager.convertCurrency(actor);
  }
 
  export const convertCurrency = function(curr) {
@@ -741,3 +751,159 @@ export const prepareActiveEffects = async function(item, owner, result, options=
       
     return (price.total > curr.total);
  }
+
+ export const computeEquipArmorShield = async function(actor, item, action) {
+    const data = actor.system;
+
+    if(this.token) {
+
+    }
+
+    const equip = { armor: data.attributes.ac.equippedArmor,
+                    shield: data.attributes.ac.equippedShield};
+
+    const flags = { armor: actor.getFlag("ldnd5e", "armorEffect"),
+                    shield: actor.getFlag("ldnd5e", "shieldEffect")};
+    
+    const effects = { armor: actor.effects.get(flags.armor.effectID),
+                      shield: actor.effects.get(flags.shield.effectID)};  
+
+    // O tipo de ação é um UPDATE?
+    if(action === this.ACTION_TYPE.UPDATE) { 
+
+        // O item alterado é uma Armadura?
+        if(["armor"].includes(item.subtype)) {
+            // O Actor tem uma Armadura equipada? Isso é um desequip então.
+            if(equip.armor) {
+                // A Armadura alterada é a mesma que está equipada?
+                if(item.id === equip.armor.id) {
+                    // Remova o efeito de avaria.
+                    await actor.updateArmorDamageEffects(effects.armor, "+0");
+                    await actor.setFlag("ldnd5e", "armorEffect", {effectID: flags.armor.effectID, armorID: "none"});
+                }
+            // Isso é um equip então.
+            } else {
+                // O Actor já tem uma Armadura atribuída ao Active Effect?
+                if(flags.armor.armorID !== "none") {
+                    // Recupera a Armadura atribuída ao Active Effect.
+                    const armor = actor.items.get(flags.armor.armorID);
+                    // A Armadura atribuída ao Active Effect não existe mais?
+                    if(!armor) {                        
+                        // Atribua a Armadura alterada pelo Actor ao Active Effect.
+                        await actor.updateArmorDamageEffects(effects.armor, item.system.armor.ACPenalty);
+                        await actor.setFlag("ldnd5e", "armorEffect", {effectID: flags.armor.effectID, armorID: item.id});
+                        
+                    // A Armadura alterada é diferente da Armadura atribuída ao Active Effect.
+                    } else if(item.id !== armor.id){
+                        // Atribua a Armadura alterada pelo Actor ao Active Effect.
+                        await actor.updateArmorDamageEffects(effects.armor, item.system.armor.ACPenalty);
+                        await actor.setFlag("ldnd5e", "armorEffect", {effectID: flags.armor.effectID, armorID: item.id});
+                    }
+                } else {
+                    // Atribua a Armadura alterada pelo Actor ao Active Effect.
+                    await actor.updateArmorDamageEffects(effects.armor, item.system.armor.ACPenalty);
+                    await actor.setFlag("ldnd5e", "armorEffect", {effectID: flags.armor.effectID, armorID: item.id});                    
+                }
+            }
+        }
+        
+        // O item alterado é um Escudo?
+        if(["shield"].includes(item.subtype)) {
+        // O Actor tem um Escudo equipado? Isso é um desequip então.
+            if(equip.shield) {
+                // O Escudo alterado é o mesmo que está equipado?
+                if(item.id === equip.shield.id) {
+                // Remova o efeito de avaria.
+                    await actor.updateArmorDamageEffects(effects.shield, "+0");
+                    await actor.setFlag("ldnd5e", "shieldEffect", {effectID: flags.shield.effectID, shieldID: "none"});
+                }
+            // Isso é um equip então.
+            } else {
+                // O Actor já tem um Escudo atribuído ao Active Effect?
+                if(flags.shield.shieldID !== "none") {
+                    // Recupera o Escudo atribuído ao Active Effect.
+                    const shield = actor.items.get(flags.shield.shieldID);
+                    // O Escudo atribuído ao Active Effect não existe mais?
+                    if(!shield) {
+                        // Atribua o Escudo alterado pelo Actor ao Active Effect.
+                        await actor.updateArmorDamageEffects(effects.shield, item.system.armor.ACPenalty);
+                        await actor.setFlag("ldnd5e", "shieldEffect", {effectID: flags.shield.effectID, shieldID: item.id});
+                    // O Escudo alterado é diferente do Escudo atribuído ao Active Effect.
+                    } else if(item.id !== shield.id){
+                    // Atribua o Escudo alterado pelo Actor ao Active Effect.
+                        await actor.updateArmorDamageEffects(effects.shield, item.system.armor.ACPenalty);
+                        await actor.setFlag("ldnd5e", "shieldEffect", {effectID: flags.shield.effectID, shieldID: item.id});
+                    }
+                } else {
+                    // Atribua o Escudo alterado pelo Actor ao Active Effect.
+                    await actor.updateArmorDamageEffects(effects.shield, item.system.armor.ACPenalty);
+                    await actor.setFlag("ldnd5e", "shieldEffect", {effectID: flags.shield.effectID, shieldID: item.id});                    
+                }
+            } 
+        }
+    // O tipo de ação é um DELETE?           
+    } else if(action === this.ACTION_TYPE.DELETE){
+        // O item deletado é uma Armadura?
+        if(["armor"].includes(item.subtype)) {
+            // O Actor tem uma Armadura atribuída ao Active Effect?
+            if(flags.armor.armorID !== "none") {
+                // Recupera a Armadura atribuída ao Active Effect.
+                const armor = actor.items.get(flags.armor.armorID);
+                // A Armadura atribuída ao Active Effect ainda existe?
+                if(!armor) {
+                    // Remova o efeito de avaria.
+                    await actor.updateArmorDamageEffects(effects.armor, "+0");
+                    await actor.setFlag("ldnd5e", "armorEffect", {effectID: flags.armor.effectID, armorID: "none"});
+                // A Armadura deletada é a Armadura atribuída ao Active Effect.
+                } else if(item.id === armor._id){    
+                    // Remova o efeito de avaria.
+                    await actor.updateArmorDamageEffects(effects.armor, "+0");
+                    await actor.setFlag("ldnd5e", "armorEffect", {effectID: flags.armor.effectID, armorID: "none"});              
+                }
+            }
+        }
+
+        // O item deletado é um Escudo?
+        if(["shield"].includes(item.subtype)) {
+            // O Actor tem um Escudo atribuído ao Active Effect?
+            if(flags.shield.shieldID !== "none") {
+                // Recupera o Escudo atribuída ao Active Effect.
+                const shield = actor.items.get(flags.shield.shieldID);
+                // O Escudo atribuído ao Active Effect ainda existe?
+                if(!shield) { 
+                    // Remova o efeito de avaria.
+                    await actor.updateArmorDamageEffects(effects.shield, "+0");
+                    await actor.setFlag("ldnd5e", "shieldEffect", {effectID: flags.shield.effectID, shieldID: "none"});                  
+                // O Escudo deletado é a Armadura atribuída ao Active Effect.
+                } else if(item.id === shield._id){    
+                    // Remova o efeito de avaria.
+                    await actor.updateArmorDamageEffects(effects.shield, "+0");
+                    await actor.setFlag("ldnd5e", "shieldEffect", {effectID: flags.shield.effectID, shieldID: "none"});              
+                }
+            }
+        }
+    // O tipo de ação é um NEW? 
+    } else if(action === this.ACTION_TYPE.NEW) {
+        // O item criado é uma Armadura?
+        if(["armor"].includes(item.subtype)) {
+            // O Actor não tem uma Armadura equipada?
+            if(!equip.armor) {                
+                // Atribua a Armadura criado pelo Actor ao Active Effect.
+                await actor.updateArmorDamageEffects(effects.armor, item.system.armor.ACPenalty);
+                await actor.setFlag("ldnd5e", "armorEffect", {effectID: flags.armor.effectID, armorID: item.id});  
+            }              
+        }
+
+        // O item criado é um Escudo?
+        if(["shield"].includes(item.subtype)) {
+            // O Actor não tem um Escudo equipado?
+            if(!equip.shield) {                
+                // Atribua o Escudo criado pelo Actor ao Active Effect.
+                await actor.updateArmorDamageEffects(effects.shield, item.system.armor.ACPenalty);
+                await actor.setFlag("ldnd5e", "shieldEffect", {effectID: flags.shield.effectID, shieldID: item.id});       
+            }         
+        }
+    }  
+    
+    actor.applyActiveEffects();
+}

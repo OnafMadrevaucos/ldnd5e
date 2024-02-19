@@ -1,8 +1,9 @@
+import BaseDialog from "./BaseDialog.js";
 import ActorL5e from "../entities/ActorL5e.js";
 import * as das from "../../scripts/DASystem.js";
 import { constants, i18nStrings } from "../../scripts/constants.js";
 
-export default class FatigueDialog extends Dialog {
+export default class FatigueDialog extends BaseDialog {
     constructor(owner, item, dialogData={}, options={}) {
         super(dialogData, options);
     
@@ -22,8 +23,7 @@ export default class FatigueDialog extends Dialog {
     /** @inheritDoc */
     static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {
-            template: constants.templates.fatigueDialogTemplate,
-            classes: ["dnd5e", "dialog"]
+            template: constants.templates.fatigueDialogTemplate
         });
     }
 

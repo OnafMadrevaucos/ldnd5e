@@ -9,6 +9,7 @@
          "templates/partials/pcs-list.hbs",
          "templates/partials/reacao-agil.hbs",
          "templates/control-dialog.hbs",
+         "templates/config-dialog.hbs",
          "templates/mainControl.hbs",
          "templates/fatigue-dialog.hbs"
     ];

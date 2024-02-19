@@ -8,18 +8,25 @@ import { registerSystemSettings } from "./scripts/settings.js"
 import { constants, gmControl } from "./scripts/constants.js";
 import adControl from "./models/adControl.js";
 
+import * as das from "./scripts/DASystem.js"
 import * as ars from "./scripts/ARSystem.js";
 import * as mss from "./scripts/MSSystem.js";
 import * as ecs from "./scripts/ECSystems.js";
 
+import ActiveEffectL5e from "./models/activeEffect.js";
+
 import ItemSheetL5e from "./models/sheets/ItemSheetL5e.js";
-import ActorSheetL5eCharacter from "./models/sheets/ActorSheetL5eCharacter.js";
-import ActorSheetL5eNPCs from "./models/sheets/ActorSheetL5eNPCs.js";
 
 Hooks.once("init", function() {
     console.log("LDnD5e | Inicializando o Módulo Lemurian D&D 5th Edition...");
 
     CONFIG.DND5E = dnd5e.config;
+
+    // Load D&D Currency Manager library;
+    CONFIG.CurrencyManager = dnd5e.applications.CurrencyManager;
+
+    // The D&D used is the newer than 3.0.0 Version.
+    CONFIG.IsDnD2 = foundry.utils.isNewerVersion(dnd5e.version, "3.0.0");    
 
     CONFIG.LDND5E = {
         specialArmors: {
@@ -34,7 +41,7 @@ Hooks.once("init", function() {
     CONFIG.Actor.documentClass = ActorL5e;
  
     preloadTemplates();
-    registerSystemSettings();
+    registerSystemSettings();    
     patchRollDamage();
 
     if (game.modules.get('rpg-styled-ui')?.active && game.modules.get('gm-screen')?.active)
@@ -47,28 +54,7 @@ Hooks.once("init", function() {
 Hooks.once('ready', () => {
     // Verifica se algums módulos necessários estão ativos.
     if(!game.modules.get('lib-wrapper')?.active && game.user.isGM)
-        ui.notifications.error("LD&D 5e necessita do módulo 'libWrapper'. Favor instalá-lo e ativá-lo.");      
-  
-    // Registra a nova classe de ActorSheet na Application.
-    Items.registerSheet("dnd5e", ItemSheetL5e, {
-        types: ["weapon"],
-        makeDefault: true,
-        label: "ldnd5e.sheetTitle"
-    });
-
-    // Registra a nova classe de ActorSheet na Application.
-    Actors.registerSheet("dnd5e", ActorSheetL5eCharacter, {
-        types: ["character"],
-        makeDefault: true,
-        label: "ldnd5e.sheetTitle"
-    });
-
-    // Registra a nova classe de ActorSheet na Application.
-    Actors.registerSheet("dnd5e", ActorSheetL5eNPCs, {
-        types: ["npc"],
-        makeDefault: true,
-        label: "ldnd5e.sheetTitle"
-    });
+        ui.notifications.error("LD&D 5e necessita do módulo 'libWrapper'. Favor instalá-lo e ativá-lo.");     
 
     Hooks.on("renderCombatTracker", async (app, html, data) => {
         // Sair se não tiver Combates ativos.
@@ -79,7 +65,7 @@ Hooks.once('ready', () => {
 
         if(CONFIG.adControl)
             CONFIG.adControl.refresh(true);        
-    });
+    });   
     
     // Re-render the combat tracker in case the initial render was missed
     ui.combat.render(true);
@@ -87,9 +73,15 @@ Hooks.once('ready', () => {
 
 Hooks.on('renderActorSheet', (app, html, data) => {
     const actor = app.actor;
-    const isActorL5e = actor.getFlag("ldnd5e", "L5eConfigured");
 
-    if(isActorL5e != undefined && (!isActorL5e && ["character"].includes(actor.type))) actor.configL5e();
+    if(!CONFIG.adControl && actor.type == "character") { 
+        actor.configArmorData(actor); 
+        
+        const isActorL5e = actor.getFlag("ldnd5e", "L5eConfigured");
+        if(isActorL5e != undefined && !isActorL5e) actor.configL5e();
+    }
+
+    data.effects = ActiveEffectL5e.prepareActiveEffectCategories(data);   
 
     if(game.settings.get('ldnd5e', 'massiveCombatRules')) {
         mss.addMassiveCombatParts(actor, html);
@@ -106,10 +98,17 @@ Hooks.on('renderActorSheet', (app, html, data) => {
 
 Hooks.on('renderItemSheet', async (app, html, data) => {   
     if(game.settings.get('ldnd5e', 'weaponsSpecialEffects')) {
-        const itemData = data.data;
-        const item = game.items.get(itemData._id);
+        const item = data.item;    
 
-        if(["weapon"].includes(itemData.type)) {    
+        if(["weapon"].includes(item.type)) {
+            const bleedFlag = item.getFlag('ldnd5e', 'bleed');
+            const stunFlag = item.getFlag('ldnd5e', 'stun');
+
+            if(bleedFlag == undefined || bleedFlag == null) await this.item.setFlag('ldnd5e', 'bleed', 0);
+            if(stunFlag == undefined || stunFlag == null) await this.item.setFlag('ldnd5e', 'stun', 0);           
+        }
+
+        if(["weapon"].includes(item.type)) {    
             ecs.addWeaponSpecialEffects(data, html, app);
         }
     }   
@@ -131,6 +130,20 @@ Hooks.on('combatRound', ars.onNewCombatTurn);
 /** ---------------------------------------------------- */
 /** Funções do Sistema D&D                               */
 /** ---------------------------------------------------- */
+
+// ITENS ------------------------------------------------//
+Hooks.on('createItem', async (document, data, options, userId) => {    
+    patchItemCreate(document.actor, document);
+});
+Hooks.on('preUpdateItem', async (document, change, options, userId) => {    
+    patchItemPreUpdate(document.actor, document, change);
+});  
+Hooks.on('preDeleteItem', async (document, options, userId) => {    
+    patchItemPreDelete(document.actor, document);
+}); 
+// ------------------------------------------------------//
+
+// ROLLS ------------------------------------------------//
 Hooks.on('dnd5e.preRollSkill', (actor, rollData, skillId) => {
     patchExtraRollRoutines(actor, rollData);
 });
@@ -160,6 +173,9 @@ Hooks.on('dnd5e.rollDamage', (item, rollData) => {
     ecs.patchRollDamageType(item, rollData);
     ecs.patchRollDamage(item, rollData);
 });
+// ------------------------------------------------------//
+
+// CHAT MESSAGE------------------------------------------//
 Hooks.on('renderChatMessage', async (message, html, messageData) => {    
     const useFlag = message.getFlag("dnd5e", "use"); 
     if(useFlag) {
@@ -173,6 +189,7 @@ Hooks.on('renderChatMessage', async (message, html, messageData) => {
         await ecs.patchChatDmgMessage(message, html, messageData);
     }
 });
+// ------------------------------------------------------//
 
 /** ---------------------------------------------------- */
 /** Funções Internas                                     */
@@ -240,9 +257,56 @@ function patchSheetText() {
 }
 
 /** ---------------------------------------------------- */
+/** Funções de Sheets                                    */
+/** ---------------------------------------------------- */
+async function patchItemCreate(actor, item) {
+    
+    // Atualiza os dados do novo Item antes de enviar para ser processado.
+    if(item.type === "equipment" && CONFIG.DND5E.armorTypes[item.system.type.value]) {
+
+        // Se Item não está devidamente configurado, configure-o antes de enviar para processamento.
+        if(item.subtype == undefined) {
+            item.equipped = (item.actor.system.attributes.ac.equippedArmor?.id === item.id ||
+                             item.actor.system.attributes.ac.equippedShield?.id === item.id);
+        
+            item.armorType = item.system.type.value; 
+            item.destroyed = item.system.armor.destroyed; 
+            item.subtype =  (item.armorType === das.TIPO_ARMOR.SHIELD ? "shield" : "armor");     
+            item.unarmored = false; 
+        }
+        
+        await das.computeEquipArmorShield(actor, item, das.ACTION_TYPE.NEW);        
+    }
+}
+async function patchItemPreUpdate(actor, item, change) {   
+
+    // Se Item não está devidamente configurado, configure-o antes de enviar para processamento.
+    if(item.subtype == undefined) {
+        item.equipped = (item.actor.system.attributes.ac.equippedArmor?.id === item.id ||
+        item.actor.system.attributes.ac.equippedShield?.id === item.id);
+
+        item.armorType = item.system.type.value; 
+        item.destroyed = item.system.armor.destroyed; 
+        item.subtype =  (item.armorType === das.TIPO_ARMOR.SHIELD ? "shield" : "armor");     
+        item.unarmored = false;        
+    }
+
+    if(["armor", "shield"].includes(item?.subtype)) {
+        await das.computeEquipArmorShield(actor, item, das.ACTION_TYPE.UPDATE);
+    }
+}
+
+async function patchItemPreDelete(actor, item) {
+
+    if(["armor", "shield"].includes(item?.subtype)) {
+        await das.computeEquipArmorShield(actor, item, das.ACTION_TYPE.DELETE);
+    }
+}
+
+/** ---------------------------------------------------- */
 /** Funções de Wrapper                                   */
 /** ---------------------------------------------------- */
-function patchRollDamage() {
+function patchRollDamage() {    
     libWrapper.register('ldnd5e', 'CONFIG.Dice.DamageRoll.prototype.configureDamage', async function(wrapper, config, ...rest) {
         if(this.isCritical && game.settings.get('ldnd5e','criticalDamageModifiers')) {        
             let flatBonus = 0;

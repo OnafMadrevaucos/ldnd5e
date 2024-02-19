@@ -1,7 +1,8 @@
+import BaseDialog from "./BaseDialog.js";
 import * as ars from "../../scripts/ARSystem.js";
 import { constants, i18nStrings } from "../../scripts/constants.js";
 
-export default class ArDialog extends Dialog {
+export default class ArDialog extends BaseDialog {
     constructor(actor, rightClick, dialogData={}, options={}) {
         super(dialogData, options);
     
@@ -21,8 +22,7 @@ export default class ArDialog extends Dialog {
     /** @inheritDoc */
     static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {
-            template: constants.templates.arControlTemplate,            
-            classes: ["dnd5e", "dialog"]
+            template: constants.templates.arControlTemplate
         });
     }
 

@@ -64,7 +64,10 @@
 
         "yesBtn": "Sim",
         "noBtn": "Não",
+        "saveBtn": "Salvar",
         "cancelBtn": "Cancelar",
+
+        "selectAll": "Selecionar Todos(as)",
 
         "damageTypes": {
             "pierc": "Perfurante",

@@ -1,8 +1,13 @@
 <ol class="items-list inventory-list" onsubmit="event.preventDefault();"> 
-<button class="button-dialog refresh-pcs" data-button="{{id}}">
-    <i class="fas fa-arrows-rotate"></i>
-    {{localize "ldnd5e.refreshBtn"}}
-</button>
+<div class="flexrow">
+    <button class="button-dialog refresh-pcs" data-button="{{id}}">
+        <i class="fas fa-arrows-rotate"></i>
+        {{localize "ldnd5e.refreshBtn"}}
+    </button>
+    <button class="button-dialog config-control" data-button="{{id}}">        
+        <i class="fas fa-gear"></i>
+    </button>
+</div>
 {{#each sections as |section sid|}}
     {{#if section.ad}}
     <div class="items-section card">

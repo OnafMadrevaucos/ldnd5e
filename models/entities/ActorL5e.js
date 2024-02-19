@@ -48,6 +48,9 @@ export default class ActorL5e extends documents.Actor5e {
                     CONFIG.adControl.refresh(true);
                 }
 
+                const dasEnabled = (this.getFlag("ldnd5e","isVisible") ?? true);
+                data.dasEnabled = dasEnabled;
+
                 /*if(game.settings.get('ldnd5e', 'massiveCombatRules')) {
                     data.commander = data.commander ?? false;
                 }*/
@@ -147,11 +150,11 @@ export default class ActorL5e extends documents.Actor5e {
                 equipped: true,                
                 subtype: "armor",
                 unarmored: true,
-                system: {armor: {}}
-            }
-
-            // Unarmored Defense is always light armor
-            unarmored.system.type.value = das.TIPO_ARMOR.UNARMORED;
+                system: {
+                    type: { value: das.TIPO_ARMOR.UNARMORED },
+                    armor: {}
+                }
+            }            
 
             if(!unarmoredDef){
                 // Armor Damage Level
@@ -200,7 +203,7 @@ export default class ActorL5e extends documents.Actor5e {
             // Active Effect padrão usado para controlar os efeitos de avaria das Armaduras.
             const armorEffect = {
                 _id: randomID(),
-                label: game.i18n.localize(i18nStrings.activeEffectLabel),
+                name: game.i18n.localize(i18nStrings.activeEffectLabel),
                 icon: constants.images.armorEffectDefault,
                 origin: this.uuid,
                 changes: [{ key: "system.attributes.ac.bonus", mode: ADD, priority: null, value: "+0" }], 
@@ -210,7 +213,7 @@ export default class ActorL5e extends documents.Actor5e {
             // Active Effect padrão usado para controlar os efeitos de avaria dos Escudos.
             const shieldEffect = {
                 _id: randomID(),
-                label: game.i18n.localize(i18nStrings.activeEffectShieldLabel),
+                name: game.i18n.localize(i18nStrings.activeEffectShieldLabel),
                 icon: constants.images.shieldEffectDefault,
                 origin: this.uuid,
                 changes: [{ key: "system.attributes.ac.bonus", mode: ADD, priority: null, value: "+0" }], 
@@ -232,7 +235,7 @@ export default class ActorL5e extends documents.Actor5e {
             // Active Effect padrão usado para controlar os efeitos de avaria das Armaduras.
             const armorEffect = {
                 _id: randomID(),
-                label: game.i18n.localize(i18nStrings.activeEffectLabel),
+                name: game.i18n.localize(i18nStrings.activeEffectLabel),
                 icon: constants.images.armorEffectDefault,
                 origin: this.uuid,
                 changes: [{ key: "system.attributes.ac.bonus", mode: ADD, priority: null, value: "+0" }], 
@@ -252,7 +255,7 @@ export default class ActorL5e extends documents.Actor5e {
             // Active Effect padrão usado para controlar os efeitos de avaria dos Escudos.
             const shieldEffect = {
                 _id: randomID(),
-                label: game.i18n.localize(i18nStrings.activeEffectShieldLabel),
+                name: game.i18n.localize(i18nStrings.activeEffectShieldLabel),
                 icon: constants.images.shieldEffectDefault,
                 origin: this.uuid,
                 changes: [{ key: "system.attributes.ac.bonus", mode: ADD, priority: null, value: "+0" }], 
@@ -289,11 +292,11 @@ export default class ActorL5e extends documents.Actor5e {
                 if(!armorEffectFound && effect.name === armorEffectLabel){
                     armorEffectFound = true; 
                     await this.setFlag("ldnd5e", "armorEffect", {effectID: effect._id, armorID: armorItem._id});                    
-                    await this.updateArmorDamageEffects({_id: effect._id, label: effect.label, ...effect}, armorItem.system.armor.ACPenalty);
+                    await this.updateArmorDamageEffects({_id: effect._id, name: effect.name, ...effect}, armorItem.system.armor.ACPenalty);
                 } else if(!shieldEffectFound && effect.name === shieldEffectLabel) {
                     shieldEffectFound = true;
                     await this.setFlag("ldnd5e", "shieldEffect", {effectID: effect._id, shieldID: shieldItem._id});                    
-                    await this.updateArmorDamageEffects({_id: effect._id, label: effect.label, ...effect}, shieldItem.system.armor.ACPenalty);
+                    await this.updateArmorDamageEffects({_id: effect._id, name: effect.name, ...effect}, shieldItem.system.armor.ACPenalty);
                 }
             }
 
@@ -302,7 +305,7 @@ export default class ActorL5e extends documents.Actor5e {
                 // Active Effect padrão usado para controlar os efeitos de avaria das Armaduras.
                 const armorEffect = {
                     _id: armorFlag?.effectID ?? randomID(),
-                    label: game.i18n.localize(i18nStrings.activeEffectLabel),
+                    name: game.i18n.localize(i18nStrings.activeEffectLabel),
                     icon: constants.images.armorEffectDefault,
                     origin: this.uuid,
                     changes: [{ key: "system.attributes.ac.bonus", mode: ADD, priority: null, value: armorItem.system.armor.ACPenalty ?? "+0" }], 
@@ -319,7 +322,7 @@ export default class ActorL5e extends documents.Actor5e {
                 // Active Effect padrão usado para controlar os efeitos de avaria dos Escudos.
                 const shieldEffect = {
                     _id: shieldFlag?.effectID ?? randomID(),
-                    label: game.i18n.localize(i18nStrings.activeEffectShieldLabel),
+                    name: game.i18n.localize(i18nStrings.activeEffectShieldLabel),
                     icon: constants.images.shieldEffectDefault,
                     origin: this.uuid,
                     changes: [{ key: "system.attributes.ac.bonus", mode: ADD, priority: null, value: shieldItem?.system.armor.ACPenalty ?? "+0" }], 
@@ -345,7 +348,7 @@ export default class ActorL5e extends documents.Actor5e {
         // Active Effect padrão que será atualizado.
         const newEffect = {
             _id: data._id,
-            label: data.label,
+            name: data.name,
             icon: data.icon,
             origin: data.origin,
             changes: [{ key: "system.attributes.ac.bonus", mode: ADD, priority: null, value: value }], 

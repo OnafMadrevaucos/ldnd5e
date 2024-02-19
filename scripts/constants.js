@@ -18,12 +18,13 @@
     moduleLabel: 'Lemurian Dungeons & Dragons 5th Edition',
 
     ItemSheet5e: dnd5e.applications.item.ItemSheet5e,
-    ActorSheet5eCharacter: dnd5e.applications.actor.ActorSheet5eCharacter,
+    ActorSheet5eCharacter: (CONFIG.IsDnD2 ? dnd5e.applications.actor.ActorSheet5eCharacter2 : dnd5e.applications.actor.ActorSheet5eCharacter),
     ActorSheet5eNPCs: dnd5e.applications.actor.ActorSheet5eNPC,
     
     templates: {
         mainTemplate: 'modules/ldnd5e/templates/mainControl.hbs',
         dlControlTemplate: 'modules/ldnd5e/templates/control-dialog.hbs',
+        dlConfigTemplate: 'modules/ldnd5e/templates/config-dialog.hbs',
         arControlTemplate: 'modules/ldnd5e/templates/confirm-dialog.hbs',
         fatigueDialogTemplate: 'modules/ldnd5e/templates/fatigue-dialog.hbs',
         cControlTemplate: 'modules/ldnd5e/templates/cControl.hbs',
@@ -172,6 +173,7 @@
 
    yesBtn: "ldnd5e.yesBtn",
    noBtn: "ldnd5e.noBtn",
+   saveBtn: "ldnd5e.saveBtn",
    cancelBtn: "ldnd5e.cancelBtn",
 
    damageTypes: {

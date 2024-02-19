@@ -65,7 +65,10 @@
 
         "yesBtn": "Yes",
         "noBtn": "No",
+        "saveBtn": "Save",
         "cancelBtn": "Cancel",
+
+        "selectAll": "Select All",
 
         "damageTypes": {
             "pierc": "Piercing",

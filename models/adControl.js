@@ -1,6 +1,8 @@
 import { constants, UnarmoredClasses, NDs, i18nStrings } from "../scripts/constants.js";
 import * as das from "../scripts/DASystem.js";
 import { updateExhaustionLevel } from "../scripts/ARSystem.js";
+
+import ConfigDialog from "./dialogs/ConfigDialog.js";
 import AdDialog from "./dialogs/AdDialog.js";
 import ArDialog from "./dialogs/ArDialog.js";
 
@@ -75,7 +77,7 @@ export default class adControl extends Application {
    {
       return foundry.utils.mergeObject(super.defaultOptions, {
          id: constants.moduleName,
-         classes: [constants.moduleName, "dnd5e2"],
+         classes: [constants.moduleName, (CONFIG.IsDnD2 ? "dnd5e2" : "dnd5e")],
          template: constants.templates.mainTemplate,
          width: 900,
          height: 650,
@@ -95,12 +97,15 @@ export default class adControl extends Application {
           shield: { label: "ldnd5e.shieldLabel", items: [], tipoShield: true, dataset: {type: "equipament", subtype: "", armorType: ""}, npcs: false, ad: true, ar: false }
       };
    
-      for(let actor of game.actors) {
-          if(actor.type == "character") {   
-               const items = actor.configArmorData();
-               // Organize items
-               for ( let i of items ) {             
-                  data[i.subtype].items.push(i);
+      for(let actor of game.actors) {         
+          if(actor.type == "character") {
+               const isVisible = actor.getFlag("ldnd5e", "isVisible");               
+               if(isVisible){
+                  const items = actor.configArmorData();
+                  // Organize items
+                  for ( let i of items ) {             
+                     data[i.subtype].items.push(i);
+                  }
                }
 
                data.pcs.actors.push(actor);
@@ -155,6 +160,7 @@ export default class adControl extends Application {
           html.find(".owner-image").click(this._onOwnerImageClick.bind(this));
           html.find(".dl-control").click(this._onDLControlClick.bind(this)); 
           html.find(".refresh-pcs").click(this._onRefreshPCsClick.bind(this));  
+          html.find(".config-control").click(this._onConfigClick.bind(this));
           // Listeners do ARSystem
           html.find(".actor-image").click(this._onActorImageClick.bind(this));
           html.find(".action-image").click(this._onActionImageClick.bind(this)); 
@@ -165,6 +171,7 @@ export default class adControl extends Application {
           html.find(".save-control").click(this._onNPCSaveClick.bind(this));
           html.find(".attack-control").click(this._onNPCRollClick.bind(this));
           html.find(".damage-control").click(this._onNPCDamageClick.bind(this));
+          
       }
 
       super.activateListeners(html);
@@ -291,7 +298,7 @@ export default class adControl extends Application {
          item = owner.system.attributes.ac.equippedArmor;
       }
 
-      await AdDialog.configDialog({
+      const dialog = await AdDialog.configDialog({
          owner: owner,
          item: item, 
          damageType: dlType,
@@ -306,7 +313,7 @@ export default class adControl extends Application {
      const actorID = event.currentTarget.closest(".item").dataset.actorId;
      const actor = game.actors.get(actorID);
 
-     await ArDialog.configDialog({
+     const dialog = await ArDialog.configDialog({
          actor: actor,
          rightClick: rightClick
      });
@@ -334,6 +341,13 @@ export default class adControl extends Application {
       this.render(true);
 
       return item;
+   }
+   async _onConfigClick(event){
+      event.preventDefault();
+
+      const dialog = await ConfigDialog.configDialog({
+         actors: this.data.pcs.actors
+      });
    }
 
    refresh(force) {

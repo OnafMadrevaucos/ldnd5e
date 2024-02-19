@@ -35,6 +35,9 @@
   border-left: 2px groove #eeede0;
   align-self: center;
 }
+.window-app .window-content .dialog-buttons-title div.no-border {
+  border: 0;
+}
 .window-app .window-content .dialog-buttons-title .repair-click label:hover {
   color: #000;
   text-shadow: 0 0 10px red;
@@ -58,6 +61,45 @@
   border-bottom: 2px groove;
   font-style: italic;
 }
+.window-app .window-content .dialog-content .pcs-conteiner {
+  background: var(--dnd5e-color-parchment);  
+}
+.window-app .window-content .dialog-content .pcs-conteiner,
+.window-app .window-content .dialog-content .pc-item {
+  border-radius: 4px;
+  border: 1px solid var(--dnd5e-color-gold);
+  box-shadow: 0 0 6px var(--dnd5e-shadow-45);
+}
+.window-app .window-content .dialog-content .pcs-list{
+  padding: 0 1.5em 0 1.5em;
+  margin-right: 2px;
+  overflow-y: auto;
+}
+.window-app .window-content .dialog-content .pcs-list .select-all {
+  background: linear-gradient(to right, var(--dnd5e-color-hd-1), var(--dnd5e-color-hd-2));
+  color: white;
+  border-radius: 4px;
+  border: 1px solid var(--dnd5e-color-gold);
+  box-shadow: 0 0 6px var(--dnd5e-shadow-45);
+}
+.window-app .window-content .dialog-content .pc-item{
+  background: var(--dnd5e-color-card);
+  margin: 0.25em 0;
+}
+.window-app .window-content .dialog-content .pcs-conteiner .actor-image{
+  border: none;
+  border-radius: 50%;
+  background-color: #c9c9c9;
+  flex: 0 0 30px;
+  height: 32px;
+  width: 32px;
+  margin-right: 5px;
+}
+.window-app .window-content .dialog-content .pcs-conteiner h4 {
+  font-family: 'Roboto Slab';
+  margin-bottom: 0;
+}
+
 .window-content .tab {
   color: var(--main-text-light-color);
 }
@@ -145,10 +187,23 @@
   border: 1px solid transparent !important;
   outline: none !important;
 }
-.ldnd5e button {
+.ldnd5e.dnd5e button {
   background: rgba(0, 0, 0, 0.1);
   border: 2px groove #eeede0;
 }
+.ldnd5e button.config-control {
+  flex: 0 0 4%;
+}
+.ldnd5e button.config-control i {
+  margin: 0;
+}
+.ldnd5e.dnd5e2 button.config-control {
+  background: #8f1515;
+  color: var(--dnd5e-color-parchment);
+  border-radius: 100%;
+  font-size: x-large;
+}
+
 .ldnd5e .form-group label {
   flex: 2;
   color: #4b4a44;
@@ -395,6 +450,7 @@
   font-weight: 700;
 }
 .ldnd5e.app .sheet-navigation .item {
+  flex: 1;
   height: 30px;
   line-height: 32px;
   margin: 0 24px;
@@ -402,6 +458,13 @@
 }
 .ldnd5e.app .sheet-navigation .item.active {
   border-bottom: 3px solid #44191A;
+}
+.ldnd5e.app .sheet-navigation .item.config {
+  flex: 0;
+  border-bottom: none;
+}
+.ldnd5e.app .sheet-navigation .item.config.active i {
+  color: #44191A;
 }
 .ldnd5e.app .sheet-body {
   flex: 1;
@@ -537,7 +600,9 @@
 .ldnd5e.app .items-list .item .item-name .actor-portrait,
 .ldnd5e.app .items-list .item .item-name .item-image.owner-image {
   border-radius: 50%;
+  background-color: #c9c9c9;
 }
+
 .ldnd5e.dnd5e.app .actors-list .actors-header,
 .ldnd5e.dnd5e.app .items-list .items-header {
   height: 28px;
@@ -1042,6 +1107,7 @@
   font-size: 1.4em;
   line-height: 0.8;
   height: 28px;
+  width: 28px;
   margin-top: 5px;
   padding-bottom: 0.2em;
   border-radius: 50% 50% 50% 50% / 12% 12% 88% 88%

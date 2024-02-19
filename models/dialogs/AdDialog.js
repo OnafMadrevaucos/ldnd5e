@@ -1,7 +1,8 @@
+import BaseDialog from "./BaseDialog.js";
 import * as das from "../../scripts/DASystem.js";
 import { constants, i18nStrings } from "../../scripts/constants.js";
 
-export default class AdDialog extends Dialog {
+export default class AdDialog extends BaseDialog {
     constructor(owner, item, damageType, unarmored, dialogData={}, options={}) {
         super(dialogData, options);
     
@@ -41,8 +42,7 @@ export default class AdDialog extends Dialog {
         return foundry.utils.mergeObject(super.defaultOptions, {
             template: constants.templates.dlControlTemplate,
             width: 420,
-            height: this.height,
-            classes: ["dnd5e", "dialog"]
+            height: this.height
         });
     }
 

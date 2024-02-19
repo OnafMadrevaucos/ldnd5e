@@ -1,4 +1,4 @@
-<form id="ad-dialog" class="dialog-content" onsubmit="event.preventDefault();">
+<form id="ad-dialog" class="dialog-content" data-isUnarmored="{{unarmored}}" onsubmit="event.preventDefault();">
     <div class="form-group">
         <label>{{ localize "ldnd5e.dlControlItemLabel" }}:</label>
         <input type="text" name="name" value="{{item.name}}" disabled/>
@@ -22,7 +22,7 @@
     </div>
     {{/unless}}
     <div class="dialog-buttons-title flexrow">
-        <div class="dialog-button-header">
+        <div class="dialog-button-header {{#if unarmored}}no-border{{/if}}">
             <label>{{ localize "ldnd5e.dlControlDamageBtn" }}</label>
         </div>
         {{#unless unarmored}}
@@ -42,27 +42,30 @@
     </div>
 </form>
 
-<script>
-    var slider = document.getElementById("repairLvlControl");
-    var output = document.getElementById("repairLvlValue");
+<script>    
+    var dialog = document.getElementById("ad-dialog");
+    var isUnarmored = (dialog.dataset.isunarmored == "true");
 
-    var priceInput = document.getElementById("repairLvlPrice");
-    priceInput.value = 0;
-
-    var price = priceInput.getAttribute('data-price');
-    var fee = priceInput.getAttribute('data-fee');
-
-    output.innerHTML = slider.value;
-
-    slider.oninput = function() {
-        output.innerHTML = this.value;
-        priceInput.value = Number(price) * Number(fee) * Number(slider.value);        
-    }
-
+    if(!isUnarmored) {
     var repairHeader = document.getElementById("repairHeader");
     repairHeader.onclick = function() {
         var smithIcon = document.getElementById("smithIcon");
         smithIcon.classList.toggle('not-smith');
         smithIcon.setAttribute("title", (smithIcon.classList.contains('not-smith') ? smithIcon.dataset.notSmithTooltip : smithIcon.dataset.smithTooltip));
     }
+    var slider = document.getElementById("repairLvlControl");
+    var output = document.getElementById("repairLvlValue");
+
+    var priceInput = document.getElementById("repairLvlPrice");
+    priceInput.value = 0;
+
+    var price = (priceInput?.getAttribute('data-price') ?? 0);
+    var fee = (priceInput?.getAttribute('data-fee') ?? 0);
+
+    output.innerHTML = Number(slider.value);
+    slider.oninput = function() {
+        output.innerHTML = this.value;
+        priceInput.value = Number(price) * Number(fee) * Number(slider.value);        
+    } 
+    }    
 </script>

@@ -1,0 +1,29 @@
+<form id="config-dialog" class="dialog-content" onsubmit="event.preventDefault();">
+    <div class="pcs-conteiner">
+    <ol class="pcs-list">
+        <li class="item flexrow select-all">              
+            <div class="form-group">
+                <input name="selectAll" type="checkbox" value="false"/>
+                <h4>{{localize "ldnd5e.selectAll"}}</h4>                
+            </div>          
+        </li>
+        {{#each actors as |actor id|}}
+        <li class="pc-item flexrow" data-actor-id="{{actor.id}}">              
+            <div class="form-group">
+                <input name="actor.system.dasEnabled" type="checkbox" value="{{actor.system.dasEnabled}}" {{#if actor.system.dasEnabled}}checked{{/if}}/>
+                <img class="actor-image" src="{{actor.img}}"/>
+                <h4>{{actor.name}}</h4>                
+            </div>          
+        </li>
+        {{/each}}        
+    </ol>
+    </div>
+    <div class="dialog-buttons">
+        {{#each buttons as |button id|}}
+        <button class="dialog-button" data-button="{{id}}">
+            {{{button.icon}}}
+            {{{button.label}}}
+        </button>
+        {{/each}}
+    </div>    
+</form>
