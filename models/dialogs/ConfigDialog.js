@@ -23,6 +23,13 @@ export default class ConfigDialog extends BaseDialog {
         return data;
     }
 
+    /** @override */
+   activateListeners(html) {
+        html.find(".select-all").click(this._onSelectAllClick.bind(this));
+
+        super.activateListeners(html);
+    }
+
     /**
    * A helper constructor function which displays the Absorved Damage dialog and returns a Promise once it's
    * workflow has been resolved.
@@ -30,22 +37,7 @@ export default class ConfigDialog extends BaseDialog {
    * @param {Array[Actor5e]} [actors]       Array of Player's Characters Actors.   
    * @returns {Promise}                     Promise that resolves when the rest is completed or rejects when canceled.
    */
-    static async configDialog({actors} = {}) {
-        const onSubmit = async function (html) {  
-            const app = html[0];
-            var selectAll = false;          
-            [...app.querySelectorAll('li')].forEach(async (item) => {
-                const checkbox = item.querySelectorAll('input')[0];
-
-                if(!item.classList.contains("select-all")) {                                   
-                    const actorId = item.dataset.actorId;
-                    const actor = game.actors.get(actorId);
-
-                    await actor.setFlag("ldnd5e", "isVisible", (selectAll ? true : checkbox.checked));
-                }
-                else selectAll = checkbox.checked;                
-            });
-        }
+    static async configDialog({actors} = {}) {        
         return new Promise((resolve, reject) => {
             const dlg = new this(actors, {
                 title: game.i18n.localize(i18nStrings.dlControlTitle),             
@@ -53,7 +45,7 @@ export default class ConfigDialog extends BaseDialog {
                     yes: {
                         icon: '<i class="fas fa-floppy-disk"></i>',
                         label: game.i18n.localize(i18nStrings.saveBtn),
-                        callback: html => resolve(onSubmit(html, {}))
+                        callback: html => resolve(ConfigDialog.onDialogSubmit(html))
                     },
                     no: {
                         icon: '<i class="fas fa-ban"></i>',
@@ -68,5 +60,39 @@ export default class ConfigDialog extends BaseDialog {
             dlg.render(true);
         });
     }   
-    
+
+    /**
+    * The submition function for the dialog.
+    * @param {object}  [hmtl]       The DOM Element for the dialog context.   
+    * @returns null                 Promise that resolves when the rest is completed or rejects when canceled.
+    */    
+    static async onDialogSubmit(html) {
+        const app = html[0];
+        var selectAll = false;          
+        [...app.querySelectorAll('li')].forEach(async (item) => {
+            const checkbox = item.querySelectorAll('input')[0];
+
+            if(!item.classList.contains("select-all")) {                                   
+                const actorId = item.dataset.actorId;
+                const actor = game.actors.get(actorId);
+
+                await actor.setFlag("ldnd5e", "dasEnabled", (selectAll ? true : checkbox.checked));
+            }
+            else selectAll = checkbox.checked;                
+        });
+    }
+
+    _onSelectAllClick(event) {
+        const app = event.currentTarget.parentElement;
+        var selectAll = false;
+
+        [...app.querySelectorAll('li')].forEach(async (item) => {
+            const checkbox = item.querySelectorAll('input')[0];
+
+            if(!item.classList.contains("select-all")) {                                   
+                checkbox.checked = selectAll;
+            }
+            else selectAll = checkbox.checked;  
+        });
+    }
 }

@@ -71,14 +71,14 @@ Hooks.once('ready', () => {
     ui.combat.render(true);
 });
 
-Hooks.on('renderActorSheet', (app, html, data) => {
+Hooks.on('renderActorSheet', async (app, html, data) => {
     const actor = app.actor;
 
     if(!CONFIG.adControl && actor.type == "character") { 
-        actor.configArmorData(actor); 
+        actor.configArmorData(); 
         
         const isActorL5e = actor.getFlag("ldnd5e", "L5eConfigured");
-        if(isActorL5e != undefined && !isActorL5e) actor.configL5e();
+        if(isActorL5e != undefined && !isActorL5e) await actor.fullAsyncConfigL5e();
     }
 
     data.effects = ActiveEffectL5e.prepareActiveEffectCategories(data);   
@@ -131,6 +131,11 @@ Hooks.on('combatRound', ars.onNewCombatTurn);
 /** Funções do Sistema D&D                               */
 /** ---------------------------------------------------- */
 
+// ACTORS ------------------------------------------------//
+Hooks.on('createActor', async (document, data, options, userId) => {    
+    patchActorCreate(document);
+});
+// ------------------------------------------------------//
 // ITENS ------------------------------------------------//
 Hooks.on('createItem', async (document, data, options, userId) => {    
     patchItemCreate(document.actor, document);
@@ -259,6 +264,12 @@ function patchSheetText() {
 /** ---------------------------------------------------- */
 /** Funções de Sheets                                    */
 /** ---------------------------------------------------- */
+async function patchActorCreate(actor) {
+    const visibleFlag = actor.getFlag("ldnd5e", "dasEnabled");
+    if(visibleFlag == undefined) {
+        await actor.setFlag("ldnd5e", "dasEnabled", true);
+    }
+}
 async function patchItemCreate(actor, item) {
     
     // Atualiza os dados do novo Item antes de enviar para ser processado.

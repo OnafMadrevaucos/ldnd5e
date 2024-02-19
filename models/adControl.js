@@ -99,8 +99,8 @@ export default class adControl extends Application {
    
       for(let actor of game.actors) {         
           if(actor.type == "character") {
-               const isVisible = actor.getFlag("ldnd5e", "isVisible");               
-               if(isVisible){
+               const dasEnabled = actor.getFlag("ldnd5e", "dasEnabled");  
+               if(dasEnabled){
                   const items = actor.configArmorData();
                   // Organize items
                   for ( let i of items ) {             

@@ -48,7 +48,7 @@ export default class ActorL5e extends documents.Actor5e {
                     CONFIG.adControl.refresh(true);
                 }
 
-                const dasEnabled = (this.getFlag("ldnd5e","isVisible") ?? true);
+                const dasEnabled = (this.getFlag("ldnd5e","dasEnabled") ?? true);
                 data.dasEnabled = dasEnabled;
 
                 /*if(game.settings.get('ldnd5e', 'massiveCombatRules')) {
@@ -273,6 +273,8 @@ export default class ActorL5e extends documents.Actor5e {
         }
     }
     async fullAsyncConfigL5e() {
+        var hasError = false;
+
         const armorItem = this.system.attributes.ac.equippedArmor;
         const shieldItem = this.system.attributes.ac.equippedShield;
 
@@ -337,10 +339,17 @@ export default class ActorL5e extends documents.Actor5e {
             await this.setFlag("ldnd5e", "L5eConfigured", true); 
             
             this.configArmorData();
-            return true;
+            hasError = true;
+        }
+
+        const dasEnabled = this.getFlag("ldnd5e", "dasEnabled");
+        if(dasEnabled == undefined) {
+            await this.unsetFlag("ldnd5e", "isVisible");
+            await this.setFlag("ldnd5e", "dasEnabled", true);
+            hasError = true;
         }
             
-        return false;        
+        return hasError;        
     }
 
     async updateArmorDamageEffects(data, value) {

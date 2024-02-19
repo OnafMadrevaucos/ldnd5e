@@ -590,6 +590,18 @@
   margin-right: 5px;
 }
 
+.ldnd5e.dnd5e2.app .items-list .item .item-name .item-image:not(.owner-image) {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  background-color: var(--dnd5e-color-light-gray);
+
+  border: 2px solid var(--dnd5e-color-gold);
+  box-shadow: 0 0 4px var(--dnd5e-shadow-45);
+  border-radius: 0;
+  background-color: var(--dnd5e-color-light-gray);  
+}
+
 .ldnd5e.app .items-list .item .item-name .item-detail.lan-value {
   border: 0;
 }
