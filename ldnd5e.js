@@ -104,8 +104,8 @@ Hooks.on('renderItemSheet', async (app, html, data) => {
             const bleedFlag = item.getFlag('ldnd5e', 'bleed');
             const stunFlag = item.getFlag('ldnd5e', 'stun');
 
-            if(bleedFlag == undefined || bleedFlag == null) await this.item.setFlag('ldnd5e', 'bleed', 0);
-            if(stunFlag == undefined || stunFlag == null) await this.item.setFlag('ldnd5e', 'stun', 0);           
+            if(bleedFlag == undefined || bleedFlag == null) await item.setFlag('ldnd5e', 'bleed', 0);
+            if(stunFlag == undefined || stunFlag == null) await item.setFlag('ldnd5e', 'stun', 0);           
         }
 
         if(["weapon"].includes(item.type)) {    

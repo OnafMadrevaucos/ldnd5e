@@ -188,6 +188,7 @@ const unitFlags = {
    stunCondition: "ldnd5e.stunCondition",
    stunLabel: "ldnd5e.stunLabel",
    stunFooter: "ldnd5e.stunFooter",
+   disableConditions: "ldnd5e.disableConditions",
 
    addBtn: "ldnd5e.addBtn",
    halfBtn: "ldnd5e.halfBtn",

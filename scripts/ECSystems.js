@@ -19,6 +19,7 @@ export const addWeaponSpecialEffects = async function(data, html, app) {
     htmlTxt = htmlTxt.replaceAll("#header-text", game.i18n.localize(i18nStrings.extraConditions));
     htmlTxt = htmlTxt.replaceAll("#bleed-label", game.i18n.localize(i18nStrings.bleedCondition));
     htmlTxt = htmlTxt.replaceAll("#stun-label", game.i18n.localize(i18nStrings.stunCondition));
+    htmlTxt = htmlTxt.replaceAll("#disableCondition", game.i18n.localize(i18nStrings.disableConditions));
 
     // Item pertence a um Actor.
     if(item.actor != null)
@@ -103,11 +104,11 @@ export const patchRollDamage = function(item, rollData) {
         for(var term of rollData.terms) {
             if(!(term instanceof Die)) continue;            
             for(var result of term.results) {
-                if(term.dmgType == "bludgeoning" && result.result >= stunFlag) {
+                if(term.dmgType == "bludgeoning" && (stunFlag > 0 && result.result >= stunFlag)) {
                     hasStunned = true;
                     break;
                 }
-                else if (term.dmgType == "slashing" && result.result >= bleedFlag) {
+                else if (term.dmgType == "slashing" && (bleedFlag > 0 && result.result >= bleedFlag)) {
                     causedBleeding = true;                    
                     break;
                 }

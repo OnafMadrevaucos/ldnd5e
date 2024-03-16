@@ -87,6 +87,7 @@
         "stunCondition": "Atordoamento",
         "stunLabel": "Atordoamento!",
         "stunFooter": "Atordoamento {value}",
+        "disableConditions": "Insira '0' para desativar",
 
         "messages": {
             "bldgDmgLightArmor": "Armaduras Leves são imunes a avarias causadas por Dano Contundente.",

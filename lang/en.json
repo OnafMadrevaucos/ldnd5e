@@ -88,6 +88,7 @@
         "stunCondition": "Stun Condition",
         "stunLabel": "Stunned!",
         "stunFooter": "Stunned {value}",
+        "disableConditions": "Put '0' to disable",
 
         "messages": {
             "bldgDmgLightArmor": "Light Armor is immune to damage caused by Bludgening Damage.",
