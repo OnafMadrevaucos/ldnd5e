@@ -23,7 +23,10 @@ export const addWeaponSpecialEffects = async function(data, html, app) {
 
     // Item pertence a um Actor.
     if(item.actor != null)
-        htmlTxt = htmlTxt.replaceAll("#actor-id", item.actor._id);
+        if(item.actor.isToken) 
+            htmlTxt = htmlTxt.replaceAll("#actor-id", item.actor.token._id);
+        else 
+            htmlTxt = htmlTxt.replaceAll("#actor-id", item.actor._id);
     else
         htmlTxt = htmlTxt.replaceAll("#actor-id", "");
 

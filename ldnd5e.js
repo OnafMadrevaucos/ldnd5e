@@ -302,8 +302,14 @@ async function patchItemPreUpdate(actor, item, change) {
         item.unarmored = false;        
     }
 
-    if(["armor", "shield"].includes(item?.subtype)) {
-        await das.computeEquipArmorShield(actor, item, das.ACTION_TYPE.UPDATE);
+    const isDesequip = ((change.equipped ?? false) && change.equipped == false);
+
+    const ACPenalty = change.flags?.ldnd5e?.armorSchema?.ACPenalty;
+    const wasDamaged = (ACPenalty !== undefined && ACPenalty !== "+0");
+
+    if(["armor", "shield"].includes(item?.subtype)) {       
+        if(isDesequip || wasDamaged)        
+            await das.computeEquipArmorShield(actor, item, (isDesequip ? das.ACTION_TYPE.DESEQUIP : das.ACTION_TYPE.UPDATE));        
     }
 }
 

@@ -42,7 +42,8 @@ export const TIPO_DANO = {
 export const ACTION_TYPE = {
     DELETE: -1,
     UPDATE: 0,        
-    NEW: 1
+    NEW: 1,
+    DESEQUIP: 2
 }
 
 
@@ -769,14 +770,14 @@ export const prepareActiveEffects = async function(item, owner, result, options=
                       shield: actor.effects.get(flags.shield.effectID)};  
 
     // O tipo de ação é um UPDATE?
-    if(action === this.ACTION_TYPE.UPDATE) { 
+    if(action === this.ACTION_TYPE.UPDATE || action === this.ACTION_TYPE.DESEQUIP) { 
 
         // O item alterado é uma Armadura?
         if(["armor"].includes(item.subtype)) {
             // O Actor tem uma Armadura equipada? Isso é um desequip então.
             if(equip.armor) {
                 // A Armadura alterada é a mesma que está equipada?
-                if(item.id === equip.armor.id) {
+                if(item.id === equip.armor.id && action === this.ACTION_TYPE.DESEQUIP) {
                     // Remova o efeito de avaria.
                     await actor.updateArmorDamageEffects(effects.armor, "+0");
                     await actor.setFlag("ldnd5e", "armorEffect", {effectID: flags.armor.effectID, armorID: "none"});
