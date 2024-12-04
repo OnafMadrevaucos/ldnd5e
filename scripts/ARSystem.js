@@ -32,11 +32,11 @@ export const updateExhaustionLevel = async function(data) {
     {
         // O nível de Exaustão ainda está abaixo do limite máximo.
         if(actorData.attributes.exhaustion + 1 < exhaustionLimit)
-            await data.actor.update({"data.attributes.exhaustion": actorData.attributes.exhaustion + 1});
+            await data.actor.update({"system.attributes.exhaustion": actorData.attributes.exhaustion + 1});
         else // A criatura morreu de exaustão.
-            await data.actor.update({"data.attributes.death.failure": 3, 
-                                     "data.attributes.exhaustion": actorData.attributes.exhaustion + 1,
-                                     "data.attributes.hp.value": 0
+            await data.actor.update({"system.attributes.death.failure": 3, 
+                                     "system.attributes.exhaustion": actorData.attributes.exhaustion + 1,
+                                     "system.attributes.hp.value": 0
                                     });     
     }       
 }

@@ -1,3 +1,13 @@
+<ol class="items-list inventory-list" onsubmit="event.preventDefault();"> 
+<div class="flexrow">
+    <button class="button-dialog refresh-pcs" data-button="{{id}}">
+        <i class="fas fa-arrows-rotate"></i>
+        {{localize "ldnd5e.refreshBtn"}}
+    </button>
+    <button class="button-dialog config-control" data-button="{{id}}">        
+        <i class="fas fa-gear"></i>
+    </button>
+</div>
 <ol class="items-list inventory-list">
 {{#each sections as |section sid|}}
     {{#if section.ar}} 
@@ -12,6 +22,7 @@
 
     <ol class="item-list">
     {{#each section.actors as |actor aid|}}
+        {{#if actor.showActor}}
         <li class="item flexrow {{section.css}}"
             data-actor-id="{{actor.id}}">
             <div class="item-name flexrow">    
@@ -22,6 +33,7 @@
             <div class="item-detail">{{actor.system.abilities.con.strMod}}</div>
             <div class="item-detail">{{actor.system.attributes.exhaustion}}</div>   
         </li>
+        {{/if}}
     {{/each}}
     </ol>
     </div>

@@ -1,0 +1,44 @@
+<ol class="items-list inventory-list" onsubmit="event.preventDefault();"> 
+<div class="flexrow">
+    <button class="button-dialog refresh-pcs" data-button="{{id}}">
+        <i class="fas fa-arrows-rotate"></i>
+        {{localize "ldnd5e.refreshBtn"}}
+    </button>
+    <button class="button-dialog config-control" data-button="{{id}}">        
+        <i class="fas fa-gear"></i>
+    </button>
+</div>
+{{#each sections as |section sid|}}
+    {{#if section.exaust}}    
+    <div class="items-section card">
+    <div class="items-header header flexrow">
+        <h3 class="item-name flexrow">{{localize section.label}}</h3>  
+        <div class="item-detail owner-portrait"></div>
+        <div class="item-name exaustion">{{localize "ldnd5e.exauTitle"}}</div>
+        <div class="item-detail exaustion">{{localize "ldnd5e.tdTitle"}}</div>       
+    </div>    
+
+    <ol class="item-list">
+    {{#each section.actors as |actor aid|}} 
+        {{#if actor.showActor}}       
+        <li class="item flexrow {{section.css}}" data-owner-id="{{actor.id}}">           
+            <div class="item-name flexrow">                
+                <div class="item-image owner-image" tabindex="0" role="button" aria-label="{{actor.name}}" style="background-image: url('{{actor.img}}')"></div>
+                <h4>
+                    {{actor.name~}} 
+                </h4>                                
+            </div> 
+            <div class="item-name exaust-pips">
+                {{#each actor.exhaustLvl as |lvl lid|}}
+                    <input class="exaust-pip" type="radio" id="{{actor.id}}.exaustLvl{{lid}}" name="{{actor.id}}" data-n="{{lid}}" value="{{lid}}" {{#if lvl}}checked{{/if}}/>
+                {{/each}}
+            </div>          
+            <div class="item-detail total-exhaust">{{actor.system.attributes.exhaustion}}</div>  
+        </li>
+        {{/if}}
+    {{/each}}
+    </ol>
+    </div>  
+    {{/if}}    
+{{/each}}
+</ol>

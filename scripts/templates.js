@@ -7,6 +7,7 @@
          "templates/partials/unit-list.hbs",
          "templates/partials/npcs-stats.hbs", 
          "templates/partials/pcs-list.hbs",
+         "templates/partials/exaust-list.hbs",
          "templates/partials/reacao-agil.hbs",
          "templates/control-dialog.hbs",
          "templates/config-dialog.hbs",

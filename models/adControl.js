@@ -91,22 +91,39 @@ export default class adControl extends Application {
    computeData() {
    
       const data = {
-          npcs:{ actors: [], npcs: true, ad: false, ar: false },
-          pcs: { label: "ldnd5e.pcsLabel", actors: [], npcs: false, ad: false, ar: true },
-          armor: { label: "ldnd5e.armorLabel", items: [], tipoShield: false, dataset: {type: "equipament", subtype: "", armorType: ""}, npcs: false, ad: true, ar: false },
-          shield: { label: "ldnd5e.shieldLabel", items: [], tipoShield: true, dataset: {type: "equipament", subtype: "", armorType: ""}, npcs: false, ad: true, ar: false }
+          npcs:{ actors: [], npcs: true, ad: false, ar: false, exaust: false },
+          pcs: { label: "ldnd5e.pcsLabel", actors: [], npcs: false, ad: false, ar: true, exaust: true },
+          armor: { label: "ldnd5e.armorLabel", items: [], tipoShield: false, dataset: {type: "equipament", subtype: "", armorType: ""}, npcs: false, ad: true, ar: false, exaust: false },
+          shield: { label: "ldnd5e.shieldLabel", items: [], tipoShield: true, dataset: {type: "equipament", subtype: "", armorType: ""}, npcs: false, ad: true, ar: false, exaust: false }
       };
    
       for(let actor of game.actors) {         
-          if(actor.type == "character") {
-               const dasEnabled = actor.getFlag("ldnd5e", "dasEnabled");  
-               if(dasEnabled){
+            if(actor.type == "character") {
+               const dasEnabled = actor.getFlag("ldnd5e", "dasEnabled"); // Se falso, o PC não irá aparecer na lista. 
+               if(dasEnabled){ 
                   const items = actor.configArmorData();
                   // Organize items
                   for ( let i of items ) {             
                      data[i.subtype].items.push(i);
-                  }
+                  }                  
                }
+
+               actor.showActor = dasEnabled;
+               actor.exhaustLvl = {
+                  0: false,
+                  1: false,
+                  2: false,
+                  3: false,
+                  4: false,
+                  5: false,
+                  6: false,
+                  7: false,
+                  8: false,
+                  9: false,
+                  10: false                 
+               };
+
+               actor.exhaustLvl[actor.system.attributes.exhaustion] = true;
 
                data.pcs.actors.push(actor);
           } 
@@ -166,6 +183,7 @@ export default class adControl extends Application {
           html.find(".action-image").click(this._onActionImageClick.bind(this)); 
           html.find(".ar-control").click(this._onARControlClick.bind(this));
           html.find(".ar-control").contextmenu(this._onARControlClick.bind(this));
+          html.find(".exaust-pip").click(this._onExhaustControlClick.bind(this));
           //Listeners de Rolagem de NPCs
           html.find(".npc-name").click(this._onNPCNameClick.bind(this));
           html.find(".save-control").click(this._onNPCSaveClick.bind(this));
@@ -317,6 +335,29 @@ export default class adControl extends Application {
          actor: actor,
          rightClick: rightClick
      });
+  }
+
+  async _onExhaustControlClick(event) {
+      event.preventDefault();
+
+      const actorID = event.currentTarget.closest(".item").dataset.ownerId;
+      const actor = game.actors.get(actorID);
+      const n = Number(event.currentTarget.closest(".exaust-pip").dataset.n);
+
+      const actorData = actor.system;
+      const exhaustionLimit = (game.settings.get('ldnd5e', 'oneDNDExhaustionRule') ? 10 : 6);
+      if(actorData.attributes.exhaustion != exhaustionLimit)
+         {
+             // O nível de Exaustão ainda está abaixo do limite máximo.
+             if(n < exhaustionLimit)
+                 await actor.update({"system.attributes.exhaustion": n});
+             else // A criatura morreu de exaustão.
+                 await actor.update({"system.attributes.death.failure": 3, 
+                                          "system.attributes.exhaustion": n,
+                                          "system.attributes.hp.value": 0
+                                         });     
+         }
+      actor.update({"system.attributes.exhaustion": n});
   }
 
   async _onFullRepairControlClick(event) {

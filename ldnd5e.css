@@ -1002,7 +1002,8 @@
   border-right: 0; 
 }
 .ldnd5e.app.window-app .inventory-list .actor-detail.total-penalty,
-.ldnd5e.app.window-app .inventory-list .item-detail.total-damage{
+.ldnd5e.app.window-app .inventory-list .item-detail.total-damage,
+.ldnd5e.app.window-app .inventory-list .item-detail.total-exhaust{
   font-size: 14px;
   font-weight: bolder;  
 }
@@ -1192,6 +1193,23 @@
   border-right: none;
   padding-right: 0;
 }
+.ldnd5e .exaust-pips input {
+  appearance: none;
+  border: 2px solid var(--dnd5e-color-gold);
+  border-radius: 100%;
+  width: 16px;
+  height: 16px;
+  display: grid;
+  place-content: center;
+  font-weight: bold;
+  font-size: var(--font-size-18);
+  box-shadow: 0 0 6px var(--dnd5e-shadow-45);
+  margin: 0;
+}
+.ldnd5e .exaust-pips input:checked {
+  background: var(--dnd5e-color-gold);
+}
+
 /* ----------------------------------------- */
 /*  DnD5e Actor Sheets
 /* ----------------------------------------- */
@@ -1206,3 +1224,4 @@
 .dnd5e.actor.sheet.actor.unit .sheet-body .ability-scores{
   flex: 0 0 100%;
 }
+
