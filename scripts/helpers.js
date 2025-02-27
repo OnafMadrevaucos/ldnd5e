@@ -49,8 +49,8 @@ export const Debugger = function(data) {
  * @return {*[] | *} The value of the found property
  */
  export function recursiveGetProperty(object, key, l = 0) {
-    const target = getProperty(object, key.split(".*.")[l]);
-    const nextTarget = getProperty(object, key.split(".*.")[l + 1]);
+    const target = foundry.utils.getProperty(object, key.split(".*.")[l]);
+    const nextTarget = foundry.utils.getProperty(object, key.split(".*.")[l + 1]);
     const descend = () => { l++; return target.map(t => recursiveGetProperty(t, key, l)); }
     return Array.isArray(target) && target && nextTarget ? descend() : target;
 }

@@ -81,11 +81,8 @@ export default class ActorL5e extends documents.Actor5e {
         }
     }
 
-    /** @override */
-    async longRest(config={}){
-        const restResult = await super.longRest(config);
-
-        if(restResult) {
+    async _restFatigue(restResult, config={}){
+        if(restResult && restResult.longRest) {
             const actorData = this.system;
             const classes = this.classes;
 
@@ -98,15 +95,16 @@ export default class ActorL5e extends documents.Actor5e {
                 if(rollResult){
 
                     var abl = null;
+                    var mod = 0; // Clases não treinadas recuperam no máximo 1 ponto de fadiga por descanso longo.
                     if(UnarmoredClasses.barbarian.name in classes){
                         abl = this.system.abilities[UnarmoredClasses.barbarian.ability];
+                        mod = abl.mod;
                     }
                     if(UnarmoredClasses.monk.name in classes) {    
                         abl = this.system.abilities[UnarmoredClasses.monk.ability];     
+                        mod = abl.mod;
                     }
-
-                    if(!abl) return null;
-                    const amountRecovered = Math.min(1, Math.floor(abl.mod / 2));
+                    const amountRecovered = Math.max(1, Math.floor(mod / 2));
 
                     const result = das.computaREST(item, this, amountRecovered);
                     das.prepareActiveEffects(item, this, result,{
@@ -358,7 +356,7 @@ export default class ActorL5e extends documents.Actor5e {
         const newEffect = {
             _id: data._id,
             name: data.name,
-            icon: data.icon,
+            img: data.img,
             origin: data.origin,
             changes: [{ key: "system.attributes.ac.bonus", mode: ADD, priority: null, value: value }], 
             duration: {}

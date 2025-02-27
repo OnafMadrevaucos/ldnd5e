@@ -135,6 +135,9 @@ Hooks.on('combatRound', ars.onNewCombatTurn);
 Hooks.on('createActor', async (document, data, options, userId) => {    
     patchActorCreate(document);
 });
+Hooks.on('dnd5e.restCompleted', (actor, result, config) => {
+    patchLongRest(actor, result, config);
+});
 // ------------------------------------------------------//
 // ITENS ------------------------------------------------//
 Hooks.on('createItem', async (document, data, options, userId) => {    
@@ -155,8 +158,8 @@ Hooks.on('dnd5e.preRollSkill', (actor, rollData, skillId) => {
 Hooks.on('dnd5e.preRollAbilityTest', (actor, rollData, abilityId) => {
     patchExtraRollRoutines(actor, rollData);
 });
-Hooks.on('dnd5e.preRollAbilitySave', (actor, rollData, abilityId) => {
-    patchExtraRollRoutines(actor, rollData);
+Hooks.on('dnd5e.preRollSavingThrowV2', (config, dialog, message) => {
+    patchExtraRollRoutines(config, dialog, message);
 });
 Hooks.on('dnd5e.preRollDeathSave', (actor, rollData) => {
     patchExtraRollRoutines(actor, rollData);
@@ -182,9 +185,9 @@ Hooks.on('dnd5e.rollDamage', (item, rollData) => {
 
 // CHAT MESSAGE------------------------------------------//
 Hooks.on('renderChatMessage', async (message, html, messageData) => {    
-    const useFlag = message.getFlag("dnd5e", "use"); 
-    if(useFlag) {
-        const item = await fromUuid(useFlag?.itemUuid);    
+    const itemFlag = message.getFlag("dnd5e", "item"); 
+    if(itemFlag) {
+        const item = await fromUuid(itemFlag?.uuid);    
         if(!item) return;
         ecs.patchChatUseMessage(item, html);
     }     
@@ -211,7 +214,8 @@ function renderControl()
     return form._render(true);
 }
 
-function patchExtraRollRoutines(actor, rollData) {
+function patchExtraRollRoutines(config, dialog, message) {
+    const actor = config.subject;
     const exh = actor.system.attributes.exhaustion;
     const data = actor.getRollData();
 
@@ -269,6 +273,9 @@ async function patchActorCreate(actor) {
     if(visibleFlag == undefined) {
         await actor.setFlag("ldnd5e", "dasEnabled", true);
     }
+}
+async function patchLongRest(actor, result, config) {
+    actor._restFatigue(result, config);
 }
 async function patchItemCreate(actor, item) {
     

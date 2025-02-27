@@ -10,7 +10,8 @@
 
   --overlay-background-color: #eeede0c7;
   --overlay-text-color: #860d07;
-  --overlay-heal-text-color: #072986;
+  --overlay-heal-text-color: #072986; 
+  
 }
 
 /* ----------------------------------------- */
@@ -28,7 +29,7 @@
   font-size: 16px;
   margin-bottom: 1px;
   border: 2px groove #eeede0;
-  border-radius: 2px;
+  border-radius: 5px;
   border-collapse: collapse;
 }
 .window-app .window-content .dialog-buttons-title div:last-child {
@@ -53,6 +54,15 @@
 .window-app .window-content .dialog-buttons-title .repair-click i.not-smith {
   color: #7a7971; 
 }
+
+:is(#fatigue-roll, #ad-dialog).dialog-content .form-group {
+  margin-bottom: 2px;
+}
+
+:is(#fatigue-roll, #ad-dialog).dialog-content .form-group input:not([type=range]) {
+  background: var(--input-background-color);
+}
+
 .window-app .window-content .dialog-content .confirmAR {
   font-weight: bolder;
 }
@@ -310,8 +320,14 @@
   overflow-y: hidden;
   padding: 5px;
   font-size: 13px;
-  color: #191813;
+  color: #191813; 
+  background-image:
+        linear-gradient(180deg, rgba(255, 255, 255, 0) 35%, var(--dnd5e-color-parchment) 70%),
+        url(ui/armor-damage-banner.jpg);
+  background-repeat: no-repeat;
+  background-position: top left;
 }
+
 .ldnd5e.app .window-content form {
   height: 100%;
   overflow: hidden;
@@ -613,6 +629,7 @@
 .ldnd5e.app .items-list .item .item-name .item-image.owner-image {
   border-radius: 50%;
   background-color: #c9c9c9;
+  background-size: contain;
 }
 
 .ldnd5e.dnd5e.app .actors-list .actors-header,

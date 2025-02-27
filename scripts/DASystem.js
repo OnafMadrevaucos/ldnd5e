@@ -504,7 +504,7 @@ export const computaREST = function(item, owner, amountRecovered) {
         if(itemData.armor.DL[tipoDanoMax] - amountRecovered < 0)
             itemData.armor.DL[tipoDanoMax] = 0
         else
-            itemData.armor.DL[tipoDanoMax] = itemData.armor.DL[tipoDanoMax] - amountRecovered;
+            itemData.armor.DL[tipoDanoMax] -= amountRecovered;
 
         for(let [dlkey, dlValue] of Object.entries(itemData.armor.DL)) {
             if(dlValue > itemData.armor.DL[tipoDanoMax]) itemData.armor.DL[dlkey] = itemData.armor.DL[tipoDanoMax];
@@ -512,7 +512,7 @@ export const computaREST = function(item, owner, amountRecovered) {
 
         if((itemData.armor.DL.bldg < itemData.armor.RealDL) &&
             (itemData.armor.DL.slsh < itemData.armor.RealDL) &&
-            (itemData.armor.DL.pierc < itemData.armor.RealDL)) itemData.armor.RealDL--;
+            (itemData.armor.DL.pierc < itemData.armor.RealDL)) itemData.armor.RealDL -= amountRecovered;
 
         const novoIndex = itemData.armor.RealDL - 1;
 
@@ -545,7 +545,7 @@ export const toMessage = async function(messageData={}) {
     // Create the ChatMessage data object
     const chatData = {
        user: game.user._id,
-       type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+       type: CONST.CHAT_MESSAGE_STYLES.OTHER,
        content: html,
        speaker: ChatMessage.getSpeaker(),
        flags: {"core.canPopout": true}
@@ -742,8 +742,8 @@ export const prepareActiveEffects = async function(item, owner, result, options=
     const itemData = item.system;
     const saveCD = 8 + itemData.armor.RealDL;
 
-    const roll = await owner.rollAbilitySave("con"); 
-    return (roll._total >= saveCD);
+    const roll = await owner.rollSavingThrow({ability: "con", target: saveCD}); 
+    return roll[0].isSuccess;
  }
 
  export const verifyRepairCost = function(cost, owner) {

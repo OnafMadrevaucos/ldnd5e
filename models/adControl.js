@@ -91,7 +91,6 @@ export default class adControl extends Application {
    computeData() {
    
       const data = {
-          npcs:{ actors: [], npcs: true, ad: false, ar: false, exaust: false },
           pcs: { label: "ldnd5e.pcsLabel", actors: [], npcs: false, ad: false, ar: true, exaust: true },
           armor: { label: "ldnd5e.armorLabel", items: [], tipoShield: false, dataset: {type: "equipament", subtype: "", armorType: ""}, npcs: false, ad: true, ar: false, exaust: false },
           shield: { label: "ldnd5e.shieldLabel", items: [], tipoShield: true, dataset: {type: "equipament", subtype: "", armorType: ""}, npcs: false, ad: true, ar: false, exaust: false }
@@ -128,43 +127,6 @@ export default class adControl extends Application {
                data.pcs.actors.push(actor);
           } 
       }
-
-      for(let token of canvas.tokens.ownedTokens) {
-
-         if(token.combatant)
-         {
-            const actor = token.actor;
-            if(actor.type == "npc"){
-               const npc = {};
-               npc.data = actor;
-               npc.nd = NDs[actor.system.details.cr];
-               npc.actions = this.prepareNPCsItems(actor);
-
-               let isNew = true;
-               for(let oldNpc of data.npcs.actors) {
-                  if(oldNpc.data.id == npc.data.id) {
-                     isNew = false;
-                     break;
-                  }
-               }
-
-               if(isNew){ 
-                  data.npcs.actors.push(npc);
-                  data.npcs.actors.sort(function (a, b) {
-                     if (a.data.name > b.data.name) {
-                       return 1;
-                     }
-                     if (a.data.name < b.data.name) {
-                       return -1;
-                     }
-                     // a must be equal to b
-                     return 0;
-                  });
-               }
-            }
-         }
-      }
-   
       return data;
    }
 
