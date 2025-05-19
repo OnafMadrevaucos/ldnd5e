@@ -118,10 +118,10 @@ Hooks.on('getSceneControlButtons', (controls) => {
 
     if (game.user.isGM)
     {  
-        gmControl[0].onClick = renderControl;
+        gmControl.onClick = renderControl;
 
-        const token = controls.find((c) => c.name === 'token');
-        if (token) { token.tools.push(...gmControl); }
+        const tokens = controls.tokens;
+        if (tokens) { tokens.tools.ldnd5e = gmControl; }
     }
 });
 Hooks.on('combatTurn', ars.onNewCombatTurn);

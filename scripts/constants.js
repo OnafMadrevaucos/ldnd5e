@@ -13,37 +13,37 @@
  *    fullRepairFee: number
  * }}
  */
- const constants = {
-    moduleName: 'ldnd5e',
-    moduleLabel: 'Lemurian Dungeons & Dragons 5th Edition',
+const constants = {
+   moduleName: 'ldnd5e',
+   moduleLabel: 'Lemurian Dungeons & Dragons 5th Edition',
 
-    ItemSheet5e: dnd5e.applications.item.ItemSheet5e,
-    ActorSheet5eCharacter: (CONFIG.IsDnD2 ? dnd5e.applications.actor.ActorSheet5eCharacter2 : dnd5e.applications.actor.ActorSheet5eCharacter),
-    ActorSheet5eNPCs: dnd5e.applications.actor.ActorSheet5eNPC,
-    
-    templates: {
-        mainTemplate: 'modules/ldnd5e/templates/mainControl.hbs',
-        dlControlTemplate: 'modules/ldnd5e/templates/control-dialog.hbs',
-        dlConfigTemplate: 'modules/ldnd5e/templates/config-dialog.hbs',
-        arControlTemplate: 'modules/ldnd5e/templates/confirm-dialog.hbs',
-        fatigueDialogTemplate: 'modules/ldnd5e/templates/fatigue-dialog.hbs',
-        cControlTemplate: 'modules/ldnd5e/templates/cControl.hbs',
-        frControlTemplate: 'modules/ldnd5e/templates/full-repair-dialog.hbs',
-        newDLTemplate: 'modules/ldnd5e/templates/newDL-template.hbs',
-        specialConditions: "modules/ldnd5e/templates/partials/extra-conditions.hbs"        
-    },
+   ItemSheet5e: dnd5e.applications.item.ItemSheet5e,
+   ActorSheet5eCharacter: (CONFIG.IsDnD2 ? dnd5e.applications.actor.ActorSheet5eCharacter2 : dnd5e.applications.actor.ActorSheet5eCharacter),
+   ActorSheet5eNPCs: dnd5e.applications.actor.ActorSheet5eNPC,
 
-    images: {
-       armorEffectDefault: "icons/equipment/chest/breastplate-helmet-metal.webp",
-       shieldEffectDefault: "icons/equipment/shield/heater-crystal-blue.webp",
-       noArmorDefault: "icons/magic/control/silhouette-hold-change-blue.webp"
-    },
+   templates: {
+      mainTemplate: 'modules/ldnd5e/templates/mainControl.hbs',
+      dlControlTemplate: 'modules/ldnd5e/templates/control-dialog.hbs',
+      dlConfigTemplate: 'modules/ldnd5e/templates/config-dialog.hbs',
+      arControlTemplate: 'modules/ldnd5e/templates/confirm-dialog.hbs',
+      fatigueDialogTemplate: 'modules/ldnd5e/templates/fatigue-dialog.hbs',
+      cControlTemplate: 'modules/ldnd5e/templates/cControl.hbs',
+      frControlTemplate: 'modules/ldnd5e/templates/full-repair-dialog.hbs',
+      newDLTemplate: 'modules/ldnd5e/templates/newDL-template.hbs',
+      specialConditions: "modules/ldnd5e/templates/partials/extra-conditions.hbs"
+   },
 
-    repairFee: 0.1,
-    fullRepairFee: 2
- };
+   images: {
+      armorEffectDefault: "icons/equipment/chest/breastplate-helmet-metal.webp",
+      shieldEffectDefault: "icons/equipment/shield/heater-crystal-blue.webp",
+      noArmorDefault: "icons/magic/control/silhouette-hold-change-blue.webp"
+   },
 
- const UnarmoredClasses = {
+   repairFee: 0.1,
+   fullRepairFee: 2
+};
+
+const UnarmoredClasses = {
    barbarian: {
       name: "barbarian",
       useShield: true,
@@ -54,9 +54,9 @@
       useShield: false,
       ability: "dex"
    }
- }
+}
 
- const NDs = {
+const NDs = {
    0: "0",
    0.125: "1/8",
    0.25: "1/4",
@@ -91,9 +91,9 @@
    28: "28",
    29: "29",
    30: "30"
- }
+}
 
- /**
+/**
 * Defines the Unit constants.
 *
 * @enum {{
@@ -102,26 +102,26 @@
 * }}
 */
 const unitFlags = {
-      /**
-      * Defines the Unit Types constants.      
-      */   
-      uTypes: {
-         light: "light",
-         heavy: "heavy",
-         mercenary: "merc"    
-      },
-      /**
-      * Defines the Unit Abilities constants.      
-      */
-      uAbilities : {
-         for: "for",
-         mrl: "mrl",
-         wil: "wil"    
-      }
+   /**
+   * Defines the Unit Types constants.      
+   */
+   uTypes: {
+      light: "light",
+      heavy: "heavy",
+      mercenary: "merc"
+   },
+   /**
+   * Defines the Unit Abilities constants.      
+   */
+   uAbilities: {
+      for: "for",
+      mrl: "mrl",
+      wil: "wil"
+   }
 }
 
- const i18nStrings = {
-   title : "ldnd5e.title",
+const i18nStrings = {
+   title: "ldnd5e.title",
    npcsStatsTitle: "ldnd5e.npcsStatsTitle",
    adSystemTitle: "ldnd5e.adSystemTitle",
    arSystemTitle: "ldnd5e.arSystemTitle",
@@ -130,7 +130,7 @@ const unitFlags = {
    pcsLabel: "ldnd5e.pcsLabel",
    armorLabel: "ldnd5e.armorLabel",
    shieldLabel: "ldnd5e.shieldLabel",
-   itemOwner:"ldnd5e.itemOwner",
+   itemOwner: "ldnd5e.itemOwner",
    ownerLan: "ldnd5e.ownerLan",
    ownerLdo: "ldnd5e.ownerLdo",
    damageSystem: "ldnd5e.damageSystem",
@@ -149,7 +149,7 @@ const unitFlags = {
    penTitle: "ldnd5e.penTitle",
    ftTitle: "ldnd5e.ftTitle",
 
-   arControlTitle:"ldnd5e.arControlTitle",   
+   arControlTitle: "ldnd5e.arControlTitle",
 
    dlControlTitle: "ldnd5e.dlControlTitle",
    dlControlItemLabel: "ldnd5e.dlControlItemLabel",
@@ -170,7 +170,7 @@ const unitFlags = {
    frControlMessage: "ldnd5e.frControlMessage",
 
    cControlTitle: "ldnd5e.cControlTitle",
-   
+
    cControlLightList: "ldnd5e.cControlLightList",
    cControlHeavyList: "ldnd5e.cControlHeavyList",
    cControlSpecialList: "ldnd5e.cControlSpecialList",
@@ -201,36 +201,36 @@ const unitFlags = {
    cancelBtn: "ldnd5e.cancelBtn",
 
    damageTypes: {
-    pierc: "ldnd5e.damageTypes.pierc",
-    slsh: "ldnd5e.damageTypes.slsh",
-    bldg: "ldnd5e.damageTypes.bldg"
+      pierc: "ldnd5e.damageTypes.pierc",
+      slsh: "ldnd5e.damageTypes.slsh",
+      bldg: "ldnd5e.damageTypes.bldg"
    },
 
    dcLabel: "ldnd5e.dcLabel",
 
    itemDestroyed: "ldnd5e.itemDestroyed",
-   groupRolls:"ldnd5e.groupRolls",
+   groupRolls: "ldnd5e.groupRolls",
 
    unitType: "ldnd5e.unit",
    uTypes: {
       light: "ldnd5e.uTypes.light",
       heavy: "ldnd5e.uTypes.heavy",
       merc: "ldnd5e.uTypes.merc",
-   },  
-   uAbilities: { 
+   },
+   uAbilities: {
       for: "ldnd5e.uAbilities.for",
       mrl: "ldnd5e.uAbilities.mrl",
       wil: "ldnd5e.uAbilities.wil",
    },
    messages: {
       bldgDmgLightArmor: "ldnd5e.messages.bldgDmgLightArmor",
-      slshDmgHeavyArmor: "ldnd5e.messages.slshDmgHeavyArmor",      
+      slshDmgHeavyArmor: "ldnd5e.messages.slshDmgHeavyArmor",
       halDmgShield: "ldnd5e.messages.halDmgShield",
       newDLMessage: "ldnd5e.messages.newDLMessage",
       maxDLMessage: "ldnd5e.messages.maxDLMessage",
       fithDLMessage: "ldnd5e.messages.fithDLMessage",
       sixthDLMessage: "ldnd5e.messages.sixthDLMessage",
-      itemDestroyed :"ldnd5e.messages.itemDestroyed",
+      itemDestroyed: "ldnd5e.messages.itemDestroyed",
       repairToExpensive: "ldnd5e.messages.repairToExpensive",
       repairMessage: "ldnd5e.messages.repairMessage",
       reconstructedMessage: "ldnd5e.messages.reconstructedMessage",
@@ -238,7 +238,7 @@ const unitFlags = {
 
       arControlLabel: "ldnd5e.messages.arControlLabel",
       arControlLabelObs: "ldnd5e.messages.arControlLabelObs",
-      arMaxedOut:"ldnd5e.messages.arMaxedOut",
+      arMaxedOut: "ldnd5e.messages.arMaxedOut",
 
       fatigueMessage: "ldnd5e.messages.fatigueMessage",
       maxFatigueMessage: "ldnd5e.messages.tofatiguedMessage",
@@ -269,20 +269,19 @@ const unitFlags = {
       exhaustionName: "ldnd5e.settings.exhaustionName",
       exhaustionHint: "ldnd5e.settings.exhaustionHint"
    }
- };
+};
 
- const feats = {
-   
- };
+const feats = {
 
- const gmControl = [
-   {
-      name: constants.moduleName,
-      title: i18nStrings.title,
-      icon: 'fas fa-shield-alt',
-      visible: true,
-      button: true
-   }
- ]; 
+};
 
- export { constants, UnarmoredClasses, NDs, gmControl, i18nStrings };
+const gmControl =
+{
+   name: constants.moduleName,
+   title: i18nStrings.title,
+   icon: 'fas fa-shield-alt',
+   visible: true,
+   button: true
+};
+
+export { constants, UnarmoredClasses, NDs, gmControl, i18nStrings };
