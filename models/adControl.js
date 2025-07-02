@@ -11,10 +11,10 @@ const ADD = ACTIVE_EFFECT_MODES.ADD;
 
 export default class adControl extends Application {
 
-   constructor( options = {} ) {
+   constructor(options = {}) {
       super(options);
 
-      CONFIG.adControl = this;      
+      CONFIG.adControl = this;
       this.data = this.computeData();
    }
 
@@ -26,7 +26,7 @@ export default class adControl extends Application {
    }
 
    /** @inheritDoc */
-  async _renderOuter() {
+   async _renderOuter() {
       const html = await super._renderOuter();
       const header = html[0].querySelector(".window-header");
 
@@ -39,15 +39,15 @@ export default class adControl extends Application {
       });
 
       return html;
-  }
+   }
 
    /**
     * Tipo de Ação no Controle de Avaria
     * @enum {number}
     */
-    static ACTION_TYPE = {
+   static ACTION_TYPE = {
       SUB: -1,
-      HALF: 0,        
+      HALF: 0,
       DA: 1,
       ZERAR: 2,
       AR: 3
@@ -57,7 +57,7 @@ export default class adControl extends Application {
     * Repair DC by Item Rarity
     * @enum {number}
     */
-    static DC_REPAIR = {
+   static DC_REPAIR = {
       common: 10,
       uncommon: 15,
       rare: 20,
@@ -67,14 +67,13 @@ export default class adControl extends Application {
    }
 
    /**@override */
-   getData() {    
-      
+   getData() {
+
       // Retorna data para a tela.
       return this.data;
    }
 
-   static get defaultOptions()
-   {
+   static get defaultOptions() {
       return foundry.utils.mergeObject(super.defaultOptions, {
          id: constants.moduleName,
          classes: [constants.moduleName, (CONFIG.IsDnD2 ? "dnd5e2" : "dnd5e")],
@@ -86,46 +85,46 @@ export default class adControl extends Application {
          title: game.i18n.localize(i18nStrings.title),
          tabs: [{ navSelector: '.tabs', contentSelector: '.sheet-body', initial: 'pcs-list' }]
       });
-   }  
+   }
 
    computeData() {
-   
+
       const data = {
-          pcs: { label: "ldnd5e.pcsLabel", actors: [], npcs: false, ad: false, ar: true, exaust: true },
-          armor: { label: "ldnd5e.armorLabel", items: [], tipoShield: false, dataset: {type: "equipament", subtype: "", armorType: ""}, npcs: false, ad: true, ar: false, exaust: false },
-          shield: { label: "ldnd5e.shieldLabel", items: [], tipoShield: true, dataset: {type: "equipament", subtype: "", armorType: ""}, npcs: false, ad: true, ar: false, exaust: false }
+         pcs: { label: "ldnd5e.pcsLabel", actors: [], npcs: false, ad: false, ar: true, exaust: true },
+         armor: { label: "ldnd5e.armorLabel", items: [], tipoShield: false, dataset: { type: "equipament", subtype: "", armorType: "" }, npcs: false, ad: true, ar: false, exaust: false },
+         shield: { label: "ldnd5e.shieldLabel", items: [], tipoShield: true, dataset: { type: "equipament", subtype: "", armorType: "" }, npcs: false, ad: true, ar: false, exaust: false }
       };
-   
-      for(let actor of game.actors) {         
-            if(actor.type == "character") {
-               const dasEnabled = actor.getFlag("ldnd5e", "dasEnabled"); // Se falso, o PC não irá aparecer na lista. 
-               if(dasEnabled){ 
-                  const items = actor.configArmorData();
-                  // Organize items
-                  for ( let i of items ) {             
-                     data[i.subtype].items.push(i);
-                  }                  
+
+      for (let actor of game.actors) {
+         if (actor.type == "character") {
+            const dasEnabled = actor.getFlag("ldnd5e", "dasEnabled"); // Se falso, o PC não irá aparecer na lista. 
+            if (dasEnabled) {
+               const items = actor.configArmorData();
+               // Organize items
+               for (let i of items) {
+                  data[i.subtype].items.push(i);
                }
+            }
 
-               actor.showActor = dasEnabled;
-               actor.exhaustLvl = {
-                  0: false,
-                  1: false,
-                  2: false,
-                  3: false,
-                  4: false,
-                  5: false,
-                  6: false,
-                  7: false,
-                  8: false,
-                  9: false,
-                  10: false                 
-               };
+            actor.showActor = dasEnabled;
+            actor.exhaustLvl = {
+               0: false,
+               1: false,
+               2: false,
+               3: false,
+               4: false,
+               5: false,
+               6: false,
+               7: false,
+               8: false,
+               9: false,
+               10: false
+            };
 
-               actor.exhaustLvl[actor.system.attributes.exhaustion] = true;
+            actor.exhaustLvl[actor.system.attributes.exhaustion] = true;
 
-               data.pcs.actors.push(actor);
-          } 
+            data.pcs.actors.push(actor);
+         }
       }
       return data;
    }
@@ -133,25 +132,25 @@ export default class adControl extends Application {
    /** @override */
    activateListeners(html) {
 
-      if(game.user.isGM) {
-          // Clicks sem Rolagem -------------------------------------------
-          // Listeners do DASystem
-          html.find(".owner-image").click(this._onOwnerImageClick.bind(this));
-          html.find(".dl-control").click(this._onDLControlClick.bind(this)); 
-          html.find(".refresh-pcs").click(this._onRefreshPCsClick.bind(this));  
-          html.find(".config-control").click(this._onConfigClick.bind(this));
-          // Listeners do ARSystem
-          html.find(".actor-image").click(this._onActorImageClick.bind(this));
-          html.find(".action-image").click(this._onActionImageClick.bind(this)); 
-          html.find(".ar-control").click(this._onARControlClick.bind(this));
-          html.find(".ar-control").contextmenu(this._onARControlClick.bind(this));
-          html.find(".exaust-pip").click(this._onExhaustControlClick.bind(this));
-          //Listeners de Rolagem de NPCs
-          html.find(".npc-name").click(this._onNPCNameClick.bind(this));
-          html.find(".save-control").click(this._onNPCSaveClick.bind(this));
-          html.find(".attack-control").click(this._onNPCRollClick.bind(this));
-          html.find(".damage-control").click(this._onNPCDamageClick.bind(this));
-          
+      if (game.user.isGM) {
+         // Clicks sem Rolagem -------------------------------------------
+         // Listeners do DASystem
+         html.find(".owner-image").click(this._onOwnerImageClick.bind(this));
+         html.find(".dl-control").click(this._onDLControlClick.bind(this));
+         html.find(".refresh-pcs").click(this._onRefreshPCsClick.bind(this));
+         html.find(".config-control").click(this._onConfigClick.bind(this));
+         // Listeners do ARSystem
+         html.find(".actor-image").click(this._onActorImageClick.bind(this));
+         html.find(".action-image").click(this._onActionImageClick.bind(this));
+         html.find(".ar-control").click(this._onARControlClick.bind(this));
+         html.find(".ar-control").contextmenu(this._onARControlClick.bind(this));
+         html.find(".exaust-pip").click(this._onExhaustControlClick.bind(this));
+         //Listeners de Rolagem de NPCs
+         html.find(".npc-name").click(this._onNPCNameClick.bind(this));
+         html.find(".save-control").click(this._onNPCSaveClick.bind(this));
+         html.find(".attack-control").click(this._onNPCRollClick.bind(this));
+         html.find(".damage-control").click(this._onNPCDamageClick.bind(this));
+
       }
 
       super.activateListeners(html);
@@ -163,7 +162,7 @@ export default class adControl extends Application {
       const div = $(event.currentTarget).parents(".npc-summary");
 
       // Toggle summary
-      if ( div.hasClass("expanded") ) {
+      if (div.hasClass("expanded")) {
          let featureOL = div.children(".feature-list");
          let spellOL = div.children(".spell-list");
          featureOL.slideUp(200, () => featureOL.hide());
@@ -171,9 +170,9 @@ export default class adControl extends Application {
       } else {
          let featureOL = div.children(".feature-list");
          let spellOL = div.children(".spell-list");
-                
+
          featureOL.slideDown(200, 'linear', () => featureOL.show());
-         spellOL.slideDown(200, 'linear' ,() => spellOL.show());
+         spellOL.slideDown(200, 'linear', () => spellOL.show());
       }
       div.toggleClass("expanded");
    }
@@ -186,11 +185,11 @@ export default class adControl extends Application {
       const owner = game.actors.get(ownerID);
       const item = owner.system.items.get(itemID);
 
-      if(item.hasSave) {  
+      if (item.hasSave) {
          const card = await item.displayCard();
          const targets = dnd5e.documents.Item5e._getChatCardTargets(card);
-         for ( let token of targets ) {
-            const speaker = ChatMessage.getSpeaker({scene: canvas.scene, token: token});
+         for (let token of targets) {
+            const speaker = ChatMessage.getSpeaker({ scene: canvas.scene, token: token });
             await token.actor.rollAbilitySave(event.currentTarget.dataset.ability, { event, speaker });
          }
       }
@@ -202,10 +201,10 @@ export default class adControl extends Application {
       const ownerID = event.currentTarget.closest(".item").dataset.actorId;
       const owner = game.actors.get(ownerID);
       const item = owner.items.get(itemID);
-      
+
       const rollResult = await item.roll();
 
-      if(rollResult && item.hasAttack) { 
+      if (rollResult && item.hasAttack) {
          item.rollAttack();
       }
    }
@@ -220,7 +219,7 @@ export default class adControl extends Application {
 
       const rollResult = await item.roll();
 
-      if(rollResult && item.hasDamage) {         
+      if (rollResult && item.hasDamage) {
          item.rollDamage();
       }
    }
@@ -236,7 +235,7 @@ export default class adControl extends Application {
       return item.sheet.render(true);
    }
 
-   _onOwnerImageClick(event){
+   _onOwnerImageClick(event) {
       event.preventDefault();
 
       const ownerID = event.currentTarget.closest(".item").dataset.ownerId;
@@ -244,7 +243,7 @@ export default class adControl extends Application {
 
       return owner.sheet.render(true);
    }
-   _onActorImageClick(event){
+   _onActorImageClick(event) {
       event.preventDefault();
 
       const actorID = event.currentTarget.closest(".item").dataset.actorId;
@@ -260,46 +259,54 @@ export default class adControl extends Application {
       const itemID = event.currentTarget.closest(".item").dataset.itemId;
       const ownerID = event.currentTarget.closest(".item").dataset.ownerId;
       const unarmored = (event.currentTarget.closest(".item").dataset.unarmored) === "true";
-      
-      const owner = game.actors.get(ownerID);      
+
+      const owner = game.actors.get(ownerID);
       const classes = owner.classes;
 
-      var item = null;
-      if(!unarmored) {
-         item = owner.items.get(itemID);
-      } else {
-         if(UnarmoredClasses.barbarian.name in classes){
-            item = await this._getUnarmoredItem(CONFIG.LDND5E.specialArmors.barbarian);
-         }
-         if(UnarmoredClasses.monk.name in classes) {
-            item = await this._getUnarmoredItem(CONFIG.LDND5E.specialArmors.monk);            
-         } 
+      try {
+         var item = null;
+         if (!unarmored) {
+            item = owner.items.get(itemID);
+         } else {
+            if (UnarmoredClasses.barbarian.name in classes) {
+               item = await this._getUnarmoredItem(CONFIG.LDND5E.specialArmors.barbarian);
+            }
+            if (UnarmoredClasses.monk.name in classes) {
+               item = await this._getUnarmoredItem(CONFIG.LDND5E.specialArmors.monk);
+            }
 
-         item = owner.system.attributes.ac.equippedArmor;
+            item = owner.system.attributes.ac.equippedArmor;
+         }
+      } catch (error) { 
+         ui.notifications.error(error);
       }
 
-      const dialog = await AdDialog.configDialog({
-         owner: owner,
-         item: item, 
-         damageType: dlType,
-         unarmored: unarmored 
-      });   
+      try {
+         const dialog = await AdDialog.configDialog({
+            owner: owner,
+            item: item,
+            damageType: dlType,
+            unarmored: unarmored
+         });
+      } catch (error) {
+         console.error(error);
+       }
    }
 
-  async _onARControlClick(event) {
-     event.preventDefault();
+   async _onARControlClick(event) {
+      event.preventDefault();
 
-     const rightClick = (event.type === "contextmenu");
-     const actorID = event.currentTarget.closest(".item").dataset.actorId;
-     const actor = game.actors.get(actorID);
+      const rightClick = (event.type === "contextmenu");
+      const actorID = event.currentTarget.closest(".item").dataset.actorId;
+      const actor = game.actors.get(actorID);
 
-     const dialog = await ArDialog.configDialog({
+      const dialog = await ArDialog.configDialog({
          actor: actor,
          rightClick: rightClick
-     });
-  }
+      });
+   }
 
-  async _onExhaustControlClick(event) {
+   async _onExhaustControlClick(event) {
       event.preventDefault();
 
       const actorID = event.currentTarget.closest(".item").dataset.ownerId;
@@ -308,21 +315,21 @@ export default class adControl extends Application {
 
       const actorData = actor.system;
       const exhaustionLimit = (game.settings.get('ldnd5e', 'oneDNDExhaustionRule') ? 10 : 6);
-      if(actorData.attributes.exhaustion != exhaustionLimit)
-         {
-             // O nível de Exaustão ainda está abaixo do limite máximo.
-             if(n < exhaustionLimit)
-                 await actor.update({"system.attributes.exhaustion": n});
-             else // A criatura morreu de exaustão.
-                 await actor.update({"system.attributes.death.failure": 3, 
-                                          "system.attributes.exhaustion": n,
-                                          "system.attributes.hp.value": 0
-                                         });     
-         }
-      actor.update({"system.attributes.exhaustion": n});
-  }
+      if (actorData.attributes.exhaustion != exhaustionLimit) {
+         // O nível de Exaustão ainda está abaixo do limite máximo.
+         if (n < exhaustionLimit)
+            await actor.update({ "system.attributes.exhaustion": n });
+         else // A criatura morreu de exaustão.
+            await actor.update({
+               "system.attributes.death.failure": 3,
+               "system.attributes.exhaustion": n,
+               "system.attributes.hp.value": 0
+            });
+      }
+      actor.update({ "system.attributes.exhaustion": n });
+   }
 
-  async _onFullRepairControlClick(event) {
+   async _onFullRepairControlClick(event) {
       event.preventDefault();
 
       const itemID = event.currentTarget.closest(".item").dataset.itemId;
@@ -333,19 +340,19 @@ export default class adControl extends Application {
       const configured = await this._configureDialog({
          title: game.i18n.localize("ldnd5e.frControlTitle"),
          data: {
-           price: item.system.price * constants.fullRepairFee,
-           owner: owner,
-           item: item
+            price: item.system.price * constants.fullRepairFee,
+            owner: owner,
+            item: item
          },
          template: constants.templates.frControlTemplate
-      }, {fullRepair: true});
-      if ( configured === null ) return null;   
-      
+      }, { fullRepair: true });
+      if (configured === null) return null;
+
       this.render(true);
 
       return item;
    }
-   async _onConfigClick(event){
+   async _onConfigClick(event) {
       event.preventDefault();
 
       const dialog = await ConfigDialog.configDialog({
@@ -363,62 +370,62 @@ export default class adControl extends Application {
       event.preventDefault();
 
       var errorCount = 0;
-      for(let actor of game.actors){
-         if(actor.type == "character") {
+      for (let actor of game.actors) {
+         if (actor.type == "character") {
             const hasError = await actor.fullAsyncConfigL5e();
-            if(hasError) errorCount++;
+            if (hasError) errorCount++;
          }
       }
 
-      if(errorCount == 0){
+      if (errorCount == 0) {
          ui.notifications.info(game.i18n.localize(i18nStrings.messages.noEffectErrors));
       }
-  }
+   }
 
-  /* -------------------------------------------- */
+   /* -------------------------------------------- */
 
-   async _configureDialog({title, data, template}={}, options={}) {
+   async _configureDialog({ title, data, template } = {}, options = {}) {
 
-   let content = null;
-   const unarmored = data.unarmored;
+      let content = null;
+      const unarmored = data.unarmored;
 
-   if(!options.fullRepair) {      
-      const dialog = await AdDialog.configDialog({
-         owner: data.actor,
-         item: data.item, 
-         damageType: game.i18n.localize(`ldnd5e.damageTypes.${data.damageType}`),
-         unarmored: unarmored 
-      });      
-   } else {
-      var smithRepair = false;
-      // Render the Dialog inner HTML
-      content = await renderTemplate(template, {
-         item: data.item, 
-         owner: data.owner,
-         price: data.price.toString(),
-         smithRepair: smithRepair
-      });
+      if (!options.fullRepair) {
+         const dialog = await AdDialog.configDialog({
+            owner: data.actor,
+            item: data.item,
+            damageType: game.i18n.localize(`ldnd5e.damageTypes.${data.damageType}`),
+            unarmored: unarmored
+         });
+      } else {
+         var smithRepair = false;
+         // Render the Dialog inner HTML
+         content = await renderTemplate(template, {
+            item: data.item,
+            owner: data.owner,
+            price: data.price.toString(),
+            smithRepair: smithRepair
+         });
 
-      return new Promise(resolve => {
-         new Dialog({
-            title,
-            content,
-            buttons: {
-               yes: {
-                  label: game.i18n.localize(i18nStrings.yesBtn),
-                  callback: html => resolve(this._onDialogSubmit(html, data, adControl.ACTION_TYPE.ZERAR, {fullRepair: options.fullRepair, price: data.price}))
+         return new Promise(resolve => {
+            new Dialog({
+               title,
+               content,
+               buttons: {
+                  yes: {
+                     label: game.i18n.localize(i18nStrings.yesBtn),
+                     callback: html => resolve(this._onDialogSubmit(html, data, adControl.ACTION_TYPE.ZERAR, { fullRepair: options.fullRepair, price: data.price }))
+                  },
+                  no: {
+                     label: game.i18n.localize(i18nStrings.noBtn),
+                     callback: html => resolve(this._onDialogSubmit(html, data, 99))
+                  }
                },
-               no: {
-                  label: game.i18n.localize(i18nStrings.noBtn),
-                  callback: html => resolve(this._onDialogSubmit(html, data, 99))
-               }
-            },
-            default: "no",
-            close: () => resolve(null)
-         }, options).render(true);
-      });
-   }    
-  }
+               default: "no",
+               close: () => resolve(null)
+            }, options).render(true);
+         });
+      }
+   }
 
    /* -------------------------------------------- */
 
@@ -430,86 +437,86 @@ export default class adControl extends Application {
    * @returns {D20Roll}              This damage roll.
    * @private
    */
-   async _onDialogSubmit(html, data, action, options={}) {
+   async _onDialogSubmit(html, data, action, options = {}) {
       const form = html[0].querySelector("form");
 
-      const unarmored = data.unarmored;      
+      const unarmored = data.unarmored;
       const owner = data.owner;
       const item = ((data.item.armorType != das.TIPO_ARMOR.SHIELD) ? owner.system.attributes.ac.equippedArmor : data.item);
-      const tipoDano = data.damageType;     
+      const tipoDano = data.damageType;
 
       let result = {};
 
-      switch(action) {
+      switch (action) {
          case adControl.ACTION_TYPE.AR: {
             await updateExhaustionLevel(data);
          }
-         break;
+            break;
 
          case adControl.ACTION_TYPE.DA: {
-            result = await das.computaDA(item, owner, tipoDano);   
-            das.prepareActiveEffects(item, owner, result, {unarmored: unarmored});            
-         } 
-         break;
+            result = await das.computaDA(item, owner, tipoDano);
+            das.prepareActiveEffects(item, owner, result, { unarmored: unarmored });
+         }
+            break;
 
          case adControl.ACTION_TYPE.HALF: {
-            result = await das.computaHALF(item, owner, tipoDano);   
-            das.prepareActiveEffects(item, owner, result, {unarmored: unarmored});
-         } 
-         break;
+            result = await das.computaHALF(item, owner, tipoDano);
+            das.prepareActiveEffects(item, owner, result, { unarmored: unarmored });
+         }
+            break;
 
          case adControl.ACTION_TYPE.SUB: {
             options.repair = true;
             options.price = parseInt(form.repairLvlPrice.value);
             options.repairLvl = parseInt(form.repairLvlSlider.value);
 
-            if(options.repairLvl === 0) return;
+            if (options.repairLvl === 0) return;
 
-            const toExpensive = this._verifyRepairCost(((options?.price ?? 0)), owner);      
-            if(toExpensive) {
-               ui.notifications.warn(game.i18n.format(i18nStrings.messages.repairToExpensive, {actor: owner.name}));
+            const toExpensive = this._verifyRepairCost(((options?.price ?? 0)), owner);
+            if (toExpensive) {
+               ui.notifications.warn(game.i18n.format(i18nStrings.messages.repairToExpensive, { actor: owner.name }));
                return;
             }
 
             options.smithRepairChk = form.querySelector('.not-smith') ? false : true;
 
-            result = das.computaSUB(item, owner, tipoDano, options); 
+            result = das.computaSUB(item, owner, tipoDano, options);
             das.prepareActiveEffects(item, owner, result, options);
-         } 
-         break;
+         }
+            break;
 
          case adControl.ACTION_TYPE.ZERAR: {
             options.repair = true;
 
-            if(options?.fullRepair) {
+            if (options?.fullRepair) {
                options.price = data.price;
                options.smithRepairChk = form.querySelector('.smith-repair')?.checked ?? false;
             }
-            else {               
-               options.price = data.price * constants.repairFee * item.system.armor.RealDL;   
+            else {
+               options.price = data.price * constants.repairFee * item.system.armor.RealDL;
                options.smithRepairChk = form.querySelector('.not-smith') ? false : true;
             }
-               
-            const toExpensive = this._verifyRepairCost(((options?.price ?? 0)), owner);      
-            if(toExpensive) {
-               ui.notifications.warn(game.i18n.format(i18nStrings.messages.repairToExpensive, {actor: owner.name}));
+
+            const toExpensive = this._verifyRepairCost(((options?.price ?? 0)), owner);
+            if (toExpensive) {
+               ui.notifications.warn(game.i18n.format(i18nStrings.messages.repairToExpensive, { actor: owner.name }));
                return;
-            }             
+            }
 
             result = das.computaZERAR(item, owner);
             das.prepareActiveEffects(item, owner, result, options);
-         } 
-         break;       
+         }
+            break;
          default: return null;
-      }     
+      }
 
       return this;
    }
 
    _verifyRepairCost(cost, owner) {
       const curr = das.convertCurrency(foundry.utils.deepClone(owner.system.currency));
-      const price = das.convertCurrency({pp: 0, gp: cost, ep: 0, sp: 0, cp: 0});
-      
+      const price = das.convertCurrency({ pp: 0, gp: cost, ep: 0, sp: 0, cp: 0 });
+
       return (price.total > curr.total);
    }
 
@@ -522,33 +529,33 @@ export default class adControl extends Application {
       const items = {};
       // Categorize Items as Features and Spells
       const features = {
-         weapons: { label: game.i18n.localize("DND5E.AttackPl"), items: [], hasActions: true, dataset: {type: "weapon", "weapon-type": "natural"} },
-         actions: { label: game.i18n.localize("DND5E.ActionPl"), items: [], hasActions: true, dataset: {type: "feat", "activation.type": "action"} }
+         weapons: { label: game.i18n.localize("DND5E.AttackPl"), items: [], hasActions: true, dataset: { type: "weapon", "weapon-type": "natural" } },
+         actions: { label: game.i18n.localize("DND5E.ActionPl"), items: [], hasActions: true, dataset: { type: "feat", "activation.type": "action" } }
       };
 
       // Start by classifying items into groups for rendering
       let [spells, other] = data.items.reduce((arr, item) => {
-         if ( item.type === "spell" ) arr[0].push(item);
+         if (item.type === "spell") arr[0].push(item);
          else arr[1].push(item);
          return arr;
       }, [[], []]);
 
       // Organize Features
-      for ( let item of other ) {        
-         if ( item.type === "weapon" ) {
-            item.labels.simpleFormula = this._getSimpleFormula(item); 
+      for (let item of other) {
+         if (item.type === "weapon") {
+            item.labels.simpleFormula = this._getSimpleFormula(item);
             features.weapons.items.push(item);
-         } else if ( item.type === "feat" ){
-            if ( item.system.activation.type ) {
-               item.labels.simpleFormula = this._getSimpleFormula(item); 
+         } else if (item.type === "feat") {
+            if (item.system.activation.type) {
+               item.labels.simpleFormula = this._getSimpleFormula(item);
                features.actions.items.push(item);
             }
          }
       }
 
       // Organize Spells
-      for ( let item of spells ) {      
-         item.labels.simpleFormula = this._getSimpleFormula(item);                   
+      for (let item of spells) {
+         item.labels.simpleFormula = this._getSimpleFormula(item);
       }
 
       spells.sort(function (a, b) {
@@ -567,19 +574,19 @@ export default class adControl extends Application {
       const data = item.system;
 
       let formula = "";
-      for ( let damage of data.damage.parts ) {
+      for (let damage of data.damage.parts) {
          try {
-           const roll = new Roll(damage[0], rollData);
-           if(formula === "") formula = dnd5e.dice.simplifyRollFormula(roll.formula, { preserveFlavor: true })
-           else formula = formula.concat("+", dnd5e.dice.simplifyRollFormula(roll.formula, { preserveFlavor: true }));
+            const roll = new Roll(damage[0], rollData);
+            if (formula === "") formula = dnd5e.dice.simplifyRollFormula(roll.formula, { preserveFlavor: true })
+            else formula = formula.concat("+", dnd5e.dice.simplifyRollFormula(roll.formula, { preserveFlavor: true }));
          }
-         catch(err) { console.warn(`Unable to simplify formula for ${this.name}: ${err}`); }
+         catch (err) { console.warn(`Unable to simplify formula for ${this.name}: ${err}`); }
       }
 
-      return formula.replaceAll(" ","");
+      return formula.replaceAll(" ", "");
    }
 
-   async _getUnarmoredItem(itemID){
+   async _getUnarmoredItem(itemID) {
       const pack = game.packs.find(p => p.collection === "dnd5e.classfeatures");
       const item = await pack.getDocument(itemID);
 

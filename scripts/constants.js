@@ -33,6 +33,14 @@ const constants = {
       specialConditions: "modules/ldnd5e/templates/partials/extra-conditions.hbs"
    },
 
+   tabs: {
+      mainTemplate: {
+         pcsList: 'modules/ldnd5e/templates/partials/pcs-list.hbs',
+         exaustControl: 'modules/ldnd5e/templates/partials/exaust-list.hbs',
+         reacaoAgil: 'modules/ldnd5e/templates/partials/reacao-agil.hbs'
+      }
+   },
+
    images: {
       armorEffectDefault: "icons/equipment/chest/breastplate-helmet-metal.webp",
       shieldEffectDefault: "icons/equipment/shield/heater-crystal-blue.webp",
@@ -188,6 +196,9 @@ const i18nStrings = {
    stunCondition: "ldnd5e.stunCondition",
    stunLabel: "ldnd5e.stunLabel",
    stunFooter: "ldnd5e.stunFooter",
+   specialCondition: "ldnd5e.specialCondition",
+   specialLabel: "ldnd5e.specialLabel",
+   specialFooter: "ldnd5e.specialFooter",
    disableConditions: "ldnd5e.disableConditions",
 
    addBtn: "ldnd5e.addBtn",
@@ -234,6 +245,7 @@ const i18nStrings = {
       repairToExpensive: "ldnd5e.messages.repairToExpensive",
       repairMessage: "ldnd5e.messages.repairMessage",
       reconstructedMessage: "ldnd5e.messages.reconstructedMessage",
+      noTool: "ldnd5e.messages.noTool",
       repairFailed: "ldnd5e.messages.repairFailed",
 
       arControlLabel: "ldnd5e.messages.arControlLabel",

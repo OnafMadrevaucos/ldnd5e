@@ -9,12 +9,14 @@
       "url": ""
     }
   ],
-  "version": "1.3.2",
+  "version": "1.3.3",
   "compatibility": {
     "minimum": "10",
-    "verified": "11"
+    "verified": "13"
   },
-  "system": [ "dnd5e" ],
+  "system": [
+    "dnd5e"
+  ],
   "relationships": {
     "requires": [
       {
@@ -44,8 +46,12 @@
       }
     ]
   },
-  "esmodules": [ "ldnd5e.js" ],
-  "styles": [ "ldnd5e.css" ],
+  "esmodules": [
+    "ldnd5e.js"
+  ],
+  "styles": [
+    "ldnd5e.css"
+  ],
   "packs": [
     {
       "label": "Regras",
@@ -118,7 +124,7 @@
           "color": "#459136",
           "packs": [
             "caracteristicas",
-	    "classes",
+            "classes",
             "magias",
             "talentos"
           ]

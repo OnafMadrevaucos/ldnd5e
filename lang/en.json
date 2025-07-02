@@ -89,7 +89,10 @@
         "stunCondition": "Stun Condition",
         "stunLabel": "Stunned!",
         "stunFooter": "Stunned {value}",
-        "disableConditions": "Put '0' to disable",
+        "specialCondition": "Special Condition",
+        "specialLabel": "Special Trigged!",        
+        "specialFooter": "Special {value}",
+        "disableConditions": "Enter '0' to disable",
 
         "messages": {
             "bldgDmgLightArmor": "Light Armor is immune to damage caused by Bludgening Damage.",
@@ -104,6 +107,7 @@
             "repairMessage": "{item} has been successfully repaired. This item now has a {penalty} AC penalty.",
             "reconstructedMessage": "{item} has been successfully rebuilt.",
             "repairFailed": "{item} cannot be repaired. The separate cost for the repair was lost.",
+            "noTool": "It is necessary to have a Smith's Tools to repair this item.",
 
             "arControlLabel": "Do you want {action} in {value} penalty point for all {actor} tests?",
             "arControlLabelObs": "NOTE: The penalty only increases the Critical Failure threshold.",
