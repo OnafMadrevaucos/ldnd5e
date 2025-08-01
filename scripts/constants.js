@@ -109,14 +109,15 @@ const NDs = {
 *    uAbilities: object
 * }}
 */
-const unitFlags = {
+const unitChoices = {
    /**
    * Defines the Unit Types constants.      
    */
    uTypes: {
       light: "light",
       heavy: "heavy",
-      mercenary: "merc"
+      special: "special",
+      medical: "medical"
    },
    /**
    * Defines the Unit Abilities constants.      
@@ -125,6 +126,25 @@ const unitFlags = {
       for: "for",
       mrl: "mrl",
       wil: "wil"
+   },
+
+   /**
+   * Defines the Unit Combat Skills Icons constants.      
+   */
+   uCombatIcons: {
+      dsp: "ra ra-crowned-heart",
+      enc: "ra ra-muscle-up",
+      def: "ra ra-shield"
+   },
+
+   /**
+   * Defines the Unit Categories constants.      
+   */
+   categories: {
+      arcanists: "arcanists",
+      devotees: "devotees",
+      fighters: "fighters",
+      specialists: "specialists",
    }
 }
 
@@ -222,17 +242,56 @@ const i18nStrings = {
    itemDestroyed: "ldnd5e.itemDestroyed",
    groupRolls: "ldnd5e.groupRolls",
 
+   army: {
+      prestige: "ldnd5e.army.prestige",
+      commander: "ldnd5e.army.commander",
+      noCommander: "ldnd5e.army.noCommander",
+      removeCommander: "ldnd5e.army.removeCommander",
+      supplies: "ldnd5e.army.supplies",
+      companies: "ldnd5e.army.companies",
+   },
+
+   company : {
+      commander: "ldnd5e.company.commander",
+      removeCommander: "ldnd5e.company.removeCommander",
+      noCommander: "ldnd5e.company.noCommander",
+   },
+
+   unit: {
+      category: "ldnd5e.unit.category",
+      categoryDescription: "ldnd5e.unit.categoryDescription",
+      description: "ldnd5e.unit.description",
+      price: "ldnd5e.unit.price",
+      combat: "ldnd5e.unit.combat",
+      tatics: "ldnd5e.unit.tatics",
+      configureCategory: "ldnd5e.unit.configureCategory",
+   },
+
    unitType: "ldnd5e.unit",
    uTypes: {
       light: "ldnd5e.uTypes.light",
       heavy: "ldnd5e.uTypes.heavy",
-      merc: "ldnd5e.uTypes.merc",
+      special: "ldnd5e.uTypes.special",
+      medical: "ldnd5e.uTypes.medical",
    },
    uAbilities: {
-      for: "ldnd5e.uAbilities.for",
+      frt: "ldnd5e.uAbilities.frt",
       mrl: "ldnd5e.uAbilities.mrl",
-      wil: "ldnd5e.uAbilities.wil",
+      wll: "ldnd5e.uAbilities.wll",
    },
+   uCombat: {
+      dsp: "ldnd5e.uCombat.dsp",
+      enc: "ldnd5e.uCombat.enc",
+      def: "ldnd5e.uCombat.def",
+   },
+
+   categories: {
+      arcanists: "ldnd5e.categories.arcanists",
+      devotees: "ldnd5e.categories.devotees",
+      fighters: "ldnd5e.categories.fighters",
+      specialists: "ldnd5e.categories.specialists",
+   },
+
    messages: {
       bldgDmgLightArmor: "ldnd5e.messages.bldgDmgLightArmor",
       slshDmgHeavyArmor: "ldnd5e.messages.slshDmgHeavyArmor",
@@ -296,4 +355,4 @@ const gmControl =
    button: true
 };
 
-export { constants, UnarmoredClasses, NDs, gmControl, i18nStrings };
+export { constants, UnarmoredClasses, NDs, gmControl, i18nStrings, unitChoices };

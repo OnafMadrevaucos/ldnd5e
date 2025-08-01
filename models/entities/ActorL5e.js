@@ -34,7 +34,7 @@ export default class ActorL5e extends documents.Actor5e {
         const actorData = this;
         const data = actorData.system;
         
-	    if(!(["group"].includes(this.type))) {
+	    if(!(["group"].includes(this.type) || this.type.startsWith("ldnd5e"))) {
             data.profMod = data.attributes.prof > 0 ? `+${data.attributes.prof}` : data.attributes.prof.toString();
             data.abilities.con.strMod = data.abilities.con.mod > 0 ? `+${data.abilities.con.mod}` : data.abilities.con.mod.toString();
 

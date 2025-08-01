@@ -1,0 +1,71 @@
+<header class="sheet-header flexcol">
+    {{#debug this}}{{/debug}}
+    <div class="center">
+
+        {{!-- Portrait --}}
+        <div class="portrait">
+
+            <img src="{{ portrait.src }}" alt="{{ actor.name }}" {{~#if (and editable portrait.path)}}
+                data-action="editImage" data-edit="{{ portrait.path }}" {{~else}} data-action="showArtwork" {{/if}}>
+
+        </div>
+
+        {{!-- Vitals --}}
+        <div class="bottom vitals">
+
+            {{!-- Category --}}
+            <div class="left ac unit-category">
+
+                <div class="{{#if editable}}none-badge{{else}}{{system.info.category}}-badge{{/if}} badge" aria-label="{{localize (concat 'ldnd5e.categories.' system.info.category)}}">
+                    {{#if editable}}
+                    <button type="button" class="config-button unbutton" data-action="showConfiguration"
+                            data-config="category" data-tooltip="ldnd5e.unit.configureCategory"
+                            aria-label="{{ localize 'ldnd5e.unit.configureCategory' }}">
+                        <i class="fas fa-cog" inert></i>
+                    </button>
+                    {{else}}
+                    <div data-attribution="system.info.category" data-attribution-caption="{{localize (concat 'ldnd5e.categories.' system.info.category)}}"
+                        data-tooltip-direction="DOWN">
+                    </div>
+                    {{/if}}
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="bottom">
+
+        {{!-- Name & Info --}}
+        <div class="center">
+
+            {{!-- Name --}}
+            {{#if editable}}
+            <input type="text" name="name" class="document-name uninput" value="{{ actor._source.name }}">
+            {{else}}
+            <div class="document-name">{{ actor.name }}</div>
+            {{/if}}
+
+
+
+            {{!-- Info --}}
+            <ul class="labels unlist">
+
+                {{!-- Type --}}
+                <li class="unit-type">
+                    {{#if editable}}
+                    <select class="unselect" name="system.info.type">
+                        {{ selectOptions uTypes selected=source.system.info.type labelAttr="label" }}
+                    </select>
+                    {{else}}
+                    <span>{{ lookup (lookup uTypes system.info.type) "label" }}</span>
+                    {{/if}}
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+</header>

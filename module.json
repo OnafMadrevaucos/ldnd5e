@@ -9,7 +9,7 @@
       "url": ""
     }
   ],
-  "version": "1.3.3",
+  "version": "1.3.4",
   "compatibility": {
     "minimum": "10",
     "verified": "13"
@@ -141,6 +141,13 @@
       ]
     }
   ],
+  "documentTypes": {
+    "Actor": {
+      "army": {},
+      "company": {},
+      "unit": {}
+    }
+  },
   "languages": [
     {
       "lang": "pt-br",

@@ -1,10 +1,14 @@
 {
-    "ldnd5e" : {
-        "title" : "Lemurian D&D 5º Ed. Control",
+    "TYPES.Actor.ldnd5e": {
+        "army": "Army",
+        "company": "Company",
+        "unit": "Unit"
+    },
+    "ldnd5e": {
+        "title": "Lemurian D&D 5º Ed. Control",
         "npcsStatsTitle": "Combat NPC Statistics",
-        "adSystemTitle" : "Absorved Damage System",
-        "arSystemTitle" : "Agile Reaction System",
-        
+        "adSystemTitle": "Absorved Damage System",
+        "arSystemTitle": "Agile Reaction System",
         "sheetTitle": "LDnD5e Character Sheet",
         "pcsLabel": "Player Characters",
         "armorLabel": "Armors",
@@ -14,22 +18,17 @@
         "ownerLdo": "Ldo",
         "damageSystem": "Damage System",
         "noArmorName": "Unarmored Defense",
-
         "refreshBtn": "Refresh PCs Data",
-
         "pdTitle": "Pierc. Dmg",
         "sdTitle": "Slsh. Dmg",
         "bdTitle": "Bldg. Dmg",
         "tdTitle": "Total",
-
         "profTitle": "Prof. Bonus",
         "conTitle": "Const. Mod",
-        "exauTitle": "Exaustion", 
+        "exauTitle": "Exaustion",
         "exaustCtrlTitle": "Exaustion Control",
-
         "arControlTitle": "",
         "arControlLabel": "",
-
         "dlControlTitle": "Damage Control",
         "dlControlItemLabel": "Damaged Item",
         "dlControlDamageType": "Damage Type",
@@ -37,51 +36,38 @@
         "dlControlRepairLvl": "# Repaired Levels",
         "dlControlDamageBtn": "Damage",
         "dlControlRepairsBtn": "Repair",
-
         "dlControlSmithRepair": "Smith Repair",
         "dlControlNotSmithRepair": "Self Repair",
-
         "dlControlRepairDC": "Repair DC",
-
         "frControlTitle": "Repair Destroyed Item",
         "frControlItemLabel": "Destroyed Item",
         "frControlItemPrice": "Service Price (GPs)",
         "frControlMessage": "As this item was completely destroyed, to repair it the price will be double the original price. Want to proceed anyway?",
-
         "cControlTitle": "Military Company",
         "cControlLightList": "Light Battalion",
         "cControlHeavyList": "Heavy Battalion",
         "cControlSpecialList": "Special Battalion",
-
         "fatigueDialogTitle": "Fatigue Test",
         "fatigueDialogRollBtn": "Roll",
-        
         "activeEffectLabel": "Armor Damage",
         "activeEffectShieldLabel": "Shield Damage",
-
         "addBtn": "Normal",
         "halfBtn": "Nearmiss",
         "subBtn": "Simple",
         "zerarBtn": "Full",
-
         "yesBtn": "Yes",
         "noBtn": "No",
         "saveBtn": "Save",
         "cancelBtn": "Cancel",
-
         "selectAll": "Select All",
-
         "damageTypes": {
             "pierc": "Piercing",
             "slsh": "Slashing",
             "bldg": "Bludgening"
         },
-
         "dcLabel": "Test DC",
-
         "itemDestroyed": "Destroyed",
         "groupRolls": "Extra Roll",
-
         "extraConditions": "Extra Conditions",
         "bleedCondition": "Bleed Condition",
         "bleedingLabel": "Bleeding!",
@@ -90,9 +76,54 @@
         "stunLabel": "Stunned!",
         "stunFooter": "Stunned {value}",
         "specialCondition": "Special Condition",
-        "specialLabel": "Special Trigged!",        
+        "specialLabel": "Special Trigged!",
         "specialFooter": "Special {value}",
         "disableConditions": "Enter '0' to disable",
+        "uTypes": {
+            "light": "Light",
+            "heavy": "Heavy",
+            "special": "Special",
+            "medical": "Medical"
+        },
+        "uAbilities": {
+            "frt": "Fortitute",
+            "mrl": "Morale",
+            "wll": "Will"
+        },
+        "uCombat": {
+            "dsp": "Discipline",
+            "enc": "Encourage",
+            "def": "Defend"
+        },
+        "categories": {
+            "arcanists": "Arcanists",
+            "devotees": "Devotees",
+            "fighters": "Fighters",
+            "specialists": "Specialists"
+        },
+        
+        "army": {
+            "prestige": "Prestige",
+            "commander": "Marshal",
+            "noCommander": "Drop an Actor here...",
+            "removeCommander": "Remove Marshal",
+            "supplies": "Supplies",
+            "companies": "Companies"
+        },
+        "company": {
+            "commander": "Commander",
+            "noCommander": "Drop an Actor here...",
+            "removeCommander": "Remove Commander"
+        },
+        "unit": {
+            "category": "Category",
+            "categoryDescription": "Each unit category has Base Attributes, in which the general needs to have a value of 13 or higher in at least one of them in order to efficiently control the unit.",
+            "description": "Unit Description",
+            "price": "Unit Price",
+            "combat": "Combat Skills",
+            "tatics": "Tatics",
+            "configureCategory": "Configure Category"
+        },
 
         "messages": {
             "bldgDmgLightArmor": "Light Armor is immune to damage caused by Bludgening Damage.",
@@ -108,30 +139,24 @@
             "reconstructedMessage": "{item} has been successfully rebuilt.",
             "repairFailed": "{item} cannot be repaired. The separate cost for the repair was lost.",
             "noTool": "It is necessary to have a Smith's Tools to repair this item.",
-
             "arControlLabel": "Do you want {action} in {value} penalty point for all {actor} tests?",
             "arControlLabelObs": "NOTE: The penalty only increases the Critical Failure threshold.",
             "arMaxedOut": "{actor}'s Critical Failure threshold is already at its maximum. Performing an agile reaction will now increase your exhaustion level by 1.",
-
             "fatigueMessage": "{owner} is fatigued and took a long rest. Check if he managed to catch his breath a little for the next battles.",
             "maxFatigueMessage": "{owner} is very fatigued and has succumbed to tiredness. Your hit points drop to 0, making you unconscious.",
             "fatigueGained": "The battle is taking its toll on {owner}'s body. The last attack earned him 1 Fatigue point. Your AC penalty is now {penalty}.",
             "fatigueLost": "{owner} has rested completely and lost {amount} Fatigue point(s). Your AC penalty is now {penalty}.",
-
             "addUnitTitle": "Add Unit",
             "addUnitLabel": "Do you want to add {unit} to a Company battalion?",
             "dismissUnitTitle": "Dismiss Unit",
             "dismissUnitLabel": "Do you wish to dismiss {unit} from your battalion in the Company?",
-
             "noActiveCombat": "It is not possible to use an Agile Reaction when there is no valid active combat.",
             "nonCobatantActor": "{actor} is not a combatant and cannot use Agile Reactions.",
-
             "noBothEffects": "Both of {actor}'s Active Effects (Armor and Shield) are malfunctioning. Active Effects have been recreated.",
             "noArmorEffect": "{actor}'s Armor Active Effect is malfunctioning. Active Effect has been recreated.",
             "noShieldEffect": "The Active Effect for {actor}'s Shields is malfunctioning. Active Effect has been recreated.",
             "noEffectErrors": "No Actor had errors in their Active Effects."
         },
-
         "settings": {
             "hideFromGMName": "Hide GM Effect Controls",
             "hideFromGMHint": "Hides the Armor Damage Active Effects controls from the GM. By default, only the GM has access to the controls.",

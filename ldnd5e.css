@@ -189,9 +189,9 @@
   flex: 100%;
 }
 
-.ldnd5e input[type="text"],
-.ldnd5e input[type="number"],
-.ldnd5e select {
+.ldnd5e:not(.sheet) input[type="text"],
+.ldnd5e:not(.sheet) input[type="number"],
+.ldnd5e:not(.sheet) select {
   height: calc(100% - 2px);
   border: 1px solid #7a7971;
   background: rgba(0, 0, 0, 0.05);
@@ -957,6 +957,506 @@
 
 .ldnd5e.app .unit-list .unit-abilities .unit-scores .unit-ability .unit-ability-save {
   border-right: 2px groove #eeede0;
+}
+
+/* ----------------------------------------- */
+/*  Military Sheet                           */
+/* ----------------------------------------- */
+.ldnd5e .attribute-title {
+  background-color: var(--dnd5e-color-gold);
+}
+
+.ldnd5e .attribute-title.morale {
+  left: -10%;
+  width: 110%;
+  background-color: var(--color-warm-3);
+  font-weight: 700;
+}
+
+.ldnd5e .attribute-title span {
+  width: 100%;
+  text-align: center;
+  font-weight: normal;
+}
+
+.ldnd5e.army .banner {
+  position: absolute;
+  top: 95px;
+  right: 1.65em;
+  width: 24px;
+  text-align: center;
+  font-weight: 700;
+  background-color: var(--dnd5e-color-gold);
+  box-shadow: -1px 7px 6px var(--dnd5e-color-black);
+}
+
+.ldnd5e.army .banner::after {
+  content: '';
+  position: absolute;
+  right: 0%;
+  bottom: -10px;
+  width: 24px;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 10px solid var(--dnd5e-color-gold);
+}
+
+.ldnd5e .commander {
+  margin-top: 10px;
+  box-shadow: 0 0 6px var(--dnd5e-color-black);
+}
+
+.ldnd5e .commander .commander-header {
+  background: linear-gradient(to right, #491d25, #311b1f);
+  display: flex;
+  align-items: stretch;
+  color: white;
+  border-radius: 3px 3px 0 0;
+  border-bottom: var(--dnd5e-border-gold);
+  padding: 0.5em;
+}
+
+.ldnd5e .commander .commander-info {
+  display: flex;
+  align-items: stretch;
+  height: 60px;
+  padding: 0.5rem;
+  background: var(--dnd5e-background-card);
+  border-radius: 0 0 3px 3px;
+}
+
+.ldnd5e .commander .commander-info img {
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  margin-right: 10px;
+  border: 1px solid var(--color-text-secondary);
+}
+
+.ldnd5e .commander .commander-info h4 {
+  width: 100%;
+  margin: 0;
+  align-self: center;
+}
+
+.ldnd5e .commander .commander-info button {
+  margin-right: 5px;
+}
+
+.ldnd5e .commander .commander-info span {
+  width: 100%;
+  align-self: center;
+  text-align: center;
+  font-style: italic;
+  font-weight: lighter;
+  color: var(--dnd5e-color-gold);
+}
+
+.ldnd5e .commander .commander-info:hover {
+  cursor: pointer;
+}
+
+.ldnd5e .commander .commander-info:hover h4 {
+  text-shadow: 0 0 5px var(--color-shadow-primary);
+}
+
+.ldnd5e section.currency {
+  padding: 5px;
+  justify-content: flex-end;
+}
+
+.ldnd5e .main-content {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
+
+.ldnd5e .basic-skills {
+  flex: 1.5;
+  align-self: baseline;
+  height: 15em;
+}
+
+.ldnd5e .basic-skills .skills {
+  height: 100%;
+}
+.ldnd5e .basic-skills .saves {
+  margin-top: 5px;
+}
+
+.ldnd5e .basic-skills .saves h3,
+.ldnd5e .basic-skills .skills h3 {
+  text-transform: uppercase;
+  font-size: var(--font-size-11);
+  color: var(--dnd5e-color-gold);
+  font-weight: bold;
+}
+
+.ldnd5e .basic-skills .saves h3 span,
+.ldnd5e .basic-skills .skills h3 span {
+  padding-left: 3px;
+}
+
+.ldnd5e .basic-skills .saves-list,
+.ldnd5e .basic-skills .skills-list {
+  list-style: none;
+}
+
+.ldnd5e .basic-skills .saves-list .save,
+.ldnd5e .basic-skills .skills-list .skill {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
+
+.ldnd5e .basic-skills .saves-list .save .name,
+.ldnd5e .basic-skills .skills-list .skill .name {
+  flex: 2;
+  font-family: var(--dnd5e-font-roboto);
+  text-transform: uppercase;
+  font-weight: bold;
+  align-self: center;
+}
+
+.ldnd5e .basic-skills .saves-list .save .name i,
+.ldnd5e .basic-skills .skills-list .skill .name i {
+  padding-right: 3px;
+}
+
+.ldnd5e .basic-skills .saves-list .save .bonus,
+.ldnd5e .basic-skills .skills-list .skill .bonus {
+  flex: 1;
+  text-align: center;
+  font-weight: bold;
+  font-size: var(--font-size-16);
+}
+
+.ldnd5e .basic-skills .saves-list .save .bonus .sign,
+.ldnd5e .basic-skills .skills-list .skill .bonus .sign {
+  color: var(--dnd5e-color-gold);
+}
+
+.ldnd5e .basic-skills .stamina {
+  align-self: center;
+  margin-top: auto;
+  padding-block: 5px;
+  width: 10em;
+}
+
+.ldnd5e .basic-skills .stamina .stamina-label {
+  color: var(--dnd5e-color-gold);
+  font-size: var(--font-size-12);
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.ldnd5e .basic-skills .stamina .stamina-bar {
+  --bar-percentage: 0%;
+  border: 1px solid var(--dnd5e-color-gold);
+  border-radius: 3px;
+  background: black;
+  width: 100%;
+  height: 8px;
+  overflow: hidden;
+}
+
+.ldnd5e .basic-skills .stamina .stamina-bar::after {
+  content: "";
+  height: 100%;
+  width: var(--bar-percentage);
+  background: var(--dnd5e-color-gold);
+  display: block;
+}
+
+.ldnd5e.unit .tatics-list .items-header,
+.ldnd5e.company .units-list .items-header,
+.ldnd5e.army .companies-list .items-header {
+  gap: 5px;
+}
+
+.ldnd5e.unit .tatics-list .items-header .item-detail,
+.ldnd5e.company .units-list .items-header .item-detail,
+.ldnd5e.army .companies-list .items-header .item-detail {
+  flex: 0 0 50px;
+}
+
+.ldnd5e.unit .tatics-list .items-header .item-name,
+.ldnd5e.company .units-list .items-header .item-name,
+.ldnd5e.army .companies-list .items-header .item-name {
+  flex: 1;
+}
+
+.ldnd5e.dnd5e2.unit .tatics-list .items-section.card,
+.ldnd5e.dnd5e2.company .units-list .items-section.card,
+.ldnd5e.dnd5e2.army .companies-list .items-section.card {
+  border: none;
+}
+
+.ldnd5e.unit .tatics-list .tatic,
+.ldnd5e.company .units-list .unit,
+.ldnd5e.army .companies-list .company {
+  background: var(--dnd5e-background-card);
+}
+
+.ldnd5e.unit .tatics-list .tatic .item-row,
+.ldnd5e.company .units-list .unit .item-row,
+.ldnd5e.army .companies-list .company .item-row {
+  gap: 5px;
+}
+
+.ldnd5e.unit .tatics-list .tatic .item-row button,
+.ldnd5e.unit .tatics-list .tatic .item-row .item-data,
+.ldnd5e.company .units-list .unit .item-row button,
+.ldnd5e.company .units-list .unit .item-row .item-data,
+.ldnd5e.army .companies-list .company .item-row button,
+.ldnd5e.army .companies-list .company .item-row .item-data {
+  flex: 0 0 50px;
+  align-self: center;
+  text-align: center;
+}
+
+.ldnd5e.unit .tatics-list .tatic .item-row .item-name,
+.ldnd5e.company .units-list .unit .item-row .item-name,
+.ldnd5e.army .companies-list .company .item-row .item-name {
+  flex: 5em;
+}
+
+.ldnd5e div[data-application-part="body"] {
+  padding-inline: 12px;
+  height: 100%;
+  margin-block: 10px;
+}
+
+.ldnd5e.company .moral-badge {
+  filter: unset;
+  margin: unset;
+  position: relative;
+  width: 52px;
+  height: 52px;
+  text-align: center;
+  line-height: 48px;
+  background-image: url(ui/moral-badge.png);
+  display: block;
+  place-content: unset;
+  font-size: var(--font-size-18);
+  z-index: 1;
+}
+
+.ldnd5e.company .ability-scores {
+  margin-top: 5px;
+}
+
+.ldnd5e.company .units {
+  flex: 3;
+}
+
+.ldnd5e.company .units .items-list {
+  margin-bottom: 5px;
+}
+
+.ldnd5e.unit .center {
+  align-self: center;
+}
+
+.ldnd5e.unit .sheet-header .bottom {
+  margin-top: auto;
+}
+
+.ldnd5e.unit .sheet-header div.document-name {
+  text-align: center;
+}
+
+.ldnd5e.unit .sheet-header .labels {
+  justify-content: center;
+  margin-top: 5px;
+  height: auto;
+}
+
+.ldnd5e.unit .unit-category .badge {
+  filter: unset;
+  margin: unset;
+  position: absolute;
+  top: -45px;
+  width: 52px;
+  height: 52px;
+  min-width: unset;
+  line-height: 48px;
+  font-size: var(--font-size-18);
+  z-index: 1;
+}
+
+.ldnd5e.unit .unit-category .none-badge {
+  background-image: url(ui/categories/vazio.png);
+}
+
+.ldnd5e.unit .unit-category .arcanists-badge {
+  background-image: url(ui/categories/arcanos.png);
+}
+
+.ldnd5e.unit .unit-category .devotees-badge {
+  background-image: url(ui/categories/devotos.png);
+}
+
+.ldnd5e.unit .unit-category .fighters-badge {
+  background-image: url(ui/categories/lutadores.png);
+}
+
+.ldnd5e.unit .unit-category .specialists-badge {
+  background-image: url(ui/categories/especialistas.png);
+}
+
+.ldnd5e.unit .ability-scores {
+  display: flex;
+  padding: 10px 0;
+  font-family: var(--dnd5e-font-roboto);
+  position: relative;
+  box-shadow: none;
+}
+
+.ldnd5e.unit .ability-scores::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 0 0;
+  pointer-events: none;
+  border-radius: 4px;
+  box-shadow: 0 0 6px var(--dnd5e-shadow-45);
+}
+
+.ldnd5e.unit .ability-scores .label {
+  text-transform: uppercase;
+  font-size: var(--font-size-11);
+  color: var(--dnd5e-color-gold);
+  font-weight: bold;
+  z-index: 2;
+}
+
+.ldnd5e.unit .ability-scores .mod {
+  font-weight: bold;
+  color: var(--dnd5e-color-black);
+  font-size: var(--font-size-16);
+  padding: 3px 0;
+  z-index: 2;
+}
+
+.ldnd5e.unit .ability-scores .mod input {
+  text-align: center;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.ldnd5e.unit .ability-scores .sign {
+  color: var(--color-text-light-6);
+}
+
+.ldnd5e.unit .ability-scores .ability-score {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 4px;
+  border-right: 1px solid var(--color-border-light-1);
+}
+
+.ldnd5e.unit .ability-scores .ability-score:last-child {
+  border: none;
+}
+
+.ldnd5e.unit .ability-scores .ability-score>img {
+  border: none;
+  position: absolute;
+  object-fit: contain;
+  opacity: 0.035;
+  margin: 0;
+  height: 100%;
+  width: 50%;
+  z-index: 1;
+}
+
+.ldnd5e.unit .items-list {
+  margin-top: 5px;
+}
+
+.ldnd5e.unit .unit-info {
+  padding-block: 5px;
+}
+
+.ldnd5e.unit .unit-description {
+  flex: 4;
+  font-size: var(--font-size-18);
+}
+
+.ldnd5e.unit .unit-description .active {
+  color: var(--dnd5e-color-gold);
+}
+
+.ldnd5e.unit .unit-info .description-tooltip {
+  position: absolute;
+  height: 25em;
+  width: 40em;
+  top: 2.5em;
+  left: -40em;
+  background: url(ui/texture1.webp) no-repeat top center / auto 770px, var(--dnd5e-color-parchment) url(ui/texture2.webp) no-repeat bottom center / auto 300px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  padding: 5px;
+  z-index: 20;
+  transition: all 0.5s ease-in-out;
+}
+
+.ldnd5e.unit .unit-info .description-tooltip.active {
+  left: 0;
+  transition: all 0.5s ease-in-out;
+}
+
+.ldnd5e.unit .unit-info .description-tooltip * {
+  color: var(--color-dark-2);
+}
+
+.ldnd5e.unit .unit-info .description-tooltip h4 {
+  text-align: center;
+}
+
+.ldnd5e.unit .unit-info .description-tooltip span {
+  border-bottom: 1px solid var(--color-warm-3);
+  padding-bottom: 10px;
+}
+
+.ldnd5e.unit .unit-info .description-tooltip .edit-description {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.ldnd5e.unit .unit-price {
+  flex: 1;
+  padding: 5px;
+  gap: 5px;
+}
+
+.ldnd5e.unit .unit-price span:not(.price) {
+  flex: 0;
+  line-height: 0em;
+}
+
+.ldnd5e.unit .unit-price * {
+  flex: 1;
+  padding-inline: 2px;
+}
+
+.ldnd5e.unit .unit-price .price {
+  color: var(--dnd5e-color-gold);
+  font-size: var(--font-size-14);
+  font-family: var(--dnd5e-font-roboto);
+  text-align: center;
+}
+
+.ldnd5e.unit .tatics-list {
+  flex: 3;
+  align-self: baseline;
 }
 
 /* ----------------------------------------- */

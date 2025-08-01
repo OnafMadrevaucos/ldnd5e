@@ -1,10 +1,14 @@
 {
-    "ldnd5e" : {
-        "title" : "Controle D&D 5º Ed. Lemuriano",
+    "TYPES.Actor.ldnd5e": {
+        "army": "Exército",
+        "company": "Companhia",
+        "unit": "Unidade"
+    },
+    "ldnd5e": {
+        "title": "Controle D&D 5º Ed. Lemuriano",
         "npcsStatsTitle": "Estatísticas PnJs em Combate",
-        "adSystemTitle" : "Sistema de Danos Absorvidos",
-        "arSystemTitle" : "Sistema de Reação Ágil",
-
+        "adSystemTitle": "Sistema de Danos Absorvidos",
+        "arSystemTitle": "Sistema de Reação Ágil",
         "sheetTitle": "LDnD5e Character Sheet",
         "pcsLabel": "Personagens de Jogadores",
         "armorLabel": "Armaduras",
@@ -14,21 +18,16 @@
         "ownerLdo": "Ldo",
         "damageSystem": "Sistema de Avarias",
         "noArmorName": "Defesa Sem Armadura",
-
         "refreshBtn": "Recarregar Dados de PJs",
-
         "pdTitle": "Dano Perf.",
         "sdTitle": "Dano Cort.",
         "bdTitle": "Dano Cont.",
         "tdTitle": "Total",
-
         "profTitle": "Bônus Prof.",
         "conTitle": "Mod. Const.",
-        "exauTitle": "Exaustão",   
-        "exaustCtrlTitle": "Controle de Exaustão",     
-
-        "arControlTitle": "Execução de Reação Ágil",        
-
+        "exauTitle": "Exaustão",
+        "exaustCtrlTitle": "Controle de Exaustão",
+        "arControlTitle": "Execução de Reação Ágil",
         "dlControlTitle": "Controle de Danos",
         "dlControlItemLabel": "Item Avariado",
         "dlControlDamageType": "Tipo de Dano",
@@ -36,62 +35,94 @@
         "dlControlRepairLvl": "# Níveis Reparados",
         "dlControlDamageBtn": "Avaria",
         "dlControlRepairsBtn": "Reparo",
-
         "dlControlSmithRepair": "Reparo por Ferreiro",
         "dlControlNotSmithRepair": "Reparo Próprio",
-
         "dlControlRepairDC": "CD do Reparo",
-
         "frControlTitle": "Reparo de Item Destruído",
         "frControlItemLabel": "Item Destruído",
         "frControlItemPrice": "Preço do Serviço (POs)",
         "frControlMessage": "Como o item foi totalmente destruído, para repará-lo será necessário pagar o dobro do seu valor original. Deseja repará-lo mesmo assim?",
-
         "cControlTitle": "Companhia Militar",
         "cControlLightList": "Batalhão Leve",
         "cControlHeavyList": "Batalhão Pesado",
         "cControlSpecialList": "Batalhão Especial",
-
         "fatigueDialogTitle": "Teste de Fadiga",
         "fatigueDialogRollBtn": "Rolar",
-
         "activeEffectLabel": "Avaria Armadura",
         "activeEffectShieldLabel": "Avaria Escudo",
-
         "addBtn": "Normal",
         "halfBtn": "Raspão",
         "subBtn": "Simples",
         "zerarBtn": "Completo",
-
         "yesBtn": "Sim",
         "noBtn": "Não",
         "saveBtn": "Salvar",
         "cancelBtn": "Cancelar",
-
         "selectAll": "Selecionar Todos(as)",
-
         "damageTypes": {
             "pierc": "Perfurante",
             "slsh": "Cortante",
             "bldg": "Contundente"
         },
-
         "dcLabel": "CD do Teste",
-
         "itemDestroyed": "Destruído",
         "groupRolls": "Rolagem Extra",
-
         "extraConditions": "Condições Extras",
         "bleedCondition": "Sangramento",
         "bleedingLabel": "Sangramento!",
         "bleedFooter": "Sangramento {value}",
         "stunCondition": "Atordoamento",
-        "stunLabel": "Atordoamento!",        
+        "stunLabel": "Atordoamento!",
         "stunFooter": "Atordoamento {value}",
         "specialCondition": "Especial",
-        "specialLabel": "Especial Ativado!",        
+        "specialLabel": "Especial Ativado!",
         "specialFooter": "Especial {value}",
         "disableConditions": "Insira '0' para desativar",
+        "uTypes": {
+            "light": "Leve",
+            "heavy": "Pesada",
+            "special": "Especial",
+            "medical": "Médica"
+        },
+        "uAbilities": {
+            "frt": "Fortitude",
+            "mrl": "Moral",
+            "wll": "Vontade"
+        },
+        "uCombat": {
+            "dsp": "Disciplina",
+            "enc": "Encorajar",
+            "def": "Defender"
+        },
+        "categories": {
+            "arcanists": "Arcanos",
+            "devotees": "Devotos",
+            "fighters": "Lutadores",
+            "specialists": "Especialistas"
+        },
+
+        "army": {
+            "prestige": "Prestígio",
+            "commander": "Marechal",
+            "noCommander": "Arraste um Actor até aqui...",
+            "removeCommander": "Remover Marechal",
+            "supplies": "Suprimentos",
+            "companies": "Companhias"
+        },
+        "company": {
+            "commander": "Comandante",
+            "noCommander": "Arraste um Actor até aqui...",
+            "removeCommander": "Remover Comandante"
+        },
+        "unit": {
+            "category": "Categoria",
+            "categoryDescription": "Cada categoria de unidade possui Atributos Base, nos quais o general necessita ter um valor 13 ou mais em pelo menos um deles para conseguir controlar a unidade de forma eficiente.",
+            "description": "Descrição da Unidade",
+            "price": "Preço da Unidade",
+            "combat": "Habilidades de Combate",
+            "tatics": "Táticas",
+            "configureCategory": "Configurar Categoria"
+        },
 
         "messages": {
             "bldgDmgLightArmor": "Armaduras Leves são imunes a avarias causadas por Dano Contundente.",
@@ -107,30 +138,24 @@
             "reconstructedMessage": "{item} foi reconstruído com sucesso.",
             "repairFailed": "{item} não pode ser reparado. O custo separado para o reparo foi perdido.",
             "noTool": "É necessário possuir Ferramentas de Ferreiro para reparar esse item.",
-
             "arControlLabel": "Deseja {action} em {value} ponto de penalidade a todos os testes do(a) {actor}?",
             "arControlLabelObs": "OBS.: A penalidade apenas aumenta o limiar de Falha Crítica.",
             "arMaxedOut": "O limiar de Falha Crítica de {actor} já se encontra no máximo. Realizar uma reação ágil agora subirá o seu nível de exaustão em 1.",
-
             "fatigueMessage": "{owner} está fadigado e realizou um descanso longo. Verifique se ele conseguiu recuperar um pouco seu fôlego para as próximas batalhas.",
             "maxFatigueMessage": "{owner} está muito fatigado(a) e sucumbiu ao cansaço. Seus pontos de vida caem para 0, ficando inconsciente.",
             "fatigueGained": "A batalha está cobrando o preço no corpo de {owner}. O último ataque lhe rendeu 1 ponto de Fadiga. Sua penalidade na CA agora é de {penalty}.",
             "fatigueLost": "{owner} descansou completamente e perdeu {amount} ponto(s) de Fadiga. Sua penalidade na CA agora é de {penalty}.",
-
             "addUnitTitle": "Adicionar Unidade",
             "addUnitLabel": "Deseja adicionar {unit} em um batalhão da Companhia?",
             "dismissUnitTitle": "Dispensar Unidade",
             "dismissUnitLabel": "Deseja dispensar {unit} de seu batalhão na Companhia?",
-
             "noActiveCombat": "Não é possível utilizar uma Reação Ágil quando não há combate ativo válido.",
             "nonCobatantActor": "{actor} não é combatente e não pode usar Reações Ágeis.",
-
             "noBothEffects": "Ambos os Active Effects (Armadura e Escudo) de {actor} estão com defeito. Active Effects foram recriados.",
             "noArmorEffect": "O Active Effect para Armaduras de {actor} está com defeito. Active Effect foi recriado.",
             "noShieldEffect": "O Active Effect para Escudos de {actor} está com defeito. Active Effect foi recriado.",
             "noEffectErrors": "Nenhum Actor apresentou erros em seus Active Effects."
         },
-
         "settings": {
             "hideFromGMName": "Esconder Controles de Efeitos do GM",
             "hideFromGMHint": "Esconde do GM os controles dos Active Effects das Avarias em Armaduras. Por padrão somente o GM possui acesso aos controles.",
