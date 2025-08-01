@@ -1,0 +1,84 @@
+<div>
+    <div class="top">
+        <section class="currency">                    
+            {{#each currency as |c|}}
+            <label aria-label="{{ c.label }}">
+                <i class="currency {{ key }}" data-tooltip="{{ c.label }}"></i>
+                <input type="text" class="uninput" name="system.currency.{{ c.key }}"
+                    value="{{ c.value }}" data-dtype="Number" inputmode="numeric" pattern="[+=\-]?\d*" readonly>
+            </label>
+            {{/each}}
+        </section>
+    </div>
+
+    <div class="middle">
+        <section class="items-list companies-list" data-item-list="companies">
+            <div class="items-section card">
+                <div class="items-header header flexrow">
+                    <h3 class="item-name flexrow">{{localize 'ldnd5e.army.companies'}}</h3>
+
+                    <div class="item-detail fortitute" data-tooltip="ldnd5e.uAbilities.frt"><i
+                            class="fas fa-hand-fist"></i>
+                    </div>
+                    <div class="item-detail moral" data-tooltip="ldnd5e.uAbilities.mrl"><i class="fas fa-heart"></i>
+                    </div>
+                    <div class="item-detail will" data-tooltip="ldnd5e.uAbilities.wll"><i class="fas fa-brain"></i>
+                    </div>
+
+                    <div class="item-detail light">{{localize 'ldnd5e.uTypes.light'}}</div>
+                    <div class="item-detail heavy">{{localize 'ldnd5e.uTypes.heavy'}}</div>
+                    <div class="item-detail special">{{localize 'ldnd5e.uTypes.special'}}</div>
+                    <div class="item-detail medical">{{localize 'ldnd5e.uTypes.medical'}}</div>
+                    <div class="item-detail tools"></div>
+                </div>
+
+                <ol class="item-list unlist">
+                    {{#each companies as |company|}}
+                    <li class="item company" data-uuid="{{ company.uuid }}" data-item-id="{{ company.id }}"
+                        data-entry-id="{{ company.id }}" data-item-name="{{ company.name }}">
+                        {{!-- Row Summary --}}
+                        <div class="item-row draggable flexrow">
+                            {{!-- Item Name --}}
+                            <div class="item-name item-action item-tooltip" role="button"
+                                data-action="company.clickAction" aria-label="{{ company.name }}">
+                                <img class="item-image gold-icon" src="{{ company.img }}" alt="{{ company.name }}"
+                                    draggable="false">
+                                <div class="name name-stacked">
+                                    <span class="title">{{company.name}}</span>
+                                </div>
+                            </div>
+                            <div class="item-data fortitute">
+                                &mdash;
+                            </div>
+                            <div class="item-data moral">
+                                &mdash;
+                            </div>
+                            <div class="item-data will">
+                                &mdash;
+                            </div>
+                            <div class="item-data light">
+                                &mdash;
+                            </div>
+                            <div class="item-data heavy">
+                                &mdash;
+                            </div>
+                            <div class="item-data special">
+                                &mdash;
+                            </div>
+                            <div class="item-data medical">
+                                &mdash;
+                            </div>
+                            <button type="button" class="config-button unbutton" data-action="removeCompany"
+                                data-tooltip="ldnd5e.army.removeCompany"
+                                aria-label="{{ localize 'ldnd5e.army.removeCompany' }}">
+                                <i class="fas fa-trash" inert></i>
+                            </button>
+                        </div>
+                    </li>
+                    {{/each}}
+                </ol>
+            </div>
+
+        </section>
+    </div>
+</div>

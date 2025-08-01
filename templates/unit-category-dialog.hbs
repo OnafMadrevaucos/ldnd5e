@@ -1,0 +1,11 @@
+<header class='header'>
+    <p>
+        {{localize "ldnd5e.unit.categoryDescription"}}
+    </p>
+</header>
+<section>
+    <h4 class='name'>{{localize 'ldnd5e.unit.category'}}</h4>
+    <select class="unselect" name="system.info.category">
+        {{ selectOptions categories selected=source.system.info.category labelAttr="label" }}
+    </select>
+</section>

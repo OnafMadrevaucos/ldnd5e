@@ -17,8 +17,22 @@ import ActiveEffectL5e from "./models/activeEffect.js";
 
 import ItemSheetL5e from "./models/sheets/ItemSheetL5e.js";
 
+import ArmyL5e from "./models/entities/ArmyL5e.js";
+import CompanyL5e from "./models/entities/CompanyL5e.js";
+import UnitL5e from "./models/entities/UnitL5e.js";
+import CompanySheet from "./models/sheets/CompanySheet.js";
+import UnitSheet from "./models/sheets/UnitSheet.js";
+import ArmySheet from "./models/sheets/ArmySheet.js";
+
+const typeArmy = "ldnd5e.army";
+const typeCompany = "ldnd5e.company";
+const typeUnit = "ldnd5e.unit";
+
 Hooks.once("init", function () {
     console.log("LDnD5e | Inicializando o Módulo Lemurian D&D 5th Edition...");
+
+    registerSystemSettings();
+    registerRPGAwesome();
 
     CONFIG.DND5E = dnd5e.config;
 
@@ -40,8 +54,36 @@ Hooks.once("init", function () {
     CONFIG.Item.documentClass = ItemL5e;
     CONFIG.Actor.documentClass = ActorL5e;
 
+    Object.assign(CONFIG.Actor.dataModels, {
+        [typeArmy]: ArmyL5e,
+        [typeCompany]: CompanyL5e,
+        [typeUnit]: UnitL5e
+    });
+
+    if (game.settings.get('ldnd5e', 'massiveCombatRules')) {
+        const Actors = foundry.documents.collections.Actors;
+
+        Actors.registerSheet('ldnd5e', ArmySheet, {
+            types: ['ldnd5e.army'],
+            makeDefault: true,
+            label: "Exército"
+        });
+
+        Actors.registerSheet('ldnd5e', CompanySheet, {
+            types: ['ldnd5e.company'],
+            makeDefault: true,
+            label: "Companhia"
+        });
+
+        Actors.registerSheet('ldnd5e', UnitSheet, {
+            types: ['ldnd5e.unit'],
+            makeDefault: true,
+            label: "Unidade"
+        });
+    }
+
     preloadTemplates();
-    registerSystemSettings();
+
     patchRollDamage();
 
     Handlebars.registerHelper('debug', Debugger);
@@ -79,12 +121,6 @@ Hooks.on('renderActorSheetV2', async (app, html, data) => {
     }
 
     data.effects = ActiveEffectL5e.prepareActiveEffectCategories(data);
-
-    if (game.settings.get('ldnd5e', 'massiveCombatRules')) {
-        mss.addMassiveCombatParts(actor, html);
-        if (["character"].includes(actor.type) && actor.system.commander)
-            mss.setCommanderSection(html, app);
-    }
 
     // Esconde os controles dos Active Effects.    
     hideEffects(actor, html);
@@ -182,7 +218,7 @@ Hooks.on('dnd5e.preRollDamage', (item, rollData) => {
     const button = rollData.event.currentTarget;
     item.rolledVersatile = (button.dataset.action == 'versatile');
 });
-Hooks.on('dnd5e.rollDamage', (item, rollData) => {    
+Hooks.on('dnd5e.rollDamage', (item, rollData) => {
     //await ecs.patchRollDamage(item, rollData);
 });
 // ------------------------------------------------------//
@@ -206,6 +242,14 @@ Hooks.on('renderChatMessage', async (message, html, messageData) => {
 /** ---------------------------------------------------- */
 /** Funções Internas                                     */
 /** ---------------------------------------------------- */
+
+function registerRPGAwesome() {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "modules/ldnd5e/css/rpg-awesome.min.css";
+    document.head.appendChild(link);
+}
+
 async function renderControl() {
     // Cria um instância do Controle de Dano Absorvido
     const form = new adControl();
