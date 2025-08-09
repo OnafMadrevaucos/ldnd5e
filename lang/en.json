@@ -113,7 +113,8 @@
         "company": {
             "commander": "Commander",
             "noCommander": "Drop an Actor here...",
-            "removeCommander": "Remove Commander"
+            "removeCommander": "Remove Commander",
+            "rest": "Make Camp"
         },
         "unit": {
             "category": "Category",

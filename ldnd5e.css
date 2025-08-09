@@ -1064,6 +1064,7 @@
 .ldnd5e section.currency {
   padding: 5px;
   justify-content: flex-end;
+  flex: 2;
 }
 
 .ldnd5e .main-content {
@@ -1081,6 +1082,7 @@
 .ldnd5e .basic-skills .skills {
   height: 100%;
 }
+
 .ldnd5e .basic-skills .saves {
   margin-top: 5px;
 }
@@ -1224,10 +1226,43 @@
   flex: 5em;
 }
 
+.ldnd5e.unit .tatics-list .tatic .item-row .item-name:hover,
+.ldnd5e.company .units-list .unit .item-row .item-name:hover,
+.ldnd5e.army .companies-list .company .item-row .item-name:hover {
+  cursor: pointer;
+  text-shadow: 0 0 5px var(--color-shadow-primary);
+}
+
 .ldnd5e div[data-application-part="body"] {
   padding-inline: 12px;
   height: 100%;
   margin-block: 10px;
+}
+
+.ldnd5e.company .hit-points .label {
+  justify-content: center;
+}
+
+.ldnd5e.company .prestige-badge {
+  position: absolute;
+  top: 0em;
+  left: 7.5em;
+  width: 45px;
+  height: 45px;
+  font-size: var(--font-size-18);
+}
+
+.ldnd5e.company .rest {
+  flex: 1;
+  justify-items: center;
+  margin-bottom: 5px;
+}
+
+.ldnd5e.company .rest button {
+  width: fit-content;
+  display: flex;
+  gap: 5px;
+  padding-inline: 1em;
 }
 
 .ldnd5e.company .moral-badge {
@@ -1237,11 +1272,11 @@
   width: 52px;
   height: 52px;
   text-align: center;
-  line-height: 48px;
+  line-height: 50px;
   background-image: url(ui/moral-badge.png);
   display: block;
   place-content: unset;
-  font-size: var(--font-size-18);
+  font-size: var(--font-size-13);
   z-index: 1;
 }
 

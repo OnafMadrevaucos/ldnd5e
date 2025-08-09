@@ -123,9 +123,9 @@ const unitChoices = {
    * Defines the Unit Abilities constants.      
    */
    uAbilities: {
-      for: "for",
+      frt: "frt",
       mrl: "mrl",
-      wil: "wil"
+      wll: "wll"
    },
 
    /**
@@ -255,6 +255,7 @@ const i18nStrings = {
       commander: "ldnd5e.company.commander",
       removeCommander: "ldnd5e.company.removeCommander",
       noCommander: "ldnd5e.company.noCommander",
+      rest: "ldnd5e.company.rest",
    },
 
    unit: {

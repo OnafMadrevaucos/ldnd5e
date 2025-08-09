@@ -16,8 +16,12 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         },
         viewPermission: CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER,
         actions: {
+            viewCommander: this.#viewCommander,
             removeCommander: this.#removeCommander,
-            removeUnit: this.#removeUnit
+            clickUnit: this.#clickUnit,
+            removeUnit: this.#removeUnit,
+            roll: this.#roll,
+            companyRest: this.#companyRest
         },
         form: {
             submitOnChange: true,
@@ -48,6 +52,9 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         this.element.classList.toggle("editable", this.isEditable && (this._mode === this.constructor.MODES.EDIT));
         this.element.classList.toggle("interactable", this.isEditable && (this._mode === this.constructor.MODES.PLAY));
         this.element.classList.toggle("locked", !this.isEditable);
+
+        this.element.querySelector('.meter > .hit-points').addEventListener('click', event => this._toggleEditHP(event, true));
+        this.element.querySelector('.meter > .hit-points > input').addEventListener('blur', event => this._toggleEditHP(event, false));
     }
 
     /**
@@ -85,29 +92,23 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
 
         Object.assign(context, {
             actor: this.actor,
-            system: this.actor.system
+            system: this.actor.system,
+            hasArmy: !!this.actor.system.info.army,
+            army: this.actor.system.info.army || null,
+            hasMarshal: !!this.actor.system.info.army?.system.info.commander,
+            marshal: this.actor.system.info.army?.system.info.commander || null,
+            hasCommander: !!this.actor.system.info.commander,
+            commander: this.actor.system.info.commander || null
         });
 
         // Prepare the units data for rendering.
         this._prepareUnits(context);
 
-        // Verify if the army has a commander.
-        context.hasCommander = !!this.actor.system.info.commander;
-
-        // Obtain the commander actor if it exists.
-        context.commander = this.actor.system.info.commander || null;
-
-        // Prepare the company's abilities.
-        this._prepareAbilities(context);
+        // Prepare the actor's combat skills.
+        context.skills = this.actor.system.combat;
 
         // Prepare the company's currency.
         this._prepareCurrency(context);
-
-        // Prepare the company's skills.
-        this._prepareSkills(context);
-
-        // Prepare the company's saves.
-        this._prepareSaves(context);
 
         return context;
     }
@@ -219,85 +220,48 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         context.currency = currency;
     }
 
-    /* -------------------------------------------- */
-
-    /**
-   * Prepare abilities.
-   * @param {ApplicationRenderContext} context  Context being prepared. 
-   * @protected
-   */
-    _prepareAbilities(context) {
-        const abilities = this.actor.system.abilities;
-        const units = this.actor.system.units;
-
-        for (const [id, abl] of Object.entries(abilities)) {
-            for (const uId of units) {
-                const unit = game.actors.get(uId);
-                const uAbl = unit.system?.abilities[id] ?? { value: 0 };
-                abl.value += Math.abs(uAbl.value);
-            }
-            abl.key = id;
-            abl.label = game.i18n.localize(i18nStrings.uAbilities[id]);
-            abl.icon = `modules/ldnd5e/ui/abilities/${id}.svg`;
-            abl.mod = Math.abs(abl.value);
-            abl.sign = (abl.value >= 0) ? "+" : "-";
-            if (!Number.isFinite(abl.max)) abl.max = CONFIG.DND5E.maxAbilityScore;
-        }
-
-        context.abilities = abilities;
-    }
 
     /* -------------------------------------------- */
 
     /**
-   * Prepare combat skills. 
-   * @param {ApplicationRenderContext} context  Context being prepared.   *   
+   * Prepare attributes.   
    * @protected
    */
-    _prepareSkills(context) {
-        const skills = this.actor.system.combat;
-        const units = this.actor.system.units;
+    _prepareAttributes(context) {
+        const data = this.system;
 
-        for (const [id, skl] of Object.entries(skills)) {
-            for (const uId of units) {
-                const unit = game.actors.get(uId);
-                const uSkl = unit.system.combat[id] ?? { value: 0 };
-                skl.value += Math.abs(uSkl.value);
-            }
+        let totalHp = 0;
 
-            skl.key = id;
-            skl.label = game.i18n.localize(i18nStrings.uCombat[id]);
-            skl.icon = unitChoices.uCombatIcons[id];
-            skl.mod = Math.abs(skl.value);
-            skl.sign = (skl.value >= 0) ? "+" : "-";
-        }
-
-        context.skills = skills;
-    }
-
-    /* -------------------------------------------- */
-
-    /**
-   * Prepare combat skills. 
-   * @param {ApplicationRenderContext} context  Context being prepared.   *   
-   * @protected
-   */
-    _prepareSaves(context) {
-        const dsp = context.skills.dsp;
-        const units = this.actor.system.units;
-
-        for (const uId of units) {
+        // Count the number of combat units.
+        for (const uId of this.units) {
             const unit = game.actors.get(uId);
-            const uDsp = unit.system.combat.dsp ?? { value: 0, save: { value: 0 } };
-            dsp.save.value += Math.abs(uDsp.value);
-        }
 
-        dsp.save.mod = Math.abs(dsp.value);
-        dsp.save.sign = (dsp.value >= 0) ? "+" : "-";
+            // Ignore medical units, for it doesn't count as a combat unit.
+            if (unit.system.info.type === unitChoices.uTypes.medical) continue;
+
+            totalHp += (unit.system.abilities.mrl.value + unit.system.abilities.wll.value);
+        }
     }
 
     /* -------------------------------------------- */
-    /*  Events Listeners                            */
+    /*  Event Listeners & Handlers                  */
+    /* -------------------------------------------- */
+
+    /**
+     * Toggle editing hit points.
+     * @param {PointerEvent} event  The triggering event.
+     * @param {boolean} edit        Whether to toggle to the edit state.
+     * @protected
+     */
+    _toggleEditHP(event, edit) {
+        const target = event.currentTarget.closest(".hit-points");
+        const label = target.querySelector(":scope > .label");
+        const input = target.querySelector(":scope > input");
+        label.hidden = edit;
+        input.hidden = !edit;
+        if (edit) input.focus();
+    }
+
     /* -------------------------------------------- */
 
     /**
@@ -322,7 +286,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
     async _onDropActor(event, actor) {
         // The dropped actor is the commander of the army.
         if (["character", "npc"].includes(actor.type)) {
-            await this.actor.update({ ['system.info.commander']: actor });
+            await this._onDropCommander(event, actor);
             return true;
         }
 
@@ -340,6 +304,24 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
     }
 
     /* -------------------------------------------- */
+
+    /** @inheritdoc */
+    async _onDropCommander(event, actor) {
+        const actorData = actor.system;
+        const mainClass = actorData.attributes.hd.classes.first();
+
+        const changes = {
+            ['system.info.commander']: actor,
+
+            ['system.attributes.affinity.class']: mainClass.system.identifier,
+            ['system.attributes.affinity.hitDice']: actorData.attributes.hd.largestFace,
+            ['system.attributes.affinity.baseAbilities']: [], // TODO...
+            ['system.attributes.affinity.bonus.value']: actorData.abilities.cha.mod,
+            ['system.attributes.affinity.bonus.prof']: actorData.attributes.prof,
+        };
+
+        await this.actor.update(changes);
+    }
 
     /** @inheritdoc */
     async _onDropUnit(event, unit) {
@@ -425,6 +407,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
 
         this.actor.system.units.push(unit.id);
         await this.actor.update({ ['system.units']: this.actor.system.units });
+        await unit.update({ ['system.info.company']: this.actor });
 
         return true;
     }
@@ -434,20 +417,67 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
     /* -------------------------------------------- */
 
     /**
+   * Opens the commander sheet.
+   * @this {CompanySheet}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+    static async #viewCommander(event, target) {
+        this.actor.system.info.commander.sheet.render(true);
+    }
+
+    /* -------------------------------------------- */
+
+    /**
    * Removes the commander from the company.
-   * @this {ArmySheet}
+   * @this {CompanySheet}
    * @param {PointerEvent} event  The originating click event.
    * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
    */
     static async #removeCommander(event, target) {
-        await this.actor.update({ [`system.info.commander`]: null });
+        const changes = {
+            ['system.info.commander']: null,
+
+            ['system.attributes.affinity.class']: null,
+            ['system.attributes.affinity.hitDice']: 8,
+            ['system.attributes.affinity.baseAbilities']: [],
+            ['system.attributes.affinity.bonus.value']: 0,
+            ['system.attributes.affinity.bonus.prof']: 0,
+        };
+
+        await this.actor.update(changes);
+
+        // Remove the commander from all units.
+        for (const unitId of this.actor.system.units) {
+            const unit = game.actors.get(unitId);
+            await unit.update({ [`system.info.commander`]: null });
+        }
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Opens the unit sheet..
+   * @this {CompanySheet}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+    static async #clickUnit(event, target) {
+        const item = target.closest(".item");
+        if (!item) return;
+
+        const unitId = item.dataset.itemId;
+        const unit = game.actors.get(unitId);
+
+        // Open the company sheet.
+        unit.sheet.render(true);
     }
 
     /* -------------------------------------------- */
 
     /**
    * Removes a unit from the company.
-   * @this {ArmySheet}
+   * @this {CompanySheet}
    * @param {PointerEvent} event  The originating click event.
    * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
    */
@@ -467,5 +497,49 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
 
         // Update the collection.
         await this.actor.update({ ['system.units']: unitCollection });
+        // Remove the company's reference from the unit.
+        await unit.update({ ['system.info.company']: null });
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Roll any check or saving throw fo the company.
+   * @this {CompanySheet}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+    static async #roll(event, target) {
+        if (!target.classList.contains("rollable")) return;
+
+        switch (target.dataset.type) {
+            case "ability": {
+                const ability = target.closest("[data-ability]")?.dataset.ability;
+
+                if (target.classList.contains("saving-throw")) return this.actor.system.rollSavingThrow({ skill: ability, event });
+                else return this.actor.system.rollAbilityCheck({ ability: ability }, { event });
+            };
+            case "skill": {
+                const skill = target.closest("[data-key]")?.dataset.key;
+                return this.actor.system.rollSkill({ skill: skill }, { event });
+            }
+        }
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Compute the values for a company Rest.
+   * @this {CompanySheet}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+    static async #companyRest(event, target) {
+        const data = this.actor.system;
+
+        await this.actor.update({ 
+            ['system.attributes.hp.value']: data.attributes.hp.max,
+            ['system.attributes.stamina.value']: data.attributes.stamina.max,
+        });
     }
 }

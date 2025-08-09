@@ -15,6 +15,7 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
         viewPermission: CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER,
         actions: {
             removeCommander: this.#removeCommander,
+            clickCompany: this.#clickCompany,
             removeCompany: this.#removeCompany
         },
         form: {
@@ -94,7 +95,25 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
         context.companies = [];
         this.actor.system.companies.forEach(companyId => {
             const company = game.actors.get(companyId);
-            if (company) context.companies.push(company);
+            if (!company) return false;
+
+            const unitCount = {
+                light: 0,
+                heavy: 0,
+                special: 0,
+                medical: 0
+            }
+
+            for (const uId of company.system.units) {
+                const unit = game.actors.get(uId);
+                if (!unit) return false;
+
+                unitCount[unit.system.info.type] += 1;
+            }
+
+            company.unitCount = unitCount;
+
+            context.companies.push(company);
         });
 
         // Verify if the army has a commander.
@@ -234,15 +253,18 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
         }
 
         // The dropped actor is a company of the army.
-        if (actor.type === "ldnd5e.company") {            
+        if (actor.type === "ldnd5e.company") {
             // If the company is already part of the army, do nothing.
             if (this.actor.system.companies.includes(actor.id)) return false;
 
             const companyCollection = foundry.utils.deepClone(this.actor.system.companies).filter(c => c !== actor.id);
             companyCollection.push(actor.id);
 
-
             await this.actor.update({ ['system.companies']: companyCollection });
+            await actor.update({ 
+                ['system.info.army']: this.actor,
+                ['system.attributes.affinity.bonus.prestige']: this.actor.system.prestige.mod 
+            });
             return true;
         }
 
@@ -266,7 +288,34 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
    */
     static async #removeCommander(event, target) {
         await this.actor.update({ [`system.info.commander`]: null });
+
+        // Remove the commander from all companies.
+        for(const company of this.actor.system.companies) {
+            const companyActor = game.actors.get(company);
+            await companyActor.update({ [`system.info.army`]: null });
+        }
     }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Removes the commander from the army.
+   * @this {ArmySheet}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+    static async #clickCompany(event, target) {
+        const item = target.closest(".item");
+        if (!item) return;
+
+        const companyId = item.dataset.itemId;
+        const company = game.actors.get(companyId);
+
+        // Open the company sheet.
+        company.sheet.render(true);
+    }
+
+    /* -------------------------------------------- */
 
     /**
    * Removes a company from the army.
@@ -279,7 +328,15 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
         if (!item) return;
 
         const companyId = item.dataset.itemId;
+        const company = game.actors.get(companyId);
         const companyCollection = foundry.utils.deepClone(this.actor.system.companies).filter(c => c !== companyId);
+
+        // Update the collection.
         await this.actor.update({ ['system.companies']: companyCollection });
+        // Remove the army's reference from the company.
+        await company.update({ 
+            ['system.info.army']: null,
+            ['system.attributes.affinity.bonus.prestige']: 0
+         });
     }
 }

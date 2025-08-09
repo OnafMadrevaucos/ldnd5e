@@ -6,7 +6,10 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
         return {
             flavor: new fields.StringField({ textSearch: true }),
             description: new fields.StringField({ textSearch: true }),
-            info: new fields.SchemaField({                                
+            info: new fields.SchemaField({        
+                company: new fields.ForeignDocumentField(getDocumentClass("Actor"), {
+                    textSearch: true, label: "TYPES.Actor.ldnd5e.company",
+                }),                        
                 type: new fields.StringField({
                     choices: unitChoices.type,
                     initial: "light",
@@ -16,7 +19,7 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
                     initial: "none",
                     textSearch: true,
                 }), 
-                price: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 }),              
+                price: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 }),                              
             }),
             abilities: new fields.SchemaField({
                 frt: new fields.SchemaField({
@@ -103,10 +106,35 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
    * @protected
    */
     _prepareSkills() {
+        const company = this.system.info.company;
+        const prestige = Number(company?.system.attributes.prestige.mod ?? 0);
+        const commander = company?.system.info.commander;
+
         for (const [id, skl] of Object.entries(this.system.combat)) {
             skl.key = id;
             skl.label = game.i18n.localize(i18nStrings.uCombat[id]);
-            skl.mod = Math.abs(skl.value);
+
+            if(['dsp'].includes(id)) {
+                skl.value = this.system.abilities.wll.value;
+
+                skl.bonus = commander?.system.abilities.cha.mod ?? 0.
+                skl.bonus += prestige;                
+            } else if(['enc'].includes(id)) {
+                skl.value = this.system.abilities.frt.value;
+
+                skl.bonus = commander?.system.abilities.cha.mod ?? 0.
+                skl.bonus += prestige;                
+            } else if(['def'].includes(id)) {
+                skl.value = this.system.abilities.mrl.value;
+
+                skl.bonus = commander?.system.abilities.cha.mod ?? 0.
+                skl.bonus += prestige;
+            } else {
+                skl.value = 0;
+                skl.bonus = 0;
+            }            
+
+            skl.mod = Math.abs(skl.value + skl.bonus);
             skl.icon = unitChoices.uCombatIcons[id];
             skl.sign = (skl.value >= 0) ? "+" : "-";
         }
@@ -119,7 +147,14 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
    * @protected
    */
     _prepareSaves() {
+        const company = this.system.info.company;
+        const commander = company?.system.info.commander;
+        const prof = commander?.system.attributes.prof ?? 0;
+
         const dsp = this.system.combat.dsp;
+
+        dsp.save.value = dsp.value + dsp.bonus + prof;
+
         dsp.save.mod = Math.abs(dsp.save.value);
         dsp.save.sign = (dsp.save.value >= 0) ? "+" : "-";
     }

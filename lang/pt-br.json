@@ -112,7 +112,8 @@
         "company": {
             "commander": "Comandante",
             "noCommander": "Arraste um Actor até aqui...",
-            "removeCommander": "Remover Comandante"
+            "removeCommander": "Remover Comandante",
+            "rest": "Acampar"
         },
         "unit": {
             "category": "Categoria",

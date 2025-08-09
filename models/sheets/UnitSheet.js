@@ -88,6 +88,10 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
     Object.assign(context, {
       actor: this.actor,
       system: this.actor.system,
+      hasCompany: !!this.actor.system.info.company,
+      company: this.actor.system.info.company || null,
+      hasCommander: !!this.actor.system.info.company?.system.info.commander,
+      commander: this.actor.system.info.company?.system.info.commander || null,
       isLight: this.actor.system.info.type === unitChoices.uTypes.light,
       isHeavy: this.actor.system.info.type === unitChoices.uTypes.heavy,
       isSpecial: this.actor.system.info.type === unitChoices.uTypes.special,

@@ -9,6 +9,11 @@
             <img src="{{ portrait.src }}" alt="{{ actor.name }}" {{~#if (and editable portrait.path)}}
                 data-action="editImage" data-edit="{{ portrait.path }}" {{~else}} data-action="showArtwork" {{/if}}>
 
+            <div class="right level-badge prestige-badge badge" data-tooltip="ldnd5e.army.prestige"
+                data-tooltip-direction="DOWN">
+                {{ system.attributes.prestige.mod }}
+            </div>
+
         </div>
 
         {{!-- Vitals --}}
@@ -33,18 +38,10 @@
                 {{#with system.attributes.hp}}
                 {{#debug this}}{{/debug}}
                 <div class="meter hit-points sectioned">
-                    <div class="progress hit-points" role="meter" aria-valuemin="0" aria-valuenow="{{ value }}"
+                    <div class="progress hit-points" role="meter" data-action="editHP" aria-valuemin="0" aria-valuenow="{{ value }}"
                         aria-valuemax="{{ max }}" style="--bar-percentage: {{ pct }}%">
                         <div class="label">
-                            <span class="value">{{ value }}</span>                            
-                            {{#if @root.editable}}
-                            <button type="button" class="config-button unbutton" data-action="showConfiguration"
-                                data-config="hitPoints" data-tooltip="DND5E.HitPointsConfig"
-                                aria-label="{{ localize 'DND5E.HitPointsConfig' }}">
-                                <i class="fas fa-cog" inert></i>
-                            </button>
-                            {{/if}}
-
+                            <span class="value">{{ value }}</span>
                         </div>
                         <input type="text" name="system.attributes.hp.value" data-dtype="Number" placeholder="0"
                             value="{{ value }}" inputmode="numeric" pattern="^[+=\-]?\d*" hidden>
@@ -81,15 +78,19 @@
                 {{!-- Organization & Type --}}
                 <ul class="labels unlist">
 
-                    {{!-- Organization --}}
-                    <li class="creature-alignment organization">
-                        {{#if editable}}
-                        <input type="text" name="system.info.org" value="{{ system.info.org }}"
-                            placeholder="{{ localize 'ldnd5e.army.org' }}">
-                        {{else}}
-                        <span>{{ system.info.org }}</span>
-                        {{/if}}
+                    {{!-- Army --}}
+                    {{#if hasArmy}}
+                    <li class="company-army">
+                        <span>{{ army.name }}</span>
                     </li>
+                    {{/if}}
+
+                    {{!-- Marshal --}}
+                    {{#if hasMarshal}}
+                    <li class="company-marshal">
+                        <span>{{ marshal.name }}</span>
+                    </li>
+                    {{/if}}
 
                 </ul>
 
@@ -115,7 +116,7 @@
                     {{#if hasCommander}}
                     <img class="commander-portrait" role="button" aria-label="{{commander.name}}"
                         src="{{commander.img}}"></img>
-                    <h4>{{commander.name}}</h4>
+                    <h4 data-action="viewCommander">{{commander.name}}</h4>
                     <button type="button" class="config-button unbutton" data-action="removeCommander"
                         data-tooltip="ldnd5e.company.removeCommander"
                         aria-label="{{ localize 'ldnd5e.company.removeCommander' }}">
@@ -135,9 +136,9 @@
                     <a class="label {{ key }} rollable ability-check" data-action="roll" data-type="ability">
                         {{ label }}
                     </a>
-                    <div class="mod">                        
-                        <span class="sign">{{ sign }}</span>{{ mod }}                        
-                    </div>                    
+                    <div class="mod">
+                        <span class="sign">{{ sign }}</span>{{ mod }}
+                    </div>
                 </div>
                 {{/each}}
             </div>

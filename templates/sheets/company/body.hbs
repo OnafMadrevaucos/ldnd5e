@@ -1,5 +1,8 @@
 <div>
-    <div class="top">
+    <div class="top flexrow">
+        <section class="rest">
+            <button class="company-rest gold-button" data-action="companyRest"><i class="fas fa-campground" inert></i>{{localize 'ldnd5e.company.rest'}}</button>
+        </section>
         <section class="currency">
             <button type="button" class="item-action unbutton always-interactive" data-action="currency"
                 aria-label="{{ localize " DND5E.CurrencyManager.Title" }}">
@@ -25,7 +28,7 @@
                 </h3>
                 <ul class="skills-list">
                     {{#each skills as |skill|}}
-                    <li data-ability="{{skill.key}}" class="skill">
+                    <li data-key="{{skill.key}}" class="skill">
                         <a class="name rollable" data-action="roll" data-type="skill"><i
                                 class="{{skill.icon}}"></i>{{skill.label}}</a>
                         <div class="bonus">
@@ -38,13 +41,13 @@
 
                 <div class="stamina" data-tooltip="Unit Stamina">
                     <div class="stamina-label roboto-upper">
-                        <i class="fa-solid fa-bolt"></i>
-                        <span class="value">150</span>
+                        <i class="fa-solid fa-bolt"></i>                        
+                        <span class="value">{{system.attributes.stamina.value}}</span>
                         <span class="separator">/</span>
-                        <span class="max">300</span>
+                        <span class="max">{{system.attributes.stamina.max}}</span>
                     </div>
                     <div class="stamina-bar" role="meter" aria-label="Progress to next Level" aria-valuemin="0"
-                        aria-valuenow="0" aria-valuemax="300" aria-valuetext="0%" style="--bar-percentage: 50%;"></div>
+                        aria-valuenow="0" aria-valuemax="{{system.attributes.stamina.max}}" aria-valuetext="{{system.attributes.stamina.pct}}%" style="--bar-percentage: {{system.attributes.stamina.pct}}%;"></div>
                 </div>
 
             </filigree-box>
@@ -56,7 +59,7 @@
                 </h3>
                 <ul class="saves-list">                    
                     <li data-ability="dsp" class="save">
-                        <a class="name rollable" data-action="roll" data-type="save"><i
+                        <a class="name saving-throw rollable" data-action="roll" data-type="ability"><i
                                 class="{{skills.dsp.icon}}"></i>{{skills.dsp.label}}</a>
                         <div class="bonus">
                             <span class="sign">{{skills.dsp.save.sign}}</span>
@@ -96,7 +99,7 @@
                             <div class="item-row draggable flexrow">
                                 {{!-- Item Name --}}
                                 <div class="item-name item-action item-tooltip" role="button"
-                                    data-action="unit.clickAction" aria-label="{{ unit.name }}">
+                                    data-action="clickUnit" aria-label="{{ unit.name }}">
                                     <img class="item-image gold-icon" src="{{ unit.img }}" alt="{{ unit.name }}"
                                         draggable="false">
                                     <div class="name name-stacked">
@@ -149,7 +152,7 @@
                             <div class="item-row draggable flexrow">
                                 {{!-- Item Name --}}
                                 <div class="item-name item-action item-tooltip" role="button"
-                                    data-action="unit.clickAction" aria-label="{{ unit.name }}">
+                                    data-action="clickUnit" aria-label="{{ unit.name }}">
                                     <img class="item-image gold-icon" src="{{ unit.img }}" alt="{{ unit.name }}"
                                         draggable="false">
                                     <div class="name name-stacked">
@@ -202,7 +205,7 @@
                             <div class="item-row draggable flexrow">
                                 {{!-- Item Name --}}
                                 <div class="item-name item-action item-tooltip" role="button"
-                                    data-action="unit.clickAction" aria-label="{{ unit.name }}">
+                                    data-action="clickUnit" aria-label="{{ unit.name }}">
                                     <img class="item-image gold-icon" src="{{ unit.img }}" alt="{{ unit.name }}"
                                         draggable="false">
                                     <div class="name name-stacked">
@@ -255,7 +258,7 @@
                             <div class="item-row draggable flexrow">
                                 {{!-- Item Name --}}
                                 <div class="item-name item-action item-tooltip" role="button"
-                                    data-action="unit.clickAction" aria-label="{{ unit.name }}">
+                                    data-action="clickUnit" aria-label="{{ unit.name }}">
                                     <img class="item-image gold-icon" src="{{ unit.img }}" alt="{{ unit.name }}"
                                         draggable="false">
                                     <div class="name name-stacked">

@@ -63,6 +63,21 @@
                     {{/if}}
                 </li>
 
+                {{!-- Company --}}
+                {{#if hasCompany}}
+                <li class="unit-company">
+                    <span>{{ company.name }}</span>                    
+                </li>
+                {{/if}}
+
+                {{!-- Commander --}}
+                {{#if hasCommander}}
+                <li class="unit-commander">
+                    <span>{{ commander.name }}</span>                    
+                </li>
+                {{/if}}
+
+
             </ul>
 
         </div>
