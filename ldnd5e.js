@@ -15,8 +15,6 @@ import * as ecs from "./scripts/ECSystems.js";
 
 import ActiveEffectL5e from "./models/activeEffect.js";
 
-import ItemSheetL5e from "./models/sheets/ItemSheetL5e.js";
-
 import ArmyL5e from "./models/entities/ArmyL5e.js";
 import CompanyL5e from "./models/entities/CompanyL5e.js";
 import UnitL5e from "./models/entities/UnitL5e.js";
@@ -54,13 +52,13 @@ Hooks.once("init", function () {
     CONFIG.Item.documentClass = ItemL5e;
     CONFIG.Actor.documentClass = ActorL5e;
 
-    Object.assign(CONFIG.Actor.dataModels, {
-        [typeArmy]: ArmyL5e,
-        [typeCompany]: CompanyL5e,
-        [typeUnit]: UnitL5e
-    });
-
     if (game.settings.get('ldnd5e', 'massiveCombatRules')) {
+        Object.assign(CONFIG.Actor.dataModels, {
+            [typeArmy]: ArmyL5e,
+            [typeCompany]: CompanyL5e,
+            [typeUnit]: UnitL5e
+        });
+
         const Actors = foundry.documents.collections.Actors;
 
         Actors.registerSheet('ldnd5e', ArmySheet, {

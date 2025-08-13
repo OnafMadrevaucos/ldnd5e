@@ -32,9 +32,6 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
         body: {
             template: "modules/ldnd5e/templates/sheets/army/body.hbs",
         },
-        footer: {
-            template: "modules/ldnd5e/templates/sheets/army/footer.hbs",
-        }
     };
 
     /* -------------------------------------------- */
@@ -249,6 +246,17 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
         // The dropped actor is the commander of the army.
         if (["character", "npc"].includes(actor.type)) {
             await this.actor.update({ ['system.info.commander']: actor });
+            const companyCollection = foundry.utils.deepClone(this.actor.system.companies);
+
+            // Update all companies of the army.
+            for (const companyId of companyCollection) {
+                const company = game.actors.get(companyId);
+
+                await company.update({
+                    ['system.info.army']: this.actor,
+                    ['system.attributes.affinity.bonus.prestige']: this.actor.system.prestige.mod
+                });
+            }
             return true;
         }
 
@@ -261,9 +269,9 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
             companyCollection.push(actor.id);
 
             await this.actor.update({ ['system.companies']: companyCollection });
-            await actor.update({ 
+            await actor.update({
                 ['system.info.army']: this.actor,
-                ['system.attributes.affinity.bonus.prestige']: this.actor.system.prestige.mod 
+                ['system.attributes.affinity.bonus.prestige']: this.actor.system.prestige.mod
             });
             return true;
         }
@@ -290,7 +298,7 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
         await this.actor.update({ [`system.info.commander`]: null });
 
         // Remove the commander from all companies.
-        for(const company of this.actor.system.companies) {
+        for (const company of this.actor.system.companies) {
             const companyActor = game.actors.get(company);
             await companyActor.update({ [`system.info.army`]: null });
         }
@@ -334,9 +342,9 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
         // Update the collection.
         await this.actor.update({ ['system.companies']: companyCollection });
         // Remove the army's reference from the company.
-        await company.update({ 
+        await company.update({
             ['system.info.army']: null,
             ['system.attributes.affinity.bonus.prestige']: 0
-         });
+        });
     }
 }

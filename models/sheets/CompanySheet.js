@@ -101,8 +101,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
             commander: this.actor.system.info.commander || null
         });
 
-        // Prepare the units data for rendering.
-        this._prepareUnits(context);
+        context.units = this.actor.system.unitsList;
 
         // Prepare the actor's combat skills.
         context.skills = this.actor.system.combat;
@@ -135,30 +134,6 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
    */
     async _prepareHeaderContext(context, options) {
         context.portrait = this._preparePortrait(context);
-    }
-
-    /* -------------------------------------------- */
-
-    /** 
-     * Prepare rendering context for the header.
-     * @param {ApplicationRenderContext} context  Context being prepared.
-     * @protected
-     */
-    _prepareUnits(context) {
-        const units = {
-            light: [],
-            heavy: [],
-            special: [],
-            medical: []
-        };
-
-        for (const id of this.actor.system.units) {
-            const unit = game.actors.get(id);
-
-            units[unit.system.info.type].push(unit);
-        }
-
-        context.units = units;
     }
 
     /* -------------------------------------------- */

@@ -9,7 +9,7 @@
       "url": ""
     }
   ],
-  "version": "1.3.42",
+  "version": "1.3.43",
   "compatibility": {
     "minimum": "10",
     "verified": "13"
@@ -21,16 +21,10 @@
     "requires": [
       {
         "id": "dnd5e",
-        "type": "system",
         "compatibility": {}
-      },
+      },      
       {
-        "id": "more-hooks-5e",
-        "type": "module",
-        "compatibility": {}
-      },
-      {
-        "id": "dnd5e_pt-BR",
+        "id": "dnd5e-pt-BR",
         "type": "module",
         "compatibility": {}
       },

@@ -111,6 +111,9 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
         this._prepareCombatSkills();
         // Prepare the company's saves.
         this._prepareSaves();
+
+        // Sort the units by type.
+        this._prepareUnits();
     }
 
     /* -------------------------------------------- */
@@ -134,7 +137,7 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
                 if (unit.system.info.type === unitChoices.uTypes.medical) continue;
 
                 const uAbl = unit.system?.abilities[id] ?? { value: 0 };
-                abl.value = Math.max(maxValue, uAbl.value);
+                abl.value = maxValue = Math.max(maxValue, uAbl.value);
             }
 
             abl.key = id;
@@ -254,6 +257,29 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
 
         dsp.save.mod = Math.abs(dsp.save.value);
         dsp.save.sign = (dsp.value >= 0) ? "+" : "-";
+    }
+
+    /* -------------------------------------------- */
+
+    /** 
+     * Prepare rendering context for the header.
+     * @protected
+     */
+    _prepareUnits() {
+        const units = {
+            light: [],
+            heavy: [],
+            special: [],
+            medical: []
+        };
+
+        for (const id of this.system.units) {
+            const unit = game.actors.get(id);
+
+            units[unit.system.info.type].push(unit);
+        }
+
+        this.unitsList = units;
     }
 
     /* -------------------------------------------- */
@@ -434,5 +460,4 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
 
         return oldFormat ? rolls[0] : rolls;
     }
-
 }

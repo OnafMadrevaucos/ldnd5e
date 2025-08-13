@@ -18,7 +18,8 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
     viewPermission: CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER,
     actions: {
       showConfiguration: this.#showConfiguration,
-      showDescription: this.#showDescription
+      showDescription: this.#showDescription,
+      roll: this.#roll,
     },
     form: {
       submitOnChange: true,
@@ -207,7 +208,7 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
  * @protected
  */
   _prepareCombat(context) {
-    const skills = this.actor.system.combat;    
+    const skills = this.actor.system.combat;
 
     context.skills = skills;
   }
@@ -262,4 +263,29 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
     const description = document.querySelector(".description-tooltip");
     description.classList.toggle("active");
   }
+
+  /**
+   * Roll any check or saving throw fo the company.
+   * @this {CompanySheet}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+  static async #roll(event, target) {
+    if (!target.classList.contains("rollable")) return;
+
+    switch (target.dataset.type) {
+      case "ability": {
+        const ability = target.closest("[data-ability]")?.dataset.ability;
+
+        if (target.classList.contains("saving-throw")) return this.actor.system.rollSavingThrow({ skill: ability, event });
+        else return this.actor.system.rollAbilityCheck({ ability: ability }, { event });
+      };
+      case "skill": {
+        const skill = target.closest("[data-key]")?.dataset.key;
+        return this.actor.system.rollSkill({ skill: skill }, { event });
+      }
+    }
+  }
+
+  /* -------------------------------------------- */
 }

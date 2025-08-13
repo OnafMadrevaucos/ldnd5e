@@ -17,17 +17,14 @@
 
          "templates/sheets/army/header.hbs",
          "templates/sheets/army/body.hbs",
-         "templates/sheets/army/footer.hbs",
 
          "templates/sheets/company/header.hbs",
          "templates/sheets/company/body.hbs",
-         "templates/sheets/company/footer.hbs",
 
          "templates/sheets/unit/header.hbs",
          "templates/sheets/unit/body.hbs",
-         "templates/sheets/unit/footer.hbs"
     ];
 
     templates = templates.map((t) => `modules/ldnd5e/${t}`);
-    loadTemplates(templates);
+    foundry.applications.handlebars.loadTemplates(templates);
  }
