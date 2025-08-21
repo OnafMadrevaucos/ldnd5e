@@ -4,6 +4,9 @@
         "company": "Companhia",
         "unit": "Unidade"
     },
+    "TYPES.Item.ldnd5e": {
+        "tatic": "Tática"
+    },
     "ldnd5e": {
         "title": "Controle D&D 5º Ed. Lemuriano",
         "npcsStatsTitle": "Estatísticas PnJs em Combate",
@@ -123,6 +126,12 @@
             "combat": "Habilidades de Combate",
             "tatics": "Táticas",
             "configureCategory": "Configurar Categoria"
+        },
+
+        "tatics": {
+            "flavor": "Floreio",
+            "description": "Descrição",
+            "impetus": "Bônus de Ímpeto"
         },
 
         "messages": {

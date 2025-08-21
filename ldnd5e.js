@@ -1,7 +1,7 @@
 import ItemL5e from "./models/entities/ItemL5e.js";
 import ActorL5e from "./models/entities/ActorL5e.js";
 
-import { Debugger, CondHelper } from "./scripts/helpers.js";
+import { Debugger, CondHelper, RepeatHelper } from "./scripts/helpers.js";
 import { preloadTemplates } from "./scripts/templates.js";
 import { registerSystemSettings } from "./scripts/settings.js"
 
@@ -21,10 +21,14 @@ import UnitL5e from "./models/entities/UnitL5e.js";
 import CompanySheet from "./models/sheets/CompanySheet.js";
 import UnitSheet from "./models/sheets/UnitSheet.js";
 import ArmySheet from "./models/sheets/ArmySheet.js";
+import TaticsL5e from "./models/entities/TaticsL5e.js";
+import TaticsSheet from "./models/sheets/TaticsSheet.js";
 
 const typeArmy = "ldnd5e.army";
 const typeCompany = "ldnd5e.company";
 const typeUnit = "ldnd5e.unit";
+
+const typeTatic = "ldnd5e.tatic";
 
 Hooks.once("init", function () {
     console.log("LDnD5e | Inicializando o Módulo Lemurian D&D 5th Edition...");
@@ -78,6 +82,20 @@ Hooks.once("init", function () {
             makeDefault: true,
             label: "Unidade"
         });
+
+        Object.assign(CONFIG.Item.dataModels, {
+            [typeTatic]: TaticsL5e,
+        });
+
+        const Items = foundry.documents.collections.Items;
+
+        Items.registerSheet('ldnd5e', TaticsSheet, {
+            types: ['ldnd5e.tatic'],
+            makeDefault: true,
+            label: "Tática"
+        });
+
+        CONFIG.DND5E.defaultArtwork.Item[typeTatic] = "modules/ldnd5e/ui/icons/tatics-dark.svg";
     }
 
     preloadTemplates();
@@ -86,6 +104,7 @@ Hooks.once("init", function () {
 
     Handlebars.registerHelper('debug', Debugger);
     Handlebars.registerHelper('cond', CondHelper);
+    Handlebars.registerHelper('repeat', RepeatHelper);
 });
 
 Hooks.once('ready', () => {
@@ -172,6 +191,9 @@ Hooks.on('dnd5e.restCompleted', (actor, result, config) => {
 // ITENS ------------------------------------------------//
 Hooks.on('createItem', async (document, data, options, userId) => {
     patchItemCreate(document.actor, document);
+
+    if (document.type === typeTatic) 
+        document.update({ 'img': "modules/ldnd5e/ui/icons/tatics.svg" });    
 });
 Hooks.on('preUpdateItem', async (document, change, options, userId) => {
     patchItemPreUpdate(document.actor, document, change);

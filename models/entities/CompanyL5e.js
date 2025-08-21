@@ -6,13 +6,15 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
         const data = {
             name: new fields.StringField({ required: true, label: "ldnd5e.company.name" }),
             info: new fields.SchemaField({
+                description: new fields.StringField({ required: true, label: "ldnd5e.company.description" }),
+                flavor: new fields.StringField({ required: true, label: "ldnd5e.company.flavor" }),
                 army: new fields.ForeignDocumentField(getDocumentClass("Actor"), {
                     textSearch: true, label: "TYPES.Actor.ldnd5e.army",
                 }),
                 commander: new fields.ForeignDocumentField(getDocumentClass("Actor"), {
                     textSearch: true, label: "ldnd5e.company.commander",
                 }),
-                type: new fields.StringField({ required: true, label: "ldnd5e.company.type" }),
+                type: new fields.StringField({ required: true, label: "ldnd5e.company.type" }),                
             }),
 
             abilities: new fields.SchemaField({
@@ -94,8 +96,6 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
             combat: this.combat,
             units: this.units
         }
-
-
     }
 
     /**@inheritdoc */

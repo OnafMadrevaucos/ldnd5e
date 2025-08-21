@@ -106,7 +106,9 @@ const NDs = {
 *
 * @enum {{
 *    uTypes: object, 
-*    uAbilities: object
+*    uAbilities: object,
+*    uCombatIcons: object
+*    categories: object
 * }}
 */
 const unitChoices = {
@@ -146,6 +148,25 @@ const unitChoices = {
       fighters: "fighters",
       specialists: "specialists",
    }
+}
+
+/**
+* Defines the Unit constants.
+*
+* @enum {{
+*    activities: object, 
+* }}
+*/
+const taticsChoices = {
+   /**
+   * Defines the Tatics Activities constants.      
+   */
+   activities: {
+      moralDmg: "moralDmg",
+      moralHeal: "moralHeal",
+      impetusBuff: "impetusBuff",
+      impetusDebuff: "impetusDebuff",
+   },   
 }
 
 const i18nStrings = {
@@ -268,6 +289,12 @@ const i18nStrings = {
       configureCategory: "ldnd5e.unit.configureCategory",
    },
 
+   tatics: {
+      flavor: "ldnd5e.tatics.flavor",
+      description: "ldnd5e.tatics.description",
+      impetus: "ldnd5e.tatics.impetus",
+   },
+
    unitType: "ldnd5e.unit",
    uTypes: {
       light: "ldnd5e.uTypes.light",
@@ -356,4 +383,4 @@ const gmControl =
    button: true
 };
 
-export { constants, UnarmoredClasses, NDs, gmControl, i18nStrings, unitChoices };
+export { constants, UnarmoredClasses, NDs, gmControl, i18nStrings, unitChoices, taticsChoices };

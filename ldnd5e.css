@@ -1494,6 +1494,11 @@
   align-self: baseline;
 }
 
+.ldnd5e.tatic .sheet-header .cr i {
+  font-size: var(--font-h6-size);
+  color: var(--dnd5e-color-gold);
+}
+
 /* ----------------------------------------- */
 /*  Property Attribution                     */
 /* ----------------------------------------- */

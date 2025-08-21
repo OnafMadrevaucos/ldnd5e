@@ -9,7 +9,7 @@
       "url": ""
     }
   ],
-  "version": "1.3.43",
+  "version": "1.3.44",
   "compatibility": {
     "minimum": "10",
     "verified": "13"
@@ -140,6 +140,9 @@
       "army": {},
       "company": {},
       "unit": {}
+    },
+    "Item": {
+      "tatic": {}
     }
   },
   "languages": [

@@ -5,6 +5,8 @@ export default class ArmyL5e extends foundry.abstract.TypeDataModel {
         const data = {
             name: new fields.StringField({ required: true, label: "ldnd5e.army.name" }),
             info: new fields.SchemaField({
+                description: new fields.StringField({ required: true, label: "ldnd5e.army.description" }),
+                flavor: new fields.StringField({ required: true, label: "ldnd5e.army.flavor" }),
                 org: new fields.StringField({ textSearch: true, required: true, label: "ldnd5e.army.org" }),
                 commander: new fields.ForeignDocumentField(getDocumentClass("Actor"), {
                     textSearch: true, label: "ldnd5e.army.commander"

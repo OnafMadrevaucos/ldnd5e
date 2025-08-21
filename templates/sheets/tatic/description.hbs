@@ -1,0 +1,70 @@
+<section class="description tab {{ tab.cssClass }}" data-tab="{{ tab.id }}" data-group="{{ tab.group }}">
+    {{#if editingDescription}}
+    <prose-mirror name="{{ editingDescription.target }}" value="{{ editingDescription.value }}"
+        document-uuid="{{ item.uuid }}" compact></prose-mirror>
+    {{else}}
+    <div class="info-block">
+        {{#each info}}
+        <div {{#if classes}}class="{{ classes }}" {{/if}}>
+            {{#if label}}
+            <div class="label">
+                <span>{{ localize label }}</span>
+                {{#if (and @root.editable config)}}
+                <button type="button" class="unbutton control-button" data-action="showConfiguration"
+                    data-config="{{ config }}" data-tooltip aria-label="{{ localize tooltip }}">
+                    <i class="fas fa-cog" inert></i>
+                </button>
+                {{/if}}
+            </div>
+            {{/if}}
+            <div class="value">{{{ value }}}</div>
+        </div>
+        {{/each}}
+    </div>
+
+    <div class="item-descriptions">
+
+        {{!-- flavor description --}}
+        {{> ".description" collapsible=item.isOwner label="ldnd5e.tatics.flavor" target="system.info.flavor"
+        enriched=enriched.flavor }}
+
+        {{!-- main description --}}
+        {{> ".description" collapsible=item.isOwner label="ldnd5e.tatics.description" target="system.info.description"
+        enriched=enriched.description }}
+
+    </div>
+
+    {{/if}}
+
+    <ul class="pills">
+        {{#each properties.active}}
+        <li class="pill transparent">
+            <span class="label">{{ this }}</span>
+        </li>
+        {{/each}}
+    </ul>
+
+</section>
+
+{{#*inline ".description"}}
+<div class="card description {{#if collapsible}}collapsible{{/if}}
+{{#debug this}}{{/debug}}
+     {{~#unless (lookup @root.expanded target)}} collapsed{{/unless}}
+     {{~#unless enriched}} empty{{/unless}}" data-target="{{ target }}" {{~#if collapsible}}
+    data-action="toggleCollapsed" data-expand-id="{{ target }}" {{/if}}>
+    <div class="header">
+        <span>{{ localize label }}</span>
+        {{#unless @root.locked}}
+        <button type="button" class="unbutton control-button always-interactive" data-action="editDescription"
+            aria-label="{{ localize 'DND5E.DescriptionEdit' description=(localize label) }}" data-target="{{ target }}">
+            <i class="fas fa-feather" inert></i>
+        </button>
+        {{/unless}}
+    </div>
+    <div class="details collapsible-content">
+        <div class="editor editor-content wrapper">
+            {{{ enriched }}}
+        </div>
+    </div>
+</div>
+{{/inline}}

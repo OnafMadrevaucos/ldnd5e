@@ -4,6 +4,9 @@
         "company": "Company",
         "unit": "Unit"
     },
+    "TYPES.Item.ldnd5e": {
+        "tatic": "Tática"
+    },
     "ldnd5e": {
         "title": "Lemurian D&D 5º Ed. Control",
         "npcsStatsTitle": "Combat NPC Statistics",
@@ -124,6 +127,12 @@
             "combat": "Combat Skills",
             "tatics": "Tatics",
             "configureCategory": "Configure Category"
+        },
+
+        "tatics": {
+            "flavor": "Flavor",
+            "description": "Description",
+            "impetus": "Impetus' Bonus"
         },
 
         "messages": {

@@ -49,37 +49,10 @@ export default class ActorL5e extends documents.Actor5e {
                 }
 
                 const dasEnabled = (this.getFlag("ldnd5e","dasEnabled") ?? true);
-                data.dasEnabled = dasEnabled;
-
-                /*if(game.settings.get('ldnd5e', 'massiveCombatRules')) {
-                    data.commander = data.commander ?? false;
-                }*/
-            }
-
-            if((["npc"].includes(this.type)) && game.settings.get('ldnd5e', 'massiveCombatRules')) {
-                data.isUnit = data.isUnit ?? false;
-            }
+                data.dasEnabled = dasEnabled;                
+            }            
         }    
-    }  
-
-    /** @override */
-    _prepareBaseAbilities(updates) {
-        super._prepareBaseAbilities(updates);        
-
-        if(["npc"].includes(this.type) && this.system.isUnit && game.settings.get('ldnd5e', 'massiveCombatRules')) {
-            const key = "mrl";
-
-            if(!this.system.abilities[key])
-            {
-                const mrl = foundry.utils.deepClone(game.system.template.Actor.templates.common.abilities.cha);
-                mrl.value = 10;
-                mrl.min = 0;
-                this.system.abilities.mrl = mrl;               
-
-                updates[`system.abilities.${key}`] = foundry.utils.deepClone(mrl);
-            }
-        }
-    }
+    }      
 
     async _restFatigue(restResult, config={}){
         if(restResult && restResult.longRest) {

@@ -4,9 +4,9 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
     static defineSchema() {
         const fields = foundry.data.fields;
         return {
-            flavor: new fields.StringField({ textSearch: true }),
-            description: new fields.StringField({ textSearch: true }),
             info: new fields.SchemaField({
+                flavor: new fields.StringField({ textSearch: true }),
+                description: new fields.StringField({ textSearch: true }),
                 company: new fields.ForeignDocumentField(getDocumentClass("Actor"), {
                     textSearch: true, label: "TYPES.Actor.ldnd5e.company",
                 }),

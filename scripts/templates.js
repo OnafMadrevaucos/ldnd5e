@@ -23,6 +23,10 @@
 
          "templates/sheets/unit/header.hbs",
          "templates/sheets/unit/body.hbs",
+
+         "templates/sheets/tatic/header.hbs",
+         "templates/sheets/tatic/activities.hbs",
+         "templates/sheets/tatic/description.hbs",
     ];
 
     templates = templates.map((t) => `modules/ldnd5e/${t}`);

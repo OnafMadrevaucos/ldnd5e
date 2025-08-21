@@ -42,6 +42,19 @@ export const Debugger = function(data) {
 }
 
 /**
+ * Define um Helpers que simulara um loop para o Handlebar.
+ * Pre-loaded templates are compiled and cached for fast access when rendering
+ * @returns {HTMLContent}
+ */
+ export const RepeatHelper = function (n, options) {
+  let result = "";
+  for (let i = 0; i < n; i++) {
+    result += options.fn(this);
+  }
+  return result;
+}
+
+/**
  * A recursive version of the core `getProperty` helper
  * @param {object} object - The object to traverse
  * @param {string} key - An object property with notation a.b.*.c where * is a wildcard
