@@ -17,9 +17,12 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
     },
     viewPermission: CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER,
     actions: {
+      removeTatic: this.#removeTatic,
       showConfiguration: this.#showConfiguration,
       showDescription: this.#showDescription,
+      showTatic: this.#showTatic,
       roll: this.#roll,
+      toggleTraining: this.#toggleTraining
     },
     form: {
       submitOnChange: true,
@@ -106,6 +109,9 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
 
     // Prepare the actor's skills.
     this._prepareCombat(context);
+
+    // Prepare the actor's items.
+    this._prepareTatics(context);
 
     return context;
   }
@@ -214,6 +220,20 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
   }
 
   /* -------------------------------------------- */
+
+  /**
+ * Prepare actor tatics' items.
+ * @param {ApplicationRenderContext} context  Context being prepared.
+ * @returns {object}
+ * @protected
+ */
+  _prepareTatics(context) {
+    const items = this.actor.items;
+
+    context.tatics = items;
+  }
+
+  /* -------------------------------------------- */
   /*  Events Listeners                            */
   /* -------------------------------------------- */
 
@@ -234,7 +254,32 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
   }
 
   /* -------------------------------------------- */
+
+  /** @override */
+  async _onDropItem(event, data) {
+    const item = await Item.implementation.fromDropData(data);
+
+    await this.actor.createEmbeddedDocuments("Item", [item]);
+  }
+
+  /* -------------------------------------------- */
   /*  Form Actions                                */
+  /* -------------------------------------------- */
+
+  /**
+   * Removes a tatics from the unit.
+   * @this {UnitSheet}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+  static async #removeTatic(event, target) {
+    const item = target.closest('li.item');
+    const taticId = item.dataset.itemId;
+    const tatic = this.actor.items.get(taticId);
+
+    await this.actor.deleteEmbeddedDocuments("Item", [tatic.id]);
+  }
+
   /* -------------------------------------------- */
 
   /**
@@ -250,6 +295,9 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
     categoryEditor.render({ force: true });
   }
 
+  /* -------------------------------------------- */
+
+
   /**
    * Opens the unit's description.
    * @this {UnitSheet}
@@ -263,6 +311,24 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
     const description = document.querySelector(".description-tooltip");
     description.classList.toggle("active");
   }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Opens the unit's description.
+   * @this {UnitSheet}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+  static async #showTatic(event, target) {
+    const taticId = target.closest('.tatic')?.dataset.itemId;
+    if(!taticId) return;
+
+    const tatic = this.actor.items.get(taticId);
+    tatic.sheet.render(true);
+  }
+
+  /* -------------------------------------------- */
 
   /**
    * Roll any check or saving throw fo the company.
@@ -284,7 +350,27 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
         const skill = target.closest("[data-key]")?.dataset.key;
         return this.actor.system.rollSkill({ skill: skill }, { event });
       }
+      case "tatic": {
+        const taticId = target.closest(".tatic")?.dataset.itemId;
+        const tatic = this.actor.items.get(taticId);
+      }
     }
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Roll any check or saving throw fo the company.
+   * @this {CompanySheet}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+  static async #toggleTraining(event, target) {
+    const taticId = target.closest(".tatic")?.dataset.itemId;
+    if(!taticId) return;
+
+    const tatic = this.actor.items.get(taticId);
+    await tatic.update({ "system.trainning": !tatic.system.trainning });
   }
 
   /* -------------------------------------------- */

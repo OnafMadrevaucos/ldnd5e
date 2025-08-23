@@ -287,12 +287,19 @@ const i18nStrings = {
       combat: "ldnd5e.unit.combat",
       tatics: "ldnd5e.unit.tatics",
       configureCategory: "ldnd5e.unit.configureCategory",
+      removeTatic: "ldnd5e.unit.removeTatic",
+      isTrainning: "ldnd5e.unit.isTrainning"
    },
 
    tatics: {
       flavor: "ldnd5e.tatics.flavor",
       description: "ldnd5e.tatics.description",
       impetus: "ldnd5e.tatics.impetus",
+      prep: "ldnd5e.tatics.prep",
+      surp: "ldnd5e.tatics.surp",
+      reac: "ldnd5e.tatics.reac",
+      pers: "ldnd5e.tatics.pers",
+      trainning: "ldnd5e.tatics.trainning"      
    },
 
    unitType: "ldnd5e.unit",

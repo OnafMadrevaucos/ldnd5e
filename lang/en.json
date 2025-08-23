@@ -104,7 +104,6 @@
             "fighters": "Fighters",
             "specialists": "Specialists"
         },
-        
         "army": {
             "prestige": "Prestige",
             "commander": "Marshal",
@@ -126,15 +125,22 @@
             "price": "Unit Price",
             "combat": "Combat Skills",
             "tatics": "Tatics",
-            "configureCategory": "Configure Category"
+            "configureCategory": "Configure Category",
+            "removeTatic": "Remove Tatic",
+            "isTrainning": "Is Training?"
         },
 
         "tatics": {
             "flavor": "Flavor",
             "description": "Description",
-            "impetus": "Impetus' Bonus"
+            "impetus": "Impetus' Bonus",
+            "prep": "Preparation",
+            "surp": "Surprise",
+            "reac": "Reaction",
+            "pers": "Persistence",
+            "trainning": "Train."            
         },
-
+        
         "messages": {
             "bldgDmgLightArmor": "Light Armor is immune to damage caused by Bludgening Damage.",
             "slshDmgHeavyArmor": "Heavy Armor is immune to damage caused by Slashing Damage.",

@@ -7,15 +7,43 @@
 
     </div>
 
-    {{!-- Name --}}
+    {{!-- Name & Attributes --}}
     <div class="middle identity-info">
 
         {{!-- Name --}}
         {{#if editable}}
         <input type="text" name="name" class="document-name uninput" value="{{ item._source.name }}">
         {{else}}
-        <div class="document-name">{{ item.name }}</div>
+        <div class="document-name">Davi Lucas</div>
         {{/if}}
+
+        {{!-- Attributes --}}
+        <ul class="attributes unlist flexrow">
+            <li class="attribute-item" data-tooltip="ldnd5e.tatics.prep">
+                <button class="attribute prep {{#unless system.attributes.prep}}active{{/unless}}"
+                    data-action="toggleAttr" data-attr="prep">
+                    <i class="fas fa-flask"></i>
+                </button>
+            </li>
+            <li class="attribute-item" data-tooltip="ldnd5e.tatics.surp">
+                <button class="attribute surp {{#unless system.attributes.surp}}active{{/unless}}"
+                    data-action="toggleAttr" data-attr="surp">
+                    <i class="fas fa-triangle-exclamation"></i>
+                </button>
+            </li>
+            <li class="attribute-item" data-tooltip="ldnd5e.tatics.reac">
+                <button class="attribute reac {{#unless system.attributes.reac}}active{{/unless}}"
+                    data-action="toggleAttr" data-attr="reac">
+                    <i class="fas fa-arrows-rotate"></i>
+                </button>
+            </li>
+            <li class="attribute-item" data-tooltip="ldnd5e.tatics.pers">
+                <button class="attribute pers {{#unless system.attributes.pers}}active{{/unless}}"
+                    data-action="toggleAttr" data-attr="pers">
+                    <i class="fas fa-infinity"></i>
+                </button>
+            </li>
+        </ul>
 
     </div>
 
@@ -27,9 +55,9 @@
             {{#if editable}}
             <input type="number" name="system.info.cr" class="uninput" value="{{ system.info.cr }}">
             {{else}}
-                {{#repeat system.info.cr}}
-                    <i class="ra ra-target-arrows"></i>
-                {{/repeat}}
+            {{#repeat system.info.cr}}
+            <i class="ra ra-target-arrows"></i>
+            {{/repeat}}
             {{/if}}
         </div>
 

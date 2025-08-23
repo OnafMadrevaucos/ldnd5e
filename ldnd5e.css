@@ -1494,9 +1494,41 @@
   align-self: baseline;
 }
 
+.ldnd5e.unit .tatics-list .tatic .trainning.active {
+  color: var(--dnd5e-color-gold);
+}
+
 .ldnd5e.tatic .sheet-header .cr i {
   font-size: var(--font-h6-size);
   color: var(--dnd5e-color-gold);
+}
+
+.ldnd5e.tatic .attributes {
+  gap: 5px;
+}
+
+.ldnd5e.tatic .attributes .attribute {
+  width: 1.75em;
+  background-color: transparent;
+}
+.ldnd5e.tatic .attributes .attribute:hover {
+  cursor: pointer;
+  text-shadow: 0 0 10px var(--color-shadow-primary);
+}
+.ldnd5e.tatic .attributes .attribute.active {
+  background-color: var(--dnd5e-color-gold);
+}
+.ldnd5e.tatic .attributes .attribute.prep.active {
+  color: #edde0b;
+}
+.ldnd5e.tatic .attributes .attribute.surp.active {
+  color: #ac3b3b;
+}
+.ldnd5e.tatic .attributes .attribute.reac.active {
+  color: #4141ac;
+}
+.ldnd5e.tatic .attributes .attribute.pers.active {
+  color: #60c757;
 }
 
 /* ----------------------------------------- */

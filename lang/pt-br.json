@@ -125,13 +125,20 @@
             "price": "Preço da Unidade",
             "combat": "Habilidades de Combate",
             "tatics": "Táticas",
-            "configureCategory": "Configurar Categoria"
+            "configureCategory": "Configurar Categoria",
+            "removeTatic": "Remover Tática",
+            "isTrainning": "Treinando?"
         },
 
         "tatics": {
             "flavor": "Floreio",
             "description": "Descrição",
-            "impetus": "Bônus de Ímpeto"
+            "impetus": "Bônus de Ímpeto",
+            "prep": "Preparação",
+            "surp": "Surpresa",
+            "reac": "Reação",
+            "pers": "Persistente",
+            "trainning": "Treina."
         },
 
         "messages": {

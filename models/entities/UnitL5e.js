@@ -49,7 +49,6 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
             status: new fields.SchemaField({
                 isolated: new fields.BooleanField({ initial: false })
             }),
-            tatics: new fields.ArrayField(new fields.StringField({ textSearch: true, label: "ldnd5e.tatics" })),
         };
     }
 

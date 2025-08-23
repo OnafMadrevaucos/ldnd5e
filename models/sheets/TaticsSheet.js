@@ -18,6 +18,7 @@ export default class TaticsSheet extends item.ItemSheet5e {
         viewPermission: CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER,
         actions: {
             editDescription: this.#editDescription,
+            toggleAttr: this.#toggleAttr
         },
         form: {
             submitOnChange: true,
@@ -251,4 +252,18 @@ export default class TaticsSheet extends item.ItemSheet5e {
     }
 
     /* -------------------------------------------- */
+
+    /**
+   * Handle toggling attributes.
+   * @this {ItemSheet5e}
+   * @param {Event} event         Triggering click event.
+   * @param {HTMLElement} target  Button that was clicked.
+   */
+    static async #toggleAttr(event, target) {
+        const attr = target.dataset.attr;
+        const attributes = this.item.system.attributes;
+        attributes[attr] = !attributes[attr];
+        
+        await this.item.update({ "system.attributes": attributes });
+    }
 }
