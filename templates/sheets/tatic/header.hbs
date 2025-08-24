@@ -14,7 +14,7 @@
         {{#if editable}}
         <input type="text" name="name" class="document-name uninput" value="{{ item._source.name }}">
         {{else}}
-        <div class="document-name">Davi Lucas</div>
+        <div class="document-name">{{ item.name }}</div>
         {{/if}}
 
         {{!-- Attributes --}}

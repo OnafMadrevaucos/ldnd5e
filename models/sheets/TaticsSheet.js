@@ -159,7 +159,18 @@ export default class TaticsSheet extends item.ItemSheet5e {
      * @protected
      */
     async _prepareActivitiesContext(context, options) {
+        context.activities = (this.item.system.activities ?? [])
+            .filter(a => CONFIG.DND5E.activityTypes[a.type]?.configurable !== false)
+            .map(activity => {
+                const { _id: id, name, img, sort } = activity.prepareSheetContext();
+                return {
+                    id, name, sort,
+                    img: { src: img, svg: img?.endsWith(".svg") },
+                    uuid: activity.uuid
+                };
+            });
 
+        return context;
     }
 
     /* -------------------------------------------- */
@@ -214,8 +225,15 @@ export default class TaticsSheet extends item.ItemSheet5e {
     /* -------------------------------------------- */
 
     /**@inheritdoc */
-    _addDocument(event) {
-        console.log("Adding document...");
+    async _addDocument(event) {
+        const document = await dnd5e.documents.activity.UtilityActivity.createDialog({}, {
+            parent: this.item,
+            types: Object.entries(CONFIG.DND5E.activityTypes).filter(([, { configurable }]) => {
+                return configurable !== false;
+            }).map(([k]) => k)
+        });
+
+        return document;
     }
 
     /* -------------------------------------------- */
@@ -263,7 +281,7 @@ export default class TaticsSheet extends item.ItemSheet5e {
         const attr = target.dataset.attr;
         const attributes = this.item.system.attributes;
         attributes[attr] = !attributes[attr];
-        
+
         await this.item.update({ "system.attributes": attributes });
     }
 }

@@ -121,11 +121,14 @@
         "unit": {
             "category": "Categoria",
             "categoryDescription": "Cada categoria de unidade possui Atributos Base, nos quais o general necessita ter um valor 13 ou mais em pelo menos um deles para conseguir controlar a unidade de forma eficiente.",
-            "description": "Descrição da Unidade",
+            "descriptionTitle": "Descrição de Unidade",
+            "flavor": "Texto de Floreio",
+            "description": "Descrição",
             "price": "Preço da Unidade",
             "combat": "Habilidades de Combate",
             "tatics": "Táticas",
             "configureCategory": "Configurar Categoria",
+            "editTatic": "Editar Tática",
             "removeTatic": "Remover Tática",
             "isTrainning": "Treinando?"
         },
@@ -138,7 +141,8 @@
             "surp": "Surpresa",
             "reac": "Reação",
             "pers": "Persistente",
-            "trainning": "Treina."
+            "trainning": "Treina.",
+            "damage": "Dano à Moral" 
         },
 
         "messages": {

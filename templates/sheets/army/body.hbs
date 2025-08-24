@@ -1,11 +1,11 @@
 <div>
     <div class="top">
-        <section class="currency">                    
+        <section class="currency">
             {{#each currency as |c|}}
             <label aria-label="{{ c.label }}">
                 <i class="currency {{ key }}" data-tooltip="{{ c.label }}"></i>
-                <input type="text" class="uninput" name="system.currency.{{ c.key }}"
-                    value="{{ c.value }}" data-dtype="Number" inputmode="numeric" pattern="[+=\-]?\d*" readonly>
+                <input type="text" class="uninput" name="system.currency.{{ c.key }}" value="{{ c.value }}"
+                    data-dtype="Number" inputmode="numeric" pattern="[+=\-]?\d*" readonly>
             </label>
             {{/each}}
         </section>
@@ -14,22 +14,22 @@
     <div class="middle">
         <section class="items-list companies-list" data-item-list="companies">
             <div class="items-section card">
-                <div class="items-header header flexrow">
+                <div class="items-header header">
                     <h3 class="item-name flexrow">{{localize 'ldnd5e.army.companies'}}</h3>
 
-                    <div class="item-detail fortitute" data-tooltip="ldnd5e.uAbilities.frt"><i
+                    <div class="item-detail item-attribute fortitute" data-tooltip="ldnd5e.uAbilities.frt"><i
                             class="fas fa-hand-fist"></i>
                     </div>
-                    <div class="item-detail moral" data-tooltip="ldnd5e.uAbilities.mrl"><i class="fas fa-heart"></i>
+                    <div class="item-detail item-attribute moral" data-tooltip="ldnd5e.uAbilities.mrl"><i class="fas fa-heart"></i>
                     </div>
-                    <div class="item-detail will" data-tooltip="ldnd5e.uAbilities.wll"><i class="fas fa-brain"></i>
+                    <div class="item-detail item-attribute will" data-tooltip="ldnd5e.uAbilities.wll"><i class="fas fa-brain"></i>
                     </div>
 
-                    <div class="item-detail light">{{localize 'ldnd5e.uTypes.light'}}</div>
-                    <div class="item-detail heavy">{{localize 'ldnd5e.uTypes.heavy'}}</div>
-                    <div class="item-detail special">{{localize 'ldnd5e.uTypes.special'}}</div>
-                    <div class="item-detail medical">{{localize 'ldnd5e.uTypes.medical'}}</div>
-                    <div class="item-detail tools"></div>
+                    <div class="item-detail item-attribute light">{{localize 'ldnd5e.uTypes.light'}}</div>
+                    <div class="item-detail item-attribute heavy">{{localize 'ldnd5e.uTypes.heavy'}}</div>
+                    <div class="item-detail item-attribute special">{{localize 'ldnd5e.uTypes.special'}}</div>
+                    <div class="item-detail item-attribute medical">{{localize 'ldnd5e.uTypes.medical'}}</div>
+                    <div class="item-detail item-controls"></div>
                 </div>
 
                 <ol class="item-list unlist">
@@ -37,42 +37,44 @@
                     <li class="item company" data-uuid="{{ company.uuid }}" data-item-id="{{ company.id }}"
                         data-entry-id="{{ company.id }}" data-item-name="{{ company.name }}">
                         {{!-- Row Summary --}}
-                        <div class="item-row draggable flexrow">
+                        <div class="item-row draggable">
                             {{!-- Item Name --}}
-                            <div class="item-name item-action item-tooltip" role="button"
-                                data-action="clickCompany" aria-label="{{ company.name }}">
+                            <div class="item-name item-action item-tooltip" role="button" data-action="clickCompany"
+                                aria-label="{{ company.name }}">
                                 <img class="item-image gold-icon" src="{{ company.img }}" alt="{{ company.name }}"
                                     draggable="false">
                                 <div class="name name-stacked">
                                     <span class="title">{{company.name}}</span>
                                 </div>
                             </div>
-                            <div class="item-data fortitute">
-                               {{company.system.abilities.frt.sign}}{{company.system.abilities.frt.mod}}
+                            <div class="item-detail item-attribute fortitute">
+                                {{company.system.abilities.frt.sign}}{{company.system.abilities.frt.mod}}
                             </div>
-                            <div class="item-data moral">
+                            <div class="item-detail item-attribute moral">
                                 {{company.system.abilities.mrl.sign}}{{company.system.abilities.mrl.mod}}
                             </div>
-                            <div class="item-data will">
+                            <div class="item-detail item-attribute will">
                                 {{company.system.abilities.wll.sign}}{{company.system.abilities.wll.mod}}
                             </div>
-                            <div class="item-data light">
+                            <div class="item-detail item-attribute light">
                                 {{company.unitCount.light}}
                             </div>
-                            <div class="item-data heavy">
+                            <div class="item-detail item-attribute heavy">
                                 {{company.unitCount.heavy}}
                             </div>
-                            <div class="item-data special">
+                            <div class="item-detail item-attribute special">
                                 {{company.unitCount.special}}
                             </div>
-                            <div class="item-data medical">
+                            <div class="item-detail item-attribute medical">
                                 {{company.unitCount.medical}}
                             </div>
-                            <button type="button" class="config-button unbutton" data-action="removeCompany"
-                                data-tooltip="ldnd5e.army.removeCompany"
-                                aria-label="{{ localize 'ldnd5e.army.removeCompany' }}">
-                                <i class="fas fa-trash" inert></i>
-                            </button>
+                            <div class="item-detail item-controls always-visible">
+                                <button type="button" class="config-button unbutton item-control item-action always-interactive" data-action="removeCompany"
+                                    data-tooltip="ldnd5e.army.removeCompany"
+                                    aria-label="{{ localize 'ldnd5e.army.removeCompany' }}">
+                                    <i class="fas fa-trash" inert></i>
+                                </button>
+                            </div>
                         </div>
                     </li>
                     {{/each}}

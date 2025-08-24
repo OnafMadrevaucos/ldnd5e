@@ -22,10 +22,9 @@
         <div class="unit-info flexrow">
 
             <div class="unit-description">
-                <a><i class="fa-solid fa-comment" data-action="showDescription"></i></a>
+                <a {{#if editDescription}}class="active" {{/if}}><i class="fa-solid fa-comment"
+                        data-action="showDescription"></i></a>
             </div>
-
-
 
             <div class="unit-price card flexrow" data-tooltip="ldnd5e.unit.price">
                 <span><i class="currency gp"></i></span>
@@ -37,11 +36,35 @@
                 {{/if}}
             </div>
 
-            <div class="description-tooltip">
-                <h4>{{localize 'ldnd5e.unit.description'}}</h4>
-                <a class="edit-description"><i class="fas fa-feather"></i></a>
-                <span aria-placeholder="Flavor Text">{{system.flavor}}</span>
-                <p aria-placeholder="Description">{{ system.description }}</p>
+            <div class="description-tooltip{{#if editDescription}} active{{/if}}">
+                <h4>{{localize 'ldnd5e.unit.descriptionTitle'}}</h4>
+                <a class="edit-description{{#if editDescription}} active{{/if}}" data-action="editDescription"><i
+                        class="fas fa-feather"></i></a>
+
+                {{#unless editDescription}}
+                <div class="description-viewer flexcol">
+                    <span class="flavor" aria-placeholder="Flavor Text">{{system.info.flavor}}</span>
+                    <hr class="ampersand">
+                    <span class="description" aria-placeholder="Description">{{ system.info.description }}</span>
+                </div>
+                {{else}}
+                <div class="description-editor flexcol">
+                    <div class="textbox textbox-half">
+                        <h3 class="icon">
+                            <i class="fa-solid fa-quote-left"></i>
+                            <span>{{localize 'ldnd5e.unit.flavor'}}</span>
+                        </h3>
+                        <textarea class="untext" name="system.info.flavor">{{ system.info.flavor }}</textarea>
+                    </div>
+                    <div class="textbox textbox-half">
+                        <h3 class="icon">
+                            <i class="fa-solid fa-quote-left"></i>
+                            <span>{{localize 'ldnd5e.unit.description'}}</span>
+                        </h3>
+                        <textarea class="untext" name="system.info.description">{{ system.info.description }}</textarea>
+                    </div>
+                </div>
+                {{/unless}}
             </div>
 
         </div>
@@ -92,24 +115,23 @@
         </section>
 
         <section class="items-list tatics-list" data-unit-list="tatics">
-            <div class="items-section card">
-                <div class="items-header header flexrow">
+            <div class="items-section card" data-column-min-width="250">
+                <div class="items-header header">
                     <h3 class="item-name flexrow">{{localize 'ldnd5e.unit.tatics'}}</h3>
 
-                    <div class="item-detail prep" data-tooltip="ldnd5e.tatics.prep">
+                    <div class="item-detail item-attribute prep" data-tooltip="ldnd5e.tatics.prep">
                         <i class="fas fa-flask"></i>
                     </div>
-                    <div class="item-detail surp" data-tooltip="ldnd5e.tatics.surp">
+                    <div class="item-detail item-attribute surp" data-tooltip="ldnd5e.tatics.surp">
                         <i class="fas fa-triangle-exclamation"></i>
                     </div>
-                    <div class="item-detail reac" data-tooltip="ldnd5e.tatics.reac">
+                    <div class="item-detail item-attribute reac" data-tooltip="ldnd5e.tatics.reac">
                         <i class="fas fa-arrows-rotate"></i>
                     </div>
-                    <div class="item-detail pers" data-tooltip="ldnd5e.tatics.pers">
+                    <div class="item-detail item-attribute pers" data-tooltip="ldnd5e.tatics.pers">
                         <i class="fas fa-infinity"></i>
                     </div>
-                    <div class="item-detail tools">Trein.</div>
-                    <div class="item-detail tools"></div>
+                    <div class="item-detail item-controls"></div>
                 </div>
 
                 <ol class="item-list unlist">
@@ -117,47 +139,54 @@
                     <li class="item tatic" data-uuid="{{ tatic.uuid }}" data-item-id="{{ tatic.id }}"
                         data-entry-id="{{ tatic.id }}" data-item-name="{{ tatic.name }}">
                         {{!-- Row Summary --}}
-                        <div class="item-row draggable flexrow">
+                        <div class="item-row draggable">
                             {{!-- Item Name --}}
-                            <div class="item-name item-action item-tooltip" role="button" data-action="showTatic"
+                            <div class="item-name item-action item-tooltip" role="button" data-action="rollTatic"
                                 data-type="tatic" aria-label="{{ tatic.name }}">
                                 <div class="image-container">
                                     <img class="item-image gold-icon" src="{{ tatic.img }}" alt="{{ tatic.name }}"
-                                        draggable="false">
-                                    <img class="roll-image gold-icon" src="icons/svg/d20.svg" alt="{{ tatic.name }}"
                                         draggable="false">
                                 </div>
                                 <div class="name name-stacked">
                                     <span class="title">{{ tatic.name }}</span>
                                 </div>
                             </div>
-                            <div class="item-data prep">
+                            <div class="item-detail item-attribute prep">
                                 {{#unless tatic.system.attributes.prep}}<i
                                     class="fa-solid fa-check"></i>{{else}}&mdash;{{/unless}}
                             </div>
-                            <div class="item-data surp">
+                            <div class="item-detail item-attribute surp">
                                 {{#unless tatic.system.attributes.surp}}<i
                                     class="fa-solid fa-check"></i>{{else}}&mdash;{{/unless}}
                             </div>
-                            <div class="item-data reac">
+                            <div class="item-detail item-attribute reac">
                                 {{#unless tatic.system.attributes.reac}}<i
                                     class="fa-solid fa-check"></i>{{else}}&mdash;{{/unless}}
                             </div>
-                            <div class="item-data pers">
+                            <div class="item-detail item-attribute pers">
                                 {{#unless tatic.system.attributes.pers}}<i
                                     class="fa-solid fa-check"></i>{{else}}&mdash;{{/unless}}
                             </div>
-                            <button type="button"
-                                class="config-button unbutton trainning{{#if tatic.system.trainning}} active{{/if}}"
-                                data-action="toggleTraining" data-tooltip="ldnd5e.unit.isTrainning"
-                                aria-label="{{ localize 'ldnd5e.unit.isTrainning' }}">
-                                <i class="ra ra-spinning-sword" inert></i>
-                            </button>
-                            <button type="button" class="config-button unbutton" data-action="removeTatic"
-                                data-tooltip="ldnd5e.unit.removeTatic"
-                                aria-label="{{ localize 'ldnd5e.unit.removeTatic' }}">
-                                <i class="fas fa-trash" inert></i>
-                            </button>
+                            <div class="item-detail item-controls always-visible">
+                                <button type="button"
+                                    class="config-button item-control  item-action unbutton trainning{{#if tatic.system.trainning}} active{{/if}}"
+                                    data-action="toggleTraining" data-tooltip="ldnd5e.unit.isTrainning"
+                                    aria-label="{{ localize 'ldnd5e.unit.isTrainning' }}">
+                                    <i class="ra ra-archery-target" inert></i>
+                                </button>
+                                <button type="button"
+                                    class="config-button unbutton item-control item-action always-interactive"
+                                    data-action="showTatic" data-tooltip="ldnd5e.unit.editTatic" data-edit-item
+                                    aria-label="{{ localize 'ldnd5e.unit.editTatic' }}">
+                                    <i class="fas fa-pen-to-square" inert></i>
+                                </button>
+                                <button type="button"
+                                    class="config-button item-control unbutton item-action always-interactive"
+                                    data-action="removeTatic" data-tooltip="ldnd5e.unit.removeTatic"
+                                    aria-label="{{ localize 'ldnd5e.unit.removeTatic' }}">
+                                    <i class="fas fa-trash" inert></i>
+                                </button>
+                            </div>
                         </div>
                     </li>
                     {{/each}}

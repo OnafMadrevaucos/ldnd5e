@@ -121,11 +121,14 @@
         "unit": {
             "category": "Category",
             "categoryDescription": "Each unit category has Base Attributes, in which the general needs to have a value of 13 or higher in at least one of them in order to efficiently control the unit.",
-            "description": "Unit Description",
+            "descriptionTitle": "Unit Description",
+            "flavor": "Flavor",
+            "description": "Description",
             "price": "Unit Price",
             "combat": "Combat Skills",
             "tatics": "Tatics",
             "configureCategory": "Configure Category",
+            "editTatic": "Edit Tatic",
             "removeTatic": "Remove Tatic",
             "isTrainning": "Is Training?"
         },
@@ -138,7 +141,8 @@
             "surp": "Surprise",
             "reac": "Reaction",
             "pers": "Persistence",
-            "trainning": "Train."            
+            "trainning": "Train.",
+            "damage": "Moral Damage"            
         },
         
         "messages": {

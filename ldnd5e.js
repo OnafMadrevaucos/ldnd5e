@@ -192,7 +192,7 @@ Hooks.on('dnd5e.restCompleted', (actor, result, config) => {
 Hooks.on('createItem', async (document, data, options, userId) => {
     patchItemCreate(document.actor, document);
 
-    if (document.type === typeTatic) 
+    if (document.type === typeTatic && document.img === "modules/ldnd5e/ui/icons/tatics-dark.svg") 
         document.update({ 'img': "modules/ldnd5e/ui/icons/tatics.svg" });    
 });
 Hooks.on('preUpdateItem', async (document, change, options, userId) => {

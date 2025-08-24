@@ -1,7 +1,8 @@
 <div>
     <div class="top flexrow">
         <section class="rest">
-            <button class="company-rest gold-button" data-action="companyRest"><i class="fas fa-campground" inert></i>{{localize 'ldnd5e.company.rest'}}</button>
+            <button class="company-rest gold-button" data-action="companyRest"><i class="fas fa-campground"
+                    inert></i>{{localize 'ldnd5e.company.rest'}}</button>
         </section>
         <section class="currency">
             <button type="button" class="item-action unbutton always-interactive" data-action="currency"
@@ -41,13 +42,15 @@
 
                 <div class="stamina" data-tooltip="Unit Stamina">
                     <div class="stamina-label roboto-upper">
-                        <i class="fa-solid fa-bolt"></i>                        
+                        <i class="fa-solid fa-bolt"></i>
                         <span class="value">{{system.attributes.stamina.value}}</span>
                         <span class="separator">/</span>
                         <span class="max">{{system.attributes.stamina.max}}</span>
                     </div>
                     <div class="stamina-bar" role="meter" aria-label="Progress to next Level" aria-valuemin="0"
-                        aria-valuenow="0" aria-valuemax="{{system.attributes.stamina.max}}" aria-valuetext="{{system.attributes.stamina.pct}}%" style="--bar-percentage: {{system.attributes.stamina.pct}}%;"></div>
+                        aria-valuenow="0" aria-valuemax="{{system.attributes.stamina.max}}"
+                        aria-valuetext="{{system.attributes.stamina.pct}}%"
+                        style="--bar-percentage: {{system.attributes.stamina.pct}}%;"></div>
                 </div>
 
             </filigree-box>
@@ -57,7 +60,7 @@
                     <i class="fas fa-shield-heart" inert></i>
                     <span class="roboto-upper">{{ localize "DND5E.ClassSaves" }}</span>
                 </h3>
-                <ul class="saves-list">                    
+                <ul class="saves-list">
                     <li data-ability="dsp" class="save">
                         <a class="name saving-throw rollable" data-action="roll" data-type="ability"><i
                                 class="{{skills.dsp.icon}}"></i>{{skills.dsp.label}}</a>
@@ -66,29 +69,29 @@
                             {{skills.dsp.save.mod}}
                         </div>
                     </li>
-                    
-                </ul>                
 
-            </filigree-box> 
+                </ul>
+
+            </filigree-box>
         </section>
 
         <div class="units">
 
             <section class="items-list units-list" data-unit-list="light">
                 <div class="items-section card">
-                    <div class="items-header header flexrow">
-                        <h3 class="item-name flexrow">{{localize 'ldnd5e.uTypes.light'}}</h3>
+                    <div class="items-header header">
+                        <h3 class="item-name">{{localize 'ldnd5e.uTypes.light'}}</h3>
 
-                        <div class="item-detail fortitute" data-tooltip="ldnd5e.uAbilities.frt">
+                        <div class="item-detail item-attribute fortitute" data-tooltip="ldnd5e.uAbilities.frt">
                             <i class="fas fa-hand-fist"></i>
                         </div>
-                        <div class="item-detail moral" data-tooltip="ldnd5e.uAbilities.mrl">
+                        <div class="item-detail item-attribute moral" data-tooltip="ldnd5e.uAbilities.mrl">
                             <i class="fas fa-heart"></i>
                         </div>
-                        <div class="item-detail will" data-tooltip="ldnd5e.uAbilities.wll">
+                        <div class="item-detail item-attribute will" data-tooltip="ldnd5e.uAbilities.wll">
                             <i class="fas fa-brain"></i>
                         </div>
-                        <div class="item-detail tools"></div>
+                        <div class="item-detail item-controls"></div>
                     </div>
 
                     <ol class="item-list unlist">
@@ -96,30 +99,32 @@
                         <li class="item unit" data-uuid="{{ unit.uuid }}" data-item-id="{{ unit.id }}"
                             data-entry-id="{{ unit.id }}" data-item-name="{{ unit.name }}">
                             {{!-- Row Summary --}}
-                            <div class="item-row draggable flexrow">
+                            <div class="item-row draggable">
                                 {{!-- Item Name --}}
-                                <div class="item-name item-action item-tooltip" role="button"
-                                    data-action="clickUnit" aria-label="{{ unit.name }}">
+                                <div class="item-name item-action item-tooltip" role="button" data-action="clickUnit"
+                                    aria-label="{{ unit.name }}">
                                     <img class="item-image gold-icon" src="{{ unit.img }}" alt="{{ unit.name }}"
                                         draggable="false">
                                     <div class="name name-stacked">
                                         <span class="title">{{unit.name}}</span>
                                     </div>
                                 </div>
-                                <div class="item-data fortitute">
+                                <div class="item-detail item-attribute fortitute">
                                     {{unit.system.abilities.frt.sign}}{{unit.system.abilities.frt.mod}}
                                 </div>
-                                <div class="item-data moral">
+                                <div class="item-detail item-attribute moral">
                                     {{unit.system.abilities.mrl.sign}}{{unit.system.abilities.mrl.mod}}
                                 </div>
-                                <div class="item-data will">
+                                <div class="item-detail item-attribute will">
                                     {{unit.system.abilities.wll.sign}}{{unit.system.abilities.wll.mod}}
                                 </div>
-                                <button type="button" class="config-button unbutton" data-action="removeUnit"
-                                    data-tooltip="ldnd5e.company.removeUnit"
-                                    aria-label="{{ localize 'ldnd5e.company.removeUnit' }}">
-                                    <i class="fas fa-trash" inert></i>
-                                </button>
+                                <div class="item-detail item-controls always-visible">
+                                    <button type="button" class="config-button unbutton item-control item-action always-interactive" data-action="removeUnit"
+                                        data-tooltip="ldnd5e.company.removeUnit"
+                                        aria-label="{{ localize 'ldnd5e.company.removeUnit' }}">
+                                        <i class="fas fa-trash" inert></i>
+                                    </button>
+                                </div>
                             </div>
                         </li>
                         {{/each}}
@@ -129,19 +134,19 @@
 
             <section class="items-list units-list" data-unit-list="heavy">
                 <div class="items-section card">
-                    <div class="items-header header flexrow">
-                        <h3 class="item-name flexrow">{{localize 'ldnd5e.uTypes.heavy'}}</h3>
+                    <div class="items-header header">
+                        <h3 class="item-name">{{localize 'ldnd5e.uTypes.heavy'}}</h3>
 
-                        <div class="item-detail fortitute" data-tooltip="ldnd5e.uAbilities.frt">
+                        <div class="item-detail item-attribute fortitute" data-tooltip="ldnd5e.uAbilities.frt">
                             <i class="fas fa-hand-fist"></i>
                         </div>
-                        <div class="item-detail moral" data-tooltip="ldnd5e.uAbilities.mrl">
+                        <div class="item-detail item-attribute moral" data-tooltip="ldnd5e.uAbilities.mrl">
                             <i class="fas fa-heart"></i>
                         </div>
-                        <div class="item-detail will" data-tooltip="ldnd5e.uAbilities.wll">
+                        <div class="item-detail item-attribute will" data-tooltip="ldnd5e.uAbilities.wll">
                             <i class="fas fa-brain"></i>
                         </div>
-                        <div class="item-detail tools"></div>
+                        <div class="item-detail item-controls"></div>
                     </div>
 
                     <ol class="item-list unlist">
@@ -149,30 +154,32 @@
                         <li class="item unit" data-uuid="{{ unit.uuid }}" data-item-id="{{ unit.id }}"
                             data-entry-id="{{ unit.id }}" data-item-name="{{ unit.name }}">
                             {{!-- Row Summary --}}
-                            <div class="item-row draggable flexrow">
+                            <div class="item-row draggable">
                                 {{!-- Item Name --}}
-                                <div class="item-name item-action item-tooltip" role="button"
-                                    data-action="clickUnit" aria-label="{{ unit.name }}">
+                                <div class="item-name item-action item-tooltip" role="button" data-action="clickUnit"
+                                    aria-label="{{ unit.name }}">
                                     <img class="item-image gold-icon" src="{{ unit.img }}" alt="{{ unit.name }}"
                                         draggable="false">
                                     <div class="name name-stacked">
                                         <span class="title">{{unit.name}}</span>
                                     </div>
                                 </div>
-                                <div class="item-data fortitute">
+                                <div class="item-detail item-attribute fortitute">
                                     {{unit.system.abilities.frt.sign}}{{unit.system.abilities.frt.mod}}
                                 </div>
-                                <div class="item-data moral">
+                                <div class="item-detail item-attribute moral">
                                     {{unit.system.abilities.mrl.sign}}{{unit.system.abilities.mrl.mod}}
                                 </div>
-                                <div class="item-data will">
+                                <div class="item-detail item-attribute will">
                                     {{unit.system.abilities.wll.sign}}{{unit.system.abilities.wll.mod}}
                                 </div>
-                                <button type="button" class="config-button unbutton" data-action="removeUnit"
-                                    data-tooltip="ldnd5e.company.removeUnit"
-                                    aria-label="{{ localize 'ldnd5e.company.removeUnit' }}">
-                                    <i class="fas fa-trash" inert></i>
-                                </button>
+                                <div class="item-detail item-controls always-visible">
+                                    <button type="button" class="config-button unbutton item-control item-action always-interactive" data-action="removeUnit"
+                                        data-tooltip="ldnd5e.company.removeUnit"
+                                        aria-label="{{ localize 'ldnd5e.company.removeUnit' }}">
+                                        <i class="fas fa-trash" inert></i>
+                                    </button>
+                                </div>
                             </div>
                         </li>
                         {{/each}}
@@ -182,19 +189,19 @@
 
             <section class="items-list units-list" data-unit-list="special">
                 <div class="items-section card">
-                    <div class="items-header header flexrow">
-                        <h3 class="item-name flexrow">{{localize 'ldnd5e.uTypes.special'}}</h3>
+                    <div class="items-header header">
+                        <h3 class="item-name">{{localize 'ldnd5e.uTypes.special'}}</h3>
 
-                        <div class="item-detail fortitute" data-tooltip="ldnd5e.uAbilities.frt">
+                        <div class="item-detail item-attribute fortitute" data-tooltip="ldnd5e.uAbilities.frt">
                             <i class="fas fa-hand-fist"></i>
                         </div>
-                        <div class="item-detail moral" data-tooltip="ldnd5e.uAbilities.mrl">
+                        <div class="item-detail item-attribute moral" data-tooltip="ldnd5e.uAbilities.mrl">
                             <i class="fas fa-heart"></i>
                         </div>
-                        <div class="item-detail will" data-tooltip="ldnd5e.uAbilities.wll">
+                        <div class="item-detail item-attribute will" data-tooltip="ldnd5e.uAbilities.wll">
                             <i class="fas fa-brain"></i>
                         </div>
-                        <div class="item-detail tools"></div>
+                        <div class="item-detail item-controls"></div>
                     </div>
 
                     <ol class="item-list unlist">
@@ -202,30 +209,32 @@
                         <li class="item unit" data-uuid="{{ unit.uuid }}" data-item-id="{{ unit.id }}"
                             data-entry-id="{{ unit.id }}" data-item-name="{{ unit.name }}">
                             {{!-- Row Summary --}}
-                            <div class="item-row draggable flexrow">
+                            <div class="item-row draggable">
                                 {{!-- Item Name --}}
-                                <div class="item-name item-action item-tooltip" role="button"
-                                    data-action="clickUnit" aria-label="{{ unit.name }}">
+                                <div class="item-name item-action item-tooltip" role="button" data-action="clickUnit"
+                                    aria-label="{{ unit.name }}">
                                     <img class="item-image gold-icon" src="{{ unit.img }}" alt="{{ unit.name }}"
                                         draggable="false">
                                     <div class="name name-stacked">
                                         <span class="title">{{unit.name}}</span>
                                     </div>
                                 </div>
-                                <div class="item-data fortitute">
+                                <div class="item-detail item-attribute fortitute">
                                     {{unit.system.abilities.frt.sign}}{{unit.system.abilities.frt.mod}}
                                 </div>
-                                <div class="item-data moral">
+                                <div class="item-detail item-attribute moral">
                                     {{unit.system.abilities.mrl.sign}}{{unit.system.abilities.mrl.mod}}
                                 </div>
-                                <div class="item-data will">
+                                <div class="item-detail item-attribute will">
                                     {{unit.system.abilities.wll.sign}}{{unit.system.abilities.wll.mod}}
                                 </div>
-                                <button type="button" class="config-button unbutton" data-action="removeUnit"
-                                    data-tooltip="ldnd5e.company.removeUnit"
-                                    aria-label="{{ localize 'ldnd5e.company.removeUnit' }}">
-                                    <i class="fas fa-trash" inert></i>
-                                </button>
+                                <div class="item-detail item-controls always-visible">
+                                    <button type="button" class="config-button unbutton item-control item-action always-interactive" data-action="removeUnit"
+                                        data-tooltip="ldnd5e.company.removeUnit"
+                                        aria-label="{{ localize 'ldnd5e.company.removeUnit' }}">
+                                        <i class="fas fa-trash" inert></i>
+                                    </button>
+                                </div>
                             </div>
                         </li>
                         {{/each}}
@@ -235,19 +244,19 @@
 
             <section class="items-list units-list" data-unit-list="medical">
                 <div class="items-section card">
-                    <div class="items-header header flexrow">
-                        <h3 class="item-name flexrow">{{localize 'ldnd5e.uTypes.medical'}}</h3>
+                    <div class="items-header header">
+                        <h3 class="item-name">{{localize 'ldnd5e.uTypes.medical'}}</h3>
 
-                        <div class="item-detail fortitute" data-tooltip="ldnd5e.uAbilities.frt">
+                        <div class="item-detail item-attribute fortitute" data-tooltip="ldnd5e.uAbilities.frt">
                             <i class="fas fa-hand-fist"></i>
                         </div>
-                        <div class="item-detail moral" data-tooltip="ldnd5e.uAbilities.mrl">
+                        <div class="item-detail item-attribute moral" data-tooltip="ldnd5e.uAbilities.mrl">
                             <i class="fas fa-heart"></i>
                         </div>
-                        <div class="item-detail will" data-tooltip="ldnd5e.uAbilities.wll">
+                        <div class="item-detail item-attribute will" data-tooltip="ldnd5e.uAbilities.wll">
                             <i class="fas fa-brain"></i>
                         </div>
-                        <div class="item-detail tools"></div>
+                        <div class="item-detail item-controls"></div>
                     </div>
 
                     <ol class="item-list unlist">
@@ -255,30 +264,32 @@
                         <li class="item unit" data-uuid="{{ unit.uuid }}" data-item-id="{{ unit.id }}"
                             data-entry-id="{{ unit.id }}" data-item-name="{{ unit.name }}">
                             {{!-- Row Summary --}}
-                            <div class="item-row draggable flexrow">
+                            <div class="item-row draggable">
                                 {{!-- Item Name --}}
-                                <div class="item-name item-action item-tooltip" role="button"
-                                    data-action="clickUnit" aria-label="{{ unit.name }}">
+                                <div class="item-name item-action item-tooltip" role="button" data-action="clickUnit"
+                                    aria-label="{{ unit.name }}">
                                     <img class="item-image gold-icon" src="{{ unit.img }}" alt="{{ unit.name }}"
                                         draggable="false">
                                     <div class="name name-stacked">
                                         <span class="title">{{unit.name}}</span>
                                     </div>
                                 </div>
-                                <div class="item-data fortitute">
+                                <div class="item-detail item-attribute fortitute">
                                     {{unit.system.abilities.frt.sign}}{{unit.system.abilities.frt.mod}}
                                 </div>
-                                <div class="item-data moral">
+                                <div class="item-detail item-attribute moral">
                                     {{unit.system.abilities.mrl.sign}}{{unit.system.abilities.mrl.mod}}
                                 </div>
-                                <div class="item-data will">
+                                <div class="item-detail item-attribute will">
                                     {{unit.system.abilities.wll.sign}}{{unit.system.abilities.wll.mod}}
                                 </div>
-                                <button type="button" class="config-button unbutton" data-action="removeUnit"
-                                    data-tooltip="ldnd5e.company.removeUnit"
-                                    aria-label="{{ localize 'ldnd5e.company.removeUnit' }}">
-                                    <i class="fas fa-trash" inert></i>
-                                </button>
+                                <div class="item-detail item-controls always-visible">
+                                    <button type="button" class="config-button unbutton item-control item-action always-interactive" data-action="removeUnit"
+                                        data-tooltip="ldnd5e.company.removeUnit"
+                                        aria-label="{{ localize 'ldnd5e.company.removeUnit' }}">
+                                        <i class="fas fa-trash" inert></i>
+                                    </button>
+                                </div>
                             </div>
                         </li>
                         {{/each}}

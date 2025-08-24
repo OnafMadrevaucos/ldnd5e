@@ -47,7 +47,7 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
                 pers: new fields.BooleanField({ required: true, nullable: false, initial: false }),
             }),
             // Lista de Atividades que a Tática fornece.
-            activities: new fields.ArrayField(new fields.StringField({ textSearch: true, label: "ldnd5e.tatics.activities" })),
+            activities: new dnd5e.dataModels.fields.ActivitiesField(),
         };
     }
 
@@ -76,17 +76,18 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
 
     /** @inheritDoc */
     async getSheetData(context) {
+        const unit = this.parent.actor;
+        const impetus = unit?.system.abilities.frt.value ?? 0;
+
         context.info = [{
             label: "ldnd5e.tatics.impetus",
             classes: "info-lg",
-            value: dnd5e.utils.formatModifier(0)
+            value: dnd5e.utils.formatModifier(impetus)
         }];
 
         if (this.parent.labels.damages?.length) {
 
 
         }
-    }
-
-    /* -------------------------------------------- */
+    }    
 }

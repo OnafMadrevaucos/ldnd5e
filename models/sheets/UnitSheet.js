@@ -20,6 +20,7 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
       removeTatic: this.#removeTatic,
       showConfiguration: this.#showConfiguration,
       showDescription: this.#showDescription,
+      editDescription: this.#editDescription,
       showTatic: this.#showTatic,
       roll: this.#roll,
       toggleTraining: this.#toggleTraining
@@ -100,6 +101,7 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
       isHeavy: this.actor.system.info.type === unitChoices.uTypes.heavy,
       isSpecial: this.actor.system.info.type === unitChoices.uTypes.special,
       isMedical: this.actor.system.info.type === unitChoices.uTypes.medical,
+      editDescription: this.actor.getFlag("ldnd5e", "editingDescription") || false,
     });
 
     this._prepareUTypes(context);
@@ -297,7 +299,6 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
 
   /* -------------------------------------------- */
 
-
   /**
    * Opens the unit's description.
    * @this {UnitSheet}
@@ -310,6 +311,24 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
 
     const description = document.querySelector(".description-tooltip");
     description.classList.toggle("active");
+
+    // If the button is being deactivated, also disable the edit mode.
+    if(!button.classList.contains("active"))
+      await this.actor.setFlag("ldnd5e", "editingDescription", false);
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Opens the unit's description editor.
+   * @this {UnitSheet}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+  static async #editDescription(event, target) {
+    target.classList.toggle("active");
+
+    await this.actor.setFlag("ldnd5e", "editingDescription", target.classList.contains("active"));
   }
 
   /* -------------------------------------------- */
@@ -322,7 +341,7 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
    */
   static async #showTatic(event, target) {
     const taticId = target.closest('.tatic')?.dataset.itemId;
-    if(!taticId) return;
+    if (!taticId) return;
 
     const tatic = this.actor.items.get(taticId);
     tatic.sheet.render(true);
@@ -367,7 +386,7 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
    */
   static async #toggleTraining(event, target) {
     const taticId = target.closest(".tatic")?.dataset.itemId;
-    if(!taticId) return;
+    if (!taticId) return;
 
     const tatic = this.actor.items.get(taticId);
     await tatic.update({ "system.trainning": !tatic.system.trainning });
