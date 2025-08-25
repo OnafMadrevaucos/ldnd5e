@@ -12,6 +12,7 @@
   --overlay-text-color: #860d07;
   --overlay-heal-text-color: #072986;
 
+  --tatic-activity-card: #f8f4f1;
 }
 
 /* ----------------------------------------- */
@@ -1434,6 +1435,7 @@
   padding: 5px;
   cursor: pointer;
 }
+
 .ldnd5e.unit .unit-info .description-tooltip .edit-description.active * {
   color: #491d25;
 }
@@ -1441,10 +1443,12 @@
 .ldnd5e.unit .unit-info .description-tooltip span {
   border: none;
 }
+
 .ldnd5e.unit .unit-info .description-tooltip .flavor {
   font-style: italic;
   text-align: end;
 }
+
 .ldnd5e.unit .unit-info .description-tooltip .description {
   font-weight: bold;
   font-size: var(--font-size-14);
@@ -1481,6 +1485,7 @@
 .ldnd5e.unit .tatics-list .tatic .trainning {
   font-size: var(--font-h6-size);
 }
+
 .ldnd5e.unit .tatics-list .tatic .trainning.active {
   color: var(--dnd5e-color-gold);
 }
@@ -1514,7 +1519,9 @@
 
 .ldnd5e.tatic .attributes .attribute {
   width: 1.75em;
+  height: 1.75em;
   background-color: transparent;
+  border: none;
 }
 
 .ldnd5e.tatic .attributes .attribute:hover {
@@ -1540,6 +1547,44 @@
 
 .ldnd5e.tatic .attributes .attribute.pers.active {
   color: #60c757;
+}
+
+.application.dnd5e2.dialog.activity.tatic {
+  background: url(ui/texture-gray1.webp) no-repeat top left, url(ui/texture-gray2.webp) no-repeat bottom right, var(--dnd5e-color-parchment);
+  border: 1px solid var(--dnd5e-color-gold);
+}
+
+.dialog.activity.tatic .window-content {
+  border-radius: 4px;
+  background: var(--tatic-activity-card);
+  box-shadow: 0 0 6px var(--dnd5e-shadow-45);
+  border: var(--dnd5e-border-gold);
+  margin-inline: 2em;
+  margin-bottom: 2em;
+}
+
+.dialog.activity.tatic .window-content .document-name {
+  font-family: var(--dnd5e-font-roboto-slab);
+  font-weight: bold;
+  font-size: var(--font-size-24);
+  text-align: center;
+  background: none;
+  border: none;
+  color: var(--color-dark-5);
+}
+
+.dialog.activity.tatic .window-content .document-name:focus {
+  box-shadow: none;
+}
+
+.dialog.activity.tatic .window-content button.dialog-button,
+.dialog.activity.tatic .window-content [data-application-part="configuration"] label {
+  color: var(--color-dark-5);
+}
+
+.dialog.activity.tatic .window-content button.dialog-button:hover {
+  background: var(--tatic-activity-card);
+  box-shadow: 0 0 5px var(--color-shadow-primary);
 }
 
 /* ----------------------------------------- */

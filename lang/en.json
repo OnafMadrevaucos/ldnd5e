@@ -142,7 +142,17 @@
             "reac": "Reaction",
             "pers": "Persistence",
             "trainning": "Train.",
-            "damage": "Moral Damage"            
+            "damage": "Moral Damage",
+            "configuration": "Configuration",
+            "activityTitle": "New Activity",
+            "activityType": "Activity Type",
+            "activities": {
+                "moralDmg": "Moral Damage",
+                "moralHeal": "Moral Heal",
+                "impetusBuff": "Impetus' Bonus",
+                "impetusDebuff": "Impetus' Penalty"
+            },
+            "invalidActivity": "Invalid Activity Data"          
         },
         
         "messages": {

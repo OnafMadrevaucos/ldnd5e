@@ -1,3 +1,6 @@
+import ActivityDialog from "../dialogs/ActivityDialog.js";
+import { taticsChoices } from "../../scripts/constants.js";
+
 const { api: api, item: item } = dnd5e.applications;
 
 const TextEditor$b = foundry.applications.ux.TextEditor.implementation;
@@ -18,7 +21,9 @@ export default class TaticsSheet extends item.ItemSheet5e {
         viewPermission: CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER,
         actions: {
             editDescription: this.#editDescription,
-            toggleAttr: this.#toggleAttr
+            toggleAttr: this.#toggleAttr,
+            editDocument: this.#editDocument,
+            deleteDocument: this.#deleteDocument
         },
         form: {
             submitOnChange: true,
@@ -159,16 +164,15 @@ export default class TaticsSheet extends item.ItemSheet5e {
      * @protected
      */
     async _prepareActivitiesContext(context, options) {
-        context.activities = (this.item.system.activities ?? [])
-            .filter(a => CONFIG.DND5E.activityTypes[a.type]?.configurable !== false)
+        context.activities = (Object.values(this.item.system.activities) ?? [])
             .map(activity => {
-                const { _id: id, name, img, sort } = activity.prepareSheetContext();
                 return {
-                    id, name, sort,
-                    img: { src: img, svg: img?.endsWith(".svg") },
-                    uuid: activity.uuid
+                    id: activity.id,
+                    name: activity.name,
+                    img: { src: `modules/ldnd5e/ui/icons/${activity.type}.svg`, svg: true }
                 };
             });
+
 
         return context;
     }
@@ -226,14 +230,13 @@ export default class TaticsSheet extends item.ItemSheet5e {
 
     /**@inheritdoc */
     async _addDocument(event) {
-        const document = await dnd5e.documents.activity.UtilityActivity.createDialog({}, {
-            parent: this.item,
-            types: Object.entries(CONFIG.DND5E.activityTypes).filter(([, { configurable }]) => {
-                return configurable !== false;
-            }).map(([k]) => k)
-        });
+        const activity = await ActivityDialog.createDialog(this.item, { mode: "create" });
 
-        return document;
+        if (activity) {
+            this.item.system.activities[activity.id] = activity;
+            await this.item.update({ "system.activities": this.item.system.activities });
+            this.render();
+        }
     }
 
     /* -------------------------------------------- */
@@ -283,5 +286,41 @@ export default class TaticsSheet extends item.ItemSheet5e {
         attributes[attr] = !attributes[attr];
 
         await this.item.update({ "system.attributes": attributes });
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Handle showing an activity.
+   * @this {ItemSheet5e}
+   * @param {Event} event         Triggering click event.
+   * @param {HTMLElement} target  Button that was clicked.
+   */
+    static async #editDocument(event, target) {
+        const activityId = target.closest(".activity")?.dataset.activityId;
+        if (!activityId) return;
+
+        const activity = await ActivityDialog.createDialog(this.item, { activityId, mode: "edit" });
+        if(!activity) return;
+
+        this.item.system.activities[activityId] = activity;
+        await this.item.update({ "system.activities": this.item.system.activities });
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Handle deleting an activity.
+   * @this {ItemSheet5e}
+   * @param {Event} event         Triggering click event.
+   * @param {HTMLElement} target  Button that was clicked.
+   */
+    static async #deleteDocument(event, target) {
+        const activityId = target.closest(".activity")?.dataset.activityId;
+        if (!activityId) return;
+
+        delete this.item.system.activities[activityId];
+        await this.item.update({ "system.activities": this.item.system.activities });
+        this.render();
     }
 }

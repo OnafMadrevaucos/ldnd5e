@@ -27,6 +27,10 @@
          "templates/sheets/tatic/header.hbs",
          "templates/sheets/tatic/activities.hbs",
          "templates/sheets/tatic/description.hbs",
+
+         "templates/dialogs/activity/header.hbs",
+         "templates/dialogs/activity/buttons.hbs",
+         "templates/dialogs/activity/configuration.hbs",
     ];
 
     templates = templates.map((t) => `modules/ldnd5e/${t}`);

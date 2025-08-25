@@ -166,7 +166,7 @@ const taticsChoices = {
       moralHeal: "moralHeal",
       impetusBuff: "impetusBuff",
       impetusDebuff: "impetusDebuff",
-   },   
+   }   
 }
 
 const i18nStrings = {
@@ -272,7 +272,7 @@ const i18nStrings = {
       companies: "ldnd5e.army.companies",
    },
 
-   company : {
+   company: {
       commander: "ldnd5e.company.commander",
       removeCommander: "ldnd5e.company.removeCommander",
       noCommander: "ldnd5e.company.noCommander",
@@ -304,6 +304,16 @@ const i18nStrings = {
       pers: "ldnd5e.tatics.pers",
       trainning: "ldnd5e.tatics.trainning",
       damage: "ldnd5e.tatics.damage",
+      configuration: "ldnd5e.tatics.configuration",
+      activityTitle: "ldnd5e.tatics.activityTitle",
+      activityType: "ldnd5e.tatics.activityType",
+      activities: {
+         moralDmg: "ldnd5e.tatics.activities.moralDmg",
+         moralHeal: "ldnd5e.tatics.activities.moralHeal",
+         impetusBuff: "ldnd5e.tatics.activities.impetusBuff",
+         impetusDebuff: "ldnd5e.tatics.activities.impetusDebuff",
+      },
+      invalidActivity: "ldnd5e.tatics.invalidActivity"
    },
 
    unitType: "ldnd5e.unit",

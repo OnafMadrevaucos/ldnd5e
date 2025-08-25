@@ -1,18 +1,14 @@
 <section class="activities tab {{ tab.cssClass }}" data-tab="{{ tab.id }}" data-group="{{ tab.group }}">
     {{#each activities}}
-    <div class="activity card" data-activity-id="{{ id }}" data-uuid="{{ uuid }}">
+    <div class="activity card" data-activity-id="{{ id }}">
 
         {{!-- Icon --}}
-        <div class="icon {{#if img.svg}}svg{{/if}}">
-            {{#if img.svg}}
-            <dnd5e-icon src="{{ img.src }}"></dnd5e-icon>
-            {{else}}
-            <img src="{{ img.src }}" class="gold-icon" alt="{{ name }}">
-            {{/if}}
+        <div class="icon {{#if img.svg}}svg{{/if}}">            
+            <dnd5e-icon src="{{ img.src }}"></dnd5e-icon>            
         </div>
 
         {{!-- Name --}}
-        <div class="name" data-action="showDocument">{{ name }}</div>
+        <div class="name" data-action="editDocument">{{ name }}</div>
 
         {{!-- Controls --}}
         <div class="controls">

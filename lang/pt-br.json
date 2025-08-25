@@ -142,7 +142,17 @@
             "reac": "Reação",
             "pers": "Persistente",
             "trainning": "Treina.",
-            "damage": "Dano à Moral" 
+            "damage": "Dano à Moral",
+            "configuration": "Configuração",
+            "activityTitle": "Nova Atividade",
+            "activityType": "Tipo de Atividade",
+            "activities": {
+                "moralDmg": "Dano à Moral",
+                "moralHeal": "Cura à Moral",
+                "impetusBuff": "Bônus de Ímpeto",
+                "impetusDebuff": "Penalidade de Ímpeto"
+            },
+            "invalidActivity": "Data de Atividade Inválida" 
         },
 
         "messages": {

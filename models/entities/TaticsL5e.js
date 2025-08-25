@@ -47,7 +47,7 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
                 pers: new fields.BooleanField({ required: true, nullable: false, initial: false }),
             }),
             // Lista de Atividades que a Tática fornece.
-            activities: new dnd5e.dataModels.fields.ActivitiesField(),
+            activities: new fields.ObjectField({ required: true, nullable: false }),
         };
     }
 
@@ -85,9 +85,20 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
             value: dnd5e.utils.formatModifier(impetus)
         }];
 
-        if (this.parent.labels.damages?.length) {
+        if (Object.keys(this.system.activities).length > 0) {
+            context.info.push({
+                value: Object.values(this.system.activities).reduce((a, b) => {
+                    const formula = `${b.number}d${b.die}${b.bonus}`;
 
-
+                    return `${a}
+                    <span class="formula rollable" data-action="roll" data-type="activity" data-tooltip aria-label="${b.name}"">${formula}</span>
+                    <span class="damage-type">
+                        <dnd5e-icon src="modules/ldnd5e/ui/icons/${b.type}.svg"></dnd5e-icon>
+                    </span>
+                    `;
+                }, ""),
+                classes: "info-grid damage"
+            });
         }
-    }    
+    }
 }
