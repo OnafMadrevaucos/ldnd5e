@@ -2,12 +2,13 @@ import { taticsChoices } from "../../scripts/constants.js";
 import TaticsL5e from "../entities/TaticsL5e.js";
 
 const api = dnd5e.applications.api;
+
 export default class ActivityDialog extends api.Dialog5e {
     constructor(options = {}) {
         super(options);
 
         this.#mode = options.mode ?? "create";
-
+ 
         if (this.#mode === "edit") {
             this.#data = options.tatic?.system.activities[options.activityId] ?? {};
         }
@@ -48,6 +49,8 @@ export default class ActivityDialog extends api.Dialog5e {
         }
     };
 
+    /* -------------------------------------------- */
+
     /**
    * Activity types used to create a Tatic Activity.
    * @type {typeof Object}
@@ -55,6 +58,8 @@ export default class ActivityDialog extends api.Dialog5e {
     static get activityTypes() {
         return taticsChoices.activities;
     }
+
+    /* -------------------------------------------- */
 
     /**
    * Activity types used to create a Tatic Activity.

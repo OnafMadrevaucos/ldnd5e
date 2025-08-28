@@ -1,4 +1,5 @@
 import { constants, i18nStrings, unitChoices } from "../../scripts/constants.js";
+import MedicalRestaurationBrowser from "../dialogs/MedicalRestaurationBrowser.js";
 
 const { api: api, sheets: sheets } = foundry.applications;
 
@@ -491,12 +492,12 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
             case "ability": {
                 const ability = target.closest("[data-ability]")?.dataset.ability;
 
-                if (target.classList.contains("saving-throw")) return this.actor.system.rollSavingThrow({ skill: ability, event });
-                else return this.actor.system.rollAbilityCheck({ ability: ability }, { event });
+                if (target.classList.contains("saving-throw")) return this.actor.system.rollSavingThrow({ skill: ability, event }, {}, { speaker: ChatMessage.getSpeaker({ actor: this.actor })});
+                else return this.actor.system.rollAbilityCheck({ ability: ability }, { event }, { speaker: ChatMessage.getSpeaker({ actor: this.actor })});
             };
             case "skill": {
                 const skill = target.closest("[data-key]")?.dataset.key;
-                return this.actor.system.rollSkill({ skill: skill }, { event });
+                return this.actor.system.rollSkill({ skill: skill }, { event }, { speaker: ChatMessage.getSpeaker({ actor: this.actor })});
             }
         }
     }
@@ -511,6 +512,17 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
    */
     static async #companyRest(event, target) {
         const data = this.actor.system;
+
+        const medicalId = data.units.find(unitId => {
+            const unit = game.actors.get(unitId);
+            return unit.system.info.type === unitChoices.uTypes.medical;
+        });
+
+        const medicalUnit = game.actors.get(medicalId);
+
+        if (medicalUnit) {
+            await MedicalRestaurationBrowser.create(medicalUnit, { force: true });
+        }
 
         await this.actor.update({ 
             ['system.attributes.hp.value']: data.attributes.hp.max,

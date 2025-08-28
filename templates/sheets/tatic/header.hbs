@@ -20,35 +20,67 @@
         {{!-- Attributes --}}
         <ul class="attributes unlist flexrow">
             <li class="attribute-item" data-tooltip="ldnd5e.tatics.prep">
-                <button class="attribute prep {{#unless system.attributes.prep}}active{{/unless}}"
+                {{#unless isMedical}}
+                <button class="attribute prep {{#if system.attributes.prep}}active{{/if}}"
                     data-action="toggleAttr" data-attr="prep">
                     <i class="fas fa-flask"></i>
                 </button>
+                {{else}}
+                <button class="attribute prep active" disabled>
+                    <i class="fas fa-flask"></i>
+                </button>
+                {{/unless}}
             </li>
             <li class="attribute-item" data-tooltip="ldnd5e.tatics.surp">
-                <button class="attribute surp {{#unless system.attributes.surp}}active{{/unless}}"
+                {{#unless isMedical}}
+                <button class="attribute surp {{#if system.attributes.surp}}active{{/if}}"
                     data-action="toggleAttr" data-attr="surp">
                     <i class="fas fa-triangle-exclamation"></i>
                 </button>
+                {{else}}
+                <button class="attribute surp" disabled>
+                    <i class="fas fa-triangle-exclamation"></i>
+                </button>
+                {{/unless}}
             </li>
             <li class="attribute-item" data-tooltip="ldnd5e.tatics.reac">
-                <button class="attribute reac {{#unless system.attributes.reac}}active{{/unless}}"
+                {{#unless isMedical}}
+                <button class="attribute reac {{#if system.attributes.reac}}active{{/if}}"
                     data-action="toggleAttr" data-attr="reac">
                     <i class="fas fa-arrows-rotate"></i>
                 </button>
+                {{else}}
+                <button class="attribute reac" disabled>
+                    <i class="fas fa-arrows-rotate"></i>
+                </button>
+                {{/unless}}
             </li>
             <li class="attribute-item" data-tooltip="ldnd5e.tatics.pers">
-                <button class="attribute pers {{#unless system.attributes.pers}}active{{/unless}}"
+                {{#unless isMedical}}
+                <button class="attribute pers {{#if system.attributes.pers}}active{{/if}}"
                     data-action="toggleAttr" data-attr="pers">
                     <i class="fas fa-infinity"></i>
                 </button>
+                {{else}}
+                <button class="attribute pers" disabled>
+                    <i class="fas fa-infinity"></i>
+                </button>
+                {{/unless}}
             </li>
         </ul>
 
     </div>
 
-    {{!-- CR, Price --}}
+    {{!-- CR, Price, Main Recovey --}}
     <div class="right common-fields ">
+
+        {{!-- Main Recovery --}}
+        <div class="main-recovery">
+            <button class="value {{#if system.mainRecovery}}active{{/if}}" name="system.mainRecovery"
+                data-action="toggleRecovery" data-tooltip="ldnd5e.tatics.mainRecovery">
+                <i class="fas fa-house-medical-flag"></i>
+            </button>
+        </div>
 
         {{!-- CR --}}
         <div class="cr">

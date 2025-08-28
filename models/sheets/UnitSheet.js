@@ -12,8 +12,8 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
   static DEFAULT_OPTIONS = {
     classes: ["dnd5e2", "sheet", "actor", "ldnd5e", "unit", "standard-form", "npc", "interactable"],
     position: {
-      width: 800,
-      height: 680
+      width: 750,
+      height: 700
     },
     viewPermission: CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER,
     actions: {
@@ -22,6 +22,7 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
       showDescription: this.#showDescription,
       editDescription: this.#editDescription,
       showTatic: this.#showTatic,
+      useTatic: this.#useTatic,
       roll: this.#roll,
       toggleTraining: this.#toggleTraining
     },
@@ -40,6 +41,18 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
       template: "modules/ldnd5e/templates/sheets/unit/body.hbs",
     },
   };
+
+  /* -------------------------------------------- */
+  /*  Properties                                  */
+  /* -------------------------------------------- */
+
+  /**
+   * The chosen activity.
+   * @type {Activity|null}
+   */
+  get isMedical() {
+    return this.actor.system.info.type === unitChoices.uTypes.medical;
+  }
 
   /* -------------------------------------------- */
   /*  Rendering                                   */
@@ -100,7 +113,7 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
       isLight: this.actor.system.info.type === unitChoices.uTypes.light,
       isHeavy: this.actor.system.info.type === unitChoices.uTypes.heavy,
       isSpecial: this.actor.system.info.type === unitChoices.uTypes.special,
-      isMedical: this.actor.system.info.type === unitChoices.uTypes.medical,
+      isMedical: this.isMedical,
       editDescription: this.actor.getFlag("ldnd5e", "editingDescription") || false,
     });
 
@@ -313,7 +326,7 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
     description.classList.toggle("active");
 
     // If the button is being deactivated, also disable the edit mode.
-    if(!button.classList.contains("active"))
+    if (!button.classList.contains("active"))
       await this.actor.setFlag("ldnd5e", "editingDescription", false);
   }
 
@@ -350,6 +363,24 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
   /* -------------------------------------------- */
 
   /**
+   * Opens the unit's description.
+   * @this {UnitSheet}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+  static async #useTatic(event, target) {
+    const taticId = target.closest('.tatic')?.dataset.itemId;
+    if (!taticId) return;
+
+    const tatic = this.actor.items.get(taticId);
+    if (!tatic) return;
+
+    await tatic.use({ event });
+  }
+
+  /* -------------------------------------------- */
+
+  /**
    * Roll any check or saving throw fo the company.
    * @this {CompanySheet}
    * @param {PointerEvent} event  The originating click event.
@@ -362,16 +393,12 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
       case "ability": {
         const ability = target.closest("[data-ability]")?.dataset.ability;
 
-        if (target.classList.contains("saving-throw")) return this.actor.system.rollSavingThrow({ skill: ability, event });
-        else return this.actor.system.rollAbilityCheck({ ability: ability }, { event });
+        if (target.classList.contains("saving-throw")) return this.actor.system.rollSavingThrow({ skill: ability, event }, {}, { speaker: ChatMessage.getSpeaker({ actor: this.actor }) });
+        else return this.actor.system.rollAbilityCheck({ ability: ability }, { event }, { speaker: ChatMessage.getSpeaker({ actor: this.actor }) });
       };
       case "skill": {
         const skill = target.closest("[data-key]")?.dataset.key;
-        return this.actor.system.rollSkill({ skill: skill }, { event });
-      }
-      case "tatic": {
-        const taticId = target.closest(".tatic")?.dataset.itemId;
-        const tatic = this.actor.items.get(taticId);
+        return this.actor.system.rollSkill({ skill: skill }, { event }, { speaker: ChatMessage.getSpeaker({ actor: this.actor }) });
       }
     }
   }

@@ -1508,6 +1508,24 @@
   padding: 0 10px 0 5px;
 }
 
+.ldnd5e.tatic .attributes .attribute,
+.ldnd5e.tatic .main-recovery button {
+  width: 1.75em;
+  height: 1.75em;
+  background-color: transparent;
+  border: none;
+}
+
+.ldnd5e.tatic:has(.editable) .attributes .attribute:hover,
+.ldnd5e.tatic:has(.editable) .main-recovery button:hover {
+  cursor: pointer;
+  text-shadow: 0 0 10px var(--color-shadow-primary);
+}
+
+.ldnd5e.tatic .main-recovery .value.active {
+  color: var(--dnd5e-color-gold);
+}
+
 .ldnd5e.tatic .sheet-header .cr i {
   font-size: var(--font-h6-size);
   color: var(--dnd5e-color-gold);
@@ -1522,11 +1540,6 @@
   height: 1.75em;
   background-color: transparent;
   border: none;
-}
-
-.ldnd5e.tatic .attributes .attribute:hover {
-  cursor: pointer;
-  text-shadow: 0 0 10px var(--color-shadow-primary);
 }
 
 .ldnd5e.tatic .attributes .attribute.active {
@@ -1547,6 +1560,11 @@
 
 .ldnd5e.tatic .attributes .attribute.pers.active {
   color: #60c757;
+}
+
+.ldnd5e.tatic .info-block .value .formula:hover {
+  cursor: pointer;
+  text-shadow: 0 0 10px var(--color-shadow-primary);
 }
 
 .application.dnd5e2.dialog.activity.tatic {
@@ -1585,6 +1603,28 @@
 .dialog.activity.tatic .window-content button.dialog-button:hover {
   background: var(--tatic-activity-card);
   box-shadow: 0 0 5px var(--color-shadow-primary);
+}
+
+.dialog.activity-choice.tatic {
+  border: none;
+}
+
+.dialog.activity-choice.tatic .window-header {
+  margin-bottom: 0;
+}
+
+.dialog.activity-choice.tatic .window-content [data-application-part="header"]{
+  margin-bottom: 0;
+}
+
+.dialog.activity-choice.tatic .window-content h1.window-title {
+  inset-inline: 0;
+  color: var(--color-text-dark-primary);
+  font-family: var(--dnd5e-font-roboto-slab);
+  font-weight: bold;
+  text-align: center;
+  font-size: var(--font-size-24);
+  margin-bottom: 0.75em;
 }
 
 /* ----------------------------------------- */

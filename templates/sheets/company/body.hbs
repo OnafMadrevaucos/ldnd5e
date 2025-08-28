@@ -245,18 +245,7 @@
             <section class="items-list units-list" data-unit-list="medical">
                 <div class="items-section card">
                     <div class="items-header header">
-                        <h3 class="item-name">{{localize 'ldnd5e.uTypes.medical'}}</h3>
-
-                        <div class="item-detail item-attribute fortitute" data-tooltip="ldnd5e.uAbilities.frt">
-                            <i class="fas fa-hand-fist"></i>
-                        </div>
-                        <div class="item-detail item-attribute moral" data-tooltip="ldnd5e.uAbilities.mrl">
-                            <i class="fas fa-heart"></i>
-                        </div>
-                        <div class="item-detail item-attribute will" data-tooltip="ldnd5e.uAbilities.wll">
-                            <i class="fas fa-brain"></i>
-                        </div>
-                        <div class="item-detail item-controls"></div>
+                        <h3 class="item-name">{{localize 'ldnd5e.uTypes.medical'}}</h3>                        
                     </div>
 
                     <ol class="item-list unlist">
@@ -273,16 +262,7 @@
                                     <div class="name name-stacked">
                                         <span class="title">{{unit.name}}</span>
                                     </div>
-                                </div>
-                                <div class="item-detail item-attribute fortitute">
-                                    {{unit.system.abilities.frt.sign}}{{unit.system.abilities.frt.mod}}
-                                </div>
-                                <div class="item-detail item-attribute moral">
-                                    {{unit.system.abilities.mrl.sign}}{{unit.system.abilities.mrl.mod}}
-                                </div>
-                                <div class="item-detail item-attribute will">
-                                    {{unit.system.abilities.wll.sign}}{{unit.system.abilities.wll.mod}}
-                                </div>
+                                </div>                                
                                 <div class="item-detail item-controls always-visible">
                                     <button type="button" class="config-button unbutton item-control item-action always-interactive" data-action="removeUnit"
                                         data-tooltip="ldnd5e.company.removeUnit"

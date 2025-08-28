@@ -242,6 +242,8 @@ export const patchChatUseMessage = async function (item, html) {
 }
 export const patchChatDmgMessage = async function (message, html, messageData) {
     const actorId = message.speaker.actor;
+    if(!actorId) return; // Mensagem não está vinculada a um ator. Abortar rolagem.
+
     const actor = game.actors.get(actorId);
 
     const baseDamage = message.rolls[0];

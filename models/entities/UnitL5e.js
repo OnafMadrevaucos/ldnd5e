@@ -52,6 +52,22 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
         };
     }
 
+    /* -------------------------------------------- */
+    /*  Properties                                  */
+    /* -------------------------------------------- */
+
+    /**
+     * The chosen activity.
+     * @type {Activity|null}
+     */
+    get isMedical() {
+        return this.info.type === unitChoices.uTypes.medical;
+    }
+
+    /* -------------------------------------------- */
+    /*  Data Preparation                            */
+    /* -------------------------------------------- */
+
     /**@inheritdoc */
     prepareBaseData() {
         this.military = true;
@@ -75,7 +91,7 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
         this.system.attributes = {
             prestige: company?.system.attributes.prestige ?? { mod: "+0" },
             prof: company?.system.attributes.affinity.bonus.prof ?? 0,
-        }
+        }       
 
         // Prepare abilities.
         this._prepareAbilities();
@@ -160,7 +176,7 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
 
         dsp.save.mod = Math.abs(dsp.save.value);
         dsp.save.sign = (dsp.save.value >= 0) ? "+" : "-";
-    }
+    }    
 
     /* -------------------------------------------- */
     /*  Utility Functions                           */
@@ -315,7 +331,7 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
                 flavor: game.i18n.format(
                     `DND5E.${["skill", "check"].includes(type) ? "Ability" : "Save"}PromptTitle`, { ability: abilityLabel }
                 ),
-                speaker: ChatMessage.getSpeaker({ actor: this })
+                speaker: message.speaker ?? ChatMessage.getSpeaker({ actor: this })
             }
         }, message);
 
@@ -340,5 +356,5 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
         Hooks.callAll(`dnd5e.roll${name}`, rolls, { ability: config.ability, subject: this });
 
         return oldFormat ? rolls[0] : rolls;
-    } F
+    }
 }

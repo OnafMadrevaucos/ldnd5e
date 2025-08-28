@@ -1,5 +1,5 @@
 import ActivityDialog from "../dialogs/ActivityDialog.js";
-import { taticsChoices } from "../../scripts/constants.js";
+import { unitChoices } from "../../scripts/constants.js";
 
 const { api: api, item: item } = dnd5e.applications;
 
@@ -22,8 +22,10 @@ export default class TaticsSheet extends item.ItemSheet5e {
         actions: {
             editDescription: this.#editDescription,
             toggleAttr: this.#toggleAttr,
+            toggleRecovery: this.#toggleRecovery,
             editDocument: this.#editDocument,
-            deleteDocument: this.#deleteDocument
+            deleteDocument: this.#deleteDocument,
+            roll: this.#roll
         },
         form: {
             submitOnChange: true,
@@ -152,6 +154,10 @@ export default class TaticsSheet extends item.ItemSheet5e {
      */
     async _prepareHeaderContext(context, options) {
         context.portrait = this._preparePortrait(context);
+
+        context.isMedical = this.item.isEmbedded && this.actor.system.info.type === unitChoices.uTypes.medical;
+
+        return context;
     }
 
     /* -------------------------------------------- */
@@ -166,10 +172,14 @@ export default class TaticsSheet extends item.ItemSheet5e {
     async _prepareActivitiesContext(context, options) {
         context.activities = (Object.values(this.item.system.activities) ?? [])
             .map(activity => {
+                const { id, name, type } = activity;
                 return {
-                    id: activity.id,
-                    name: activity.name,
-                    img: { src: `modules/ldnd5e/ui/icons/${activity.type}.svg`, svg: true }
+                    id: id,
+                    name: name,
+                    img: {
+                        src: `modules/ldnd5e/ui/icons/${type}.svg`,
+                        svg: true
+                    }
                 };
             });
 
@@ -283,9 +293,23 @@ export default class TaticsSheet extends item.ItemSheet5e {
     static async #toggleAttr(event, target) {
         const attr = target.dataset.attr;
         const attributes = this.item.system.attributes;
-        attributes[attr] = !attributes[attr];
+        attributes[attr] = attributes[attr] === true ? false : true;
 
         await this.item.update({ "system.attributes": attributes });
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Handle toggling if this tatic is part of the main recovey action.
+   * @this {ItemSheet5e}
+   * @param {Event} event         Triggering click event.
+   * @param {HTMLElement} target  Button that was clicked.
+   */
+    static async #toggleRecovery(event, target) {
+        const mainRecovery = !this.item.system.mainRecovery;
+
+        await this.item.update({ "system.mainRecovery": mainRecovery });
     }
 
     /* -------------------------------------------- */
@@ -301,7 +325,7 @@ export default class TaticsSheet extends item.ItemSheet5e {
         if (!activityId) return;
 
         const activity = await ActivityDialog.createDialog(this.item, { activityId, mode: "edit" });
-        if(!activity) return;
+        if (!activity) return;
 
         this.item.system.activities[activityId] = activity;
         await this.item.update({ "system.activities": this.item.system.activities });
@@ -322,5 +346,29 @@ export default class TaticsSheet extends item.ItemSheet5e {
         delete this.item.system.activities[activityId];
         await this.item.update({ "system.activities": this.item.system.activities });
         this.render();
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Handle activity's roll.
+   * @this {ItemSheet5e}
+   * @param {Event} event         Triggering click event.
+   * @param {HTMLElement} target  Button that was clicked.
+   */
+    static async #roll(event, target) {
+        if (!target.classList.contains("rollable")) return;
+        switch (target.dataset.type) {
+            case "activity": {
+                const activityId = target.dataset.id;
+                const activity = this.item.system.activities[activityId];
+                if (!activity) return;
+
+                return this.item.system.rollActivity(
+                    { activity, event }, {},
+                    { speaker: ChatMessage.getSpeaker({ actor: this.actor }) }
+                );
+            };
+        }
     }
 }

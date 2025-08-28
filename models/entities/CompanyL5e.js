@@ -434,7 +434,7 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
                 flavor: game.i18n.format(
                     `DND5E.${["skill", "check"].includes(type) ? "Ability" : "Save"}PromptTitle`, { ability: abilityLabel }
                 ),
-                speaker: ChatMessage.getSpeaker({ actor: this })
+                speaker: message.speaker ?? ChatMessage.getSpeaker({ actor: this })
             }
         }, message);
 

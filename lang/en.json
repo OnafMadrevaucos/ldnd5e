@@ -132,7 +132,6 @@
             "removeTatic": "Remove Tatic",
             "isTrainning": "Is Training?"
         },
-
         "tatics": {
             "flavor": "Flavor",
             "description": "Description",
@@ -147,14 +146,16 @@
             "activityTitle": "New Activity",
             "activityType": "Activity Type",
             "activities": {
-                "moralDmg": "Moral Damage",
-                "moralHeal": "Moral Heal",
-                "impetusBuff": "Impetus' Bonus",
-                "impetusDebuff": "Impetus' Penalty"
+                "md": "Moral Damage",
+                "mh": "Moral Heal",
+                "ib": "Impetus' Bonus",
+                "id": "Impetus' Penalty"
             },
-            "invalidActivity": "Invalid Activity Data"          
+            "invalidActivity": "Invalid Activity Data",
+            "clash": "Clash",
+            "useTatic": "Tatic Use",
+            "mainRecovery": "Main Recovery"
         },
-        
         "messages": {
             "bldgDmgLightArmor": "Light Armor is immune to damage caused by Bludgening Damage.",
             "slshDmgHeavyArmor": "Heavy Armor is immune to damage caused by Slashing Damage.",

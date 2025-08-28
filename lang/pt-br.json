@@ -147,12 +147,15 @@
             "activityTitle": "Nova Atividade",
             "activityType": "Tipo de Atividade",
             "activities": {
-                "moralDmg": "Dano à Moral",
-                "moralHeal": "Cura à Moral",
-                "impetusBuff": "Bônus de Ímpeto",
-                "impetusDebuff": "Penalidade de Ímpeto"
+                "md": "Dano à Moral",
+                "mh": "Cura à Moral",
+                "ib": "Bônus de Ímpeto",
+                "id": "Penalidade de Ímpeto"
             },
-            "invalidActivity": "Data de Atividade Inválida" 
+            "invalidActivity": "Data de Atividade Inválida",
+            "clash": "Embate",
+            "useTatic": "Uso de Tática",
+            "mainRecovery": "Recuperação Principal" 
         },
 
         "messages": {

@@ -162,10 +162,10 @@ const taticsChoices = {
    * Defines the Tatics Activities constants.      
    */
    activities: {
-      moralDmg: "moralDmg",
-      moralHeal: "moralHeal",
-      impetusBuff: "impetusBuff",
-      impetusDebuff: "impetusDebuff",
+      md: "md",
+      mh: "mh",
+      ib: "ib",
+      id: "id",
    }   
 }
 
@@ -308,12 +308,15 @@ const i18nStrings = {
       activityTitle: "ldnd5e.tatics.activityTitle",
       activityType: "ldnd5e.tatics.activityType",
       activities: {
-         moralDmg: "ldnd5e.tatics.activities.moralDmg",
-         moralHeal: "ldnd5e.tatics.activities.moralHeal",
-         impetusBuff: "ldnd5e.tatics.activities.impetusBuff",
-         impetusDebuff: "ldnd5e.tatics.activities.impetusDebuff",
+         md: "ldnd5e.tatics.activities.md",
+         mh: "ldnd5e.tatics.activities.mh",
+         ib: "ldnd5e.tatics.activities.ib",
+         id: "ldnd5e.tatics.activities.id",
       },
-      invalidActivity: "ldnd5e.tatics.invalidActivity"
+      invalidActivity: "ldnd5e.tatics.invalidActivity",
+      clash: "ldnd5e.tatics.clash",
+      useTatic: "ldnd5e.tatics.useTatic",
+      mainRecovery: "ldnd5e.tatics.mainRecovery",
    },
 
    unitType: "ldnd5e.unit",

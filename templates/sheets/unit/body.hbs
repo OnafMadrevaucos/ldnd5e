@@ -81,7 +81,7 @@
                 </h3>
                 <ul class="skills-list">
                     {{#each skills as |skill|}}
-                    <li data-ability="{{skill.key}}" class="skill">
+                    <li data-key="{{skill.key}}" class="skill">
                         <a class="name rollable" data-action="roll" data-type="skill"><i
                                 class="{{skill.icon}}"></i>{{skill.label}}</a>
                         <div class="bonus">
@@ -119,6 +119,7 @@
                 <div class="items-header header">
                     <h3 class="item-name flexrow">{{localize 'ldnd5e.unit.tatics'}}</h3>
 
+                    {{#unless isMedical}}
                     <div class="item-detail item-attribute prep" data-tooltip="ldnd5e.tatics.prep">
                         <i class="fas fa-flask"></i>
                     </div>
@@ -131,6 +132,11 @@
                     <div class="item-detail item-attribute pers" data-tooltip="ldnd5e.tatics.pers">
                         <i class="fas fa-infinity"></i>
                     </div>
+                    {{else}}
+                    <div class="item-detail item-attribute main-recovery" data-tooltip="ldnd5e.tatics.mainRecovery">
+                        <i class="fas fa-house-medical-flag"></i>
+                    </div>
+                    {{/unless}}
                     <div class="item-detail item-controls"></div>
                 </div>
 
@@ -141,7 +147,7 @@
                         {{!-- Row Summary --}}
                         <div class="item-row draggable">
                             {{!-- Item Name --}}
-                            <div class="item-name item-action item-tooltip" role="button" data-action="rollTatic"
+                            <div class="item-name item-action item-tooltip" role="button" data-action="useTatic"
                                 data-type="tatic" aria-label="{{ tatic.name }}">
                                 <div class="image-container">
                                     <img class="item-image gold-icon" src="{{ tatic.img }}" alt="{{ tatic.name }}"
@@ -151,22 +157,28 @@
                                     <span class="title">{{ tatic.name }}</span>
                                 </div>
                             </div>
+                            {{#unless @root.isMedical}}
                             <div class="item-detail item-attribute prep">
-                                {{#unless tatic.system.attributes.prep}}<i
-                                    class="fa-solid fa-check"></i>{{else}}&mdash;{{/unless}}
+                                {{#if tatic.system.attributes.prep}}<i
+                                    class="fa-solid fa-check"></i>{{else}}&mdash;{{/if}}
                             </div>
                             <div class="item-detail item-attribute surp">
-                                {{#unless tatic.system.attributes.surp}}<i
-                                    class="fa-solid fa-check"></i>{{else}}&mdash;{{/unless}}
+                                {{#if tatic.system.attributes.surp}}<i
+                                    class="fa-solid fa-check"></i>{{else}}&mdash;{{/if}}
                             </div>
                             <div class="item-detail item-attribute reac">
-                                {{#unless tatic.system.attributes.reac}}<i
-                                    class="fa-solid fa-check"></i>{{else}}&mdash;{{/unless}}
+                                {{#if tatic.system.attributes.reac}}<i
+                                    class="fa-solid fa-check"></i>{{else}}&mdash;{{/if}}
                             </div>
                             <div class="item-detail item-attribute pers">
-                                {{#unless tatic.system.attributes.pers}}<i
-                                    class="fa-solid fa-check"></i>{{else}}&mdash;{{/unless}}
+                                {{#if tatic.system.attributes.pers}}<i
+                                    class="fa-solid fa-check"></i>{{else}}&mdash;{{/if}}
                             </div>
+                            {{else}}
+                            <div class="item-detail item-attribute main-recovery">
+                                {{#if tatic.system.mainRecovery}}<i class="fa-solid fa-check"></i>{{else}}&mdash;{{/if}}
+                            </div>
+                            {{/unless}}
                             <div class="item-detail item-controls always-visible">
                                 <button type="button"
                                     class="config-button item-control  item-action unbutton trainning{{#if tatic.system.trainning}} active{{/if}}"

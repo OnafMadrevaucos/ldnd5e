@@ -31,6 +31,11 @@
          "templates/dialogs/activity/header.hbs",
          "templates/dialogs/activity/buttons.hbs",
          "templates/dialogs/activity/configuration.hbs",
+
+         "templates/dialogs/activity-choices/header.hbs",
+         "templates/dialogs/activity-choices/body.hbs",
+
+         "templates/dialogs/medical-restauration.hbs",
     ];
 
     templates = templates.map((t) => `modules/ldnd5e/${t}`);

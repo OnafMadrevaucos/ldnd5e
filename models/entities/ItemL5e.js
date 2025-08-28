@@ -1,4 +1,7 @@
 import { i18nStrings } from "../../scripts/constants.js";
+import ActivityChoiceDialog from "../dialogs/ActivityChoiceDialog.js";
+
+const app = dnd5e.applications;
 
 /**
  * Sobrescreve e amplia a implementação padrão do Sistema DnD5e.
@@ -37,6 +40,36 @@ export default class ItemL5e extends dnd5e.documents.Item5e {
         return data;
     }
 
+    /* -------------------------------------------- */
+
+    /**
+   * @inheritdoc
+   * @param {Partial<AbilityRollProcessConfiguration>} config  Configuration information for the roll.
+   * @param {Partial<BasicRollDialogConfiguration>} dialog     Configuration for the roll dialog.
+   * @param {Partial<BasicRollMessageConfiguration>} message   Configuration for the roll message.
+   */
+    async use(config = {}, dialog = {}, message = {}) {
+        if (this.type === "ldnd5e.tatic") {
+            const activities = Object.values(this.system.activities);
+
+            let event = config.event;
+            if (activities?.length) {
+                const { chooseActivity, ...activityConfig } = config;
+                let activity = activities[0];
+                let usageConfig = {activity, ...activityConfig};
+                let dialogConfig = dialog;
+                let messageConfig = message;
+                if (((activities.length > 1)) && !event?.shiftKey) {
+                    activity = await ActivityChoiceDialog.create(this);
+                }
+                if (!activity) return;
+                return await this.system.rollActivity(usageConfig, dialogConfig, messageConfig);
+            }
+        } else super.use(config, dialog, message);
+    }
+
+    /* -------------------------------------------- */
+
     _prepareArmorData(armorData) {
         // Get the Item's data
         const itemData = this;
@@ -69,6 +102,6 @@ export default class ItemL5e extends dnd5e.documents.Item5e {
         data.armor.ACPenalty = armorData?.ACPenalty ?? "0";
         data.armor.destroyed = armorData?.destroyed ?? false;
     }
-    
+
     /* -------------------------------------------- */
 }
