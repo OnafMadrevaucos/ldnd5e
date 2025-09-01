@@ -276,7 +276,13 @@ const i18nStrings = {
       commander: "ldnd5e.company.commander",
       removeCommander: "ldnd5e.company.removeCommander",
       noCommander: "ldnd5e.company.noCommander",
+      stamina: "ldnd5e.company.stamina",
       rest: "ldnd5e.company.rest",
+      restRoll: "ldnd5e.company.restRoll",
+      restResult: "ldnd5e.company.restResult",
+      hasRestoration: "ldnd5e.company.hasRestoration",
+      fatigueRest: "ldnd5e.company.fatigueRest",
+      noRestTatics: "ldnd5e.company.noRestTatics",
    },
 
    unit: {
@@ -305,6 +311,7 @@ const i18nStrings = {
       trainning: "ldnd5e.tatics.trainning",
       damage: "ldnd5e.tatics.damage",
       configuration: "ldnd5e.tatics.configuration",
+      activity: "ldnd5e.tatics.activity",
       activityTitle: "ldnd5e.tatics.activityTitle",
       activityType: "ldnd5e.tatics.activityType",
       activities: {

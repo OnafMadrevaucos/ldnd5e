@@ -56,6 +56,10 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
 
         this.element.querySelector('.meter > .hit-points').addEventListener('click', event => this._toggleEditHP(event, true));
         this.element.querySelector('.meter > .hit-points > input').addEventListener('blur', event => this._toggleEditHP(event, false));
+
+        // Handle delta inputs
+        this.element.querySelectorAll('input[type="text"][data-dtype="Number"]')
+            .forEach(i => i.addEventListener("change", this._onChangeInputDelta.bind(this)));
     }
 
     /**
@@ -79,6 +83,28 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
             toggle.checked = this._mode === this.constructor.MODES.EDIT;
         } else if (!this.isEditable && toggle) {
             toggle.remove();
+        }
+    }
+
+    /**
+     * Handle input changes to numeric form fields, allowing them to accept delta-typed inputs.
+     * @param {Event} event  Triggering event.
+     * @protected
+     */
+    _onChangeInputDelta(event) {
+        const input = event.target;
+        const target = this.actor.items.get(input.closest("[data-item-id]")?.dataset.itemId) ?? this.actor;
+        const { activityId } = input.closest("[data-activity-id]")?.dataset ?? {};
+        const activity = target?.system.activities?.get(activityId);
+        const result = dnd5e.utils.parseInputDelta(input, activity ?? target);
+        if (result !== undefined) {
+            // Special case handling for Item uses.
+            if (input.dataset.name === "system.uses.value") {
+                target.update({ "system.uses.spent": target.system.uses.max - result });
+            } else if (activity && (input.dataset.name === "uses.value")) {
+                target.updateActivity(activityId, { "uses.spent": activity.uses.max - result });
+            }
+            else target.update({ [input.dataset.name]: result });
         }
     }
 
@@ -492,12 +518,12 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
             case "ability": {
                 const ability = target.closest("[data-ability]")?.dataset.ability;
 
-                if (target.classList.contains("saving-throw")) return this.actor.system.rollSavingThrow({ skill: ability, event }, {}, { speaker: ChatMessage.getSpeaker({ actor: this.actor })});
-                else return this.actor.system.rollAbilityCheck({ ability: ability }, { event }, { speaker: ChatMessage.getSpeaker({ actor: this.actor })});
+                if (target.classList.contains("saving-throw")) return this.actor.system.rollSavingThrow({ skill: ability, event }, {}, { speaker: ChatMessage.getSpeaker({ actor: this.actor }) });
+                else return this.actor.system.rollAbilityCheck({ ability: ability }, { event }, { speaker: ChatMessage.getSpeaker({ actor: this.actor }) });
             };
             case "skill": {
                 const skill = target.closest("[data-key]")?.dataset.key;
-                return this.actor.system.rollSkill({ skill: skill }, { event }, { speaker: ChatMessage.getSpeaker({ actor: this.actor })});
+                return this.actor.system.rollSkill({ skill: skill }, { event }, { speaker: ChatMessage.getSpeaker({ actor: this.actor }) });
             }
         }
     }
@@ -511,22 +537,41 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
    * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
    */
     static async #companyRest(event, target) {
+        event.preventDefault();
         const data = this.actor.system;
+        const result = await MedicalRestaurationBrowser.create(this.actor, { force: true });
 
-        const medicalId = data.units.find(unitId => {
-            const unit = game.actors.get(unitId);
-            return unit.system.info.type === unitChoices.uTypes.medical;
-        });
+        const rolls = Object.values(result.rolls);
+        const hasRestauration = rolls.length > 0;
+        const totalHealed = rolls.reduce((a, b) => a + b.total, 0);
+        const staminaRestored = data.attributes.stamina.max - data.attributes.stamina.value;
 
-        const medicalUnit = game.actors.get(medicalId);
 
-        if (medicalUnit) {
-            await MedicalRestaurationBrowser.create(medicalUnit, { force: true });
-        }
 
-        await this.actor.update({ 
-            ['system.attributes.hp.value']: data.attributes.hp.max,
+        await this.actor.update({
+            ['system.attributes.hp.value']: Math.min(data.attributes.hp.max, data.attributes.hp.value + totalHealed),
             ['system.attributes.stamina.value']: data.attributes.stamina.max,
         });
+
+        let restaurationMessage = '';
+        if (hasRestauration) {
+            restaurationMessage = game.i18n.format('ldnd5e.company.hasRestoration', {
+                total: totalHealed,
+            });
+        }
+
+        let chatData = {
+            content: game.i18n.format('ldnd5e.company.restResult', {
+                name: this.actor.name,
+                stamina: staminaRestored,
+                restoration: restaurationMessage
+            }),
+            flavor: game.i18n.localize('ldnd5e.company.rest'),
+            type: "rest",
+            rolls: result.rolls,
+            speaker: ChatMessage.getSpeaker({ actor: this.actor, alias: this.name })
+        };
+        ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
+        return ChatMessage.create(chatData);
     }
 }

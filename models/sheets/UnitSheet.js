@@ -67,6 +67,10 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
     this.element.classList.toggle("editable", this.isEditable && (this._mode === this.constructor.MODES.EDIT));
     this.element.classList.toggle("interactable", this.isEditable && (this._mode === this.constructor.MODES.PLAY));
     this.element.classList.toggle("locked", !this.isEditable);
+
+    // Handle delta inputs
+    this.element.querySelectorAll('input[type="text"][data-dtype="Number"]')
+      .forEach(i => i.addEventListener("change", this._onChangeInputDelta.bind(this)));
   }
 
   /**
@@ -90,6 +94,28 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
       toggle.checked = this._mode === this.constructor.MODES.EDIT;
     } else if (!this.isEditable && toggle) {
       toggle.remove();
+    }
+  }
+
+  /**
+     * Handle input changes to numeric form fields, allowing them to accept delta-typed inputs.
+     * @param {Event} event  Triggering event.
+     * @protected
+     */
+  _onChangeInputDelta(event) {
+    const input = event.target;
+    const target = this.actor.items.get(input.closest("[data-item-id]")?.dataset.itemId) ?? this.actor;
+    const { activityId } = input.closest("[data-activity-id]")?.dataset ?? {};
+    const activity = target?.system.activities?.get(activityId);
+    const result = dnd5e.utils.parseInputDelta(input, activity ?? target);
+    if (result !== undefined) {
+      // Special case handling for Item uses.
+      if (input.dataset.name === "system.uses.value") {
+        target.update({ "system.uses.spent": target.system.uses.max - result });
+      } else if (activity && (input.dataset.name === "uses.value")) {
+        target.updateActivity(activityId, { "uses.spent": activity.uses.max - result });
+      }
+      else target.update({ [input.dataset.name]: result });
     }
   }
 

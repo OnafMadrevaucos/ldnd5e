@@ -116,7 +116,13 @@
             "commander": "Comandante",
             "noCommander": "Arraste um Actor até aqui...",
             "removeCommander": "Remover Comandante",
-            "rest": "Acampar"
+            "stamina": "Stamina",
+            "rest": "Acampar",
+            "restRoll": "Rolagem de Restauração",
+            "restResult": "{name} descansou com sucesso, recuperando {stamina} pontos de stamina.{restoration}",
+            "hasRestoration": " Sua Unidade Médica restaurou {total} pontos de moral perdidos nas últimas batalhas.",
+            "fatigueRest": "A companhia sempre repõem seu nível de stamina ao máximo após completar o descanso.",
+            "noRestTatics": "A unidade médica dessa companhia não possui Táticas de Restauração válidas. Por causa disso, a companhia é incpaz de recuperar qualquer unidade perdida na batalha anterior."
         },
         "unit": {
             "category": "Categoria",
@@ -144,6 +150,7 @@
             "trainning": "Treina.",
             "damage": "Dano à Moral",
             "configuration": "Configuração",
+            "activity": "Atividade",
             "activityTitle": "Nova Atividade",
             "activityType": "Tipo de Atividade",
             "activities": {

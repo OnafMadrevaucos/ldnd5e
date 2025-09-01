@@ -1264,6 +1264,37 @@
   margin-bottom: 5px;
 }
 
+.company.restauration.dialog {
+  border: none;
+}
+.company.restauration.dialog .tatic {
+  padding: 5px;
+  margin-bottom: 5px;
+}
+.company.restauration.dialog .tatic .item-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  line-height: 1;
+  gap: 5px;
+}
+.company.restauration.dialog .tatic .item-header .name {
+  font-family: var(--dnd5e-font-roboto-slab);
+}
+.company.restauration.dialog .tatic .item-header .icon img {
+  height: 24px;
+}
+.company.restauration.dialog .form-fields.rest-activity button {
+  font-size: var(--font-size-16);
+  --icon-fill: var(--dnd5e-color-gold);
+}
+.company.restauration.dialog fieldset {
+  margin-block: 5px;
+}
+.company.restauration.dialog button[name="rest"] {
+  width: 100%;
+}
+
 .ldnd5e.unit .center {
   align-self: center;
 }

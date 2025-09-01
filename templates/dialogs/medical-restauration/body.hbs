@@ -1,0 +1,42 @@
+<section>
+    {{#unless noTatics}}
+    {{#each recoveryTatics}}
+    {{#debug this}}{{/debug}}
+    <div class="tatic card" data-tatic-id="{{ id }}">
+
+        <div class="item-header">
+            {{!-- Icon --}}
+            <div class="icon{{#if img.svg}} svg{{/if}}">
+                <img class="item-image gold-icon" src="{{ img.src }}"></img>
+            </div>
+
+            {{!-- Name --}}
+            <div class="name" data-action="editDocument">{{ name }}</div>
+        </div>
+        <fieldset class="activities">
+            <legend>{{ localize "ldnd5e.tatics.activity" }}</legend>
+            {{#each activities}}
+            <div class="form-fields rest-activity" data-activity-id="{{ id }}">
+                <input type="text" value="{{ name }}" disabled>
+                <input type="number" class="roll-result" placeholder="{{localize 'ldnd5e.tatics.activities.mh'}}" disabled>
+                <button type="button" class="dice-button" data-action="rollRestActivity" data-tooltip
+                    aria-label="{{ localize 'DND5E.Roll' }}">
+                    <dnd5e-icon src="{{ icon.src }}"></dnd5e-icon>
+                </button>
+            </div>
+            {{/each}}
+        </fieldset>
+
+    </div>
+    {{/each}}
+    {{else}}
+    <div class="note warn">
+        {{ localize "ldnd5e.company.noRestTatics" }}
+    </div>
+    {{/unless}}
+
+    <fieldset>
+        <legend>{{ localize "ldnd5e.company.stamina" }}</legend>
+        {{ localize "ldnd5e.company.fatigueRest" }}
+    </fieldset>
+</section>

@@ -116,7 +116,13 @@
             "commander": "Commander",
             "noCommander": "Drop an Actor here...",
             "removeCommander": "Remove Commander",
-            "rest": "Make Camp"
+            "stamina": "Stamina",
+            "rest": "Make Camp",
+            "restRoll": "Restauration Roll",
+            "restResult": "{name} rested successfully, restoring {stamina} points of stamina.{restoration}",
+            "hasRestoration": " It's Medical Unit restored {total} points of moral losted in the previous battle.",
+            "fatigueRest": "The company always restore its stamina level to max after completing a rest.",
+            "noRestTatics": "This company's medical unit has no valid Restauration Tatics. Because of that the company is unable to restore any of its lost units from the last battle."
         },
         "unit": {
             "category": "Category",
@@ -143,6 +149,7 @@
             "trainning": "Train.",
             "damage": "Moral Damage",
             "configuration": "Configuration",
+            "activity": "Activity",
             "activityTitle": "New Activity",
             "activityType": "Activity Type",
             "activities": {
