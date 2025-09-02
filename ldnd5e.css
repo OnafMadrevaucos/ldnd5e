@@ -1174,6 +1174,38 @@
   display: block;
 }
 
+.ldnd5e.supplies .supplies-sizes {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  font-size: var(--font-h5-size);
+  color: var(--dnd5e-color-gold);
+  margin-bottom: 5px;
+}
+
+.ldnd5e.supplies .supplies-sources select {
+  height: var(--form-field-height);
+  background: var(--dnd5e-background-card);
+  border: none;
+  color: var(--main-text-light-color);
+}
+.ldnd5e.supplies .supplies-sources button {
+  background: transparent;
+  border: none;
+  color: var(--dnd5e-color-gold);
+}
+.ldnd5e.supplies .supplies-sources .items-section {
+  margin-top: 5px;
+}
+.ldnd5e.supplies .supplies-sources .item-list .item {
+  margin-block: 5px;
+}
+
+.ldnd5e.supplies .form-fields {
+  display: flex;
+  gap: 5px;
+}
+
 .ldnd5e.unit .tatics-list .items-header,
 .ldnd5e.company .units-list .items-header,
 .ldnd5e.army .companies-list .items-header {
@@ -1267,10 +1299,12 @@
 .company.restauration.dialog {
   border: none;
 }
+
 .company.restauration.dialog .tatic {
   padding: 5px;
   margin-bottom: 5px;
 }
+
 .company.restauration.dialog .tatic .item-header {
   width: 100%;
   display: flex;
@@ -1278,19 +1312,24 @@
   line-height: 1;
   gap: 5px;
 }
+
 .company.restauration.dialog .tatic .item-header .name {
   font-family: var(--dnd5e-font-roboto-slab);
 }
+
 .company.restauration.dialog .tatic .item-header .icon img {
   height: 24px;
 }
+
 .company.restauration.dialog .form-fields.rest-activity button {
   font-size: var(--font-size-16);
   --icon-fill: var(--dnd5e-color-gold);
 }
+
 .company.restauration.dialog fieldset {
   margin-block: 5px;
 }
+
 .company.restauration.dialog button[name="rest"] {
   width: 100%;
 }
@@ -1644,7 +1683,7 @@
   margin-bottom: 0;
 }
 
-.dialog.activity-choice.tatic .window-content [data-application-part="header"]{
+.dialog.activity-choice.tatic .window-content [data-application-part="header"] {
   margin-bottom: 0;
 }
 

@@ -28,10 +28,14 @@ export default class ArmyL5e extends foundry.abstract.TypeDataModel {
                 })
             }),
             supplies: new fields.SchemaField({
-                value: new fields.NumberField({ required: true, initial: 10, label: "ldnd5e.army.supplies.value" }),
+                sources: new fields.SchemaField({
+                    food: new fields.ArrayField(new fields.StringField({ textSearch: true })),
+                    water: new fields.ArrayField(new fields.StringField({ textSearch: true })),
+                }),
+                total: new fields.NumberField({ required: true, initial: 10, label: "ldnd5e.army.supplies.value" }),
                 min: new fields.NumberField({ required: true, initial: 0, label: "ldnd5e.army.supplies.min" }),
             }),
-            
+
             companies: new fields.ArrayField(new fields.StringField({ textSearch: true, label: "ldnd5e.company", })),
         };
 
@@ -66,6 +70,6 @@ export default class ArmyL5e extends foundry.abstract.TypeDataModel {
         const mod = Math.floor((this.system.prestige.value - 10) / 2);
         this.system.prestige.mod = (mod >= 0 ? "+" : "") + mod;
 
-        this.system.supplies.pct = Math.clamp((this.system.supplies.value / this.system.supplies.max) * 100, 0, 100);
+        this.system.supplies.pct = Math.clamp((this.system.supplies.total / this.system.supplies.max) * 100, 0, 100);
     }
 }

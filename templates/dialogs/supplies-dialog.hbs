@@ -1,0 +1,42 @@
+<section>
+    <div class="supplies-sizes">
+        {{#repeat size}}
+        <span class="size"><i class="ras ra-helmet"></i></span>
+        {{/repeat}}
+    </div>
+
+    {{#debug this}}{{/debug}}
+
+    <fieldset class="supplies-sources food">
+        <legend>{{localize 'ldnd5e.supplies.food'}}</legend>
+        <div class="form-group">
+            <div class="form-fields">
+                <select>
+                    {{ selectOptions foodSources labelAttr="label" valueAttr="value" selected=level.food }}
+                </select>
+                <button data-action="addFoodSource"><i class="fas fa-plus"></i></button>
+            </div>
+            <div class="items-section">
+                {{#if hasFoodSource}}
+                <ul class="item-list food-sources unlist">
+                    {{#each sources.food as |food|}}
+                    <li class="item food">
+                        <div class="item-row food card" data-value="{{food.value}}">
+                            <div class="item-name">
+                                <img class="item-image gold-icon{{#if food.img.svg}} svg{{/if}}" src="{{food.img.src}}"
+                                    alt="{{food.name}}">
+                                <div class="name">
+                                    <span class="title">{{food.name}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    {{/each}}
+                </ul>
+                {{else}}
+                <p class="empty">{{localize 'ldnd5e.supplies.noFood'}}</p>
+                {{/if}}
+            </div>
+        </div>
+    </fieldset>
+</section>

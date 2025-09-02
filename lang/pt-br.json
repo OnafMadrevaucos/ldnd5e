@@ -104,7 +104,34 @@
             "specialists": "Especialistas"
         },
 
+        "supplies": {
+            "title": "Configuração de Suprimentos",
+            "level": "Nível",
+            "needs": "Necessidades",
+            "food": "Alimento",
+            "water": "Água",
+            "sources": {
+                "food": {
+                    "plantI": "Fazenda Pequena",
+                    "plantII": "Fazenda Grande",
+                    "plantIII": "Latifúndio",
+                    "cityI": "Aldeia",
+                    "cityII": "Cidade",
+                    "cityIII": "Metrópoles"
+                },
+                "water": {
+                    "springI": "Nascente",
+                    "springII": "Lagoa",
+                    "springIII": "Lago",
+                    "riverI": "Córrego",
+                    "riverII": "Rio Médio",
+                    "riverIII": "Rio Grande"
+                }
+            }
+        },
+
         "army": {
+            "org": "Organização",
             "prestige": "Prestígio",
             "commander": "Marechal",
             "noCommander": "Arraste um Actor até aqui...",

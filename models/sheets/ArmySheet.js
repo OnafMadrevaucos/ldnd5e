@@ -1,3 +1,5 @@
+import SuppliesConfigDialog from "../dialogs/SuppliesConfigDialog.js";
+
 const { api: api, sheets: sheets } = foundry.applications;
 
 export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.ActorSheet) {
@@ -16,7 +18,8 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
         actions: {
             removeCommander: this.#removeCommander,
             clickCompany: this.#clickCompany,
-            removeCompany: this.#removeCompany
+            removeCompany: this.#removeCompany,
+            showConfiguration: this.#showConfiguration
         },
         form: {
             submitOnChange: true,
@@ -372,5 +375,18 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
             ['system.info.army']: null,
             ['system.attributes.affinity.bonus.prestige']: 0
         });
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Show the supplies configuration form for the army.
+   * @this {ArmySheet}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+    static async #showConfiguration(event, target) {
+        const app = new SuppliesConfigDialog({ army: this.actor });
+        app.render(true);
     }
 }

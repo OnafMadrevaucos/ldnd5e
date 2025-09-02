@@ -32,13 +32,13 @@
                 {{!-- Supplies --}}
                 {{#with system.supplies}}
                 <div class="meter hit-points supplies sectioned">
-                    <div class="progress hit-points supplies" role="meter" aria-valuemin="0" aria-valuenow="{{ value }}"
+                    <div class="progress hit-points supplies" role="meter" aria-valuemin="0" aria-valuenow="{{ total }}"
                         aria-valuemax="{{ max }}" style="--bar-percentage: {{ pct }}%">
                         <div class="label">
-                            <span class="value">{{ value }}</span>                            
+                            <span class="value">{{ total }}</span>                            
                             {{#if @root.editable}}
                             <button type="button" class="config-button unbutton" data-action="showConfiguration"
-                                data-config="hitPoints" data-tooltip="DND5E.HitPointsConfig"
+                                data-config="supplies" data-tooltip="ldnd5e.supplies.config"
                                 aria-label="{{ localize 'DND5E.HitPointsConfig' }}">
                                 <i class="fas fa-cog" inert></i>
                             </button>

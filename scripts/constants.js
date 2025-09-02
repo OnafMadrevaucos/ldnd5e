@@ -102,6 +102,77 @@ const NDs = {
 }
 
 /**
+* Defines the Supplies constants.
+*
+* @enum {{
+*    sources: Object<string>,
+*    sourcesValues: Object<number>,
+*    sourcesImg: Object<string>
+* }}
+*/
+const suppliesChoices = {
+   /**
+   * Defines the Supplies Sources constants.      
+   */
+   sources: {
+      food: {
+         plantI: "plantI",
+         plantII: "plantII",
+         plantIII: "plantIII",
+         cityI: "cityI",
+         cityII: "cityII",
+         cityIII: "cityIII"
+      },
+      water: {
+         springI: "springI",
+         springII: "springII",
+         springIII: "springIII",
+         riverI: "riverI",
+         riverII: "riverII",
+         riverIII: "riverIII"
+      }
+   },
+
+   sourcesValues: {
+      food: {
+         plantI: 1,
+         plantII: 2,
+         plantIII: 3,
+         cityI: 4,
+         cityII: 5,
+         cityIII: 6
+      },
+      water: {
+         springI: 1,
+         springII: 2,
+         springIII: 3,
+         riverI: 4,
+         riverII: 5,
+         riverIII: 6
+      }
+   },
+
+   sourcesImg: {
+      food: {
+         plantI: "modules/ldnd5e/ui/supplies/plantI.webp",
+         plantII: "modules/ldnd5e/ui/supplies/plantII.webp",
+         plantIII: "modules/ldnd5e/ui/supplies/plantIII.webp",
+         cityI: "modules/ldnd5e/ui/supplies/cityI.webp",
+         cityII: "modules/ldnd5e/ui/supplies/cityII.webp",
+         cityIII: "modules/ldnd5e/ui/supplies/cityIII.webp"
+      },
+      water: {
+         springI: "modules/ldnd5e/ui/supplies/springI.webp",
+         springII: "modules/ldnd5e/ui/supplies/springII.webp",
+         springIII: "modules/ldnd5e/ui/supplies/springIII.webp",
+         riverI: "modules/ldnd5e/ui/supplies/riverI.webp",
+         riverII: "modules/ldnd5e/ui/supplies/riverII.webp",
+         riverIII: "modules/ldnd5e/ui/supplies/riverIII.webp"
+      }
+   }
+}
+
+/**
 * Defines the Unit constants.
 *
 * @enum {{
@@ -263,7 +334,34 @@ const i18nStrings = {
    itemDestroyed: "ldnd5e.itemDestroyed",
    groupRolls: "ldnd5e.groupRolls",
 
+   supplies: {
+      title: 'ldnd5e.supplies.title',
+      level: 'ldnd5e.supplies.level',
+      needs: 'ldnd5e.supplies.needs',
+      food: 'ldnd5e.supplies.food',
+      water: 'ldnd5e.supplies.water',
+      sources: {
+         food: {
+            plantI: 'ldnd5e.supplies.sources.food.plantI',
+            plantII: 'ldnd5e.supplies.sources.food.plantII',
+            plantIII: 'ldnd5e.supplies.sources.food.plantIII',
+            cityI: 'ldnd5e.supplies.sources.food.cityI',
+            cityII: 'ldnd5e.supplies.sources.food.cityII',
+            cityIII: 'ldnd5e.supplies.sources.food.cityIII'
+         },
+         water: {
+            springI: 'ldnd5e.supplies.sources.water.springI',
+            springII: 'ldnd5e.supplies.sources.water.springII',
+            springIII: 'ldnd5e.supplies.sources.water.springIII',
+            riverI: 'ldnd5e.supplies.sources.water.riverI',
+            riverII: 'ldnd5e.supplies.sources.water.riverII',
+            riverIII: 'ldnd5e.supplies.sources.water.riverIII'
+         }
+      }
+   },
+
    army: {
+      org: "ldnd5e.army.org",
       prestige: "ldnd5e.army.prestige",
       commander: "ldnd5e.army.commander",
       noCommander: "ldnd5e.army.noCommander",
@@ -414,4 +512,4 @@ const gmControl =
    button: true
 };
 
-export { constants, UnarmoredClasses, NDs, gmControl, i18nStrings, unitChoices, taticsChoices };
+export { constants, UnarmoredClasses, NDs, gmControl, i18nStrings, suppliesChoices, unitChoices, taticsChoices };

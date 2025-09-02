@@ -104,7 +104,33 @@
             "fighters": "Fighters",
             "specialists": "Specialists"
         },
+        "supplies": {
+            "title": "Supplies Configuration",
+            "level": "Level",
+            "needs": "Needs",
+            "food": "Food",
+            "water": "Water",
+            "sources": {
+                "food": {
+                    "plantI": "Small Farm",
+                    "plantII": "Large Farm",
+                    "plantIII": "Plantation",
+                    "cityI": "Village",
+                    "cityII": "City",
+                    "cityIII": "Metropolis"
+                },
+                "water": {
+                    "springI": "Small Spring",
+                    "springII": "Pond",
+                    "springIII": "Lake",
+                    "riverI": "Small River",
+                    "riverII": "Medium River",
+                    "riverIII": "Large River"
+                }
+            }
+        },
         "army": {
+            "org": "Organization",
             "prestige": "Prestige",
             "commander": "Marshal",
             "noCommander": "Drop an Actor here...",
