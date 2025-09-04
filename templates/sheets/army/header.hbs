@@ -1,5 +1,4 @@
 <header class="sheet-header">
-    {{#debug this}}{{/debug}}
     {{!-- Portrait & Vitals --}}
     <div class="left">
 
@@ -8,6 +7,21 @@
 
             <img src="{{ portrait.src }}" alt="{{ actor.name }}" {{~#if (and editable portrait.path)}}
                 data-action="editImage" data-edit="{{ portrait.path }}" {{~else}} data-action="showArtwork" {{/if}}>
+
+            {{!-- Starving Badge --}}
+            {{#if isStarving}}
+            {{#unless hasUrbanSource}}
+            <div class="right level-badge starving-badge badge" data-tooltip="ldnd5e.supplies.starving"
+                data-tooltip-direction="DOWN">
+                <i class="fas fa-utensils"></i>
+            </div>
+            {{else}}
+            <div class="right level-badge urban-badge badge" data-tooltip="ldnd5e.supplies.starving"
+                data-tooltip-direction="DOWN">
+                <img src="{{urbanIcon}}">
+            </div>
+            {{/unless}}
+            {{/if}}
 
         </div>
 
@@ -20,7 +34,7 @@
                 <div class="ac-badge badge" aria-label="{{ localize 'ldnd5e.army.supplies.min' }}">
                     <div data-attribution="supplies.min" data-attribution-caption="ldnd5e.army.supplies.min"
                         data-tooltip-direction="DOWN">
-                        {{ system.supplies.min }}
+                        {{ system.supplies.needs }}
                     </div>
                 </div>
 
@@ -29,13 +43,14 @@
             {{!-- Supplies --}}
             <div class="right">
 
-                {{!-- Supplies --}}
+                {{!-- Supplies --}}                
                 {{#with system.supplies}}
-                <div class="meter hit-points supplies sectioned">
-                    <div class="progress hit-points supplies" role="meter" aria-valuemin="0" aria-valuenow="{{ total }}"
-                        aria-valuemax="{{ max }}" style="--bar-percentage: {{ pct }}%">
+                <div class="meter supplies sectioned" {{#if @root.hasUrbanSource}}hidden{{/if}}>
+                    <div class="progress supplies{{#if @root.isStarving}} starving{{/if}}" role="meter"
+                        aria-valuemin="0" aria-valuenow="{{ total }}" aria-valuemax="{{ max }}"
+                        style="--bar-percentage: {{ pct }}%">
                         <div class="label">
-                            <span class="value">{{ total }}</span>                            
+                            <span class="value">{{ total }}</span>
                             {{#if @root.editable}}
                             <button type="button" class="config-button unbutton" data-action="showConfiguration"
                                 data-config="supplies" data-tooltip="ldnd5e.supplies.config"
@@ -43,8 +58,29 @@
                                 <i class="fas fa-cog" inert></i>
                             </button>
                             {{/if}}
-
-                        </div>                        
+                        </div>
+                        <input type="text" name="system.supplies.total" data-dtype="Number" placeholder="0"
+                            value="{{ total }}" data-max="{{ max }}" inputmode="numeric" pattern="^[+=\-]?\d*" hidden>
+                    </div>
+                </div>
+                {{/with}}
+                {{#with system.supplies.reserve}}
+                <div class="meter reserve sectioned" {{#unless @root.hasUrbanSource}}hidden{{/unless}}>
+                    <div class="progress reserve" role="meter"
+                        aria-valuemin="0" aria-valuenow="{{ value }}" aria-valuemax="{{ max }}"
+                        style="--bar-percentage: {{ pct }}%">
+                        <div class="label">
+                            <span class="value">{{ value }}</span>
+                            {{#if @root.editable}}
+                            <button type="button" class="config-button unbutton" data-action="showConfiguration"
+                                data-config="supplies" data-tooltip="ldnd5e.supplies.config"
+                                aria-label="{{ localize 'DND5E.HitPointsConfig' }}">
+                                <i class="fas fa-cog" inert></i>
+                            </button>
+                            {{/if}}
+                        </div>
+                        <input type="text" name="system.supplies.reserve.value" data-dtype="Number" placeholder="0"
+                            value="{{ value }}" inputmode="numeric" pattern="^[+=\-]?\d*" hidden>
                     </div>
                 </div>
                 {{/with}}
@@ -74,7 +110,7 @@
                 <div class="document-name">{{ actor.name }}</div>
                 {{/if}}
 
-                {{!-- Organization & Type --}}
+                {{!-- Organization, Size & Type --}}
                 <ul class="labels unlist">
 
                     {{!-- Organization --}}
@@ -84,6 +120,18 @@
                             placeholder="{{ localize 'ldnd5e.army.org' }}">
                         {{else}}
                         <span>{{ system.info.org }}</span>
+                        {{/if}}
+                    </li>
+
+                    {{!-- Size --}}
+                    <li class="creature-size">
+                        {{#if editable}}
+                        {{#debug this}}{{/debug}}
+                        <select class="unselect" name="system.info.size">
+                            {{ selectOptions CONFIG.actorSizes selected=system.info.size labelAttr="label" }}
+                        </select>
+                        {{else}}
+                        <span>{{ lookup (lookup CONFIG.actorSizes system.info.size) "label" }}</span>
                         {{/if}}
                     </li>
 
@@ -101,10 +149,10 @@
                         placeholder="10">
                     {{else}}
                     {{ system.prestige.value }}
-                    {{/if}}                    
-                </div>    
+                    {{/if}}
+                </div>
 
-                <div class="banner">{{system.prestige.mod}}</div>          
+                <div class="banner">{{system.prestige.mod}}</div>
 
             </div>
 
@@ -121,7 +169,8 @@
                         src="{{commander.img}}"></img>
                     <h4>{{commander.name}}</h4>
                     <button type="button" class="config-button unbutton" data-action="removeCommander"
-                    data-tooltip="ldnd5e.army.removeCommander" aria-label="{{ localize 'ldnd5e.army.removeCommander' }}">
+                        data-tooltip="ldnd5e.army.removeCommander"
+                        aria-label="{{ localize 'ldnd5e.army.removeCommander' }}">
                         <i class="fas fa-trash" inert></i>
                     </button>
                     {{else}}

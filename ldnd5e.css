@@ -13,6 +13,10 @@
   --overlay-heal-text-color: #072986;
 
   --tatic-activity-card: #f8f4f1;
+
+  --ldnd5e-color-re-1: #3466db;
+  --ldnd5e-color-re-2: #314d8f;
+  --ldnd5e-color-re-3: #273165;
 }
 
 /* ----------------------------------------- */
@@ -1174,12 +1178,55 @@
   display: block;
 }
 
-.ldnd5e.supplies .supplies-sizes {
+.ldnd5e.supplies .form-fields {
+  display: flex;
+  gap: 5px;
+}
+
+.ldnd5e.supplies .info-block .army .size {
   display: flex;
   justify-content: center;
   gap: 5px;
   font-size: var(--font-h5-size);
   color: var(--dnd5e-color-gold);
+  margin-bottom: 5px;
+}
+
+.ldnd5e.supplies .info-block .info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ldnd5e.supplies .info-block .info label {
+  text-align: center;
+  color: var(--dnd5e-color-beige);
+  font-family: var(--dnd5e-font-roboto-slab);
+}
+
+.ldnd5e.supplies .info-block .totals {
+  flex-direction: row;
+  padding: 5px;
+  margin-bottom: 5px;
+}
+
+.ldnd5e.supplies .info-block .totals .supply {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  align-items: center;
+}
+
+.ldnd5e.supplies .info-block .totals .supply .value {
+  font-size: var(--font-h5-size);
+}
+
+.ldnd5e.supplies .info-block .totals .supply .value i {
+  color: var(--dnd5e-color-gold);
+}
+
+.ldnd5e.supplies .supplies-sources:not(:last-of-type) {
   margin-bottom: 5px;
 }
 
@@ -1189,21 +1236,136 @@
   border: none;
   color: var(--main-text-light-color);
 }
+
 .ldnd5e.supplies .supplies-sources button {
   background: transparent;
   border: none;
   color: var(--dnd5e-color-gold);
 }
+
 .ldnd5e.supplies .supplies-sources .items-section {
   margin-top: 5px;
 }
-.ldnd5e.supplies .supplies-sources .item-list .item {
-  margin-block: 5px;
+
+.ldnd5e.supplies .items-section .empty {
+  text-align: center;
+  font-style: italic;
+  color: var(--dnd5e-color-beige);
 }
 
-.ldnd5e.supplies .form-fields {
+.ldnd5e.supplies .items-section .item-list {
+  overflow-y: scroll;
+  max-height: 145px;
+}
+
+.ldnd5e.supplies .items-section .item-list .item {
+  margin-block: 5px;
+  border: none;
+}
+
+.ldnd5e.supplies .item-list .item .item-row {
+  margin-right: 0.5em;
+}
+
+.ldnd5e.supplies .item-list .item .item-name .title {
+  font-family: var(--dnd5e-font-roboto-slab);
+}
+
+.ldnd5e.supplies .item-list .item .supply-value {
+  width: 50px;
+  text-align: center;
   display: flex;
-  gap: 5px;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.ldnd5e.supplies .item-list .item .supply-value .value {
+  font-weight: bold;
+}
+
+.ldnd5e.supplies .item-list .item .supply-value i {
+  font-size: var(--font-size-18);
+  color: var(--dnd5e-color-gold);
+}
+
+.ldnd5e.supplies .item-list .item .item-controls {
+  width: 30px;
+  align-self: center;
+  text-align: center;
+  padding: 0;
+}
+
+.ldnd5e.supplies .item-list .item .item-controls button {
+  font-size: var(--font-size-11);
+  color: var(--color-text-light-6);
+}
+
+.ldnd5e.sheet.army .meter.supplies .progress::before {
+  background: linear-gradient(to right, var(--dnd5e-color-hp-1) 0%, var(--dnd5e-color-hp-2) 100%);
+  border-inline-end: var(--border-width) solid var(--dnd5e-color-hp-3);
+}
+
+.ldnd5e.sheet.army .meter.supplies .progress.starving::before {
+  background: linear-gradient(to right, var(--dnd5e-color-hd-1) 0%, var(--dnd5e-color-hd-2) 100%);
+  border-inline-end: var(--border-width) solid var(--dnd5e-color-hd-3);
+}
+
+.ldnd5e.sheet.army .meter.reserve .progress.reserve::before {
+  background: linear-gradient(to right, var(--ldnd5e-color-re-1) 0%, var(--ldnd5e-color-re-2) 100%);
+  border-inline-end: var(--border-width) solid var(--ldnd5e-color-re-3);
+}
+
+.ldnd5e.sheet.army .meter.sectioned>.reserve,
+.ldnd5e.sheet.army .meter.sectioned>.supplies {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: var(--cursor-pointer);
+}
+.ldnd5e.sheet.army .sheet-header .vitals .meter.reserve,
+.ldnd5e.sheet.army .sheet-header .vitals .meter.supplies {
+  block-size: 20px;
+  font-size: var(--font-size-12);
+}
+
+.ldnd5e.sheet.army .sheet-header .vitals .reserve .label,
+.ldnd5e.sheet.army .sheet-header .vitals .supplies .label {
+  padding-inline-start: 12px;
+}
+
+.ldnd5e.sheet.army .sheet-header .vitals .reserve .label .config-button,
+.ldnd5e.sheet.army .sheet-header .vitals .supplies .label .config-button {
+  color: inherit;
+  font-size: var(--font-size-10);
+  margin-left: auto;
+}
+
+.ldnd5e.sheet.army .sheet-header .meter>.reserve>input {
+  z-index: 2;
+}
+
+.ldnd5e.army .urban-badge,
+.ldnd5e.army .starving-badge {
+  filter: unset;
+  margin: unset;
+  text-align: center;
+  line-height: 45px;
+  background-image: url(ui/starving-badge.webp);
+  display: block;
+  place-content: unset;
+  z-index: 1;
+}
+
+.ldnd5e.army .urban-badge {
+  background-image: url(ui/level-badge.webp);
+}
+
+.ldnd5e.army .urban-badge img {
+  position: absolute;
+  height: 20px;
+  top: 12px;
+  left: 12px;
 }
 
 .ldnd5e.unit .tatics-list .items-header,
@@ -1247,6 +1409,8 @@
   justify-content: center;
 }
 
+.ldnd5e.army .urban-badge,
+.ldnd5e.army .starving-badge,
 .ldnd5e.company .prestige-badge {
   position: absolute;
   top: 0em;

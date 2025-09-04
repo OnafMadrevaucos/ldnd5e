@@ -106,28 +106,48 @@
         },
         "supplies": {
             "title": "Supplies Configuration",
-            "level": "Level",
+            "config": "Configure",
             "needs": "Needs",
-            "food": "Food",
-            "water": "Water",
+            "food": "Food Supply",
+            "water": "Water Supply",
+            "urban": "Urban Supply",
             "sources": {
                 "food": {
-                    "plantI": "Small Farm",
-                    "plantII": "Large Farm",
-                    "plantIII": "Plantation",
-                    "cityI": "Village",
-                    "cityII": "City",
-                    "cityIII": "Metropolis"
+                    "farmI": "Wild Plantation",
+                    "farmII": "Subsistence Plantation",
+                    "farmIII": "Regional Plantation",
+                    "farmIV": "Agricultural Estate",
+                    "meatI": "Wild Herd",
+                    "meatII": "Subsistence Herd",
+                    "meatIII": "Regional Herd",
+                    "meatIV": "Livestock Estate"
                 },
                 "water": {
-                    "springI": "Small Spring",
-                    "springII": "Pond",
-                    "springIII": "Lake",
-                    "riverI": "Small River",
-                    "riverII": "Medium River",
-                    "riverIII": "Large River"
+                    "wellI": "Well",
+                    "wellII": "Cistern",
+                    "wellIII": "Reservoir",
+                    "wellIV": "Dam",
+                    "riverI": "Streamlet",
+                    "riverII": "Brook",
+                    "riverIII": "River",
+                    "riverIV": "Great River",
+                    "riverV": "Lake"
+                },
+                "urban": {
+                    "cityI": "Hamlet",
+                    "cityII": "Village",
+                    "cityIII": "City",
+                    "cityIV": "Metropolis",
+                    "cityV": "Capital"
                 }
-            }
+            },
+            "noFood": "No Food",
+            "totalFood": "Total Food",
+            "noWater": "No Water",
+            "totalWater": "Total Water",
+            "armySize": "Army Size",
+            "starving": "Shortage",
+            "urbanHint": "If the army has access to a city, it becomes immune to the effects of Shortage for a certain period of time, limited by the size of the city's stockpiles. A city's stockpiles are only used if the army has not reached its minimum Supply level with the resources available in the region."
         },
         "army": {
             "org": "Organization",

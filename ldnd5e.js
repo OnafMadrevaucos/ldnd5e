@@ -183,6 +183,27 @@ Hooks.on('combatRound', ars.onNewCombatTurn);
 Hooks.on('createActor', async (document, data, options, userId) => {
     patchActorCreate(document);
 });
+Hooks.on('updateActor', async (document, data, options, userId) => {
+    if (document.type == "ldnd5e.company") {
+        const companyData = document.system;
+        const armyData = companyData.info.army;
+
+        if (armyData) {
+            Object.values(armyData.apps).forEach(app => {
+                app.render(true);
+            })
+        }
+    } else if (document.type == "ldnd5e.unit") {
+        const unitData = document.system;
+        const companyData = unitData.info.company;
+
+        if (companyData) {
+            Object.values(companyData.apps).forEach(app => {
+                app.render(true);
+            })
+        }
+    }
+});
 Hooks.on('dnd5e.restCompleted', (actor, result, config) => {
     patchLongRest(actor, result, config);
 });
@@ -192,8 +213,8 @@ Hooks.on('dnd5e.restCompleted', (actor, result, config) => {
 Hooks.on('createItem', async (document, data, options, userId) => {
     patchItemCreate(document.actor, document);
 
-    if (document.type === typeTatic && document.img === "modules/ldnd5e/ui/icons/tatics-dark.svg") 
-        document.update({ 'img': "modules/ldnd5e/ui/icons/tatics.svg" });    
+    if (document.type === typeTatic && document.img === "modules/ldnd5e/ui/icons/tatics-dark.svg")
+        document.update({ 'img': "modules/ldnd5e/ui/icons/tatics.svg" });
 });
 Hooks.on('preUpdateItem', async (document, change, options, userId) => {
     patchItemPreUpdate(document.actor, document, change);

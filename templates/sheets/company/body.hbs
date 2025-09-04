@@ -9,10 +9,10 @@
                 aria-label="{{ localize " DND5E.CurrencyManager.Title" }}">
                 <i class="fa-solid fa-coins" inert></i>
             </button>
-            {{#each currency as |c|}}
+            {{#each system.currency as |c|}}
             <label aria-label="{{ c.label }}">
                 <i class="currency {{ key }}" data-tooltip="{{ c.label }}"></i>
-                <input type="text" class="uninput" name="system.currency.{{ c.key }}" value="{{ c.value }}"
+                <input type="text" class="uninput" name="system.currency.{{ c.key }}.value" value="{{ c.value }}"
                     data-dtype="Number" inputmode="numeric" pattern="[+=\-]?\d*">
             </label>
             {{/each}}

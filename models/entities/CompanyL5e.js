@@ -1,8 +1,12 @@
 import { i18nStrings, unitChoices } from "../../scripts/constants.js";
 
+const DND5E = dnd5e.config;
+
 export default class CompanyL5e extends foundry.abstract.TypeDataModel {
+
     static defineSchema() {
         const fields = foundry.data.fields;
+
         const data = {
             name: new fields.StringField({ required: true, label: "ldnd5e.company.name" }),
             info: new fields.SchemaField({
@@ -14,9 +18,25 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
                 commander: new fields.ForeignDocumentField(getDocumentClass("Actor"), {
                     textSearch: true, label: "ldnd5e.company.commander",
                 }),
-                type: new fields.StringField({ required: true, label: "ldnd5e.company.type" }),                
+                type: new fields.StringField({ required: true, label: "ldnd5e.company.type" }),
             }),
-
+            currency: new fields.SchemaField({
+                cp: new fields.SchemaField({                    
+                    value: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 })
+                }),
+                sp: new fields.SchemaField({                    
+                    value: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 })
+                }),
+                gp: new fields.SchemaField({                    
+                    value: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 })
+                }),
+                ep: new fields.SchemaField({                    
+                    value: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 })
+                }),
+                pp: new fields.SchemaField({
+                    value: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 })
+                })
+            }),
             abilities: new fields.SchemaField({
                 frt: new fields.SchemaField({
                     value: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 }),
@@ -91,6 +111,7 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
 
         this.system = {
             info: this.info,
+            currency: this.currency,
             abilities: this.abilities,
             attributes: this.attributes,
             combat: this.combat,
@@ -111,6 +132,9 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
         this._prepareCombatSkills();
         // Prepare the company's saves.
         this._prepareSaves();
+
+        // Prepare the company's currency.
+        this._prepareCurrency();
 
         // Sort the units by type.
         this._prepareUnits();
@@ -195,7 +219,7 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
 
         // Army's prestige modifier.
         const prestige = companyData.attributes.affinity.bonus.prestige;
-        
+
         // Commander's charisma modifier.
         const bonus = companyData.attributes.affinity.bonus.value;
 
@@ -246,7 +270,7 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
    * @protected
    */
     _prepareSaves() {
-        const companyData = this.system;        
+        const companyData = this.system;
         const prof = companyData.attributes.affinity.bonus.prof;
 
         // Army's prestige modifier.
@@ -258,6 +282,21 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
         dsp.save.mod = Math.abs(dsp.save.value);
         dsp.save.sign = (dsp.value >= 0) ? "+" : "-";
     }
+
+    /* -------------------------------------------- */
+
+    /**
+    * Prepare actor currency for display.
+    * @protected
+    */
+    _prepareCurrency() {
+        const companyData = this.system;
+        Object.entries(companyData.currency).forEach(([k, v]) => {
+            companyData.currency[k].key = k;
+            companyData.currency[k].label = game.i18n.localize(DND5E.currencies[k].label);
+        });
+    }
+
 
     /* -------------------------------------------- */
 

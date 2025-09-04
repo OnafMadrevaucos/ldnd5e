@@ -103,33 +103,51 @@
             "fighters": "Lutadores",
             "specialists": "Especialistas"
         },
-
         "supplies": {
             "title": "Configuração de Suprimentos",
-            "level": "Nível",
+            "config": "Configurar",
             "needs": "Necessidades",
-            "food": "Alimento",
-            "water": "Água",
+            "food": "Suprimento de Alimento",
+            "water": "Suprimento de Água",
+            "urban": "Suprimento Urbano",
             "sources": {
                 "food": {
-                    "plantI": "Fazenda Pequena",
-                    "plantII": "Fazenda Grande",
-                    "plantIII": "Latifúndio",
-                    "cityI": "Aldeia",
-                    "cityII": "Cidade",
-                    "cityIII": "Metrópoles"
+                    "farmI": "Plantação Silvestre",
+                    "farmII": "Plantação Subsistência",
+                    "farmIII": "Plantação Regional",
+                    "farmIV": "Latifúndio Agrícola",
+                    "meatI": "Rebanho Selvagem",
+                    "meatII": "Rebanho Subsistência",
+                    "meatIII": "Rebanho Regional",
+                    "meatIV": "Latifúndio Pecuário"
                 },
                 "water": {
-                    "springI": "Nascente",
-                    "springII": "Lagoa",
-                    "springIII": "Lago",
+                    "wellI": "Poço",
+                    "wellII": "Cisterna",
+                    "wellIII": "Reservatório",
+                    "wellIV": "Represa",
                     "riverI": "Córrego",
-                    "riverII": "Rio Médio",
-                    "riverIII": "Rio Grande"
+                    "riverII": "Riacho",
+                    "riverIII": "Rio",
+                    "riverIV": "Grande Rio",
+                    "riverV": "Lago"
+                },
+                "urban": {
+                    "cityI": "Vila",
+                    "cityII": "Aldeia",
+                    "cityIII": "Cidade",
+                    "cityIV": "Metrópole",
+                    "cityV": "Capital"
                 }
-            }
+            },
+            "noFood": "Sem Alimento",
+            "totalFood": "Alimento Total",
+            "noWater": "Sem Água",
+            "totalWater": "Água Total",
+            "armySize": "Tamanho do Exército",
+            "starving": "Desabastecimento",
+            "urbanHint": "Se o exército tiver acesso a uma cidade, ele se torna imune aos efeitos da Desabastecimento por um determinado tempo, delimitado pelo tamanho dos estoques da cidade. Os estoques de uma cidade somente são utilizados caso o exército não tenha atingido seu nível mínimo de Suprimento com os recursos a que tem acesso na região."
         },
-
         "army": {
             "org": "Organização",
             "prestige": "Prestígio",
@@ -165,7 +183,6 @@
             "removeTatic": "Remover Tática",
             "isTrainning": "Treinando?"
         },
-
         "tatics": {
             "flavor": "Floreio",
             "description": "Descrição",
@@ -189,9 +206,8 @@
             "invalidActivity": "Data de Atividade Inválida",
             "clash": "Embate",
             "useTatic": "Uso de Tática",
-            "mainRecovery": "Recuperação Principal" 
+            "mainRecovery": "Recuperação Principal"
         },
-
         "messages": {
             "bldgDmgLightArmor": "Armaduras Leves são imunes a avarias causadas por Dano Contundente.",
             "slshDmgHeavyArmor": "Armaduras Pesadas são imunes a avarias causadas por Dano Cortante.",

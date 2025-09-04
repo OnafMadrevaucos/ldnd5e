@@ -1,11 +1,12 @@
 import SuppliesConfigDialog from "../dialogs/SuppliesConfigDialog.js";
+import { suppliesChoices } from "../../scripts/constants.js";
 
 const { api: api, sheets: sheets } = foundry.applications;
 
 export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.ActorSheet) {
     static MODES = {
-        PLAY: 1,
-        EDIT: 2
+        PLAY: 0,
+        EDIT: 1
     }
 
     static DEFAULT_OPTIONS = {
@@ -50,6 +51,10 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
         this.element.classList.toggle("editable", this.isEditable && (this._mode === this.constructor.MODES.EDIT));
         this.element.classList.toggle("interactable", this.isEditable && (this._mode === this.constructor.MODES.PLAY));
         this.element.classList.toggle("locked", !this.isEditable);
+
+        this.element.querySelector('.meter > .reserve').addEventListener('click', event => this._toggleEditReserves(event, true));
+        this.element.querySelector('.meter > .reserve > input').addEventListener('blur', event => this._toggleEditReserves(event, false));
+        this.element.querySelector('.meter > .reserve > input').addEventListener('input', event => this._onReservesInput(event));
 
         // Handle delta inputs
         this.element.querySelectorAll('input[type="text"][data-dtype="Number"]')
@@ -111,11 +116,12 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
         // Set editable the current form mode.
         context.editable = this.isEditable && (this._mode === this.constructor.MODES.EDIT);
 
+        context.CONFIG = dnd5e.config;
+
         // Prepare the actor data for rendering.
         Object.assign(context, {
             actor: this.actor,
             system: this.actor.system,
-
         });
 
         context.companies = [];
@@ -141,6 +147,15 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
 
             context.companies.push(company);
         });
+
+        //Verify if the army is starving.
+        const supplies = this.actor.system.supplies;
+        context.isStarving = supplies.total < supplies.needs;
+
+        // Verify if the army has a urban source of supplies.
+        context.hasUrbanSource = supplies.sources.urban !== '';
+
+        if (context.hasUrbanSource) context.urbanIcon = suppliesChoices.sourcesImg.urban[supplies.sources.urban];
 
         // Verify if the army has a commander.
         context.hasCommander = !!this.actor.system.info.commander;
@@ -211,30 +226,39 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
         const currency = {
             cp: {
                 key: "cp",
-                label: game.i18n.localize("DND5E.CurrencyCopper"),
+                label: game.i18n.localize("DND5E.CurrencyCP"),
                 value: 0
             },
             sp: {
                 key: "sp",
-                label: game.i18n.localize("DND5E.CurrencySilver"),
+                label: game.i18n.localize("DND5E.CurrencySP"),
                 value: 0
             },
             gp: {
                 key: "gp",
-                label: game.i18n.localize("DND5E.CurrencyGold"),
+                label: game.i18n.localize("DND5E.CurrencyGP"),
                 value: 0
             },
             ep: {
                 key: "ep",
-                label: game.i18n.localize("DND5E.CurrencyElectrum"),
+                label: game.i18n.localize("DND5E.CurrencyEP"),
                 value: 0
             },
             pp: {
                 key: "pp",
-                label: game.i18n.localize("DND5E.CurrencyPlatinum"),
+                label: game.i18n.localize("DND5E.CurrencyPP"),
                 value: 0
             }
         };
+
+        for(let company of this.actor.system.companies) {
+            const companyActor = game.actors.get(company);
+            if (!companyActor) continue;
+
+            for (const [k, c] of Object.entries(companyActor.system.currency)) {
+                currency[k].value += c.value;
+            }
+        }
 
         context.currency = currency;
     }
@@ -250,6 +274,39 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
 
     /* -------------------------------------------- */
     /*  Events Listeners                            */
+    /* -------------------------------------------- */
+
+    /**
+     * Toggle editing reserves.
+     * @param {PointerEvent} event  The triggering event.
+     * @param {boolean} edit        Whether to toggle to the edit state.
+     * @protected
+     */
+    _toggleEditReserves(event, edit) {
+        const target = event.currentTarget.closest(".reserve");
+        const label = target.querySelector(":scope > .label");
+        const input = target.querySelector(":scope > input");
+        label.hidden = edit;
+        input.hidden = !edit;
+        if (edit) input.focus();
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+     * On changing reserves' value.
+     * @param {PointerEvent} event  The triggering event.
+     * @protected
+     */
+    _onReservesInput(event) {
+        const input = event.currentTarget;
+        const max = parseInt(input.dataset.max);
+        const value = parseInt(input.value);
+
+        if (value > max) input.value = max;
+        if (value < 0) input.value = 0;
+    }
+
     /* -------------------------------------------- */
 
     /**

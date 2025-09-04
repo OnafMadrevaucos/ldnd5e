@@ -116,59 +116,123 @@ const suppliesChoices = {
    */
    sources: {
       food: {
-         plantI: "plantI",
-         plantII: "plantII",
-         plantIII: "plantIII",
-         cityI: "cityI",
-         cityII: "cityII",
-         cityIII: "cityIII"
+         farmI: 'farmI',
+         farmII: 'farmII',
+         farmIII: 'farmIII',
+         farmIV: 'farmIV',
+         meatI: 'meatI',
+         meatII: 'meatII',
+         meatIII: 'meatIII',
+         meatIV: 'meatIV'
       },
       water: {
-         springI: "springI",
-         springII: "springII",
-         springIII: "springIII",
-         riverI: "riverI",
-         riverII: "riverII",
-         riverIII: "riverIII"
+         wellI: 'wellI',
+         wellII: 'wellII',
+         wellIII: 'wellIII',
+         wellIV: 'wellIV',
+         riverI: 'riverI',
+         riverII: 'riverII',
+         riverIII: 'riverIII',
+         riverIV: 'riverIV',
+         riverV: 'riverV'
+      },
+      urban: {
+         cityI: 'cityI',
+         cityII: 'cityII',
+         cityIII: 'cityIII',
+         cityIV: 'cityIV',
+         cityV: 'cityV'         
       }
    },
 
    sourcesValues: {
       food: {
-         plantI: 1,
-         plantII: 2,
-         plantIII: 3,
-         cityI: 4,
-         cityII: 5,
-         cityIII: 6
+         farmI: 0.2,
+         farmII: 0.5,
+         farmIII: 3,
+         farmIV: 5,
+         meatI: 0.33,
+         meatII: 1,
+         meatIII: 4,
+         meatIV: 5
       },
       water: {
-         springI: 1,
-         springII: 2,
-         springIII: 3,
-         riverI: 4,
-         riverII: 5,
-         riverIII: 6
+         wellI: 1,
+         wellII: 2,
+         wellIII: 3,
+         wellIV: 4,
+         riverI: 1,
+         riverII: 2,
+         riverIII: 3,
+         riverIV: 4,
+         riverV: 5
+      },
+      urban: {
+         cityI: 1,
+         cityII: 2,
+         cityIII: 4,
+         cityIV: 6,
+         cityV: 8
       }
    },
 
    sourcesImg: {
       food: {
-         plantI: "modules/ldnd5e/ui/supplies/plantI.webp",
-         plantII: "modules/ldnd5e/ui/supplies/plantII.webp",
-         plantIII: "modules/ldnd5e/ui/supplies/plantIII.webp",
-         cityI: "modules/ldnd5e/ui/supplies/cityI.webp",
-         cityII: "modules/ldnd5e/ui/supplies/cityII.webp",
-         cityIII: "modules/ldnd5e/ui/supplies/cityIII.webp"
+         farmI: 'modules/ldnd5e/ui/supplies/farmI.webp',
+         farmII: 'modules/ldnd5e/ui/supplies/farmII.webp',
+         farmIII: 'modules/ldnd5e/ui/supplies/farmIII.webp',
+         farmIV: 'modules/ldnd5e/ui/supplies/farmIV.webp',
+         meatI: 'modules/ldnd5e/ui/supplies/meatI.webp',
+         meatII: 'modules/ldnd5e/ui/supplies/meatII.webp',
+         meatIII: 'modules/ldnd5e/ui/supplies/meatIII.webp',
+         meatIV: 'modules/ldnd5e/ui/supplies/meatIV.webp'
       },
       water: {
-         springI: "modules/ldnd5e/ui/supplies/springI.webp",
-         springII: "modules/ldnd5e/ui/supplies/springII.webp",
-         springIII: "modules/ldnd5e/ui/supplies/springIII.webp",
-         riverI: "modules/ldnd5e/ui/supplies/riverI.webp",
-         riverII: "modules/ldnd5e/ui/supplies/riverII.webp",
-         riverIII: "modules/ldnd5e/ui/supplies/riverIII.webp"
+         wellI: 'modules/ldnd5e/ui/supplies/wellI.webp',
+         wellII: 'modules/ldnd5e/ui/supplies/wellII.webp',
+         wellIII: 'modules/ldnd5e/ui/supplies/wellIII.webp',
+         wellIV: 'modules/ldnd5e/ui/supplies/wellIV.webp',
+         riverI: 'modules/ldnd5e/ui/supplies/riverI.webp',
+         riverII: 'modules/ldnd5e/ui/supplies/riverII.webp',
+         riverIII: 'modules/ldnd5e/ui/supplies/riverIII.webp',
+         riverIV: 'modules/ldnd5e/ui/supplies/riverIV.webp',
+         riverV: 'modules/ldnd5e/ui/supplies/riverV.webp'
+      },
+      urban: {
+         cityI: 'modules/ldnd5e/ui/icons/supplies/cityI.webp',
+         cityII: 'modules/ldnd5e/ui/icons/supplies/cityII.webp',
+         cityIII: 'modules/ldnd5e/ui/icons/supplies/cityIII.webp',
+         cityIV: 'modules/ldnd5e/ui/icons/supplies/cityIV.webp',
+         cityV: 'modules/ldnd5e/ui/icons/supplies/cityV.webp',
       }
+   }
+}
+
+/**
+* Defines the Army constants.
+*
+* @enum {{
+*    sizes: object,
+*    needs: object
+* }}
+*/
+const armyChoices = {
+   sizes: {
+      tiny: 0,
+      sm: 1,
+      med: 2,
+      lg: 3,
+      huge: 4,
+      grg: 5
+   },
+
+   needs: {
+      tiny: 5,
+      sm: 10,
+      med: 15,
+      lg: 20,
+      huge: 25,
+      grg: 30
    }
 }
 
@@ -237,7 +301,7 @@ const taticsChoices = {
       mh: "mh",
       ib: "ib",
       id: "id",
-   }   
+   }
 }
 
 const i18nStrings = {
@@ -336,28 +400,48 @@ const i18nStrings = {
 
    supplies: {
       title: 'ldnd5e.supplies.title',
-      level: 'ldnd5e.supplies.level',
+      config: 'ldnd5e.supplies.config',
       needs: 'ldnd5e.supplies.needs',
       food: 'ldnd5e.supplies.food',
       water: 'ldnd5e.supplies.water',
+      urban: 'ldnd5e.supplies.urban',
       sources: {
          food: {
-            plantI: 'ldnd5e.supplies.sources.food.plantI',
-            plantII: 'ldnd5e.supplies.sources.food.plantII',
-            plantIII: 'ldnd5e.supplies.sources.food.plantIII',
-            cityI: 'ldnd5e.supplies.sources.food.cityI',
-            cityII: 'ldnd5e.supplies.sources.food.cityII',
-            cityIII: 'ldnd5e.supplies.sources.food.cityIII'
+            farmI: 'ldnd5e.supplies.sources.food.farmI',
+            farmII: 'ldnd5e.supplies.sources.food.farmII',
+            farmIII: 'ldnd5e.supplies.sources.food.farmIII',
+            farmIV: 'ldnd5e.supplies.sources.food.farmIV',
+            meatI: 'ldnd5e.supplies.sources.food.meatI',
+            meatII: 'ldnd5e.supplies.sources.food.meatII',
+            meatIII: 'ldnd5e.supplies.sources.food.meatIII',
+            meatIV: 'ldnd5e.supplies.sources.food.meatIV'
          },
          water: {
-            springI: 'ldnd5e.supplies.sources.water.springI',
-            springII: 'ldnd5e.supplies.sources.water.springII',
-            springIII: 'ldnd5e.supplies.sources.water.springIII',
+            wellI: 'ldnd5e.supplies.sources.water.wellI',
+            wellII: 'ldnd5e.supplies.sources.water.wellII',
+            wellIII: 'ldnd5e.supplies.sources.water.wellIII',
+            wellIV: 'ldnd5e.supplies.sources.water.wellIV',
             riverI: 'ldnd5e.supplies.sources.water.riverI',
             riverII: 'ldnd5e.supplies.sources.water.riverII',
-            riverIII: 'ldnd5e.supplies.sources.water.riverIII'
+            riverIII: 'ldnd5e.supplies.sources.water.riverIII',
+            riverIV: 'ldnd5e.supplies.sources.water.riverIV',
+            riverV: 'ldnd5e.supplies.sources.water.riverV',
+         },
+         urban: {
+            cityI: 'ldnd5e.supplies.sources.urban.cityI',
+            cityII: 'ldnd5e.supplies.sources.urban.cityII',
+            cityIII: 'ldnd5e.supplies.sources.urban.cityIII',
+            cityIV: 'ldnd5e.supplies.sources.urban.cityIV',
+            cityV: 'ldnd5e.supplies.sources.urban.cityV',
          }
-      }
+      },
+      noFood: 'ldnd5e.supplies.noFood',
+      totalFood: 'ldnd5e.supplies.totalFood',
+      noWater: 'ldnd5e.supplies.noWater',
+      totalWater: 'ldnd5e.supplies.totalWater',
+      armySize: 'ldnd5e.supplies.armySize',
+      starving: 'ldnd5e.supplies.starving',
+      urbanHint: 'ldnd5e.supplies.urbanHint'
    },
 
    army: {
@@ -512,4 +596,4 @@ const gmControl =
    button: true
 };
 
-export { constants, UnarmoredClasses, NDs, gmControl, i18nStrings, suppliesChoices, unitChoices, taticsChoices };
+export { constants, UnarmoredClasses, NDs, gmControl, i18nStrings, suppliesChoices, armyChoices, unitChoices, taticsChoices };

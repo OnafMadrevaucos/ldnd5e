@@ -59,7 +59,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
 
         // Handle delta inputs
         this.element.querySelectorAll('input[type="text"][data-dtype="Number"]')
-            .forEach(i => i.addEventListener("change", this._onChangeInputDelta.bind(this)));
+            .forEach(i => i.addEventListener("change", this._onChangeInputDelta.bind(this)));        
     }
 
     /**
@@ -243,7 +243,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
 
             totalHp += (unit.system.abilities.mrl.value + unit.system.abilities.wll.value);
         }
-    }
+    }    
 
     /* -------------------------------------------- */
     /*  Event Listeners & Handlers                  */
@@ -572,6 +572,6 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
             speaker: ChatMessage.getSpeaker({ actor: this.actor, alias: this.name })
         };
         ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
-        return ChatMessage.create(chatData);
+        return await ChatMessage.create(chatData);
     }
 }

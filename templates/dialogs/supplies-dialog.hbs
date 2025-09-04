@@ -1,33 +1,63 @@
 <section>
-    <div class="supplies-sizes">
-        {{#repeat size}}
-        <span class="size"><i class="ras ra-helmet"></i></span>
-        {{/repeat}}
+    <div class="info-block sizes">
+        <div class="info army" data-tooltip="{{ lookup (lookup CONFIG.actorSizes size) " label" }}">
+            <label>{{localize 'ldnd5e.supplies.armySize'}}</label>
+            <div class="size">
+                {{#repeat size}}
+                <span><i class="fas fa-tent"></i></span>
+                {{/repeat}}
+            </div>
+        </div>
+        <div class="card info totals">
+            <div class="supply food">
+                <label>{{localize 'ldnd5e.supplies.totalFood'}}</label>
+                <span class="value">
+                    {{totals.foodTotal}}
+                    <i class="fas fa-wheat-awn"></i>
+                </span>
+            </div>
+            <div class="supply water">
+                <label>{{localize 'ldnd5e.supplies.totalWater'}}</label>
+                <span class="value">
+                    {{totals.waterTotal}}
+                    <i class="fas fa-droplet"></i>
+                </span>
+            </div>
+        </div>
     </div>
-
-    {{#debug this}}{{/debug}}
 
     <fieldset class="supplies-sources food">
         <legend>{{localize 'ldnd5e.supplies.food'}}</legend>
         <div class="form-group">
             <div class="form-fields">
                 <select>
-                    {{ selectOptions foodSources labelAttr="label" valueAttr="value" selected=level.food }}
+                    {{ selectOptions foodSources labelAttr="label" valueAttr="value" }}
                 </select>
                 <button data-action="addFoodSource"><i class="fas fa-plus"></i></button>
             </div>
             <div class="items-section">
                 {{#if hasFoodSource}}
                 <ul class="item-list food-sources unlist">
-                    {{#each sources.food as |food|}}
+                    {{#each sources.food as |food idx|}}
                     <li class="item food">
-                        <div class="item-row food card" data-value="{{food.value}}">
+                        <div class="item-row food card" data-value="{{food.value}}" data-idx="{{idx}}">
                             <div class="item-name">
                                 <img class="item-image gold-icon{{#if food.img.svg}} svg{{/if}}" src="{{food.img.src}}"
                                     alt="{{food.name}}">
                                 <div class="name">
                                     <span class="title">{{food.name}}</span>
                                 </div>
+                                <div class="supply-value">
+                                    <span class="value">{{food.value}}</span>
+                                    <i class="fas fa-wheat-awn"></i>
+                                </div>
+                            </div>
+                            <div class="item-controls">
+                                <button type="button" class="config-button unbutton" data-action="deleteSupply"
+                                    data-type="food" data-tooltip="ldnd5e.supplies.delete"
+                                    aria-label="{{ localize 'ldnd5e.supplies.delete' }}">
+                                    <i class="fas fa-trash" inert></i>
+                                </button>
                             </div>
                         </div>
                     </li>
@@ -37,6 +67,61 @@
                 <p class="empty">{{localize 'ldnd5e.supplies.noFood'}}</p>
                 {{/if}}
             </div>
+        </div>
+    </fieldset>
+    <fieldset class="supplies-sources water">
+        <legend>{{localize 'ldnd5e.supplies.water'}}</legend>
+        <div class="form-group">
+            <div class="form-fields">
+                <select>
+                    {{ selectOptions waterSources labelAttr="label" valueAttr="value" }}
+                </select>
+                <button data-action="addWaterSource"><i class="fas fa-plus"></i></button>
+            </div>
+            <div class="items-section">
+                {{#if hasWaterSource}}
+                <ul class="item-list water-sources unlist">
+                    {{#each sources.water as |water idx|}}
+                    <li class="item water">
+                        <div class="item-row water card" data-value="{{water.value}}" data-idx="{{idx}}">
+                            <div class="item-name">
+                                <img class="item-image gold-icon{{#if water.img.svg}} svg{{/if}}"
+                                    src="{{water.img.src}}" alt="{{water.name}}">
+                                <div class="name">
+                                    <span class="title">{{water.name}}</span>
+                                </div>
+                                <div class="supply-value">
+                                    <span class="value">{{water.value}}</span>
+                                    <i class="fas fa-droplet"></i>
+                                </div>
+                            </div>
+                            <div class="item-controls">
+                                <button type="button" class="config-button unbutton" data-action="deleteSupply"
+                                    data-type="water" data-tooltip="ldnd5e.supplies.delete"
+                                    aria-label="{{ localize 'ldnd5e.supplies.delete' }}">
+                                    <i class="fas fa-trash" inert></i>
+                                </button>
+                            </div>
+                        </div>
+                    </li>
+                    {{/each}}
+                </ul>
+                {{else}}
+                <p class="empty">{{localize 'ldnd5e.supplies.noWater'}}</p>
+                {{/if}}
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset class="supplies-sources urban">
+        <legend>{{localize 'ldnd5e.supplies.urban'}}</legend>
+        <div class="form-group">            
+            <div class="form-fields">                
+                <select class="urban-selector unselect" name="system.supplies.sources.urban">
+                    {{ selectOptions urbanSources labelAttr="label" valueAttr="value" blank=true selected=system.supplies.sources.urban }}
+                </select>                
+            </div>  
+            <p class="hint">{{localize 'ldnd5e.supplies.urbanHint'}}</p>          
         </div>
     </fieldset>
 </section>
