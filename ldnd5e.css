@@ -20,8 +20,12 @@
 }
 
 /* ----------------------------------------- */
-/*  Sheet Styles                             */
+/*  SideBar Directory                        */
 /* ----------------------------------------- */
+.directory .directory-list .directory-item.member {
+  display: none !important;
+}
+
 /* ----------------------------------------- */
 /*  Flexbox                                  */
 /* ----------------------------------------- */
@@ -1323,6 +1327,7 @@
   align-items: center;
   cursor: var(--cursor-pointer);
 }
+
 .ldnd5e.sheet.army .sheet-header .vitals .meter.reserve,
 .ldnd5e.sheet.army .sheet-header .vitals .meter.supplies {
   block-size: 20px;

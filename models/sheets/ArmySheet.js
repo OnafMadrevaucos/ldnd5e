@@ -251,7 +251,7 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
             }
         };
 
-        for(let company of this.actor.system.companies) {
+        for (let company of this.actor.system.companies) {
             const companyActor = game.actors.get(company);
             if (!companyActor) continue;
 
@@ -351,14 +351,29 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
             // If the company is already part of the army, do nothing.
             if (this.actor.system.companies.includes(actor.id)) return false;
 
+            // Only an original company can be dropped.
+            if (actor.getFlag("ldnd5e", "isMember")) {
+                ui.notifications.warn(game.i18n.localize("ldnd5e.army.invalidCompany"), {
+                    localize: true
+                });
+                return false;
+            };
+
             const companyCollection = foundry.utils.deepClone(this.actor.system.companies).filter(c => c !== actor.id);
-            companyCollection.push(actor.id);
+
+            const companyData = foundry.utils.deepClone(actor.toObject());
+            companyData.isMember = true;
+            // Create a new company and add it to the army.
+            const createdCompany = await Actor.create(companyData);
+
+            companyCollection.push(createdCompany.id);
 
             await this.actor.update({ ['system.companies']: companyCollection });
-            await actor.update({
+            await createdCompany.update({
                 ['system.info.army']: this.actor,
                 ['system.attributes.affinity.bonus.prestige']: this.actor.system.prestige.mod
             });
+
             return true;
         }
 
@@ -427,11 +442,8 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
 
         // Update the collection.
         await this.actor.update({ ['system.companies']: companyCollection });
-        // Remove the army's reference from the company.
-        await company.update({
-            ['system.info.army']: null,
-            ['system.attributes.affinity.bonus.prestige']: 0
-        });
+        // Remove the company.
+        await company.delete();
     }
 
     /* -------------------------------------------- */

@@ -59,7 +59,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
 
         // Handle delta inputs
         this.element.querySelectorAll('input[type="text"][data-dtype="Number"]')
-            .forEach(i => i.addEventListener("change", this._onChangeInputDelta.bind(this)));        
+            .forEach(i => i.addEventListener("change", this._onChangeInputDelta.bind(this)));
     }
 
     /**
@@ -243,7 +243,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
 
             totalHp += (unit.system.abilities.mrl.value + unit.system.abilities.wll.value);
         }
-    }    
+    }
 
     /* -------------------------------------------- */
     /*  Event Listeners & Handlers                  */
@@ -294,6 +294,14 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
 
         // The dropped actor is a unit of the company.
         if (actor.type === "ldnd5e.unit") {
+            // Only an original unit can be dropped.
+            if (actor.getFlag("ldnd5e", "isMember")) {
+                ui.notifications.warn(game.i18n.localize("ldnd5e.army.invalidUnit"), {
+                    localize: true
+                });
+                return false;
+            };
+
             return this._onDropUnit(event, actor);
         }
 
@@ -407,9 +415,16 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
             } break;
         }
 
-        this.actor.system.units.push(unit.id);
+        const unitData = foundry.utils.deepClone(unit.toObject());
+        unitData._id = null;
+        unitData.isMember = true;
+
+        // Create the new unit.        
+        const createdUnit = await Actor.create(unitData);
+
+        this.actor.system.units.push(createdUnit.id);
         await this.actor.update({ ['system.units']: this.actor.system.units });
-        await unit.update({ ['system.info.company']: this.actor });
+        await createdUnit.update({ ['system.info.company']: this.actor });
 
         return true;
     }
@@ -495,12 +510,12 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         // Remove the unit from the collection.
         const unitCollection = foundry.utils.deepClone(this.actor.system.units);
         // Remove the first instance of the unit from the collection.
-        unitCollection.splice(unitCollection.indexOf(unitId), 1);
+        unitCollection.splice(unitCollection.indexOf(unitId), 1); 
 
         // Update the collection.
         await this.actor.update({ ['system.units']: unitCollection });
-        // Remove the company's reference from the unit.
-        await unit.update({ ['system.info.company']: null });
+        // Remove the embedded unit.
+        await unit.delete();
     }
 
     /* -------------------------------------------- */

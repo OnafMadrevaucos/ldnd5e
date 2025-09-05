@@ -1,6 +1,13 @@
 import { i18nStrings, unitChoices } from "../../scripts/constants.js";
 
 export default class UnitL5e extends foundry.abstract.TypeDataModel {
+
+    constructor(data, options, config) {
+        super(data, options);
+
+        const i = 0;
+    }
+
     static defineSchema() {
         const fields = foundry.data.fields;
         return {
@@ -91,7 +98,7 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
         this.system.attributes = {
             prestige: company?.system.attributes.prestige ?? { mod: "+0" },
             prof: company?.system.attributes.affinity.bonus.prof ?? 0,
-        }       
+        }
 
         // Prepare abilities.
         this._prepareAbilities();
@@ -176,7 +183,7 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
 
         dsp.save.mod = Math.abs(dsp.save.value);
         dsp.save.sign = (dsp.save.value >= 0) ? "+" : "-";
-    }    
+    }
 
     /* -------------------------------------------- */
     /*  Utility Functions                           */

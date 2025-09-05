@@ -3,6 +3,11 @@ import { i18nStrings, unitChoices } from "../../scripts/constants.js";
 const DND5E = dnd5e.config;
 
 export default class CompanyL5e extends foundry.abstract.TypeDataModel {
+    constructor(data, options) { 
+        super(data, options); 
+
+        const i = 0;
+    }
 
     static defineSchema() {
         const fields = foundry.data.fields;

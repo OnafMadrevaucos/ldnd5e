@@ -127,6 +127,19 @@ Hooks.once('ready', () => {
     ui.combat.render(true);
 });
 
+Hooks.on("renderActorDirectory", async (app, html, data) => {
+    const directory = html.querySelectorAll('.directory-item');
+
+    for (let item of directory) {
+        const entryId = item.dataset.entryId;
+        const entry = app.options.collection.get(entryId);
+
+        if ([typeCompany, typeUnit].includes(entry.type) && entry.getFlag('ldnd5e', 'isMember')) {
+            item.classList.add('member');
+        }
+    }
+});
+
 Hooks.on('renderActorSheetV2', async (app, html, data) => {
     const actor = app.actor;
 
@@ -180,7 +193,12 @@ Hooks.on('combatRound', ars.onNewCombatTurn);
 /** ---------------------------------------------------- */
 
 // ACTORS ------------------------------------------------//
-Hooks.on('createActor', async (document, data, options, userId) => {
+Hooks.on('preCreateActor', async (document, data, options, userId) => {
+    if ([typeCompany, typeUnit].includes(document.type) && data.isMember) {
+        await document.setFlag('ldnd5e', 'isMember', true);
+    }
+});
+Hooks.on('createActor', async (document, options, userId) => {
     patchActorCreate(document);
 });
 Hooks.on('updateActor', async (document, data, options, userId) => {

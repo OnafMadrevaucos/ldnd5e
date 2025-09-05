@@ -45,7 +45,7 @@ export default class ArmyL5e extends foundry.abstract.TypeDataModel {
                 })
             }),
 
-            companies: new fields.ArrayField(new fields.StringField({ textSearch: true, label: "ldnd5e.company", })),
+            companies: new fields.ArrayField(new fields.StringField({ textSearch: true, label: "ldnd5e.company"})),
         };
 
         return data;

@@ -220,6 +220,8 @@ export default class MedicalRestaurationBrowser extends api.Dialog5e {
 
         const medicalId = data.units.find(unitId => {
             const unit = game.actors.get(unitId);
+            if (!unit) return null;
+
             return unit.system.info.type === unitChoices.uTypes.medical;
         });
 
