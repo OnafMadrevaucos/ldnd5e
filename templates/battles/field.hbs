@@ -1,0 +1,95 @@
+<section>
+    <div class="fields">
+
+        <div class="top field">
+
+            <div class="row-numbers">
+                <span class="row-number">3 <i class="ra ra-arrow-cluster" inert></i></span>
+                <span class="row-number">2 <i class="ra ra-sword" inert></i></span>
+                <span class="row-number">1 <i class="ra ra-broken-shield" inert></i></span>
+            </div>
+
+            <div class="rows">
+                <div class="top row">
+                    <ol class="units-list">
+
+                    </ol>
+                </div>
+
+                <div class="center row">
+                    <ol class="units-list">
+
+                    </ol>
+                </div>
+
+                <div class="bottom row">
+                    <ol class="units-list">
+
+                    </ol>
+                </div>
+            </div>
+
+        </div>
+
+        <hr class="ampersand">
+
+        <div class="bottom field">
+
+            <div class="row-numbers">
+                <span class="row-number">1 <i class="ra ra-broken-shield" inert></i></span>
+                <span class="row-number">2 <i class="ra ra-sword" inert></i></span>
+                <span class="row-number">3 <i class="ra ra-arrow-cluster" inert></i></span>
+            </div>
+
+            <div class="rows">
+                <div class="top row">
+                    <ol class="units-list">
+
+                    </ol>
+                </div>
+
+                <div class="center row">
+                    <ol class="units-list">
+
+                    </ol>
+                </div>
+
+                <div class="bottom row">
+                    <ol class="units-list">
+
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        {{#debug this}}{{/debug}}
+        <div class="pill battle-phase">
+            <i class="ra {{phase.icon}}"></i>
+            {{phase.label}}
+        </div>
+
+        <div class="pill turn-counter">
+            <div class="meter progress" role="meter" aria-valuemin="0" aria-valuenow="57.41666666666667"
+                aria-valuetext="137.8" aria-valuemax="240"
+                style="--bar-percentage: 57.41666666666667%; --encumbrance-low: 33.333333333333336%; --encumbrance-high: 66.66666666666667%;">
+                <div class="label">
+                    <i class="fa-solid fa-weight-hanging" inert=""></i>
+                    <span class="value">137.8</span>
+                    <span class="separator">/</span>
+                    <span class="max">240</span>
+                </div>
+                <i class="breakpoint encumbrance-low arrow-up" role="presentation"></i>
+                <i class="breakpoint encumbrance-low arrow-down" role="presentation"></i>
+                <i class="breakpoint encumbrance-high arrow-up" role="presentation"></i>
+                <i class="breakpoint encumbrance-high arrow-down" role="presentation"></i>
+            </div>
+            <div class="counter">
+                <i class="ra ra-lightning-bolt"></i>
+                {{turns.elapsed}}
+            </div>
+        </div>
+    </footer>
+</section>

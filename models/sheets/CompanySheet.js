@@ -331,6 +331,9 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         };
 
         await this.actor.update(changes);
+
+        // Link the company to it's commander's actor.
+        await actor.setFlag('ldnd5e', 'company', this.actor.id);
     }
 
     /** @inheritdoc */
@@ -416,15 +419,16 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         }
 
         const unitData = foundry.utils.deepClone(unit.toObject());
-        unitData._id = null;
-        unitData.isMember = true;
 
         // Create the new unit.        
-        const createdUnit = await Actor.create(unitData);
+        const createdUnit = await Actor.create(unitData, { parent: null });
+        await createdUnit.setFlag("ldnd5e", "isMember", true);
 
         this.actor.system.units.push(createdUnit.id);
         await this.actor.update({ ['system.units']: this.actor.system.units });
         await createdUnit.update({ ['system.info.company']: this.actor });
+
+        await game.actors.directory.render(true);
 
         return true;
     }

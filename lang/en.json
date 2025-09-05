@@ -9,6 +9,11 @@
     },
     "ldnd5e": {
         "title": "Lemurian D&D 5º Ed. Control",
+
+        "titles" : {
+          "ac": "Armor Damage Control",
+          "battle": "Battlefield Control"  
+        },
         "npcsStatsTitle": "Combat NPC Statistics",
         "adSystemTitle": "Absorved Damage System",
         "arSystemTitle": "Agile Reaction System",
@@ -156,7 +161,8 @@
             "noCommander": "Drop an Actor here...",
             "removeCommander": "Remove Marshal",
             "supplies": "Supplies",
-            "companies": "Companies"
+            "companies": "Companies",
+            "config": "Configure"
         },
         "company": {
             "commander": "Commander",
@@ -209,6 +215,14 @@
             "useTatic": "Tatic Use",
             "mainRecovery": "Main Recovery"
         },
+
+        "battle": {
+            "phases": {
+                "prep": "Preparation",
+                "combat": "Combat"
+            }
+        },
+
         "messages": {
             "bldgDmgLightArmor": "Light Armor is immune to damage caused by Bludgening Damage.",
             "slshDmgHeavyArmor": "Heavy Armor is immune to damage caused by Slashing Damage.",

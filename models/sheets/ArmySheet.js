@@ -153,7 +153,7 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
         context.isStarving = supplies.total < supplies.needs;
 
         // Verify if the army has a urban source of supplies.
-        context.hasUrbanSource = supplies.sources.urban !== '';
+        context.hasUrbanSource = supplies.sources.urban || (supplies.sources.urban?.lenght > 0);
 
         if (context.hasUrbanSource) context.urbanIcon = suppliesChoices.sourcesImg.urban[supplies.sources.urban];
 
@@ -161,7 +161,7 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
         context.hasCommander = !!this.actor.system.info.commander;
 
         // Obtain the commander actor if it exists.
-        context.commander = this.actor.system.info.commander || null;
+        context.commander = this.actor.system.info.commander;
 
         // Prepare the actor's currency.
         this._prepareCurrency(context);
@@ -343,6 +343,10 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
                     ['system.attributes.affinity.bonus.prestige']: this.actor.system.prestige.mod
                 });
             }
+
+            // Link the army to it's commander's actor.
+            await actor.setFlag('ldnd5e', 'army', this.actor.id);
+
             return true;
         }
 
@@ -360,11 +364,11 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
             };
 
             const companyCollection = foundry.utils.deepClone(this.actor.system.companies).filter(c => c !== actor.id);
-
             const companyData = foundry.utils.deepClone(actor.toObject());
-            companyData.isMember = true;
+
             // Create a new company and add it to the army.
-            const createdCompany = await Actor.create(companyData);
+            const createdCompany = await Actor.create(companyData, {parent: null});
+            await createdCompany.setFlag("ldnd5e", "isMember", true);
 
             companyCollection.push(createdCompany.id);
 
@@ -374,6 +378,8 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
                 ['system.attributes.affinity.bonus.prestige']: this.actor.system.prestige.mod
             });
 
+            await game.actors.directory.render(true);
+
             return true;
         }
 
@@ -381,8 +387,8 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
         ui.notifications.warn(game.i18n.localize("ldnd5e.army.invalidCommander"), {
             localize: true
         });
-        return false;
 
+        return false;
     }
 
     /* -------------------------------------------- */

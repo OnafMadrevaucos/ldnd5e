@@ -17,6 +17,11 @@ const constants = {
    moduleName: 'ldnd5e',
    moduleLabel: 'Lemurian Dungeons & Dragons 5th Edition',
 
+   controls: {
+      ac: 'ac',
+      battle: 'battle'
+   },
+
    ItemSheet5e: dnd5e.applications.item.ItemSheet5e,
    ActorSheet5eCharacter: (CONFIG.IsDnD2 ? dnd5e.applications.actor.ActorSheet5eCharacter2 : dnd5e.applications.actor.ActorSheet5eCharacter),
    ActorSheet5eNPCs: dnd5e.applications.actor.ActorSheet5eNPC,
@@ -141,7 +146,7 @@ const suppliesChoices = {
          cityII: 'cityII',
          cityIII: 'cityIII',
          cityIV: 'cityIV',
-         cityV: 'cityV'         
+         cityV: 'cityV'
       }
    },
 
@@ -305,7 +310,10 @@ const taticsChoices = {
 }
 
 const i18nStrings = {
-   title: "ldnd5e.title",
+   titles: {
+      ac: "ldnd5e.titles.ac",
+      battle: "ldnd5e.titles.battle",
+   },
    npcsStatsTitle: "ldnd5e.npcsStatsTitle",
    adSystemTitle: "ldnd5e.adSystemTitle",
    arSystemTitle: "ldnd5e.arSystemTitle",
@@ -452,6 +460,7 @@ const i18nStrings = {
       removeCommander: "ldnd5e.army.removeCommander",
       supplies: "ldnd5e.army.supplies",
       companies: "ldnd5e.army.companies",
+      config: "ldnd5e.army.config"
    },
 
    company: {
@@ -526,6 +535,13 @@ const i18nStrings = {
       def: "ldnd5e.uCombat.def",
    },
 
+   battle: {
+      phases: {
+         prep: "ldnd5e.battle.phases.prep",
+         combat: "ldnd5e.battle.phases.combat",
+      }
+   },
+
    categories: {
       arcanists: "ldnd5e.categories.arcanists",
       devotees: "ldnd5e.categories.devotees",
@@ -589,11 +605,19 @@ const feats = {
 
 const gmControl =
 {
-   name: constants.moduleName,
-   title: i18nStrings.title,
+   name: constants.controls.ac,
+   title: i18nStrings.titles.ac,
    icon: 'fas fa-shield-alt',
    visible: true,
    button: true
 };
 
-export { constants, UnarmoredClasses, NDs, gmControl, i18nStrings, suppliesChoices, armyChoices, unitChoices, taticsChoices };
+const battleControl = {
+   name: constants.controls.battle,
+   title: i18nStrings.titles.battle,
+   icon: 'fas fa-map-location',
+   visible: true,
+   button: true
+};
+
+export { constants, UnarmoredClasses, NDs, gmControl, battleControl, i18nStrings, suppliesChoices, armyChoices, unitChoices, taticsChoices };

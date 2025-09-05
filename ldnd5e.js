@@ -5,8 +5,9 @@ import { Debugger, CondHelper, RepeatHelper } from "./scripts/helpers.js";
 import { preloadTemplates } from "./scripts/templates.js";
 import { registerSystemSettings } from "./scripts/settings.js"
 
-import { constants, gmControl } from "./scripts/constants.js";
+import { constants, gmControl, battleControl } from "./scripts/constants.js";
 import adControl from "./models/adControl.js";
+import BattleApp from "./models/battleApp.js";
 
 import * as das from "./scripts/DASystem.js"
 import * as ars from "./scripts/ARSystem.js";
@@ -179,10 +180,14 @@ Hooks.on('renderItemSheet5e', async (app, html, data) => {
 Hooks.on('getSceneControlButtons', (controls) => {
 
     if (game.user.isGM) {
-        gmControl.onClick = renderControl;
+        gmControl.onClick = renderACControl;
+        battleControl.onClick = renderBattleControl;
 
         const tokens = controls.tokens;
-        if (tokens) { tokens.tools.ldnd5e = gmControl; }
+        if (tokens) { 
+            tokens.tools.ac = gmControl; 
+            tokens.tools.battle = battleControl
+        }
     }
 });
 Hooks.on('combatTurn', ars.onNewCombatTurn);
@@ -309,13 +314,15 @@ function registerRPGAwesome() {
     document.head.appendChild(link);
 }
 
-async function renderControl() {
+async function renderACControl() {
     // Cria um instância do Controle de Dano Absorvido
     const form = new adControl();
 
-    if (game.modules.get('rpg-styled-ui')?.active) {
-        form.options.classes.push("dnd5e", "sheet", "actor");
-    }
+    return await form.render(true);
+}
+
+async function renderBattleControl() {
+    const form = new BattleApp();
 
     return await form.render(true);
 }

@@ -9,6 +9,11 @@
     },
     "ldnd5e": {
         "title": "Controle D&D 5º Ed. Lemuriano",
+
+        "titles" : {
+          "ac": "Controle Dano de Armadura",
+          "battle": "Control de Campo de Batalha"  
+        },
         "npcsStatsTitle": "Estatísticas PnJs em Combate",
         "adSystemTitle": "Sistema de Danos Absorvidos",
         "arSystemTitle": "Sistema de Reação Ágil",
@@ -155,7 +160,8 @@
             "noCommander": "Arraste um Actor até aqui...",
             "removeCommander": "Remover Marechal",
             "supplies": "Suprimentos",
-            "companies": "Companhias"
+            "companies": "Companhias",
+            "config": "Configurar"
         },
         "company": {
             "commander": "Comandante",
@@ -208,6 +214,14 @@
             "useTatic": "Uso de Tática",
             "mainRecovery": "Recuperação Principal"
         },
+
+        "battle": {
+            "phases": {
+                "prep": "Preparação",
+                "combat": "Combate"
+            }
+        },
+
         "messages": {
             "bldgDmgLightArmor": "Armaduras Leves são imunes a avarias causadas por Dano Contundente.",
             "slshDmgHeavyArmor": "Armaduras Pesadas são imunes a avarias causadas por Dano Cortante.",
