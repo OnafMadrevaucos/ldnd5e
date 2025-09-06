@@ -219,7 +219,9 @@
             "phases": {
                 "prep": "Preparação",
                 "combat": "Combate"
-            }
+            },
+            "deck": "Baralho",
+            "closeDeck": "Fechar Baralho"
         },
 
         "messages": {

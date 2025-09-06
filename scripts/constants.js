@@ -539,7 +539,9 @@ const i18nStrings = {
       phases: {
          prep: "ldnd5e.battle.phases.prep",
          combat: "ldnd5e.battle.phases.combat",
-      }
+      },
+      deck: "ldnd5e.battle.deck",
+      closeDeck: "ldnd5e.battle.closeDeck"
    },
 
    categories: {
