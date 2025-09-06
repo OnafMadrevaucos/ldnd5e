@@ -541,7 +541,10 @@ const i18nStrings = {
          combat: "ldnd5e.battle.phases.combat",
       },
       deck: "ldnd5e.battle.deck",
-      closeDeck: "ldnd5e.battle.closeDeck"
+      openDeck: "ldnd5e.battle.openDeck",
+      closeDeck: "ldnd5e.battle.closeDeck",
+      hand: "ldnd5e.battle.hand",
+      drawHand: "ldnd5e.battle.drawHand",
    },
 
    categories: {
@@ -586,7 +589,9 @@ const i18nStrings = {
       noBothEffects: "ldnd5e.messages.noBothEffects",
       noArmorEffect: "ldnd5e.messages.noArmorEffect",
       noShieldEffect: "ldnd5e.messages.noShieldEffect",
-      noEffectErrors: "ldnd5e.messages.noEffectErrors"
+      noEffectErrors: "ldnd5e.messages.noEffectErrors",
+
+      invalidActorOnBattle: "ldnd5e.messages.invalidActorOnBattle",
    },
 
    settings: {
@@ -617,7 +622,7 @@ const gmControl =
 const battleControl = {
    name: constants.controls.battle,
    title: i18nStrings.titles.battle,
-   icon: 'fas fa-map-location',
+   icon: 'fas fa-puzzle-piece',
    visible: true,
    button: true
 };

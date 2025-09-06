@@ -10,19 +10,19 @@
             </div>
 
             <div class="rows">
-                <div class="top row">
+                <div class="top row draggable" data-row="3" data-drag-counter="0">
                     <ol class="units-list">
 
                     </ol>
                 </div>
 
-                <div class="center row">
+                <div class="center row draggable" data-row="2" data-drag-counter="0">
                     <ol class="units-list">
 
                     </ol>
                 </div>
 
-                <div class="bottom row">
+                <div class="bottom row draggable" data-row="1" data-drag-counter="0">
                     <ol class="units-list">
 
                     </ol>
@@ -42,19 +42,19 @@
             </div>
 
             <div class="rows">
-                <div class="top row">
+                <div class="top row draggable" data-row="1" data-drag-counter="0">
                     <ol class="units-list">
 
                     </ol>
                 </div>
 
-                <div class="center row">
+                <div class="center row draggable" data-row="2" data-drag-counter="0">
                     <ol class="units-list">
 
                     </ol>
                 </div>
 
-                <div class="bottom row">
+                <div class="bottom row draggable" data-row="3" data-drag-counter="0">
                     <ol class="units-list">
 
                     </ol>
@@ -62,9 +62,34 @@
             </div>
         </div>
 
-        <button class="deck-button" data-action="toggleDeckControls">
-            <img src="{{deckIcon}}" alt="{{localize 'ldnd5e.battle.closeDeck'}}">
-        </button>
+        <div class="sidebar">
+
+            <div class="deck-controls">
+                <button class="deck-button" data-action="toggleDeckControls">
+                    <img src="{{icons.deck}}" alt="{{localize 'ldnd5e.battle.openDeck'}}">
+                </button>
+                <button class="event-button {{#unless isGM}}hidden{{/unless}}" data-action="toggleEventControls">
+                    <img src="{{icons.events}}" alt="{{localize 'ldnd5e.battle.openEvents'}}">
+                </button>
+            </div>
+
+            {{#with score}}
+            <div class="scoreboard">
+
+                <div class="score top">
+                    <span class="impetus">{{enemy.impetus}} <i class="ra ra-all-for-one" inert></i></span>
+                    <span class="atk-points">{{enemy.attack}} <i class="ra ra-broken-skull" inert></i></span>
+                </div>
+
+                <div class="score bottom">
+                    <span class="impetus">{{ally.impetus}} <i class="ra ra-all-for-one" inert></i></span>
+                    <span class="atk-points">{{ally.attack}} <i class="ra ra-broken-skull" inert></i></span>
+                </div>
+
+            </div>
+            {{/with}}
+            
+        </div>
 
     </div>
 
@@ -88,8 +113,8 @@
                 </div>
                 <i class="breakpoint stamina-limit arrow-up" role="presentation"></i>
                 <i class="breakpoint stamina-limit  arrow-down" role="presentation"></i>
-            </div>   
-            {{/with}}         
+            </div>
+            {{/with}}
         </div>
     </footer>
 </section>

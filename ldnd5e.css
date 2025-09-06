@@ -1951,13 +1951,47 @@
   width: calc(100% - 32px);
 }
 
-.ldnd5e.battle .fields .deck-button {
+.ldnd5e.battle .fields .sidebar {
+  display: flex;
+  flex-direction: column;
   position: absolute;
   right: 10px;
-  width: 28px;
-  height: 28px;
+}
+
+.ldnd5e.battle .fields .sidebar .deck-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ldnd5e.battle .fields .sidebar .deck-controls button {
   background: transparent;
   border: none;
+  width: 28px;
+  height: 28px;
+}
+
+.ldnd5e.battle .fields .sidebar .scoreboard {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  position: absolute;
+  top: 19.5em;
+  text-align: center;
+}
+
+.ldnd5e.battle .scoreboard .score {
+  font-size: var(--font-h5-size);
+  font-family: var(--dnd5e-font-roboto-slab);
+  color: var(--color-text-light-1);
+}
+
+.ldnd5e.battle .scoreboard .score.top i {
+  color: var(--color-warm-3);
+}
+
+.ldnd5e.battle .scoreboard .score.bottom i {
+  color: var(--dnd5e-capacity-background-color);
 }
 
 .ldnd5e.battle .fields .ampersand {
@@ -1986,11 +2020,16 @@
   height: 33.34%;
 }
 
-.ldnd5e.battle .fields .field.top .row {
+.ldnd5e.battle .fields .field .row.drag-over {
+  box-shadow: inset 0px 0px 10px 1px var(--dnd5e-color-beige);
+}
+
+
+.ldnd5e.battle .fields .top .row {
   box-shadow: inset 0 5px 15px 1px var(--dnd5e-color-hd-1);
 }
 
-.ldnd5e.battle .fields .field.bottom .row {
+.ldnd5e.battle .fields .bottom .row {
   box-shadow: inset 0 5px 15px 1px var(--dnd5e-color-blue-gray-4);
 }
 
@@ -2011,6 +2050,10 @@
   font-size: var(--font-h5-size);
   font-family: var(--dnd5e-font-roboto-slab);
   color: var(--dnd5e-highlight-10);
+}
+
+.ldnd5e.battle .fields .field .row-numbers .row-number.drag-over {
+  color: var(--dnd5e-color-beige);
 }
 
 .ldnd5e.battle footer {
@@ -2125,6 +2168,83 @@
   flex: 1;
   margin: 5px;
   text-align: center;
+}
+
+.ldnd5e.battle .battle-controls .content {
+  height: 100%;
+  padding: 5px;
+}
+
+.ldnd5e.battle .battle-controls .scoreboard {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  margin-bottom: 5px;
+  justify-content: center;
+}
+
+.ldnd5e.battle .battle-controls .scoreboard .score {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
+
+.ldnd5e.battle .battle-controls .scoreboard .score:first-of-type {
+  padding-right: 15px;
+  border-right: 1px solid var(--dnd5e-color-olive);
+}
+
+.ldnd5e.battle .battle-controls .deck.tatics {
+  height: 35%;
+}
+
+.ldnd5e.battle .battle-controls .deck.tatics .cards-section {
+  height: 100%;
+}
+
+.ldnd5e.battle .battle-controls .deck.tatics .cards-counter {
+  color: var(--color-text-light-1);
+  font-size: var(--font-size-11);
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.ldnd5e.battle .battle-controls .deck.tatics .cards-counter i {
+  align-self: center;
+  color: var(--dnd5e-color-gold);
+  font-size: var(--font-size-12);
+}
+
+.ldnd5e.battle .battle-controls .deck.tatics .hand-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  width: 100%;
+}
+
+.ldnd5e.battle .battle-controls .deck.tatics .hand-actions button {
+  flex: 1;
+  background: transparent;
+  border: var(--dnd5e-border-gold);
+  color: var(--dnd5e-color-gold);
+}
+
+.ldnd5e.battle .battle-controls .extra-decks {
+  display: flex;
+  gap: 20px;
+  height: 92px;
+  padding: 5px;
+  justify-content: space-evenly;
+}
+
+.ldnd5e.battle .battle-controls .extra-decks button {
+  background: transparent;
+}
+
+.ldnd5e.battle .battle-controls .extra-decks button,
+.ldnd5e.battle .battle-controls .extra-decks button img {
+  height: 100%;
 }
 
 /* ----------------------------------------- */

@@ -1,16 +1,48 @@
 <section class="battle-controls">
     <section class="header">
-        <button type="button" class="header-control icon fa-solid fa-xmark" data-tooltip="{{localize 'ldnd5e.battle.closeDeck'}}"
-            aria-label="{{localize 'ldnd5e.battle.close'}}" data-action="toggleDeckControls">          
+        <button type="button" class="header-control icon fa-solid fa-xmark"
+            data-tooltip="{{localize 'ldnd5e.battle.closeDeck'}}" aria-label="{{localize 'ldnd5e.battle.close'}}"
+            data-action="toggleDeckControls">
         </button>
         <h1 class="title">{{localize 'ldnd5e.battle.deck'}}</h1>
     </section>
     <section class="content">
-        <fieldset class="tatics-hand">
+        {{#with score}}
+        <div class="scoreboard">
+
+            <div class="score top">
+                <span class="impetus">{{enemy.impetus}} <i class="ra ra-all-for-one" inert></i></span>
+                <span class="atk-points">{{enemy.attack}} <i class="ra ra-broken-skull" inert></i></span>
+            </div>
+
+            <div class="score bottom">
+                <span class="impetus">{{ally.impetus}} <i class="ra ra-all-for-one" inert></i></span>
+                <span class="atk-points">{{ally.attack}} <i class="ra ra-broken-skull" inert></i></span>
+            </div>
+
+        </div>
+        {{/with}}
+
+        <fieldset class="deck tatics">
             <legend>{{localize 'ldnd5e.battle.hand'}}</legend>
-            <ol>
-                
-            </ol>
+            <div class="cards-counter">{{hand.counter}} <i class="ra ra-diamonds-card"></i></div>
+            <div class="cards-section card">
+                <ol class="cards-list unlist">
+
+                </ol>
+            </div>
+            <div class="hand-actions">
+                <button class="draw-card" type="button" data-action="drawCard"><i
+                        class="fas fa-hand-holding-medical"></i> {{localize 'ldnd5e.battle.drawHand'}}</button>
+            </div>
         </fieldset>
+
+        <div class="extra-decks">
+            <button class="full-deck" type="button" data-action="toggleExtraDeck"><img class="svg"
+                    src="{{icons.full}}"></button>
+            <button class="discarded-deck" type="button" data-action="toggleExtraDeck"><img class="svg"
+                    src="{{icons.discarded}}"></button>
+        </div>
+
     </section>
 </section>

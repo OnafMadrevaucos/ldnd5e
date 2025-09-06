@@ -178,18 +178,21 @@ Hooks.on('renderItemSheet5e', async (app, html, data) => {
 });
 
 Hooks.on('getSceneControlButtons', (controls) => {
+    const tokens = controls.tokens;
 
+    if (!tokens) return;
+
+    // Add AC Control only for GM.
     if (game.user.isGM) {
         gmControl.onClick = renderACControl;
-        battleControl.onClick = renderBattleControl;
-
-        const tokens = controls.tokens;
-        if (tokens) { 
-            tokens.tools.ac = gmControl; 
-            tokens.tools.battle = battleControl
-        }
+        tokens.tools.ac = gmControl;
     }
+
+    // Add Battle Control for all players.
+    tokens.tools.battle = battleControl;
+    battleControl.onClick = renderBattleControl;
 });
+
 Hooks.on('combatTurn', ars.onNewCombatTurn);
 Hooks.on('combatRound', ars.onNewCombatTurn);
 

@@ -9,10 +9,9 @@
     },
     "ldnd5e": {
         "title": "Lemurian D&D 5º Ed. Control",
-
-        "titles" : {
-          "ac": "Armor Damage Control",
-          "battle": "Battlefield Control"  
+        "titles": {
+            "ac": "Armor Damage Control",
+            "battle": "Battlefield Control"
         },
         "npcsStatsTitle": "Combat NPC Statistics",
         "adSystemTitle": "Absorved Damage System",
@@ -215,16 +214,17 @@
             "useTatic": "Tatic Use",
             "mainRecovery": "Main Recovery"
         },
-
         "battle": {
             "phases": {
                 "prep": "Preparation",
                 "combat": "Combat"
             },
             "deck": "Deck",
-            "closeDeck": "Close Deck"
+            "openDeck": "Open Deck",
+            "closeDeck": "Close Deck",
+            "hand": "Hand",
+            "drawHand": "Draw Cards"
         },
-
         "messages": {
             "bldgDmgLightArmor": "Light Armor is immune to damage caused by Bludgening Damage.",
             "slshDmgHeavyArmor": "Heavy Armor is immune to damage caused by Slashing Damage.",
@@ -255,7 +255,8 @@
             "noBothEffects": "Both of {actor}'s Active Effects (Armor and Shield) are malfunctioning. Active Effects have been recreated.",
             "noArmorEffect": "{actor}'s Armor Active Effect is malfunctioning. Active Effect has been recreated.",
             "noShieldEffect": "The Active Effect for {actor}'s Shields is malfunctioning. Active Effect has been recreated.",
-            "noEffectErrors": "No Actor had errors in their Active Effects."
+            "noEffectErrors": "No Actor had errors in their Active Effects.",
+            "invalidActorOnBattle": "{actor} is invalid and cannot be added to the battle."
         },
         "settings": {
             "hideFromGMName": "Hide GM Effect Controls",
