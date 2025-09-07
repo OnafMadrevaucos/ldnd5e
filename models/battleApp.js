@@ -1,6 +1,14 @@
 const api = dnd5e.applications.api;
 export default class BattleApp extends api.Application5e {
 
+    /**@inheritdoc */
+    constructor(options = {}) {
+        super(options);
+
+        // Initialize the application data.
+        this._initialize(options);
+    }
+
     /** @override */
     static DEFAULT_OPTIONS = {
         classes: ["ldnd5e", "battle"],
@@ -8,7 +16,8 @@ export default class BattleApp extends api.Application5e {
             title: "ldnd5e.titles.battle"
         },
         actions: {
-            toggleDeckControls: BattleApp.#toggleDeckControls
+            toggleDeckControls: BattleApp.#toggleDeckControls,
+            toggleExtraDeck: BattleApp.#toggleExtraDeck
         },
         form: {
             submitOnChange: true,
@@ -34,14 +43,65 @@ export default class BattleApp extends api.Application5e {
     };
 
     /* -------------------------------------------- */
+    /*  Properties                                  */
+    /* -------------------------------------------- */
+
+    /**
+     * The whole battle data.
+     * @type {Activity|null}
+     */
+    get battle() {
+        return this.#battle ?? null;
+    }
+
+    /**
+     * The world battle data.
+     * @type {Activity|null}
+     */
+    get world() {
+        return this.#battle.world ?? null;
+    }
+
+    /**
+     * The local battle data.
+     * @type {Activity|null}
+     */
+    get local() {
+        return this.#battle.local ?? null;
+    }
+
+    #battle;
+
+    /* -------------------------------------------- */
     /*  Rendering                                   */
     /* -------------------------------------------- */
+
+    _initialize(options) {
+        // Get the world battle data.
+        let world = options?.world || game.settings.get('ldnd5e', 'battle');
+
+        // Check if the data is empty.
+        if (!world) {
+            ui.notifications.error(game.i18n.localize("ldnd5e.messages.emptyBattleData"), { localize: true });
+            return null;
+        }
+
+        let userCompanyId = game.user.character?.getFlag('ldnd5e', 'company');
+        this.#battle = {
+            world: world,
+            local: {
+                user: game.user,
+                commander: game.user.character ?? null,
+                company: userCompanyId ? game.actors.get(userCompanyId) : null,                
+            }
+        };
+    }
 
     /** @inheritDoc */
     async _preparePartContext(partId, context, options) {
         context = await super._preparePartContext(partId, context, options);
 
-        context.isGM = game.user.isGM;
+        context.isGM = this.local.user.isGM;
 
         context.icons = {
             deck: 'modules/ldnd5e/ui/icons/battle/deck.svg',
@@ -96,15 +156,55 @@ export default class BattleApp extends api.Application5e {
     /** @inheritDoc */
     async _prepareControlsContext(context, options) {
 
+        context.title = game.i18n.format('ldnd5e.battle.deck', { name: this.local.company.name });
+
         Object.assign(context.icons, {
+            deckTiny: 'modules/ldnd5e/ui/icons/battle/deck-tiny.svg',
             full: 'modules/ldnd5e/ui/icons/battle/full-deck.svg',
-            discarded: 'modules/ldnd5e/ui/icons/battle/discarded-deck.svg'
+            discarded: 'modules/ldnd5e/ui/icons/battle/discarded-deck.svg',
+            assets: 'modules/ldnd5e/ui/icons/battle/assets-deck.svg',
         });
 
         context.hand = {
             counter: 3,
             max: 5
         }
+
+        context.piles = {
+            draw: 14,
+            discard: 3,
+            assets: 5
+        }
+
+        context.company = this.local.company;
+
+        // Prepare the commander's combat skills.
+        context.skills = this.local.company.system.combat;
+
+        // Prepare the combat units for display.
+        this._prepareUnits(context);
+
+        return context;
+    }
+
+    /**
+   * Prepare the combat units for display.
+   * @param {ApplicationRenderContext} context  Context being prepared.
+   * @returns {object}
+   * @protected
+   */
+    _prepareUnits(context) { 
+        const company = this.local.company;
+
+        const unitsList = [];
+        Object.entries(company.system.unitsList).forEach(([type, units]) => {
+            if(['light', 'heavy', 'special'].includes(type)) {
+                unitsList.push(...units);
+            }
+        });
+
+        context.units = unitsList;
+
         return context;
     }
 
@@ -130,8 +230,6 @@ export default class BattleApp extends api.Application5e {
                 }
             }).bind(row);
         });
-
-
     }
 
     /* -------------------------------------------- */
@@ -252,10 +350,83 @@ export default class BattleApp extends api.Application5e {
    */
     static #toggleDeckControls(event, target) {
         const content = target.closest(".window-content");
-        const controls = content.querySelector(".battle-controls");
 
-        if (!controls) return;
+        const controls = content.querySelector(".battle-controls");
+        const viewer = controls.querySelector(".extra-decks-viewer");
 
         controls.classList.toggle("active");
+
+        // If its closing, hide the viewer as well.
+        if (!controls.classList.contains("active")) {
+            viewer.classList.remove("active");
+
+            const buttons = controls.querySelectorAll(".extra-decks button");
+
+            // Clear all active elements.
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove("active");
+            }
+
+            // Clear active deck.
+            viewer.dataset.deck = '';
+        }
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Toggles the extra deck viewer.
+   * @this {ArmySheet}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+    static #toggleExtraDeck(event, target) {
+        const container = target.closest(".extra-decks");
+        const buttons = container.querySelectorAll("button");
+
+        const content = target.closest(".window-content");
+        const viewer = content.querySelector(".extra-decks-viewer");
+
+        const oldActiveDeck = viewer.dataset.deck ?? '';
+        const targetDeck = target.dataset.deck ?? '';
+
+        const cardsSections = viewer.querySelectorAll(".cards-section");
+
+        // Clear all active elements.
+        for (let i = 0; i < buttons.length; i++) {
+            buttons[i].classList.remove("active");
+            cardsSections[i].classList.add("hidden");
+        }
+
+        const targetCardsSection = viewer.querySelector(`.cards-section.${targetDeck}`);
+        if (!targetCardsSection) return;
+
+        // Show the target section.
+        targetCardsSection.classList.remove("hidden");
+
+        // If the viewer is already active.
+        if (viewer.classList.contains("active")) {
+            // Check if the target button is active.
+            if (oldActiveDeck === targetDeck) {
+                // If the deck is the same, close the viewer.
+                viewer.classList.remove("active");
+                target.classList.remove("active");
+                // Reset the active deck. 
+                viewer.dataset.deck = '';
+            }
+            // If the deck is different, change the active deck.
+            else {
+                target.classList.add("active");
+                // Update the active deck.
+                viewer.dataset.deck = targetDeck;
+            }
+        }
+        // If the viewer is not active.
+        else {
+            viewer.classList.add("active");
+            target.classList.add("active");
+            // Set the active deck.
+            viewer.dataset.deck = targetDeck;
+        }
     }
 }

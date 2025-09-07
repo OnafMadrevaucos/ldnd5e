@@ -27,7 +27,7 @@
                     <i class="ra ra-battered-axe" inert></i>
                     <span>{{localize 'ldnd5e.unit.combat'}}</span>
                 </h3>
-                <ul class="skills-list">
+                <ul class="skills-list unlist">
                     {{#each skills as |skill|}}
                     <li data-key="{{skill.key}}" class="skill">
                         <a class="name rollable" data-action="roll" data-type="skill"><i
@@ -60,7 +60,7 @@
                     <i class="fas fa-shield-heart" inert></i>
                     <span class="roboto-upper">{{ localize "DND5E.ClassSaves" }}</span>
                 </h3>
-                <ul class="saves-list">
+                <ul class="saves-list unlist">
                     <li data-ability="dsp" class="save">
                         <a class="name saving-throw rollable" data-action="roll" data-type="ability"><i
                                 class="{{skills.dsp.icon}}"></i>{{skills.dsp.label}}</a>

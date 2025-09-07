@@ -1096,6 +1096,11 @@
   margin-top: 5px;
 }
 
+.ldnd5e .basic-skills .saves ul,
+.ldnd5e .basic-skills .skills ul {
+  padding: 10px 15px;
+}
+
 .ldnd5e .basic-skills .saves h3,
 .ldnd5e .basic-skills .skills h3 {
   text-transform: uppercase;
@@ -1109,21 +1114,16 @@
   padding-left: 3px;
 }
 
-.ldnd5e .basic-skills .saves-list,
-.ldnd5e .basic-skills .skills-list {
-  list-style: none;
-}
-
 .ldnd5e .basic-skills .saves-list .save,
 .ldnd5e .basic-skills .skills-list .skill {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   gap: 5px;
 }
 
 .ldnd5e .basic-skills .saves-list .save .name,
 .ldnd5e .basic-skills .skills-list .skill .name {
-  flex: 2;
   font-family: var(--dnd5e-font-roboto);
   text-transform: uppercase;
   font-weight: bold;
@@ -1137,7 +1137,6 @@
 
 .ldnd5e .basic-skills .saves-list .save .bonus,
 .ldnd5e .basic-skills .skills-list .skill .bonus {
-  flex: 1;
   text-align: center;
   font-weight: bold;
   font-size: var(--font-size-16);
@@ -1942,6 +1941,7 @@
 
 .ldnd5e.battle .field-container {
   height: 100%;
+  z-index: -2;
 }
 
 .ldnd5e.battle .fields {
@@ -2153,7 +2153,7 @@
   transition: all 0.5s ease-in-out;
 }
 
-.ldnd5e.battle .battle-controls .header {
+.ldnd5e.battle .battle-controls .header:not(.items-header) {
   display: flex;
   flex-direction: row;
   padding: 5px;
@@ -2164,7 +2164,7 @@
   --button-size: 20px;
 }
 
-.ldnd5e.battle .battle-controls .header h1 {
+.ldnd5e.battle .battle-controls .header .title {
   flex: 1;
   margin: 5px;
   text-align: center;
@@ -2194,40 +2194,51 @@
   border-right: 1px solid var(--dnd5e-color-olive);
 }
 
-.ldnd5e.battle .battle-controls .deck.tatics {
-  height: 35%;
+.ldnd5e.battle .battle-controls filigree-box>h3 img {
+  height: var(--font-size-16);
 }
 
-.ldnd5e.battle .battle-controls .deck.tatics .cards-section {
-  height: 100%;
+.ldnd5e.battle .battle-controls .hand.tatics .cards-section {
+  height: 140px;
+  margin-block: 2px;
+  padding-inline: 15px;
 }
 
-.ldnd5e.battle .battle-controls .deck.tatics .cards-counter {
+.ldnd5e.battle .battle-controls .hand.tatics .cards-counter {
   color: var(--color-text-light-1);
   font-size: var(--font-size-11);
   display: flex;
   gap: 2px;
-  margin-left: auto;
+  flex-direction: row-reverse;
+  padding-inline: 12px;
 }
 
-.ldnd5e.battle .battle-controls .deck.tatics .cards-counter i {
+.ldnd5e.battle .battle-controls .hand.tatics .cards-counter i {
   align-self: center;
   color: var(--dnd5e-color-gold);
   font-size: var(--font-size-12);
 }
 
-.ldnd5e.battle .battle-controls .deck.tatics .hand-actions {
+.ldnd5e.battle .battle-controls .hand.tatics .hand-actions {
   display: flex;
   flex-direction: row;
   gap: 5px;
   width: 100%;
 }
 
-.ldnd5e.battle .battle-controls .deck.tatics .hand-actions button {
+.ldnd5e.battle .battle-controls .hand.tatics .hand-actions button {
   flex: 1;
   background: transparent;
+  height: var(--font-size-11);
+  margin: 5px 15px;
+  padding-block: 10px;
   border: var(--dnd5e-border-gold);
   color: var(--dnd5e-color-gold);
+  box-shadow: none;
+}
+
+.ldnd5e.battle .battle-controls .hand.tatics .hand-actions button:hover {
+  text-shadow: 0 0 5px var(--color-shadow-primary);
 }
 
 .ldnd5e.battle .battle-controls .extra-decks {
@@ -2240,11 +2251,124 @@
 
 .ldnd5e.battle .battle-controls .extra-decks button {
   background: transparent;
+  border: none;
+}
+
+.ldnd5e.battle .battle-controls .extra-decks button:focus,
+.ldnd5e.battle .battle-controls .extra-decks button:hover {
+  box-shadow: none;
 }
 
 .ldnd5e.battle .battle-controls .extra-decks button,
 .ldnd5e.battle .battle-controls .extra-decks button img {
   height: 100%;
+}
+
+.ldnd5e.battle .battle-controls .extra-decks button:hover img {
+  filter: brightness(1.5);
+}
+
+.ldnd5e.battle .battle-controls .extra-decks button.active img {
+  filter: brightness(0.5);
+}
+
+.ldnd5e.battle .battle-controls .extra-decks button.active:hover img {
+  filter: brightness(1.15);
+}
+
+.ldnd5e.battle .battle-controls .company-summary {
+  height: auto;
+  margin-top: 5px;
+}
+
+.ldnd5e.battle .battle-controls .company-summary>h2 {
+  display: flex;
+  gap: 15px;
+  font-size: var(--font-size-13);
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 5px;
+}
+
+.ldnd5e.battle .battle-controls .company-summary>h2 img {
+  height: var(--font-size-20);
+}
+
+.ldnd5e.battle .battle-controls .company-summary .skills-list {
+  padding: 15px 20px;
+}
+
+.ldnd5e.battle .battle-controls .units-list {
+  margin-top: 5px;
+}
+
+.ldnd5e.battle .battle-controls .units-list .card {
+  border: none;
+}
+
+.ldnd5e.battle .battle-controls .units-list .unit {
+  background: var(--dnd5e-background-card);
+}
+
+.ldnd5e.battle .battle-controls .extra-decks-viewer {
+  position: absolute;
+  height: 80%;
+  width: 20em;
+  top: 10%;
+  right: 0%;
+  background: url(ui/texture-gray1.webp) no-repeat top left, url(ui/texture-gray2.webp) no-repeat bottom right, var(--dnd5e-color-parchment);
+  border-radius: 4px;
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+  z-index: -1;
+  transition: all 0.5s ease-in-out;
+}
+
+.ldnd5e.battle .battle-controls .extra-decks-viewer.active {
+  right: 100%;
+}
+
+.ldnd5e.battle .extra-decks-viewer .cards-section {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 10px 15px;
+}
+
+.ldnd5e.battle .extra-decks-viewer .cards-section h4 {
+  flex: 1;
+  color: var(--dnd5e-color-blue-gray-1);
+  text-align: center;
+}
+
+.ldnd5e.battle .extra-decks-viewer .cards-section .cards-list {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--tatic-activity-card);
+  box-shadow: 0 0 6px var(--dnd5e-shadow-45);
+  border: var(--dnd5e-border-gold);
+  margin-bottom: 2em;
+  overflow-y: auto;
+}
+
+.ldnd5e.battle .extra-decks-viewer .cards-section .cards-counter {
+  position: absolute;
+  top: 55px;
+  right: 20px;
+  display: flex;
+  gap: 2px;
+  color: var(--dnd5e-color-blue-gray-1);
+  font-size: var(--font-size-14);
+  font-family: var(--dnd5e-font-roboto-slab);
+  font-weight: bold;
+  align-items: center;
+}
+
+.ldnd5e.battle .extra-decks-viewer .cards-section .cards-counter i {
+  font-size: var(--font-size-16);
+  color: var(--dnd5e-color-gold);
+  text-shadow: 0px 0px 1px var(--dnd5e-capacity-container-border-color);
 }
 
 /* ----------------------------------------- */

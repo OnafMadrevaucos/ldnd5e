@@ -1,6 +1,6 @@
 import { i18nStrings } from "../scripts/constants.js";
 
-export const registerSystemSettings = function() {
+export const registerSystemSettings = function () {
 
     const reload = foundry.utils.debounce(() => window.location.reload(), 250);
 
@@ -42,5 +42,50 @@ export const registerSystemSettings = function() {
         config: true,
         type: Boolean,
         default: false
+    });
+
+    // Battle Data
+    game.settings.register("ldnd5e", "battle", {
+        name: "ldnd5e.settings.battleDataName",
+        hint: "ldnd5e.settings.battleDataHint",
+        scope: "world",
+        config: false,
+        type: Object,
+        default: {
+            // Global battle data.
+            world: {
+                scoreboard: {
+                    top: {
+                        attack: 0,
+                        impetus: 0
+                    },
+                    bottom: {
+                        attack: 0,
+                        impetus: 0
+                    }
+                },
+                turns: {
+                    max: 0,
+                    current: 0
+                },
+                events: [],
+                fields: {
+                    top: {
+                        rows: {
+                            1: [],
+                            2: [],
+                            3: []
+                        }
+                    },
+                    bottom: {
+                        rows: {
+                            1: [],
+                            2: [],
+                            3: []
+                        }
+                    }
+                }
+            }
+        }
     });
 }

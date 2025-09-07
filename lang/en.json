@@ -219,11 +219,17 @@
                 "prep": "Preparation",
                 "combat": "Combat"
             },
-            "deck": "Deck",
+            "deck": "Deck - {name",
             "openDeck": "Open Deck",
             "closeDeck": "Close Deck",
-            "hand": "Hand",
-            "drawHand": "Draw Cards"
+            "hand": "Available Tatics",
+            "drawHand": "Draw Cards",
+            "extraDecks": {
+                "full": "Draw Pile",
+                "discarded": "Discarded Pile",
+                "assets": "Assets Deck"
+            },
+            "summary": "Abilities Summary"
         },
         "messages": {
             "bldgDmgLightArmor": "Light Armor is immune to damage caused by Bludgening Damage.",
@@ -256,7 +262,8 @@
             "noArmorEffect": "{actor}'s Armor Active Effect is malfunctioning. Active Effect has been recreated.",
             "noShieldEffect": "The Active Effect for {actor}'s Shields is malfunctioning. Active Effect has been recreated.",
             "noEffectErrors": "No Actor had errors in their Active Effects.",
-            "invalidActorOnBattle": "{actor} is invalid and cannot be added to the battle."
+            "invalidActorOnBattle": "{actor} is invalid and cannot be added to the battle.",
+            "emptyBattleData": "Impossible to continue. The battle data is empty."
         },
         "settings": {
             "hideFromGMName": "Hide GM Effect Controls",

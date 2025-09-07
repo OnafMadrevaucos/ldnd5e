@@ -545,6 +545,12 @@ const i18nStrings = {
       closeDeck: "ldnd5e.battle.closeDeck",
       hand: "ldnd5e.battle.hand",
       drawHand: "ldnd5e.battle.drawHand",
+      extraDecks: {
+         full: "ldnd5e.battle.extraDecks.full",
+         discarded: "ldnd5e.battle.extraDecks.discarded",
+         assets: "ldnd5e.battle.extraDecks.assets",
+      },
+      summary: "ldnd5e.battle.summary",
    },
 
    categories: {
@@ -592,6 +598,8 @@ const i18nStrings = {
       noEffectErrors: "ldnd5e.messages.noEffectErrors",
 
       invalidActorOnBattle: "ldnd5e.messages.invalidActorOnBattle",
+
+      emptyBattleData: "ldnd5e.messages.emptyBattleData",
    },
 
    settings: {
@@ -602,7 +610,11 @@ const i18nStrings = {
       massCombatName: "ldnd5e.settings.massCombatName",
       massCombatHint: "ldnd5e.settings.massCombatHint",
       exhaustionName: "ldnd5e.settings.exhaustionName",
-      exhaustionHint: "ldnd5e.settings.exhaustionHint"
+      exhaustionHint: "ldnd5e.settings.exhaustionHint",
+      battleDataName: "ldnd5e.settings.battleDataName",
+      battleDataHint: "ldnd5e.settings.battleDataHint",
+      extraConditionsName: "ldnd5e.settings.extraConditionsName",
+      extraConditionsHint: "ldnd5e.settings.extraConditionsHint",
    }
 };
 
