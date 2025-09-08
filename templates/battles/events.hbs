@@ -1,0 +1,70 @@
+<section class="events-controls side-controls">
+    <section class="header">
+        <button type="button" class="header-control icon fa-solid fa-xmark"
+            data-tooltip="{{localize 'ldnd5e.battle.closeDeck'}}" aria-label="{{localize 'ldnd5e.battle.close'}}"
+            data-action="toggleEventsControls">
+        </button>
+        <h2 class="title">{{localize 'ldnd5e.battle.events'}}</h2>
+    </section>
+    <section class="content">
+
+        <filigree-box class="hand events">
+            <h3>
+                <i class="ra ra-hourglass" inert></i>
+                <span>{{localize 'ldnd5e.battle.eventHand'}}</span>
+            </h3>
+            <div class="event">
+
+            </div>
+            <div class="hand-actions">
+                <button class="draw-card" type="button" data-action="drawEvent" data-type="event">
+                    <i class="ra ra-perspective-dice-six"></i>
+                    {{localize 'ldnd5e.battle.drawEvent'}}
+                </button>
+            </div>
+        </filigree-box>
+
+        <filigree-box class="rows-control">
+            <h3>
+                <i class="ra ra-sideswipe" inert></i>
+                <span>{{localize 'ldnd5e.battle.rowsControl'}}</span>
+            </h3>
+            <div class="rows-list unlist">
+                {{#debug this}}{{/debug}}                
+                <div class="top-rows field-rows">
+                    <label class="field-name">{{localize 'ldnd5e.battle.fields.top'}}</label>
+
+                    {{#each fields.top.rows}}
+                    <div class="form-group row" data-row-number="{{number}}" data-row-field="top">
+                        <label>{{label}}</label>
+                        <div class="form-fields">
+                            <select class="row-effect">
+                                {{ selectOptions @root.rowEffects labelAttr="label" valueAttr="value" selected=effect }}
+                            </select>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+
+                <div class="bottom-rows field-rows">
+                    <label class="field-name">{{localize 'ldnd5e.battle.fields.bottom'}}</label>
+
+                    {{#each fields.bottom.rows}}
+                    <div class="form-group row" data-row-number="{{number}}" data-row-field="bottom">
+                        <label>{{label}}</label>
+                        <div class="form-fields">
+                            <select class="row-effect">
+                                {{ selectOptions @root.rowEffects labelAttr="label" valueAttr="value" }}
+                            </select>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+
+            </div>
+
+        </filigree-box>
+
+    </section>
+
+</section>

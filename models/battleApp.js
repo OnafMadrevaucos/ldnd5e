@@ -1,3 +1,5 @@
+import { battleData } from "../scripts/constants.js";
+
 const api = dnd5e.applications.api;
 export default class BattleApp extends api.Application5e {
 
@@ -17,7 +19,9 @@ export default class BattleApp extends api.Application5e {
         },
         actions: {
             toggleDeckControls: BattleApp.#toggleDeckControls,
-            toggleExtraDeck: BattleApp.#toggleExtraDeck
+            toggleExtraDeck: BattleApp.#toggleExtraDeck,
+            toggleEventsControls: BattleApp.#toggleEventsControls,
+            clickUnit: BattleApp.#clickUnit
         },
         form: {
             submitOnChange: true,
@@ -39,6 +43,9 @@ export default class BattleApp extends api.Application5e {
         },
         controls: {
             template: "modules/ldnd5e/templates/battles/controls.hbs"
+        },
+        events: {
+            template: "modules/ldnd5e/templates/battles/events.hbs"
         }
     };
 
@@ -88,11 +95,11 @@ export default class BattleApp extends api.Application5e {
 
         let userCompanyId = game.user.character?.getFlag('ldnd5e', 'company');
         this.#battle = {
-            world: world,
+            ...world,
             local: {
                 user: game.user,
                 commander: game.user.character ?? null,
-                company: userCompanyId ? game.actors.get(userCompanyId) : null,                
+                company: userCompanyId ? game.actors.get(userCompanyId) : null,
             }
         };
     }
@@ -124,6 +131,8 @@ export default class BattleApp extends api.Application5e {
                 return this._prepareFieldContext(context, options);
             case "controls":
                 return this._prepareControlsContext(context, options);
+            case "events":
+                return this._prepareEventsContext(context, options);
             default:
                 return context;
         }
@@ -187,18 +196,51 @@ export default class BattleApp extends api.Application5e {
         return context;
     }
 
+    /* -------------------------------------------- */
+
+    /** @inheritDoc */
+    async _prepareEventsContext(context, options) {
+        const world = this.battle.world;
+
+        context.fields = {
+            top: {
+                rows: Object.entries(world.fields.top.rows).map(([n, { effect }]) => ({
+                    number: Number(n),
+                    label: game.i18n.format('ldnd5e.battle.rowNumber', { number: n }),
+                    effect
+                }))
+            },
+            bottom: {
+                rows: Object.entries(world.fields.top.rows).map(([n, { effect }]) => ({
+                    number: Number(n),
+                    label: game.i18n.format('ldnd5e.battle.rowNumber', { number: n }),
+                    effect
+                }))
+            }
+        };
+
+        context.rowEffects = [{ value: '', label: '—' }, 
+            ...Object.values(battleData.rowEffects).map(effect => ({
+                value: effect,
+                label: game.i18n.localize(`ldnd5e.battle.rowEffects.${effect}`)
+            }))
+        ];
+
+        return context;
+    }
+
     /**
    * Prepare the combat units for display.
    * @param {ApplicationRenderContext} context  Context being prepared.
    * @returns {object}
    * @protected
    */
-    _prepareUnits(context) { 
+    _prepareUnits(context) {
         const company = this.local.company;
 
         const unitsList = [];
         Object.entries(company.system.unitsList).forEach(([type, units]) => {
-            if(['light', 'heavy', 'special'].includes(type)) {
+            if (['light', 'heavy', 'special'].includes(type)) {
                 unitsList.push(...units);
             }
         });
@@ -428,5 +470,38 @@ export default class BattleApp extends api.Application5e {
             // Set the active deck.
             viewer.dataset.deck = targetDeck;
         }
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Toggles the events controls.
+   * @this {ArmySheet}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+    static #toggleEventsControls(event, target) {
+        const content = target.closest(".window-content");
+        const controls = content.querySelector(".events-controls");
+
+        controls.classList.toggle("active");
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Renders the clicked unit sheet.
+   * @this {ArmySheet}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+    static #clickUnit(event, target) {
+        const item = target.closest("li");
+        const unitId = item.dataset.unitId;
+        const unit = game.actors.get(unitId);
+
+        if (!unit) return;
+
+        unit.sheet.render(true);
     }
 }

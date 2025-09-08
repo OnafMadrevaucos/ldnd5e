@@ -219,6 +219,12 @@
                 "prep": "Preparation",
                 "combat": "Combat"
             },
+            "fields": {
+                "top": "Top",
+                "bottom": "Bottom",
+                "enemy": "Enemy",
+                "ally": "Ally"
+            },
             "deck": "Deck - {name",
             "openDeck": "Open Deck",
             "closeDeck": "Close Deck",
@@ -229,7 +235,19 @@
                 "discarded": "Discarded Pile",
                 "assets": "Assets Deck"
             },
-            "summary": "Abilities Summary"
+            "summary": "Abilities Summary",
+            "units": "Company's Units",
+            "events": "Event Control",
+            "eventHand": "Event Drawn",
+            "drawEvent": "Draw Event",
+            "rowsControl": "Battle Rows Control",
+            "rowNumber": "Row {number}",
+            "rowEffects": {
+                "blizzard": "Blizzard",
+                "flood": "Flood",
+                "fog": "Fog",
+                "rain": "Rain"
+            }
         },
         "messages": {
             "bldgDmgLightArmor": "Light Armor is immune to damage caused by Bludgening Damage.",

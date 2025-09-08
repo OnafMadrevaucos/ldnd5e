@@ -1,4 +1,4 @@
-import { constants, i18nStrings, unitChoices } from "../../scripts/constants.js";
+import { constants, i18nStrings, unitData } from "../../scripts/constants.js";
 import CategoryEditor from "../dialogs/CategoryEditor.js";
 
 const { api: api, sheets: sheets } = foundry.applications;
@@ -51,7 +51,7 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
    * @type {Activity|null}
    */
   get isMedical() {
-    return this.actor.system.info.type === unitChoices.uTypes.medical;
+    return this.actor.system.info.type === unitData.uTypes.medical;
   }
 
   /* -------------------------------------------- */
@@ -136,9 +136,9 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
       company: this.actor.system.info.company || null,
       hasCommander: !!this.actor.system.info.company?.system.info.commander,
       commander: this.actor.system.info.company?.system.info.commander || null,
-      isLight: this.actor.system.info.type === unitChoices.uTypes.light,
-      isHeavy: this.actor.system.info.type === unitChoices.uTypes.heavy,
-      isSpecial: this.actor.system.info.type === unitChoices.uTypes.special,
+      isLight: this.actor.system.info.type === unitData.uTypes.light,
+      isHeavy: this.actor.system.info.type === unitData.uTypes.heavy,
+      isSpecial: this.actor.system.info.type === unitData.uTypes.special,
       isMedical: this.isMedical,
       editDescription: this.actor.getFlag("ldnd5e", "editingDescription") || false,
     });
@@ -215,7 +215,7 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
   _prepareUTypes(context) {
     const uTypes = {};
 
-    for (const type in unitChoices.uTypes) {
+    for (const type in unitData.uTypes) {
       uTypes[type] = {};
 
       uTypes[type].type = type;
@@ -236,7 +236,7 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
   _prepareCategories(context) {
     const categories = {};
 
-    for (const category in unitChoices.categories) {
+    for (const category in unitData.categories) {
       categories[category] = {};
 
       categories[category].value = category;

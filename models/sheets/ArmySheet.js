@@ -1,5 +1,5 @@
 import SuppliesConfigDialog from "../dialogs/SuppliesConfigDialog.js";
-import { suppliesChoices } from "../../scripts/constants.js";
+import { suppliesData } from "../../scripts/constants.js";
 
 const { api: api, sheets: sheets } = foundry.applications;
 
@@ -155,7 +155,7 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
         // Verify if the army has a urban source of supplies.
         context.hasUrbanSource = supplies.sources.urban || (supplies.sources.urban?.lenght > 0);
 
-        if (context.hasUrbanSource) context.urbanIcon = suppliesChoices.sourcesImg.urban[supplies.sources.urban];
+        if (context.hasUrbanSource) context.urbanIcon = suppliesData.sourcesImg.urban[supplies.sources.urban];
 
         // Verify if the army has a commander.
         context.hasCommander = !!this.actor.system.info.commander;

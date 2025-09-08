@@ -1,4 +1,4 @@
-import { i18nStrings, unitChoices } from "../../scripts/constants.js";
+import { i18nStrings, unitData } from "../../scripts/constants.js";
 
 export default class UnitL5e extends foundry.abstract.TypeDataModel {
 
@@ -18,7 +18,7 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
                     textSearch: true, label: "TYPES.Actor.ldnd5e.company",
                 }),
                 type: new fields.StringField({
-                    choices: unitChoices.type,
+                    choices: unitData.type,
                     initial: "light",
                     textSearch: true,
                 }),
@@ -68,7 +68,7 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
      * @type {Activity|null}
      */
     get isMedical() {
-        return this.info.type === unitChoices.uTypes.medical;
+        return this.info.type === unitData.uTypes.medical;
     }
 
     /* -------------------------------------------- */
@@ -163,7 +163,7 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
             }
 
             skl.mod = Math.abs(skl.value + skl.bonus);
-            skl.icon = unitChoices.uCombatIcons[id];
+            skl.icon = unitData.uCombatIcons[id];
             skl.sign = (skl.value >= 0) ? "+" : "-";
         }
     }

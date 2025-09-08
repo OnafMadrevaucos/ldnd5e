@@ -220,6 +220,12 @@
                 "prep": "Preparação",
                 "combat": "Combate"
             },
+            "fields": {
+                "top": "Cima",
+                "bottom": "Baixo",
+                "enemy": "Inimigo",
+                "ally": "Aliado"
+            },
             "deck": "Baralho - {name}",
             "openDeck": "Abrir Baralho",
             "closeDeck": "Fechar Baralho",
@@ -230,7 +236,19 @@
                 "discarded": "Pilha de Descarte",
                 "assets": "Insumos"
             },
-            "summary": "Resumo de Habilidades"
+            "summary": "Resumo de Habilidades",
+            "units": "Unidades da Companhia",
+            "events": "Controle de Eventos",
+            "eventHand": "Evento Sorteado",
+            "drawEvent": "Sortear Evento",
+            "rowsControl": "Controle das Fileiras",
+            "rowNumber": "Fileira {number}", 
+            "rowEffects": {
+                "blizzard": "Nevasca",
+                "flood": "Enchente",
+                "fog": "Neblina",
+                "rain": "Chuva"
+            }
         },
 
         "messages": {

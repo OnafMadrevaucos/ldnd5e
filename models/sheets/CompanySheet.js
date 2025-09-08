@@ -1,4 +1,4 @@
-import { constants, i18nStrings, unitChoices } from "../../scripts/constants.js";
+import { constants, i18nStrings, unitData } from "../../scripts/constants.js";
 import MedicalRestaurationBrowser from "../dialogs/MedicalRestaurationBrowser.js";
 
 const { api: api, sheets: sheets } = foundry.applications;
@@ -239,7 +239,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
             const unit = game.actors.get(uId);
 
             // Ignore medical units, for it doesn't count as a combat unit.
-            if (unit.system.info.type === unitChoices.uTypes.medical) continue;
+            if (unit.system.info.type === unitData.uTypes.medical) continue;
 
             totalHp += (unit.system.abilities.mrl.value + unit.system.abilities.wll.value);
         }
@@ -357,7 +357,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
 
         // If the total number of units is greater than 3, warn the user and abort.
         const totalUnits = unitCount.light + unitCount.heavy + unitCount.special;
-        if (totalUnits >= 3 && [unitChoices.uTypes.light, unitChoices.uTypes.heavy].includes(type)) {
+        if (totalUnits >= 3 && [unitData.uTypes.light, unitData.uTypes.heavy].includes(type)) {
             ui.notifications.warn(game.i18n.localize("ldnd5e.company.full"), {
                 localize: true
             });
@@ -366,7 +366,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
 
         // If the total number of common units is greater than 3, warn the user and abort.
         // Special units count as common units for this check.
-        if ([unitChoices.uTypes.special].includes(type) && unitCount.light + unitCount.heavy >= 3) {
+        if ([unitData.uTypes.special].includes(type) && unitCount.light + unitCount.heavy >= 3) {
             ui.notifications.warn(game.i18n.format("ldnd5e.company.overLimit", game.i18n.localize(`ldnd5e.uTypes.${type}`)), {
                 localize: true
             });
@@ -375,7 +375,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
 
         switch (type) {
             // If the unit type is light...
-            case unitChoices.uTypes.light: {
+            case unitData.uTypes.light: {
                 if (unitCount.light > limits[type]) {
                     ui.notifications.warn(game.i18n.format("ldnd5e.company.overLimit", game.i18n.localize(`ldnd5e.uTypes.${type}`)), {
                         localize: true
@@ -384,7 +384,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
                 }
             } break;
             // If the unit type is heavy...
-            case unitChoices.uTypes.heavy: {
+            case unitData.uTypes.heavy: {
                 if (unitCount.heavy > limits[type]) {
                     ui.notifications.warn(game.i18n.format("ldnd5e.company.overLimit", game.i18n.localize(`ldnd5e.uTypes.${type}`)), {
                         localize: true
@@ -393,7 +393,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
                 }
             } break;
             // If the unit type is special...
-            case unitChoices.uTypes.special: {
+            case unitData.uTypes.special: {
                 let idx = -1;
                 for (const uid of this.actor.system.units) {
                     const u = game.actors.get(uid);
@@ -405,7 +405,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
                 if (idx !== -1) this.actor.system.units.splice(idx, 1);
             } break;
             // If the unit type is medical...
-            case unitChoices.uTypes.medical: {
+            case unitData.uTypes.medical: {
                 let idx = -1;
                 for (const uid of this.actor.system.units) {
                     const u = game.actors.get(uid);

@@ -115,7 +115,7 @@ const NDs = {
 *    sourcesImg: Object<string>
 * }}
 */
-const suppliesChoices = {
+const suppliesData = {
    /**
    * Defines the Supplies Sources constants.      
    */
@@ -221,7 +221,7 @@ const suppliesChoices = {
 *    needs: object
 * }}
 */
-const armyChoices = {
+const armyData = {
    sizes: {
       tiny: 0,
       sm: 1,
@@ -251,7 +251,7 @@ const armyChoices = {
 *    categories: object
 * }}
 */
-const unitChoices = {
+const unitData = {
    /**
    * Defines the Unit Types constants.      
    */
@@ -297,7 +297,7 @@ const unitChoices = {
 *    activities: object, 
 * }}
 */
-const taticsChoices = {
+const taticsData = {
    /**
    * Defines the Tatics Activities constants.      
    */
@@ -306,6 +306,25 @@ const taticsChoices = {
       mh: "mh",
       ib: "ib",
       id: "id",
+   }
+}
+
+/**
+* Defines the Battle constants.
+*
+* @enum {{
+*     
+* }}
+*/
+const battleData = {
+   /**
+   * Defines the Effects on Rows constants.      
+   */
+   rowEffects: {
+      blizzard: 'blizzard',
+      flood: 'flood',
+      fog: 'fog',
+      rain: 'rain',
    }
 }
 
@@ -540,6 +559,12 @@ const i18nStrings = {
          prep: "ldnd5e.battle.phases.prep",
          combat: "ldnd5e.battle.phases.combat",
       },
+      fields: {
+         top: "ldnd5e.battle.fields.top",
+         bottom: "ldnd5e.battle.fields.bottom",
+         enemy: "ldnd5e.battle.fields.enemy",
+         ally: "ldnd5e.battle.fields.ally",
+      },
       deck: "ldnd5e.battle.deck",
       openDeck: "ldnd5e.battle.openDeck",
       closeDeck: "ldnd5e.battle.closeDeck",
@@ -551,6 +576,17 @@ const i18nStrings = {
          assets: "ldnd5e.battle.extraDecks.assets",
       },
       summary: "ldnd5e.battle.summary",
+      units: "ldnd5e.battle.units",
+      events: "ldnd5e.battle.events",
+      eventHand: "ldnd5e.battle.eventHand",
+      drawEvent: "ldnd5e.battle.drawEvent",
+      rowsControl: "ldnd5e.battle.rowsControl",
+      rowEffects: {
+         blizzard: "ldnd5e.battle.rowEffects.blizzard",
+         flood: "ldnd5e.battle.rowEffects.flood",
+         fog: "ldnd5e.battle.rowEffects.fog",
+         rain: "ldnd5e.battle.rowEffects.rain",                           
+      }
    },
 
    categories: {
@@ -639,4 +675,4 @@ const battleControl = {
    button: true
 };
 
-export { constants, UnarmoredClasses, NDs, gmControl, battleControl, i18nStrings, suppliesChoices, armyChoices, unitChoices, taticsChoices };
+export { constants, UnarmoredClasses, NDs, gmControl, battleControl, i18nStrings, suppliesData, armyData, unitData, taticsData, battleData };

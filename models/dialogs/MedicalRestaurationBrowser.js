@@ -1,4 +1,4 @@
-import { unitChoices } from "../../scripts/constants.js";
+import { unitData } from "../../scripts/constants.js";
 
 const api = dnd5e.applications.api;
 
@@ -222,7 +222,7 @@ export default class MedicalRestaurationBrowser extends api.Dialog5e {
             const unit = game.actors.get(unitId);
             if (!unit) return null;
 
-            return unit.system.info.type === unitChoices.uTypes.medical;
+            return unit.system.info.type === unitData.uTypes.medical;
         });
 
         const medicalUnit = game.actors.get(medicalId);

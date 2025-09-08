@@ -1,5 +1,5 @@
 import ActivityDialog from "../dialogs/ActivityDialog.js";
-import { unitChoices } from "../../scripts/constants.js";
+import { unitData } from "../../scripts/constants.js";
 
 const { api: api, item: item } = dnd5e.applications;
 
@@ -155,7 +155,7 @@ export default class TaticsSheet extends item.ItemSheet5e {
     async _prepareHeaderContext(context, options) {
         context.portrait = this._preparePortrait(context);
 
-        context.isMedical = this.item.isEmbedded && this.actor.system.info.type === unitChoices.uTypes.medical;
+        context.isMedical = this.item.isEmbedded && this.actor.system.info.type === unitData.uTypes.medical;
 
         return context;
     }

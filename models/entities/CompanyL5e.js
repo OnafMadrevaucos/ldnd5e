@@ -1,4 +1,4 @@
-import { i18nStrings, unitChoices } from "../../scripts/constants.js";
+import { i18nStrings, unitData } from "../../scripts/constants.js";
 
 const DND5E = dnd5e.config;
 
@@ -163,7 +163,7 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
                 const unit = game.actors.get(uId);
 
                 // Ignore medical units, for it doesn't count as a combat unit.
-                if (unit.system.info.type === unitChoices.uTypes.medical) continue;
+                if (unit.system.info.type === unitData.uTypes.medical) continue;
 
                 const uAbl = unit.system?.abilities[id] ?? { value: 0 };
                 abl.value = maxValue = Math.max(maxValue, uAbl.value);
@@ -198,7 +198,7 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
             const unit = game.actors.get(uId);
 
             // Ignore medical units, for it doesn't count as a combat unit.
-            if (unit.system.info.type === unitChoices.uTypes.medical) continue;
+            if (unit.system.info.type === unitData.uTypes.medical) continue;
 
             stamina += unit.system.abilities.frt.value;
             totalHP += (unit.system.abilities.mrl.value + unit.system.abilities.wll.value) * hitDice;
@@ -236,7 +236,7 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
                 const unit = game.actors.get(uId);
 
                 // Ignore medical units, for it doesn't count as a combat unit.
-                if (unit.system.info.type === unitChoices.uTypes.medical) continue;
+                if (unit.system.info.type === unitData.uTypes.medical) continue;
 
                 unitCount++;
             }
@@ -262,7 +262,7 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
 
             skl.key = id;
             skl.label = game.i18n.localize(i18nStrings.uCombat[id]);
-            skl.icon = unitChoices.uCombatIcons[id];
+            skl.icon = unitData.uCombatIcons[id];
             skl.mod = Math.abs(skl.value + skl.bonus);
             skl.sign = (skl.value >= 0) ? "+" : "-";
         }

@@ -1,4 +1,4 @@
-import { unitChoices } from "../../scripts/constants.js";
+import { unitData } from "../../scripts/constants.js";
 const { DocumentSheet, HandlebarsApplicationMixin } = foundry.applications.api;
 
 export default class CategoryEditor extends HandlebarsApplicationMixin(DocumentSheet) {
@@ -43,7 +43,7 @@ export default class CategoryEditor extends HandlebarsApplicationMixin(DocumentS
 
     _prepareCategories(context) {
         const categories = {};
-        for (const category in unitChoices.categories) {
+        for (const category in unitData.categories) {
             categories[category] = game.i18n.localize(`ldnd5e.categories.${category}`);            
         }
 

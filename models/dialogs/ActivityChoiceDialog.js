@@ -1,4 +1,3 @@
-import { taticsChoices } from "../../scripts/constants.js";
 import TaticsL5e from "../entities/TaticsL5e.js";
 
 const api = dnd5e.applications.api;

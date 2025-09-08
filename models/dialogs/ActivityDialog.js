@@ -1,4 +1,4 @@
-import { taticsChoices } from "../../scripts/constants.js";
+import { taticsData } from "../../scripts/constants.js";
 import TaticsL5e from "../entities/TaticsL5e.js";
 
 const api = dnd5e.applications.api;
@@ -56,7 +56,7 @@ export default class ActivityDialog extends api.Dialog5e {
    * @type {typeof Object}
    */
     static get activityTypes() {
-        return taticsChoices.activities;
+        return taticsData.activities;
     }
 
     /* -------------------------------------------- */

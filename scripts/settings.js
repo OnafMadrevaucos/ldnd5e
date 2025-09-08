@@ -72,16 +72,34 @@ export const registerSystemSettings = function () {
                 fields: {
                     top: {
                         rows: {
-                            1: [],
-                            2: [],
-                            3: []
+                            1: {
+                                units: [],
+                                effect: ''
+                            },
+                            2: {
+                                units: [],
+                                effect: ''
+                            },
+                            3: {
+                                units: [],
+                                effect: ''
+                            }
                         }
                     },
                     bottom: {
                         rows: {
-                            1: [],
-                            2: [],
-                            3: []
+                            1: {
+                                units: [],
+                                effect: ''
+                            },
+                            2: {
+                                units: [],
+                                effect: ''
+                            },
+                            3: {
+                                units: [],
+                                effect: ''
+                            }
                         }
                     }
                 }

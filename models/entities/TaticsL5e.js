@@ -1,4 +1,4 @@
-import { i18nStrings, taticsChoices } from "../../scripts/constants.js";
+import { i18nStrings } from "../../scripts/constants.js";
 
 export default class TaticsL5e extends foundry.abstract.TypeDataModel {
 

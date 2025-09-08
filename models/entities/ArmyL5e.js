@@ -1,4 +1,4 @@
-import { i18nStrings, armyChoices } from "../../scripts/constants.js";
+import { i18nStrings, armyData } from "../../scripts/constants.js";
 
 const DND5E = dnd5e.config;
 
@@ -87,6 +87,6 @@ export default class ArmyL5e extends foundry.abstract.TypeDataModel {
         else
             this.system.supplies.reserve.pct = 0;
 
-        this.system.supplies.needs = armyChoices.needs[this.system.info.size] || 0;        
+        this.system.supplies.needs = armyData.needs[this.system.info.size] || 0;        
     }   
 }

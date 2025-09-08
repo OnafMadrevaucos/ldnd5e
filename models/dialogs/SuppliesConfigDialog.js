@@ -1,4 +1,4 @@
-import { suppliesChoices, armyChoices } from "../../scripts/constants.js";
+import { suppliesData, armyData } from "../../scripts/constants.js";
 
 const api = dnd5e.applications.api;
 
@@ -57,7 +57,7 @@ export default class SuppliesConfigDialog extends api.Application5e {
     async _prepareContext(options) {
         const context = await super._prepareContext(options);
 
-        context.size = armyChoices.sizes[this.document.system.info.size] || 0;
+        context.size = armyData.sizes[this.document.system.info.size] || 0;
 
         this._prepareSources(context);
 
@@ -81,18 +81,18 @@ export default class SuppliesConfigDialog extends api.Application5e {
     _prepareSources(context) {
         const supplies = this.supplies;
 
-        context.foodSources = Object.values(suppliesChoices.sources.food).map(food => ({
+        context.foodSources = Object.values(suppliesData.sources.food).map(food => ({
             value: food,
             label: game.i18n.localize(`ldnd5e.supplies.sources.food.${food}`)
         }));
 
-        context.waterSources = Object.values(suppliesChoices.sources.water).map(water => ({
+        context.waterSources = Object.values(suppliesData.sources.water).map(water => ({
             value: water,
             label: game.i18n.localize(`ldnd5e.supplies.sources.water.${water}`)
         }));
 
         context.urbanSources = [{ value: '', label: '—' }, // Add a blank option.,
-            ...Object.values(suppliesChoices.sources.urban).map(urban => ({
+            ...Object.values(suppliesData.sources.urban).map(urban => ({
             value: urban,
             label: game.i18n.localize(`ldnd5e.supplies.sources.urban.${urban}`)
         }))];
@@ -100,18 +100,18 @@ export default class SuppliesConfigDialog extends api.Application5e {
         context.sources = {
             food: supplies.sources.food.map(food => ({
                 name: game.i18n.localize(`ldnd5e.supplies.sources.food.${food}`),
-                value: suppliesChoices.sourcesValues.food[food],
+                value: suppliesData.sourcesValues.food[food],
                 img: {
-                    src: suppliesChoices.sourcesImg.food[food],
-                    svg: suppliesChoices.sourcesImg.food[food].endsWith(".svg")
+                    src: suppliesData.sourcesImg.food[food],
+                    svg: suppliesData.sourcesImg.food[food].endsWith(".svg")
                 },
             })),
             water: supplies.sources.water.map(water => ({
                 name: game.i18n.localize(`ldnd5e.supplies.sources.water.${water}`),
-                value: suppliesChoices.sourcesValues.water[water],
+                value: suppliesData.sourcesValues.water[water],
                 img: {
-                    src: suppliesChoices.sourcesImg.water[water],
-                    svg: suppliesChoices.sourcesImg.water[water].endsWith(".svg")
+                    src: suppliesData.sourcesImg.water[water],
+                    svg: suppliesData.sourcesImg.water[water].endsWith(".svg")
                 }
             }))
         }
@@ -152,8 +152,8 @@ export default class SuppliesConfigDialog extends api.Application5e {
         const source = event.currentTarget.value;
 
         const reserve = {
-            value: suppliesChoices.sourcesValues.urban[source] ?? 0,
-            max: suppliesChoices.sourcesValues.urban[source] ?? 0
+            value: suppliesData.sourcesValues.urban[source] ?? 0,
+            max: suppliesData.sourcesValues.urban[source] ?? 0
         }
 
         await this.document.update({ 
@@ -176,8 +176,8 @@ export default class SuppliesConfigDialog extends api.Application5e {
 
         const sources = supplies.sources;
 
-        const foodTotal = Math.floor(sources.food.reduce((total, food) => total + suppliesChoices.sourcesValues.food[food], 0));
-        const waterTotal = Math.floor(sources.water.reduce((total, water) => total + suppliesChoices.sourcesValues.water[water], 0));
+        const foodTotal = Math.floor(sources.food.reduce((total, food) => total + suppliesData.sourcesValues.food[food], 0));
+        const waterTotal = Math.floor(sources.water.reduce((total, water) => total + suppliesData.sourcesValues.water[water], 0));
 
         this.#totals = { foodTotal, waterTotal, total: foodTotal + waterTotal };
 

@@ -1,4 +1,4 @@
-<section class="battle-controls">
+<section class="battle-controls side-controls">
     <section class="header">
         <button type="button" class="header-control icon fa-solid fa-xmark"
             data-tooltip="{{localize 'ldnd5e.battle.closeDeck'}}" aria-label="{{localize 'ldnd5e.battle.close'}}"
@@ -35,8 +35,10 @@
                 </ol>
             </div>
             <div class="hand-actions">
-                <button class="draw-card" type="button" data-action="drawCard"><i
-                        class="fas fa-hand-holding-medical"></i> {{localize 'ldnd5e.battle.drawHand'}}</button>
+                <button class="draw-card" type="button" data-action="drawCard" data-type="tatic">
+                    <i class="fas fa-hand-holding-medical"></i>
+                    {{localize 'ldnd5e.battle.drawHand'}}
+                </button>
             </div>
         </filigree-box>
 
@@ -96,32 +98,24 @@
 
         </section>
 
-        <section class="items-list units-list">
+        <section class="units-summary">
 
-            <div class="items-section card">
-                <div class="items-header header">
-                    <h3 class="item-name">{{localize 'ldnd5e.uTypes.light'}}</h3>
-                </div>
-                <ol class="item-list unlist">
+            <filigree-box class="units flexcol">
+                <h3>
+                    <i class="ra ra-knight-helmet" inert></i>
+                    <span>{{localize 'ldnd5e.battle.units'}}</span>
+                </h3>
+                <ul class="units-list unlist">
                     {{#each units as |unit|}}
-                    <li class="item unit" data-uuid="{{ unit.uuid }}" data-item-id="{{ unit.id }}"
-                        data-entry-id="{{ unit.id }}" data-item-name="{{ unit.name }}">
-                        {{!-- Row Summary --}}
-                        <div class="item-row">
-                            {{!-- Item Name --}}
-                            <div class="item-name item-action item-tooltip" role="button" data-action="clickUnit"
-                                aria-label="{{ unit.name }}">
-                                <img class="item-image gold-icon" src="{{ unit.img }}" alt="{{ unit.name }}"
-                                    draggable="false">
-                                <div class="name name-stacked">
-                                    <span class="title">{{unit.name}}</span>
-                                </div>
-                            </div>
-                        </div>
+                    <li class="unit" data-unit-id="{{unit.id}}">
+                        <a class="unit-link rollable" data-action="clickUnit">
+                            <img class="gold-icon" src="{{unit.img}}">
+                            <span class="name">{{unit.name}}</span>
+                        </a>
                     </li>
                     {{/each}}
-                </ol>
-            </div>
+                </ul>
+            </filigree-box>
 
         </section>
 
@@ -129,7 +123,6 @@
 
     <div class="extra-decks-viewer">
 
-        {{#debug this}}{{/debug}}
         <div class="cards-section full hidden">
             <h4 class="title">{{localize 'ldnd5e.battle.extraDecks.full'}}</h4>
             <ol class="cards-list unlist">
