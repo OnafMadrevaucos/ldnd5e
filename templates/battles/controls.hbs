@@ -1,124 +1,126 @@
-<section class="battle-controls side-controls">
-    <section class="header">
-        <button type="button" class="header-control icon fa-solid fa-xmark"
-            data-tooltip="{{localize 'ldnd5e.battle.closeDeck'}}" aria-label="{{localize 'ldnd5e.battle.close'}}"
-            data-action="toggleDeckControls">
-        </button>
-        <h2 class="title">{{title}}</h2>
-    </section>
-    <section class="content">
-        {{#with score}}
-        <div class="scoreboard">
-
-            <div class="score top">
-                <span class="impetus">{{enemy.impetus}} <i class="ra ra-all-for-one" inert></i></span>
-                <span class="atk-points">{{enemy.attack}} <i class="ra ra-broken-skull" inert></i></span>
-            </div>
-
-            <div class="score bottom">
-                <span class="impetus">{{ally.impetus}} <i class="ra ra-all-for-one" inert></i></span>
-                <span class="atk-points">{{ally.attack}} <i class="ra ra-broken-skull" inert></i></span>
-            </div>
-
+<div class="deck-controls">
+    <section class="battle-controls side-controls">
+        <div class="header">
+            <button type="button" class="header-control icon fa-solid fa-xmark"
+                data-tooltip="{{localize 'ldnd5e.battle.closeDeck'}}" aria-label="{{localize 'ldnd5e.battle.close'}}"
+                data-action="toggleDeckControls">
+            </button>
+            <h2 class="title">{{title}}</h2>
         </div>
-        {{/with}}
+        <div class="content">
+            {{#with score}}
+            <div class="scoreboard">
 
-        <filigree-box class="hand tatics">
-            <h3>
-                <img class="svg" src="{{icons.deckTiny}}">
-                <span>{{localize 'ldnd5e.battle.hand'}}</span>
-            </h3>
-            <div class="cards-counter">{{hand.counter}} <i class="ra ra-diamonds-card"></i></div>
-            <div class="cards-section">
-                <ol class="cards-list unlist">
+                <div class="score top">
+                    <span class="impetus">{{enemy.impetus}} <i class="ra ra-all-for-one" inert></i></span>
+                    <span class="atk-points">{{enemy.attack}} <i class="ra ra-broken-skull" inert></i></span>
+                </div>
 
-                </ol>
+                <div class="score bottom">
+                    <span class="impetus">{{ally.impetus}} <i class="ra ra-all-for-one" inert></i></span>
+                    <span class="atk-points">{{ally.attack}} <i class="ra ra-broken-skull" inert></i></span>
+                </div>
+
             </div>
-            <div class="hand-actions">
-                <button class="draw-card" type="button" data-action="drawCard" data-type="tatic">
-                    <i class="fas fa-hand-holding-medical"></i>
-                    {{localize 'ldnd5e.battle.drawHand'}}
+            {{/with}}
+
+            <filigree-box class="hand tatics">
+                <h3>
+                    <img class="svg" src="{{icons.deckTiny}}">
+                    <span>{{localize 'ldnd5e.battle.hand'}}</span>
+                </h3>
+                <div class="cards-counter">{{hand.counter}} <i class="ra ra-diamonds-card"></i></div>
+                <div class="cards-section">
+                    <ol class="cards-list unlist">
+
+                    </ol>
+                </div>
+                <div class="hand-actions">
+                    <button class="draw-card" type="button" data-action="drawCard" data-type="tatic">
+                        <i class="fas fa-hand-holding-medical"></i>
+                        {{localize 'ldnd5e.battle.drawHand'}}
+                    </button>
+                </div>
+            </filigree-box>
+
+            <div class="extra-decks">
+                <button class="full-deck" type="button" data-action="toggleExtraDeck" data-deck="full">
+                    <img class="svg" src="{{icons.full}}">
+                </button>
+                <button class="discarded-deck" type="button" data-action="toggleExtraDeck" data-deck="discarded">
+                    <img class="svg" src="{{icons.discarded}}">
+                </button>
+                <button class="assets-deck" type="button" data-action="toggleExtraDeck" data-deck="assets">
+                    <img class="svg" src="{{icons.assets}}">
                 </button>
             </div>
-        </filigree-box>
 
-        <div class="extra-decks">
-            <button class="full-deck" type="button" data-action="toggleExtraDeck" data-deck="full">
-                <img class="svg" src="{{icons.full}}">
-            </button>
-            <button class="discarded-deck" type="button" data-action="toggleExtraDeck" data-deck="discarded">
-                <img class="svg" src="{{icons.discarded}}">
-            </button>
-            <button class="assets-deck" type="button" data-action="toggleExtraDeck" data-deck="assets">
-                <img class="svg" src="{{icons.assets}}">
-            </button>
+            <hr class="ampersand">
+
+            <section class="company-summary basic-skills">
+
+                <filigree-box class="skills flexcol">
+                    <h3>
+                        <i class="ra ra-battered-axe" inert></i>
+                        <span>{{localize 'ldnd5e.battle.summary'}}</span>
+                    </h3>
+                    <ul class="skills-list unlist">
+                        {{#each skills as |skill|}}
+                        <li data-key="{{skill.key}}" class="skill">
+                            <a class="name rollable" data-action="roll" data-type="skill"><i
+                                    class="{{skill.icon}}"></i>{{skill.label}}</a>
+                            <div class="bonus">
+                                <span class="sign">{{skill.sign}}</span>
+                                {{skill.mod}}
+                            </div>
+                        </li>
+                        {{/each}}
+                    </ul>
+                </filigree-box>
+
+                <filigree-box class="saves flexcol">
+                    <h3>
+                        <i class="fas fa-shield-heart" inert></i>
+                        <span class="roboto-upper">{{ localize "DND5E.ClassSaves" }}</span>
+                    </h3>
+                    <ul class="saves-list unlist">
+                        <li data-ability="dsp" class="save">
+                            <a class="name rollable" data-action="roll" data-type="save"><i
+                                    class="{{skills.dsp.icon}}"></i>{{skills.dsp.label}}</a>
+                            <div class="bonus">
+                                <span class="sign">{{skills.dsp.save.sign}}</span>
+                                {{skills.dsp.save.mod}}
+                            </div>
+                        </li>
+
+                    </ul>
+
+                </filigree-box>
+
+            </section>
+
+            <section class="units-summary">
+
+                <filigree-box class="units flexcol">
+                    <h3>
+                        <i class="ra ra-knight-helmet" inert></i>
+                        <span>{{localize 'ldnd5e.battle.units'}}</span>
+                    </h3>
+                    <ul class="units-list unlist">
+                        {{#each units as |unit|}}
+                        <li class="unit draggable" data-unit-id="{{unit.id}}" data-drag-type="link" draggable="true">
+                            <a class="unit-link rollable" data-action="clickUnit">
+                                <img class="gold-icon" src="{{unit.img}}">
+                                <span class="name">{{unit.name}}</span>
+                            </a>
+                        </li>
+                        {{/each}}
+                    </ul>
+                </filigree-box>
+
+            </section>
+
         </div>
-
-        <hr class="ampersand">
-
-        <section class="company-summary basic-skills">
-
-            <filigree-box class="skills flexcol">
-                <h3>
-                    <i class="ra ra-battered-axe" inert></i>
-                    <span>{{localize 'ldnd5e.battle.summary'}}</span>
-                </h3>
-                <ul class="skills-list unlist">
-                    {{#each skills as |skill|}}
-                    <li data-key="{{skill.key}}" class="skill">
-                        <a class="name rollable" data-action="roll" data-type="skill"><i
-                                class="{{skill.icon}}"></i>{{skill.label}}</a>
-                        <div class="bonus">
-                            <span class="sign">{{skill.sign}}</span>
-                            {{skill.mod}}
-                        </div>
-                    </li>
-                    {{/each}}
-                </ul>
-            </filigree-box>
-
-            <filigree-box class="saves flexcol">
-                <h3>
-                    <i class="fas fa-shield-heart" inert></i>
-                    <span class="roboto-upper">{{ localize "DND5E.ClassSaves" }}</span>
-                </h3>
-                <ul class="saves-list unlist">
-                    <li data-ability="dsp" class="save">
-                        <a class="name rollable" data-action="roll" data-type="save"><i
-                                class="{{skills.dsp.icon}}"></i>{{skills.dsp.label}}</a>
-                        <div class="bonus">
-                            <span class="sign">{{skills.dsp.save.sign}}</span>
-                            {{skills.dsp.save.mod}}
-                        </div>
-                    </li>
-
-                </ul>
-
-            </filigree-box>
-
-        </section>
-
-        <section class="units-summary">
-
-            <filigree-box class="units flexcol">
-                <h3>
-                    <i class="ra ra-knight-helmet" inert></i>
-                    <span>{{localize 'ldnd5e.battle.units'}}</span>
-                </h3>
-                <ul class="units-list unlist">
-                    {{#each units as |unit|}}
-                    <li class="unit" data-unit-id="{{unit.id}}">
-                        <a class="unit-link rollable" data-action="clickUnit">
-                            <img class="gold-icon" src="{{unit.img}}">
-                            <span class="name">{{unit.name}}</span>
-                        </a>
-                    </li>
-                    {{/each}}
-                </ul>
-            </filigree-box>
-
-        </section>
-
     </section>
 
     <div class="extra-decks-viewer">
@@ -146,4 +148,4 @@
 
     </div>
 
-</section>
+</div>

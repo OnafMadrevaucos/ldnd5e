@@ -190,10 +190,7 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
     /* -------------------------------------------- */
 
     /**
-   * @inheritdoc
-   * @param {object} [options]
-   * @param {boolean} [options.deterministic] Whether to force deterministic values for data properties that could be
-   *                                          either a die term or a flat term.
+   * @inheritdoc  
    */
     getRollData() {
 
@@ -213,6 +210,16 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
         data.flags = { ...this.flags };
         data.name = this.name;
         return data;
+    }
+
+    /**
+   * @inheritdoc
+   */
+    toDragData() { 
+        return {
+            type: "ldnd5e.unit",
+            uuid: this.uuid
+        };
     }
 
     /* -------------------------------------------- */

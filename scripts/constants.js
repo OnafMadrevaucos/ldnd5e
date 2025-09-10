@@ -507,7 +507,8 @@ const i18nStrings = {
       configureCategory: "ldnd5e.unit.configureCategory",
       editTatic: "ldnd5e.unit.editTatic",
       removeTatic: "ldnd5e.unit.removeTatic",
-      isTrainning: "ldnd5e.unit.isTrainning"
+      isTrainning: "ldnd5e.unit.isTrainning",
+      delete: "ldnd5e.unit.delete"
    },
 
    tatics: {
@@ -586,7 +587,9 @@ const i18nStrings = {
          flood: "ldnd5e.battle.rowEffects.flood",
          fog: "ldnd5e.battle.rowEffects.fog",
          rain: "ldnd5e.battle.rowEffects.rain",                           
-      }
+      },
+      reset: "ldnd5e.battle.reset",                 
+      resetConfirm: "ldnd5e.battle.resetConfirm",
    },
 
    categories: {

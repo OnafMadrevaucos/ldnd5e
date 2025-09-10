@@ -187,7 +187,8 @@
             "configureCategory": "Configurar Categoria",
             "editTatic": "Editar Tática",
             "removeTatic": "Remover Tática",
-            "isTrainning": "Treinando?"
+            "isTrainning": "Treinando?",
+            "delete": "Excluir Unidade"
         },
         "tatics": {
             "flavor": "Floreio",
@@ -248,7 +249,9 @@
                 "flood": "Enchente",
                 "fog": "Neblina",
                 "rain": "Chuva"
-            }
+            },
+            "reset": "Resetar Campo de Batalha",
+            "resetConfirm": "Isso irá limpar todos os dados da batalha atual."
         },
 
         "messages": {

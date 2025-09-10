@@ -52,6 +52,10 @@ export const registerSystemSettings = function () {
         config: false,
         type: Object,
         default: {
+            // Battle Application data.
+            app: {
+                mode: 0
+            },
             // Global battle data.
             world: {
                 scoreboard: {

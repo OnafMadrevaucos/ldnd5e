@@ -1580,7 +1580,6 @@
 
 .ldnd5e.unit .ability-scores .mod {
   font-weight: bold;
-  color: var(--dnd5e-color-black);
   font-size: var(--font-size-16);
   padding: 3px 0;
   z-index: 2;
@@ -1935,13 +1934,57 @@
 /* ----------------------------------------- */
 /*  Battlefield App                          */
 /* ----------------------------------------- */
+.ldnd5e.battle::before {
+  content: var(--dnd5e-character-background-content, none);
+  background: url(ui/banner-battle.jpg) no-repeat top center / cover;
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 300px;
+  border-radius: 5px 5px 0 0;
+  opacity: 0.5;
+  mask-image: linear-gradient(to bottom, black, transparent);
+}
+
+.ldnd5e.battle:where(:not(.minimized))>header>slide-toggle {
+  flex: none;
+  margin-inline-end: auto;
+}
+
+.ldnd5e.battle:where(:not(.minimized))>header>slide-toggle .slide-toggle-thumb {
+  line-height: 12px;
+}
+
+.ldnd5e.battle:where(:not(.minimized))>header>slide-toggle .slide-toggle-thumb::before {
+  content: "\f0ad";
+  font-family: var(--font-awesome);
+  color: var(--dnd5e-background-alt-1);
+  font-weight: bold;
+  font-size: var(--font-size-9);
+}
+
+.ldnd5e.battle .window-header>* {
+  max-block-size: 100%;
+}
+
+.ldnd5e.battle .window-header h1 {
+  font-family: var(--dnd5e-font-modesto);
+  font-size: var(--font-h1-size);
+}
+
 .ldnd5e.battle .window-content {
   overflow: hidden;
+  padding: 10px;
+  backdrop-filter: opacity(0.5);
 }
 
 .ldnd5e.battle .field-container {
+  align-self: center;
   height: 100%;
-  z-index: -2;
+  width: 90%;
+  padding: 15px;
+  background: var(--dnd5e-color-dark-gray) url(../../ui/denim075.png);
+  border-radius: 4px;
+  box-shadow: 0 0 5px #000;
 }
 
 .ldnd5e.battle .fields {
@@ -1955,7 +1998,7 @@
   display: flex;
   flex-direction: column;
   position: absolute;
-  right: 10px;
+  right: 65px;
 }
 
 .ldnd5e.battle .fields .sidebar .deck-controls {
@@ -1969,6 +2012,7 @@
   border: none;
   width: 28px;
   height: 28px;
+  color: var(--dnd5e-color-gold);
 }
 
 .ldnd5e.battle .fields .sidebar .scoreboard {
@@ -1976,7 +2020,7 @@
   flex-direction: column;
   gap: 15px;
   position: absolute;
-  top: 19.5em;
+  top: 18em;
   text-align: center;
 }
 
@@ -2035,6 +2079,37 @@
 
 .ldnd5e.battle .fields .field .row .units-list {
   flex: 1;
+  flex-direction: row;
+  display: flex;
+  gap: 10px;
+  padding-inline: 10px;
+}
+
+.ldnd5e.battle .field .row .units-list .unit {
+  display: flex;
+  align-items: center;
+}
+
+.ldnd5e.battle .field .row .units-list .unit img {
+  height: 85px;
+  border-radius: 4px;
+}
+
+.ldnd5e.battle .field .row .units-list .unit .virtual {
+  opacity: 0.36;
+  filter: grayscale(8%) blur(0.2px);
+  transform: scale(0.995);
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+
+.ldnd5e.battle .field .row .units-list .unit .virtual::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.55);
+  pointer-events: none;
+  border-radius: inherit;
 }
 
 .ldnd5e.battle .fields .field .row-numbers {
@@ -2106,6 +2181,7 @@
   padding-inline-start: 8px;
   padding-inline-end: 12px;
   color: var(--color-text-light-0);
+  font-weight: normal;
 }
 
 .ldnd5e.battle footer .turn-counter .meter.turns .breakpoint {
@@ -2138,14 +2214,15 @@
   display: flex;
   flex-direction: column;
   width: 300px;
-  height: calc(100% - 10px);
-  border: 1px solid var(--color-border-light-1);
+  height: calc(100% - 25px);
+  border: var(--dnd5e-border-gold);
   border-right: none;
   border-radius: 4px;
   box-shadow: -1px 3px 8px 1px var(--color-shadow-dark);
   top: 0;
   right: -35%;
   transition: all 0.5s ease-in-out;
+  z-index: 1;
 }
 
 .ldnd5e.battle .side-controls.active {
@@ -2178,7 +2255,7 @@
 }
 
 .ldnd5e.battle .side-controls filigree-box .unlist {
-  padding: 15px 20px;
+  padding: 10px 20px;
 }
 
 .ldnd5e.battle .side-controls .hand .hand-actions {
@@ -2201,6 +2278,10 @@
 
 .ldnd5e.battle .side-controls .hand .hand-actions button:hover {
   text-shadow: 0 0 5px var(--color-shadow-primary);
+}
+
+.ldnd5e.battle .deck-controls {
+  z-index: 1;
 }
 
 .ldnd5e.battle .battle-controls .scoreboard {
@@ -2250,7 +2331,7 @@
 .ldnd5e.battle .battle-controls .extra-decks {
   display: flex;
   gap: 20px;
-  height: 92px;
+  height: 70px;
   padding: 5px;
   justify-content: space-evenly;
 }
@@ -2311,43 +2392,38 @@
   margin-top: 5px;
 }
 
-.ldnd5e.battle .battle-controls .units-summary .units-list {
+.ldnd5e.battle .units-summary .units-list {
   overflow-y: auto;
 }
 
-.ldnd5e.battle .battle-controls .units-list .unit {
+.ldnd5e.battle .units-summary .units-list .unit {
   padding-block: 1px;
   font-family: var(--dnd5e-font-roboto-slab);
   font-weight: bold;
 }
 
-.ldnd5e.battle .battle-controls .units-list .unit .unit-link {
+.ldnd5e.battle .units-summary .units-list .unit .unit-link {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 5px;
 }
 
-.ldnd5e.battle .battle-controls .unit .unit-link img {
-  height: var(--font-size-20);
-}
-
-.ldnd5e.battle .battle-controls .extra-decks-viewer {
+.ldnd5e.battle .deck-controls .extra-decks-viewer {
   position: absolute;
   height: 80%;
   width: 20em;
   top: 10%;
-  right: 0%;
+  right: -29%;
   background: url(ui/texture-gray1.webp) no-repeat top left, url(ui/texture-gray2.webp) no-repeat bottom right, var(--dnd5e-color-parchment);
   border-radius: 4px;
   border-bottom-right-radius: 0;
   border-top-right-radius: 0;
-  z-index: -1;
   transition: all 0.5s ease-in-out;
 }
 
-.ldnd5e.battle .battle-controls .extra-decks-viewer.active {
-  right: 100%;
+.ldnd5e.battle .deck-controls .extra-decks-viewer.active {
+  right: 33%;
 }
 
 .ldnd5e.battle .extra-decks-viewer .cards-section {
@@ -2409,6 +2485,7 @@
 .ldnd5e.battle .rows-control .rows-list.unlist {
   padding-top: 5px;
 }
+
 .ldnd5e.battle .rows-control .rows-list .field-rows {
   display: flex;
   flex-direction: column;
@@ -2430,7 +2507,7 @@
 }
 
 .ldnd5e.battle .rows-control .rows-list .row * {
-  color: var(--color-text-dark-primary);
+  color: var(--color-text-primary);
 }
 
 .ldnd5e.battle .rows-control .rows-list .row label {

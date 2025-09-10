@@ -1,7 +1,7 @@
 <section class="field-container">
     <div class="fields">
 
-        <div class="top field">
+        <div class="top field" data-side="top">
 
             <div class="row-numbers">
                 <span class="row-number" data-row="3">3 <i class="ra ra-arrow-cluster" inert></i></span>
@@ -10,21 +10,39 @@
             </div>
 
             <div class="rows">
-                <div class="top row draggable" data-row="3" data-drag-counter="0">
-                    <ol class="units-list">
-
+                <div class="top row" data-row="3" data-drag-counter="0">
+                    <ol class="units-list unlist">
+                        {{#each rowUnits.top.rows.2.units}}
+                        <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}" data-item-name="{{name}}" data-drag-type="move">
+                            <div class="item-row draggable" draggable="true">
+                                <img class="row-unit" src="{{img}}" alt="{{name}}">
+                            </div>
+                        </li>
+                        {{/each}}
                     </ol>
                 </div>
 
-                <div class="center row draggable" data-row="2" data-drag-counter="0">
-                    <ol class="units-list">
-
+                <div class="center row" data-row="2" data-drag-counter="0">
+                    <ol class="units-list unlist">
+                        {{#each rowUnits.top.rows.1.units}}
+                        <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}" data-item-name="{{name}}" data-drag-type="move">
+                            <div class="item-row draggable" draggable="true">
+                                <img class="row-unit" src="{{img}}" alt="{{name}}">
+                            </div>
+                        </li>
+                        {{/each}}
                     </ol>
                 </div>
 
-                <div class="bottom row draggable" data-row="1" data-drag-counter="0">
-                    <ol class="units-list">
-
+                <div class="bottom row" data-row="1" data-drag-counter="0">
+                    <ol class="units-list unlist">
+                        {{#each rowUnits.top.rows.0.units}}
+                        <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}" data-unit-name="{{name}}" data-drag-type="move">
+                            <div class="item-row draggable" draggable="true">
+                                <img class="row-unit" src="{{img}}" alt="{{name}}">
+                            </div>
+                        </li>
+                        {{/each}}
                     </ol>
                 </div>
             </div>
@@ -33,7 +51,7 @@
 
         <hr class="ampersand">
 
-        <div class="bottom field">
+        <div class="bottom field" data-side="bottom">
 
             <div class="row-numbers">
                 <span class="row-number" data-row="1">1 <i class="ra ra-broken-shield" inert></i></span>
@@ -42,21 +60,39 @@
             </div>
 
             <div class="rows">
-                <div class="top row draggable" data-row="1" data-drag-counter="0">
-                    <ol class="units-list">
-
+                <div class="top row" data-row="1" data-drag-counter="0">
+                    <ol class="units-list unlist">
+                        {{#each rowUnits.bottom.rows.0.units}}
+                        <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}" data-item-name="{{name}}" data-drag-type="move">
+                            <div class="item-row draggable" draggable="true">
+                                <img class="row-unit" src="{{img}}" alt="{{name}}">
+                            </div>
+                        </li>
+                        {{/each}}
                     </ol>
                 </div>
 
-                <div class="center row draggable" data-row="2" data-drag-counter="0">
-                    <ol class="units-list">
-
+                <div class="center row" data-row="2" data-drag-counter="0">
+                    <ol class="units-list unlist">
+                        {{#each rowUnits.bottom.rows.1.units}}
+                        <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}" data-item-name="{{name}}" data-drag-type="move">
+                            <div class="item-row draggable" draggable="true">
+                                <img class="row-unit" src="{{img}}" alt="{{name}}">
+                            </div>
+                        </li>
+                        {{/each}}
                     </ol>
                 </div>
 
-                <div class="bottom row draggable" data-row="3" data-drag-counter="0">
-                    <ol class="units-list">
-
+                <div class="bottom row" data-row="3" data-drag-counter="0">
+                    <ol class="units-list unlist">
+                        {{#each rowUnits.bottom.rows.2.units}}
+                        <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}" data-item-name="{{name}}" data-drag-type="move">
+                            <div class="item-row draggable" draggable="true">
+                                <img class="row-unit" src="{{img}}" alt="{{name}}">
+                            </div>
+                        </li>
+                        {{/each}}
                     </ol>
                 </div>
             </div>
@@ -88,10 +124,10 @@
 
             </div>
             {{/with}}
-            
+
         </div>
 
-    </div>    
+    </div>
 
     <footer>
         <div class="pill battle-phase">

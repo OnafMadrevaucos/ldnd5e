@@ -187,7 +187,8 @@
             "configureCategory": "Configure Category",
             "editTatic": "Edit Tatic",
             "removeTatic": "Remove Tatic",
-            "isTrainning": "Is Training?"
+            "isTrainning": "Is Training?",
+            "delete": "Delete Unit"
         },
         "tatics": {
             "flavor": "Flavor",
@@ -247,7 +248,9 @@
                 "flood": "Flood",
                 "fog": "Fog",
                 "rain": "Rain"
-            }
+            },
+            "reset": "Reset Battlefield",
+            "resetConfirm": "This will clear all the current battle data."
         },
         "messages": {
             "bldgDmgLightArmor": "Light Armor is immune to damage caused by Bludgening Damage.",
