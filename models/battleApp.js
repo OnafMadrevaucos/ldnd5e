@@ -382,7 +382,10 @@ export default class BattleApp extends api.Application5e {
         this.activateListeners();
     }
 
-    /** @override */
+    /**
+     * Activate listeners for context menu on units.
+     * @return {void}
+     */
     activateListeners() {
         for (const unit of this.element.querySelectorAll("li.unit")) {
             unit.addEventListener("contextmenu ", contextMenu.triggerEvent);
@@ -395,6 +398,12 @@ export default class BattleApp extends api.Application5e {
     /*  Event Listeners                             */
     /* -------------------------------------------- */
 
+    /**
+     * Gets the header controls for the application.
+     *
+     * @returns {array} An array of header controls.
+     * @protected
+     */
     _getHeaderControls() {
         return [
             {
@@ -407,7 +416,7 @@ export default class BattleApp extends api.Application5e {
 
     /**
    * Prepare an array of context menu options which are available for inventory items.
-   * @param {UnitL5e} unit          The unit.
+   * @param {UnitL5e} unit         The unit.
    * @param {HTMLElement} element  The unit's rendered element.
    * @returns {ContextMenuEntry[]}
    * @protected
@@ -554,6 +563,11 @@ export default class BattleApp extends api.Application5e {
     /*  Drag & Drop                                 */
     /* -------------------------------------------- */
 
+    /**
+     * Handle the start of a drag operation by setting the drag data and allowed effect.
+     * @param {DragEvent} event  The drag event.
+     * @protected
+     */
     async _onDragStart(event) {
         const li = event.target.closest("li");
         const unit = game.actors.get(li.dataset.unitId);
@@ -562,6 +576,11 @@ export default class BattleApp extends api.Application5e {
         event.dataTransfer.effectAllowed = li?.dataset.dragType ?? null;
     }
 
+    /**
+     * Handle when the user's mouse enters the drop target.
+     * @param {DragEvent} event  The drag event.
+     * @protected
+     */
     async _onDragEnter(event) {
         const field = event.currentTarget.closest(".field");
         const rowEl = event.currentTarget.closest(".row");
@@ -579,6 +598,11 @@ export default class BattleApp extends api.Application5e {
         rowNumberSpan.classList.add("drag-over");
     }
 
+    /**
+     * Handle when the user's mouse leaves the drop target.
+     * @param {DragEvent} event  The drag event.
+     * @protected
+     */
     async _onDragLeave(event) {
         const field = event.currentTarget.closest(".field");
         const rowEl = event.currentTarget.closest(".row");
@@ -598,6 +622,12 @@ export default class BattleApp extends api.Application5e {
         }
     }
 
+
+    /**
+     * Handle dropping an actor onto the battlefield.
+     * @param {DragEvent} event  The drop event.
+     * @protected
+     */
     async _onDrop(event) {
 
         const field = event.currentTarget.closest(".field");
@@ -638,10 +668,10 @@ export default class BattleApp extends api.Application5e {
 
         switch (event.dataTransfer.effectAllowed) {
             case "move": {
-                await this._onMoveUnit(event, { actor, sideName, rowName });
+                await this._onMoveUnit({ actor, sideName, rowName });
             } break;
             default: {
-                await this._onDropUnit(event, { actor, sideName, rowName });
+                await this._onDropUnit({ actor, sideName, rowName });
             } break
         }
 
@@ -649,9 +679,18 @@ export default class BattleApp extends api.Application5e {
         this.render(true);
     }
 
-    async _onMoveUnit(event, data) {
+    /**
+     * Handle the move of a unit from one row to another.
+     * @param {object} data - The event data.
+     * @param {string} data.sideName - The name of the side.
+     * @param {string} data.rowName - The name of the row.
+     * @param {Actor} data.actor - The actor.
+     * @private
+     */
+    async _onMoveUnit(data) {
         const fields = this.#battle.world.fields;
 
+        // Remove from the old row.
         Object.values(fields).forEach(field => {
             Object.values(field.rows).forEach(row => {
                 row.units = row.units.filter(u => u !== data.actor.id);
@@ -663,7 +702,14 @@ export default class BattleApp extends api.Application5e {
         await game.settings.set('ldnd5e', 'battle', { app: this.app, world: this.world });
     }
 
-    async _onDropUnit(event, data) {
+    /**
+     * Handle the drop of a unit onto the battle board.
+     * @param {object} data - The event data.
+     * @param {string} data.sideName - The name of the side.
+     * @param {string} data.rowName - The name of the row.
+     * @param {Actor} data.actor - The actor.
+     */
+    async _onDropUnit(data) {
         const fields = this.#battle.world.fields;
 
         fields[data.sideName].rows[data.rowName].units.push(data.actor.id);
@@ -677,7 +723,7 @@ export default class BattleApp extends api.Application5e {
 
     /**
    * Toggles the deck controls.
-   * @this {ArmySheet}
+   * @this {BattleApp}
    * @param {PointerEvent} event  The originating click event.
    * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
    */
@@ -709,7 +755,7 @@ export default class BattleApp extends api.Application5e {
 
     /**
    * Toggles the extra deck viewer.
-   * @this {ArmySheet}
+   * @this {BattleApp}
    * @param {PointerEvent} event  The originating click event.
    * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
    */
