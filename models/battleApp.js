@@ -174,7 +174,9 @@ export default class BattleApp extends api.Application5e {
             }
         }
 
-        let userCompanyId = game.user.character?.getFlag('ldnd5e', 'company');
+        const userCompanyId = game.user.character?.getFlag('ldnd5e', 'company');
+        const isViewer = (userCompanyId === null) || (userCompanyId === undefined) || (userCompanyId === '');
+
         this.#battle = {
             app,
             world,
@@ -182,6 +184,7 @@ export default class BattleApp extends api.Application5e {
                 user: game.user,
                 commander: game.user.character ?? null,
                 company: userCompanyId ? game.actors.get(userCompanyId) : null,
+                isViewer
             }
         };
     }
@@ -202,7 +205,10 @@ export default class BattleApp extends api.Application5e {
     async _preparePartContext(partId, context, options) {
         context = await super._preparePartContext(partId, context, options);
 
-        context.isGM = this.local.user.isGM;
+        Object.assign(context, {
+            isGM: this.local.user.isGM,
+            isViewer: this.local.isViewer
+        });
 
         context.icons = {
             deck: 'modules/ldnd5e/ui/icons/battle/deck.svg',
@@ -239,7 +245,6 @@ export default class BattleApp extends api.Application5e {
 
     /** @inheritDoc */
     async _prepareFieldContext(context, options) {
-
         context.phase = {
             label: game.i18n.localize('ldnd5e.battle.phases.prep'),
             icon: 'ra-tower'
@@ -261,6 +266,8 @@ export default class BattleApp extends api.Application5e {
 
     /** @inheritDoc */
     async _prepareControlsContext(context, options) {
+        if (context.isViewer) return context;
+
         context.title = game.i18n.format('ldnd5e.battle.deck', { name: this.local.company.name });
 
         Object.assign(context.icons, {
@@ -329,16 +336,19 @@ export default class BattleApp extends api.Application5e {
    * @protected
    */
     _prepareUnits(context) {
-        const company = this.local.company;
+        // If user is not a viewer, prepare its company's units list.
+        if (!context.isViewer) {
+            const company = this.local.company;
 
-        const unitsList = [];
-        Object.entries(company.system.unitsList).forEach(([type, units]) => {
-            if (['light', 'heavy', 'special'].includes(type)) {
-                unitsList.push(...units);
-            }
-        });
+            const unitsList = [];
+            Object.entries(company.system.unitsList).forEach(([type, units]) => {
+                if (['light', 'heavy', 'special'].includes(type)) {
+                    unitsList.push(...units);
+                }
+            });
 
-        context.units = unitsList;
+            context.units = unitsList;
+        }
 
         const world = this.battle.world;
 
@@ -596,6 +606,8 @@ export default class BattleApp extends api.Application5e {
 
         rowEl.classList.add("drag-over");
         rowNumberSpan.classList.add("drag-over");
+
+        // TODO: Implement a visual feedback indicator of the drop unit proficiency to the field row.
     }
 
     /**

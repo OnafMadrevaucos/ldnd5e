@@ -44,7 +44,7 @@ export default class TaticsSheet extends item.ItemSheet5e {
             template: "modules/ldnd5e/templates/sheets/tatic/header.hbs",
         },
         tabs: {
-            template: "systems/dnd5e/templates/items/tabs.hbs",
+            template: "systems/dnd5e/templates/shared/horizontal-tabs.hbs",
             templates: ["templates/generic/tab-navigation.hbs"]
         },
         activities: {

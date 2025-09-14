@@ -38,7 +38,7 @@ export default class ArmyL5e extends foundry.abstract.TypeDataModel {
                     water: new fields.ArrayField(new fields.StringField({ textSearch: true })),
                     urban: new fields.StringField({ textSearch: true }),
                 }),
-                total: new fields.NumberField({ required: true, initial: 10, label: "ldnd5e.army.supplies.value" }),
+                total: new fields.NumberField({ required: true, initial: 0, label: "ldnd5e.army.supplies.value" }),
                 reserve: new fields.SchemaField({
                     value: new fields.NumberField({ required: true, initial: 0, label: "ldnd5e.supplies.reserve.value" }),
                     max: new fields.NumberField({ required: true, initial: 0, label: "ldnd5e.supplies.reserve.max" }),

@@ -102,6 +102,17 @@
             "enc": "Encorajar",
             "def": "Defender"
         },
+        "uProf": {
+            "van": "Vanguarda",
+            "res": "Reserva",
+            "rea": "Retaguarda"
+        },
+         "uProfLevel": {
+            "none": "Nenhum",
+            "low": "Baixo",
+            "medium": "Médio",
+            "high": "Alto"
+        },
         "categories": {
             "arcanists": "Arcanos",
             "devotees": "Devotos",
@@ -173,7 +184,13 @@
             "restResult": "{name} descansou com sucesso, recuperando {stamina} pontos de stamina.{restoration}",
             "hasRestoration": " Sua Unidade Médica restaurou {total} pontos de moral perdidos nas últimas batalhas.",
             "fatigueRest": "A companhia sempre repõem seu nível de stamina ao máximo após completar o descanso.",
-            "noRestTatics": "A unidade médica dessa companhia não possui Táticas de Restauração válidas. Por causa disso, a companhia é incpaz de recuperar qualquer unidade perdida na batalha anterior."
+            "noRestTatics": "A unidade médica dessa companhia não possui Táticas de Restauração válidas. Por causa disso, a companhia é incpaz de recuperar qualquer unidade perdida na batalha anterior.",
+            "accounting": "Contabilidade",
+            "cost": {
+                "total": "Total",
+                "units": "Unidades",
+                "tatics": "Táticas"
+            }
         },
         "unit": {
             "category": "Categoria",
@@ -188,6 +205,7 @@
             "editTatic": "Editar Tática",
             "removeTatic": "Remover Tática",
             "isTrainning": "Treinando?",
+            "trainningLoad": "Carga de Treino",            
             "delete": "Excluir Unidade"
         },
         "tatics": {

@@ -26,7 +26,23 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
                     initial: "none",
                     textSearch: true,
                 }),
-                price: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 }),
+                price: new fields.SchemaField({
+                    value: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+                    denomination: new fields.StringField({
+                        required: true,
+                        nullable: false,
+                        initial: "gp",
+                        choices: dnd5e.config.currencies,
+                    }),
+                }),
+            }),
+            prof: new fields.SchemaField({
+                // Nível de proficiência na fileira de vanguarda.
+                van: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+                // Nível de proficiência na fileira de reserva.
+                res: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+                // Nível de proficiência na fileira de retaguarda.
+                rea: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
             }),
             abilities: new fields.SchemaField({
                 frt: new fields.SchemaField({
@@ -81,10 +97,11 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
 
         this.system = {
             info: this.info,
+            prof: this.prof,
             abilities: this.abilities,
             combat: this.combat,
             status: this.status,
-            tatics: this.tatics
+            tatics: this.parent.items
         };
     }
 
@@ -94,11 +111,11 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
     prepareDerivedData() {
         this.labels = {};
 
-        const company = this.system.info.company;
-        this.system.attributes = {
-            prestige: company?.system.attributes.prestige ?? { mod: "+0" },
-            prof: company?.system.attributes.affinity.bonus.prof ?? 0,
-        }
+        // Prepare the unit's attributes.
+        this._prepareAttributes();
+
+        // Prepare the unit's total price.
+        this._prepareTotalPrice();
 
         // Prepare abilities.
         this._prepareAbilities();
@@ -108,6 +125,34 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
 
         // Prepare saving throws.
         this._prepareSaves();
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Prepare the unit's attributes.   
+   * @protected
+   */
+    _prepareAttributes() {
+        const company = this.system.info.company;
+        this.system.attributes = {
+            prestige: company?.system.attributes.prestige ?? { mod: "+0" },
+            prof: company?.system.attributes.affinity.bonus.prof ?? 0                     
+        };        
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Prepare unit's total price.   
+   * @protected
+   */
+    _prepareTotalPrice() {
+        this.fullPrice = foundry.utils.deepClone(this.system.info.price) || { value: 0, denomination: "gp" };
+
+        this.system.tatics.forEach(tatic => {
+            this.fullPrice.value += (tatic.system.info.price.value * tatic.system.quantity);
+        });
     }
 
     /* -------------------------------------------- */
@@ -215,7 +260,7 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
     /**
    * @inheritdoc
    */
-    toDragData() { 
+    toDragData() {
         return {
             type: "ldnd5e.unit",
             uuid: this.uuid

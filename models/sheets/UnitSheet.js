@@ -17,14 +17,17 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
     },
     viewPermission: CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER,
     actions: {
-      removeTatic: this.#removeTatic,
-      showConfiguration: this.#showConfiguration,
-      showDescription: this.#showDescription,
-      editDescription: this.#editDescription,
-      showTatic: this.#showTatic,
-      useTatic: this.#useTatic,
-      roll: this.#roll,
-      toggleTraining: this.#toggleTraining
+      removeTatic: UnitSheet.#removeTatic,
+      showConfiguration: UnitSheet.#showConfiguration,
+      showDescription: UnitSheet.#showDescription,
+      editDescription: UnitSheet.#editDescription,
+      changeProf: UnitSheet.#changeProf,
+      showTatic: UnitSheet.#showTatic,
+      useTatic: UnitSheet.#useTatic,
+      roll: UnitSheet.#roll,
+      toggleTraining: UnitSheet.#toggleTraining,
+      decrease: UnitSheet.#decrease,
+      increase: UnitSheet.#increase
     },
     form: {
       submitOnChange: true,
@@ -47,9 +50,22 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
   /* -------------------------------------------- */
 
   /**
-   * The chosen activity.
-   * @type {Activity|null}
-   */
+  * A map of proficiency level labels.
+  * @type {Object|null}
+  */
+  get profLevelLabel() {
+    return {
+      0: 'none',
+      1: 'low',
+      2: 'medium',
+      3: 'high'
+    }
+  }
+
+  /**
+  * A flag indicating if the actor is a medical unit.
+  * @type {Boolean|null}
+  */
   get isMedical() {
     return this.actor.system.info.type === unitData.uTypes.medical;
   }
@@ -102,20 +118,16 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
      * @param {Event} event  Triggering event.
      * @protected
      */
-  _onChangeInputDelta(event) {
+  async _onChangeInputDelta(event) {
     const input = event.target;
     const target = this.actor.items.get(input.closest("[data-item-id]")?.dataset.itemId) ?? this.actor;
+
     const { activityId } = input.closest("[data-activity-id]")?.dataset ?? {};
-    const activity = target?.system.activities?.get(activityId);
+    const activity = (target.type !== 'ldnd5e.tatic' ? target.system.activities.get(activityId) : null);
+
     const result = dnd5e.utils.parseInputDelta(input, activity ?? target);
     if (result !== undefined) {
-      // Special case handling for Item uses.
-      if (input.dataset.name === "system.uses.value") {
-        target.update({ "system.uses.spent": target.system.uses.max - result });
-      } else if (activity && (input.dataset.name === "uses.value")) {
-        target.updateActivity(activityId, { "uses.spent": activity.uses.max - result });
-      }
-      else target.update({ [input.dataset.name]: result });
+      await target.update({ [input.dataset.name]: result });
     }
   }
 
@@ -132,6 +144,7 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
     Object.assign(context, {
       actor: this.actor,
       system: this.actor.system,
+      fullPrice: this.actor.system.fullPrice,
       hasCompany: !!this.actor.system.info.company,
       company: this.actor.system.info.company || null,
       hasCommander: !!this.actor.system.info.company?.system.info.commander,
@@ -143,7 +156,11 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
       editDescription: this.actor.getFlag("ldnd5e", "editingDescription") || false,
     });
 
+    // Prepare the actor's unit types.
     this._prepareUTypes(context);
+
+    // Prepare the actor's unit proficiencies.
+    this._prepareUProf(context);
 
     // Prepare the actor's category.
     this._prepareCategories(context);
@@ -223,6 +240,27 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
     }
 
     context.uTypes = uTypes;
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+ * Prepare actor unit proficiencies for display.
+ * @param {ApplicationRenderContext} context  Context being prepared.
+ * @returns {object}
+ * @protected
+ */
+  _prepareUProf(context) {
+    const uProf = {};
+
+    Object.entries(this.actor.system.prof).forEach(([key, value]) => {
+      uProf[key] = {
+        value: this.profLevelLabel[value],
+        label: `${game.i18n.localize(`ldnd5e.uProf.${key}`)} (${game.i18n.localize(`ldnd5e.uProfLevel.${this.profLevelLabel[value]}`)})`
+      };
+    });
+
+    context.uProf = uProf;
   }
 
   /* -------------------------------------------- */
@@ -373,6 +411,23 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
   /* -------------------------------------------- */
 
   /**
+   * Toggles the unit's proficiency.
+   * @this {UnitSheet}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+  static async #changeProf(event, target) {
+    const key = target.dataset.prof;
+
+    this.actor.system.prof[key] = (this.actor.system.prof[key] == unitData.uProfLevel.high ?
+      unitData.uProfLevel.none : this.actor.system.prof[key] + 1);
+
+    await this.actor.update({ [`system.prof`]: this.actor.system.prof });
+  }
+
+  /* -------------------------------------------- */
+
+  /**
    * Opens the unit's description.
    * @this {UnitSheet}
    * @param {PointerEvent} event  The originating click event.
@@ -408,7 +463,7 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
 
   /**
    * Roll any check or saving throw fo the company.
-   * @this {CompanySheet}
+   * @this {UnitSheet}
    * @param {PointerEvent} event  The originating click event.
    * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
    */
@@ -433,7 +488,7 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
 
   /**
    * Roll any check or saving throw fo the company.
-   * @this {CompanySheet}
+   * @this {UnitSheet}
    * @param {PointerEvent} event  The originating click event.
    * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
    */
@@ -442,7 +497,47 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
     if (!taticId) return;
 
     const tatic = this.actor.items.get(taticId);
-    await tatic.update({ "system.trainning": !tatic.system.trainning });
+    await tatic.update({
+      ["system.trainning"]: !tatic.system.trainning,
+      ["system.quantity"]: 1                        
+    });
+    await tatic.update();
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Decrease an unit property value.
+   * @this {UnitSheet}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+  static async #decrease(event, target) {
+    const property = target.dataset.property;
+    const taticId = target.closest(".tatic")?.dataset.itemId;
+    if (!taticId) return;
+
+    const tatic = this.actor.items.get(taticId);
+    const value = foundry.utils.getProperty(tatic, property);
+    await tatic.update({ [property]: value - 1 });
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Increase an unit property value.
+   * @this {UnitSheet}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+  static async #increase(event, target) {
+    const property = target.dataset.property;
+    const taticId = target.closest(".tatic")?.dataset.itemId;
+    if (!taticId) return;
+
+    const tatic = this.actor.items.get(taticId);
+    const value = foundry.utils.getProperty(tatic, property);
+    await tatic.update({ [property]: value + 1 });
   }
 
   /* -------------------------------------------- */

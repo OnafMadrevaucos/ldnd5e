@@ -29,10 +29,10 @@
             <div class="unit-price card flexrow" data-tooltip="ldnd5e.unit.price">
                 <span><i class="currency gp"></i></span>
                 {{#if editable}}
-                <input type="text" class="uninput" name="system.info.price" value="{{ system.info.price }}"
+                <input type="text" class="uninput" name="system.info.price.value" value="{{ system.info.price.value }}"
                     placeholder="0">
                 {{else}}
-                <span class="price">{{ system.info.price }}</span>
+                <span class="price">{{ system.fullPrice.value }}</span>
                 {{/if}}
             </div>
 
@@ -182,7 +182,7 @@
                             <div class="item-detail item-controls always-visible">
                                 <button type="button"
                                     class="config-button item-control  item-action unbutton trainning{{#if tatic.system.trainning}} active{{/if}}"
-                                    data-action="toggleTraining" data-tooltip="ldnd5e.unit.isTrainning"
+                                    data-action="toggleTraining" data-tooltip="ldnd5e.unit.isTrainning" data-tooltip-direction="LEFT"
                                     aria-label="{{ localize 'ldnd5e.unit.isTrainning' }}">
                                     <i class="ra ra-archery-target" inert></i>
                                 </button>
@@ -200,6 +200,27 @@
                                 </button>
                             </div>
                         </div>
+                        {{#if tatic.system.trainning}}
+                        <div class="item-footer">
+                            <div class="item-detail item-quantity" data-column-id="quantity">
+                                <span class="quantity-label">
+                                    {{ localize 'ldnd5e.unit.trainningLoad' }}
+                                    <i class="ra ra-diamonds-card" inert></i>
+                                </span>
+                                <a class="adjustment-button always-interactive" data-action="decrease"
+                                    data-property="system.quantity">
+                                    <i class="fa-solid fa-minus" inert=""></i>
+                                </a>
+                                <input type="text" class="always-interactive" value="{{system.quantity}}" placeholder="0"
+                                    data-dtype="Number" data-name="system.quantity" inputmode="numeric"
+                                    pattern="[+=\-]?\d*" min="0" aria-label="Quantity">
+                                <a class="adjustment-button always-interactive" data-action="increase"
+                                    data-property="system.quantity">
+                                    <i class="fa-solid fa-plus" inert=""></i>
+                                </a>
+                            </div>
+                        </div>
+                        {{/if}}
                     </li>
                     {{/each}}
                 </ol>

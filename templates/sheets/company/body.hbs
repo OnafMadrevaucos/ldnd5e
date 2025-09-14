@@ -40,15 +40,16 @@
                     {{/each}}
                 </ul>
 
-                <div class="stamina" data-tooltip="{{localize "ldnd5e.company.stamina"}}">
+                <div class="stamina" data-tooltip="{{localize " ldnd5e.company.stamina"}}">
                     <div class="stamina-label roboto-upper">
                         <i class="fa-solid fa-bolt"></i>
                         <span class="value">{{system.attributes.stamina.value}}</span>
                         <span class="separator">/</span>
                         <span class="max">{{system.attributes.stamina.max}}</span>
                     </div>
-                    <div class="stamina-bar" role="meter" aria-label="Progress to next Level" aria-valuemin="0"
-                        aria-valuenow="0" aria-valuemax="{{system.attributes.stamina.max}}"
+                    <div class="progress-bar stamina-bar" role="meter" aria-valuemin="0"
+                        aria-valuenow="{{system.attributes.stamina.value}}"
+                        aria-valuemax="{{system.attributes.stamina.max}}"
                         aria-valuetext="{{system.attributes.stamina.pct}}%"
                         style="--bar-percentage: {{system.attributes.stamina.pct}}%;"></div>
                 </div>
@@ -73,6 +74,55 @@
                 </ul>
 
             </filigree-box>
+
+            <filigree-box class="accounting flexcol">
+                <h3>
+                    <i class="fas fa-coins" inert></i>
+                    <span class="roboto-upper">{{ localize "ldnd5e.company.accounting" }}</span>
+                </h3>
+
+                <div class="form-group units">
+                    <label>{{localize 'ldnd5e.company.cost.units'}}</label>
+                    <div class="form-fields">
+                        <span class="denomination"><i class="currency gp"></i></span>
+                        <span class="price">{{cost.units}}</span>
+                    </div>
+                </div>
+
+                <div class="form-group tatics">
+                    <label>{{localize 'ldnd5e.company.cost.tatics'}}</label>
+                    <div class="form-fields">
+                        <span class="denomination"><i class="currency gp"></i></span>
+                        <span class="price">{{cost.tatics}}</span>
+                    </div>
+                </div>
+
+                <div class="form-group total">
+                    <label>{{localize 'ldnd5e.company.cost.total'}}</label>
+                    <div class="form-fields">
+                        <span class="denomination"><i class="currency gp"></i></span>
+                        <span class="price">{{cost.total}}</span>
+                    </div>
+                </div>
+
+                <div class="trainning" data-tooltip="{{localize 'ldnd5e.unit.trainningLoad'}}">
+
+                    <div class="trainning-label roboto-upper">
+                        <i class="ra ra-diamonds-card"></i>
+                        <span class="value">{{system.attributes.trainning.value}}</span>
+                        <span class="separator">/</span>
+                        <span class="max">{{system.attributes.trainning.max}}</span>
+                    </div>
+                    <div class="trainning-load-bar progress-bar" role="meter" aria-valuemin="0"
+                        aria-valuenow="{{system.attributes.trainning.value}}"
+                        aria-valuemax="{{system.attributes.trainning.max}}"
+                        aria-valuetext="{{system.attributes.trainning.pct}}%"
+                        style="--bar-percentage: {{system.attributes.trainning.pct}}%;"></div>
+
+                </div>
+
+            </filigree-box>
+
         </section>
 
         <div class="units">
@@ -119,8 +169,9 @@
                                     {{unit.system.abilities.wll.sign}}{{unit.system.abilities.wll.mod}}
                                 </div>
                                 <div class="item-detail item-controls always-visible">
-                                    <button type="button" class="config-button unbutton item-control item-action always-interactive" data-action="removeUnit"
-                                        data-tooltip="ldnd5e.company.removeUnit"
+                                    <button type="button"
+                                        class="config-button unbutton item-control item-action always-interactive"
+                                        data-action="removeUnit" data-tooltip="ldnd5e.company.removeUnit"
                                         aria-label="{{ localize 'ldnd5e.company.removeUnit' }}">
                                         <i class="fas fa-trash" inert></i>
                                     </button>
@@ -174,8 +225,9 @@
                                     {{unit.system.abilities.wll.sign}}{{unit.system.abilities.wll.mod}}
                                 </div>
                                 <div class="item-detail item-controls always-visible">
-                                    <button type="button" class="config-button unbutton item-control item-action always-interactive" data-action="removeUnit"
-                                        data-tooltip="ldnd5e.company.removeUnit"
+                                    <button type="button"
+                                        class="config-button unbutton item-control item-action always-interactive"
+                                        data-action="removeUnit" data-tooltip="ldnd5e.company.removeUnit"
                                         aria-label="{{ localize 'ldnd5e.company.removeUnit' }}">
                                         <i class="fas fa-trash" inert></i>
                                     </button>
@@ -229,8 +281,9 @@
                                     {{unit.system.abilities.wll.sign}}{{unit.system.abilities.wll.mod}}
                                 </div>
                                 <div class="item-detail item-controls always-visible">
-                                    <button type="button" class="config-button unbutton item-control item-action always-interactive" data-action="removeUnit"
-                                        data-tooltip="ldnd5e.company.removeUnit"
+                                    <button type="button"
+                                        class="config-button unbutton item-control item-action always-interactive"
+                                        data-action="removeUnit" data-tooltip="ldnd5e.company.removeUnit"
                                         aria-label="{{ localize 'ldnd5e.company.removeUnit' }}">
                                         <i class="fas fa-trash" inert></i>
                                     </button>
@@ -245,7 +298,7 @@
             <section class="items-list units-list" data-unit-list="medical">
                 <div class="items-section card">
                     <div class="items-header header">
-                        <h3 class="item-name">{{localize 'ldnd5e.uTypes.medical'}}</h3>                        
+                        <h3 class="item-name">{{localize 'ldnd5e.uTypes.medical'}}</h3>
                     </div>
 
                     <ol class="item-list unlist">
@@ -262,10 +315,11 @@
                                     <div class="name name-stacked">
                                         <span class="title">{{unit.name}}</span>
                                     </div>
-                                </div>                                
+                                </div>
                                 <div class="item-detail item-controls always-visible">
-                                    <button type="button" class="config-button unbutton item-control item-action always-interactive" data-action="removeUnit"
-                                        data-tooltip="ldnd5e.company.removeUnit"
+                                    <button type="button"
+                                        class="config-button unbutton item-control item-action always-interactive"
+                                        data-action="removeUnit" data-tooltip="ldnd5e.company.removeUnit"
                                         aria-label="{{ localize 'ldnd5e.company.removeUnit' }}">
                                         <i class="fas fa-trash" inert></i>
                                     </button>

@@ -13,7 +13,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         classes: ["dnd5e2", "sheet", "actor", "ldnd5e", "company", "standard-form", "npc", "interactable"],
         position: {
             width: 720,
-            height: 680
+            height: 750
         },
         viewPermission: CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER,
         actions: {
@@ -133,6 +133,9 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         // Prepare the actor's combat skills.
         context.skills = this.actor.system.combat;
 
+        // Prepare the company's costs.
+        this._prepareCosts(context);
+
         // Prepare the company's currency.
         this._prepareCurrency(context);
 
@@ -146,11 +149,13 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
 
         switch (partId) {
             case "header": await this._prepareHeaderContext(context, options); break;
-            case "body": break;
+            case "body": this._prepareBodyContext(context, options); break;
         }
 
         return context;
     }
+
+    /* -------------------------------------------- */
 
     /**
    * Prepare rendering context for the header.
@@ -161,6 +166,19 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
    */
     async _prepareHeaderContext(context, options) {
         context.portrait = this._preparePortrait(context);
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Prepare rendering context for the body.
+   * @param {ApplicationRenderContext} context  Context being prepared.
+   * @param {HandlebarsRenderOptions} options   Options which configure application rendering behavior.
+   * @returns {ApplicationRenderContext}
+   * @protected
+   */
+    async _prepareBodyContext(context, options) {
+        this._prepareAttributes(context);
     }
 
     /* -------------------------------------------- */
@@ -181,6 +199,36 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
             // TODO: Not sure the best way to update the parent texture from this sheet if this is a token actor.
             path: showTokenPortrait ? this.actor.isToken ? "" : "prototypeToken.texture.src" : "img"
         };
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Prepare actor cost for display.
+   * @param {ApplicationRenderContext} context  Context being prepared.
+   * @protected
+   */
+    _prepareCosts(context) {
+        const cost = {
+            units: 0,
+            tatics: 0,
+            total: 0
+        };
+
+        for(const unitId of this.actor.system.units) {
+            const unit = game.actors.get(unitId);
+            if(!unit) continue;
+
+            cost.units += unit.system.info.price.value;  
+            
+            for(const tatic of unit.items) {
+                cost.tatics += (tatic.system.info.price.value * tatic.system.quantity);
+            }
+        }    
+        
+        cost.total = cost.units + cost.tatics;
+
+        context.cost = cost;
     }
 
     /* -------------------------------------------- */
@@ -230,19 +278,27 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
    * @protected
    */
     _prepareAttributes(context) {
-        const data = this.system;
+        const data = this.actor.system;
+        const army = data.info.army;
 
-        let totalHp = 0;
+        data.attributes.trainning.max = 0;
 
         // Count the number of combat units.
-        for (const uId of this.units) {
+        for (const uId of this.actor.system.units) {
             const unit = game.actors.get(uId);
 
             // Ignore medical units, for it doesn't count as a combat unit.
             if (unit.system.info.type === unitData.uTypes.medical) continue;
 
-            totalHp += (unit.system.abilities.mrl.value + unit.system.abilities.wll.value);
+            const dsp = unit.system.combat.dsp;
+
+            data.attributes.trainning.max += (dsp.value + dsp.bonus);
         }
+
+        data.attributes.trainning.max += army.system.supplies.total;
+
+        data.attributes.trainning.value = Math.min(data.attributes.trainning.value, data.attributes.trainning.max);
+        data.attributes.trainning.pct = (data.attributes.trainning.value / data.attributes.trainning.max) * 100;
     }
 
     /* -------------------------------------------- */

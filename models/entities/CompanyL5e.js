@@ -70,9 +70,9 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
                     max: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 }),
                 }),
                 stamina: new fields.SchemaField({
-                    value: new fields.NumberField({ required: true, nullable: true, integer: true }),
+                    value: new fields.NumberField({ required: true, nullable: true, integer: true, initial: 0 }),
                     max: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 }),
-                }),
+                }),           
             }),
 
             combat: new fields.SchemaField({
@@ -112,7 +112,7 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
             heavy: 2,
             special: 1,
             medical: 1
-        }
+        }        
 
         this.system = {
             info: this.info,
@@ -193,6 +193,11 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
         let stamina = 0;
         let totalHP = 0;
 
+        data.attributes.trainning = {
+            value: 0,
+            max: 0
+        };
+
         // Count the number of combat units.
         for (const uId of this.units) {
             const unit = game.actors.get(uId);
@@ -210,7 +215,7 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
 
         data.attributes.hp.max = totalHP;
         data.attributes.hp.value = Math.min(data.attributes.hp.value, data.attributes.hp.max);
-        data.attributes.hp.pct = (data.attributes.hp.value / data.attributes.hp.max) * 100;
+        data.attributes.hp.pct = (data.attributes.hp.value / data.attributes.hp.max) * 100;           
     }
 
     /* -------------------------------------------- */

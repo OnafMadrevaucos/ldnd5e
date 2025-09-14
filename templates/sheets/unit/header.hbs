@@ -15,15 +15,17 @@
             {{!-- Category --}}
             <div class="left ac unit-category">
 
-                <div class="{{#if editable}}none-badge{{else}}{{system.info.category}}-badge{{/if}} badge" aria-label="{{localize (concat 'ldnd5e.categories.' system.info.category)}}">
+                <div class="{{#if editable}}none-badge{{else}}{{system.info.category}}-badge{{/if}} badge"
+                    aria-label="{{localize (concat 'ldnd5e.categories.' system.info.category)}}">
                     {{#if editable}}
                     <button type="button" class="config-button unbutton" data-action="showConfiguration"
-                            data-config="category" data-tooltip="ldnd5e.unit.configureCategory"
-                            aria-label="{{ localize 'ldnd5e.unit.configureCategory' }}">
+                        data-config="category" data-tooltip="ldnd5e.unit.configureCategory"
+                        aria-label="{{ localize 'ldnd5e.unit.configureCategory' }}">
                         <i class="fas fa-cog" inert></i>
                     </button>
                     {{else}}
-                    <div data-attribution="system.info.category" data-attribution-caption="{{localize (concat 'ldnd5e.categories.' system.info.category)}}"
+                    <div data-attribution="system.info.category"
+                        data-attribution-caption="{{localize (concat 'ldnd5e.categories.' system.info.category)}}"
                         data-tooltip-direction="DOWN">
                     </div>
                     {{/if}}
@@ -32,12 +34,39 @@
             </div>
 
         </div>
+
     </div>
 
     <div class="bottom">
 
-        {{!-- Name & Info --}}
+        {{!-- Prof, Name & Info --}}
         <div class="center">
+
+            {{!-- Proficiencies --}}
+            <ul class="proficiencies unlist flexrow">
+
+                <li class="proficiency-item" data-tooltip="{{uProf.rea.label}}">
+                    <button class="proficiency rea {{uProf.rea.value}}"
+                        data-action="changeProf" data-prof="rea" data-level="{{system.prof.rea}}">
+                        <i class="ra ra-arrow-cluster"></i>
+                    </button>
+                </li>
+
+                <li class="proficiency-item" data-tooltip="{{uProf.res.label}}">
+                    <button class="proficiency res {{uProf.res.value}}"
+                        data-action="changeProf" data-prof="res" data-level="{{system.prof.res}}">
+                        <i class="ra ra-sword"></i>
+                    </button>
+                </li>
+
+                <li class="proficiency-item" data-tooltip="{{uProf.van.label}}">
+                    <button class="proficiency van {{uProf.van.value}}"
+                        data-action="changeProf" data-prof="van" data-level="{{system.prof.van}}">
+                        <i class="ra ra-broken-shield"></i>
+                    </button>
+                </li>
+
+            </ul>
 
             {{!-- Name --}}
             {{#if editable}}
@@ -65,14 +94,14 @@
                 {{!-- Company --}}
                 {{#if hasCompany}}
                 <li class="unit-company">
-                    <span>{{ company.name }}</span>                    
+                    <span>{{ company.name }}</span>
                 </li>
                 {{/if}}
 
                 {{!-- Commander --}}
                 {{#if hasCommander}}
                 <li class="unit-commander">
-                    <span>{{ commander.name }}</span>                    
+                    <span>{{ commander.name }}</span>
                 </li>
                 {{/if}}
 

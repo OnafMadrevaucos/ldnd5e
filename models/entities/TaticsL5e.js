@@ -14,10 +14,12 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
         return {
             // Nome da Tática.
             name: new fields.StringField({ required: true, label: "ldnd5e.tatics.name" }),
+            // Intensidade de Treinamento da Tática (número de cartas dessa Tática no baralho).
+            quantity: new fields.NumberField({ required: true, nullable: false, initial: 1, min: 0 }),
             info: new fields.SchemaField({
                 flavor: new fields.StringField({ textSearch: true, initial: "" }),
                 description: new fields.StringField({ textSearch: true, initial: "" }),
-                // Unidade que a Tática pertence.
+                // Unidade a que a Tática pertence.
                 unit: new fields.ForeignDocumentField(getDocumentClass("Actor"), {
                     textSearch: true, label: "TYPES.Actor.ldnd5e.unit",
                 }),
@@ -61,6 +63,7 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
     prepareBaseData() {
         this.system = {
             info: this.info,
+            quantity: this.quantity,
             trainning: this.trainning,
             attributes: this.attributes,
             activities: this.activities,
@@ -74,7 +77,7 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
         this.labels = {};
 
         // Main recoveries only can be used on the Preparation Phase.
-        if(this.system.mainRecovery) {
+        if (this.system.mainRecovery) {
             this.system.attributes.surp = false;
             this.system.attributes.reac = false;
             this.system.attributes.pers = false;
@@ -127,7 +130,7 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
         data.flags = { ...this.flags };
         data.name = this.name;
         return data;
-    }    
+    }
 
     /* -------------------------------------------- */
     /*  Dice Roll Functions                         */

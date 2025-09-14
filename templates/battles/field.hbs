@@ -4,17 +4,21 @@
         <div class="top field" data-side="top">
 
             <div class="row-numbers">
-                <span class="row-number" data-row="3">3 <i class="ra ra-arrow-cluster" inert></i></span>
-                <span class="row-number" data-row="2">2 <i class="ra ra-sword" inert></i></span>
-                <span class="row-number" data-row="1">1 <i class="ra ra-broken-shield" inert></i></span>
+                <span class="row-number" data-row="3" data-tooltip="ldnd5e.uProf.rea">3 <i class="ra ra-arrow-cluster"
+                        inert></i></span>
+                <span class="row-number" data-row="2" data-tooltip="ldnd5e.uProf.res">2 <i class="ra ra-sword"
+                        inert></i></span>
+                <span class="row-number" data-row="1" data-tooltip="ldnd5e.uProf.van">1 <i class="ra ra-broken-shield"
+                        inert></i></span>
             </div>
 
             <div class="rows">
                 <div class="top row" data-row="3" data-drag-counter="0">
                     <ol class="units-list unlist">
                         {{#each rowUnits.top.rows.2.units}}
-                        <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}" data-item-name="{{name}}" data-drag-type="move">
-                            <div class="item-row draggable" draggable="true">
+                        <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}"
+                            data-item-name="{{name}}" data-drag-type="move">
+                            <div class="item-row {{#unless @root.isViewer}} draggable{{/unless}}" draggable="true">
                                 <img class="row-unit" src="{{img}}" alt="{{name}}">
                             </div>
                         </li>
@@ -25,8 +29,9 @@
                 <div class="center row" data-row="2" data-drag-counter="0">
                     <ol class="units-list unlist">
                         {{#each rowUnits.top.rows.1.units}}
-                        <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}" data-item-name="{{name}}" data-drag-type="move">
-                            <div class="item-row draggable" draggable="true">
+                        <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}"
+                            data-item-name="{{name}}" data-drag-type="move">
+                            <div class="item-row {{#unless @root.isViewer}} draggable{{/unless}}" draggable="true">
                                 <img class="row-unit" src="{{img}}" alt="{{name}}">
                             </div>
                         </li>
@@ -37,8 +42,9 @@
                 <div class="bottom row" data-row="1" data-drag-counter="0">
                     <ol class="units-list unlist">
                         {{#each rowUnits.top.rows.0.units}}
-                        <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}" data-unit-name="{{name}}" data-drag-type="move">
-                            <div class="item-row draggable" draggable="true">
+                        <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}"
+                            data-unit-name="{{name}}" data-drag-type="move">
+                            <div class="item-row {{#unless @root.isViewer}} draggable{{/unless}}" draggable="true">
                                 <img class="row-unit" src="{{img}}" alt="{{name}}">
                             </div>
                         </li>
@@ -54,17 +60,18 @@
         <div class="bottom field" data-side="bottom">
 
             <div class="row-numbers">
-                <span class="row-number" data-row="1">1 <i class="ra ra-broken-shield" inert></i></span>
-                <span class="row-number" data-row="2">2 <i class="ra ra-sword" inert></i></span>
-                <span class="row-number" data-row="3">3 <i class="ra ra-arrow-cluster" inert></i></span>
+                <span class="row-number" data-row="1" data-tooltip="ldnd5e.uProf.van">1 <i class="ra ra-broken-shield" inert></i></span>
+                <span class="row-number" data-row="2" data-tooltip="ldnd5e.uProf.res">2 <i class="ra ra-sword" inert></i></span>
+                <span class="row-number" data-row="3" data-tooltip="ldnd5e.uProf.rea">3 <i class="ra ra-arrow-cluster" inert></i></span>
             </div>
 
             <div class="rows">
                 <div class="top row" data-row="1" data-drag-counter="0">
                     <ol class="units-list unlist">
                         {{#each rowUnits.bottom.rows.0.units}}
-                        <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}" data-item-name="{{name}}" data-drag-type="move">
-                            <div class="item-row draggable" draggable="true">
+                        <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}"
+                            data-item-name="{{name}}" data-drag-type="move">
+                            <div class="item-row {{#unless @root.isViewer}} draggable{{/unless}}" draggable="true">
                                 <img class="row-unit" src="{{img}}" alt="{{name}}">
                             </div>
                         </li>
@@ -75,8 +82,9 @@
                 <div class="center row" data-row="2" data-drag-counter="0">
                     <ol class="units-list unlist">
                         {{#each rowUnits.bottom.rows.1.units}}
-                        <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}" data-item-name="{{name}}" data-drag-type="move">
-                            <div class="item-row draggable" draggable="true">
+                        <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}"
+                            data-item-name="{{name}}" data-drag-type="move">
+                            <div class="item-row {{#unless @root.isViewer}} draggable{{/unless}}" draggable="true">
                                 <img class="row-unit" src="{{img}}" alt="{{name}}">
                             </div>
                         </li>
@@ -87,8 +95,9 @@
                 <div class="bottom row" data-row="3" data-drag-counter="0">
                     <ol class="units-list unlist">
                         {{#each rowUnits.bottom.rows.2.units}}
-                        <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}" data-item-name="{{name}}" data-drag-type="move">
-                            <div class="item-row draggable" draggable="true">
+                        <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}"
+                            data-item-name="{{name}}" data-drag-type="move">
+                            <div class="item-row {{#unless @root.isViewer}} draggable{{/unless}}" draggable="true">
                                 <img class="row-unit" src="{{img}}" alt="{{name}}">
                             </div>
                         </li>
@@ -100,6 +109,7 @@
 
         <div class="sidebar">
 
+            {{#unless isViewer}}
             <div class="deck-controls">
                 <button class="deck-button" data-action="toggleDeckControls">
                     <img src="{{icons.deck}}" alt="{{localize 'ldnd5e.battle.openDeck'}}">
@@ -108,6 +118,7 @@
                     <img src="{{icons.events}}" alt="{{localize 'ldnd5e.battle.openEvents'}}">
                 </button>
             </div>
+            {{/unless}}
 
             {{#with score}}
             <div class="scoreboard">

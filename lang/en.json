@@ -5,8 +5,9 @@
         "unit": "Unit"
     },
     "TYPES.Item.ldnd5e": {
-        "tatic": "Tática"
+        "tatic": "Tatic"
     },
+
     "ldnd5e": {
         "title": "Lemurian D&D 5º Ed. Control",
         "titles": {
@@ -102,6 +103,17 @@
             "enc": "Encourage",
             "def": "Defend"
         },
+        "uProf": {
+            "van": "Vanguard",
+            "res": "Reserve",
+            "rea": "Rear"
+        },
+        "uProfLevel": {
+            "none": "None",
+            "low": "Low",
+            "medium": "Medium",
+            "high": "High"
+        },
         "categories": {
             "arcanists": "Arcanists",
             "devotees": "Devotees",
@@ -173,7 +185,13 @@
             "restResult": "{name} rested successfully, restoring {stamina} points of stamina.{restoration}",
             "hasRestoration": " It's Medical Unit restored {total} points of moral losted in the previous battle.",
             "fatigueRest": "The company always restore its stamina level to max after completing a rest.",
-            "noRestTatics": "This company's medical unit has no valid Restauration Tatics. Because of that the company is unable to restore any of its lost units from the last battle."
+            "noRestTatics": "This company's medical unit has no valid Restauration Tatics. Because of that the company is unable to restore any of its lost units from the last battle.",
+            "accounting": "Accounting",
+            "cost": {
+                "total": "Total",
+                "units": "Units",
+                "tatics": "Tatics"
+            }
         },
         "unit": {
             "category": "Category",
@@ -188,6 +206,7 @@
             "editTatic": "Edit Tatic",
             "removeTatic": "Remove Tatic",
             "isTrainning": "Is Training?",
+            "trainningLoad": "Training Load",            
             "delete": "Delete Unit"
         },
         "tatics": {

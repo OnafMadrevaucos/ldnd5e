@@ -280,6 +280,16 @@ const unitData = {
    },
 
    /**
+   * Defines the Unit's Proficiency Level constants.      
+   */
+   uProfLevel: {
+      none: 0,
+      low: 1,
+      medium: 2,
+      high: 3
+   },
+
+   /**
    * Defines the Unit Categories constants.      
    */
    categories: {
@@ -493,6 +503,12 @@ const i18nStrings = {
       hasRestoration: "ldnd5e.company.hasRestoration",
       fatigueRest: "ldnd5e.company.fatigueRest",
       noRestTatics: "ldnd5e.company.noRestTatics",
+      accounting: "ldnd5e.company.accounting",
+      cost: {
+         total: "ldnd5e.company.cost.total",
+         units: "ldnd5e.company.cost.units",
+         tatics: "ldnd5e.company.cost.tatics"
+      }
    },
 
    unit: {
@@ -508,6 +524,7 @@ const i18nStrings = {
       editTatic: "ldnd5e.unit.editTatic",
       removeTatic: "ldnd5e.unit.removeTatic",
       isTrainning: "ldnd5e.unit.isTrainning",
+      trainningLoad: "ldnd5e.unit.trainningLoad",      
       delete: "ldnd5e.unit.delete"
    },
 
@@ -553,6 +570,17 @@ const i18nStrings = {
       dsp: "ldnd5e.uCombat.dsp",
       enc: "ldnd5e.uCombat.enc",
       def: "ldnd5e.uCombat.def",
+   },
+   uProf: {
+      van: "ldnd5e.uProf.van",
+      res: "ldnd5e.uProf.res",
+      rea: "ldnd5e.uProf.rea",
+   },
+   uProfLevel: {
+      none: "ldnd5e.uProfLevel.none",
+      low: "ldnd5e.uProfLevel.low",
+      medium: "ldnd5e.uProfLevel.medium",
+      high: "ldnd5e.uProfLevel.high",
    },
 
    battle: {
