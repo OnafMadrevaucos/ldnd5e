@@ -40,10 +40,15 @@
                     {{/each}}
                 </ul>
 
-                <div class="stamina" data-tooltip="{{localize " ldnd5e.company.stamina"}}">
+                <div class="stamina" data-tooltip="{{localize "ldnd5e.company.stamina"}}">
                     <div class="stamina-label roboto-upper">
                         <i class="fa-solid fa-bolt"></i>
+                        {{#if editable}}
+                        <input type="text" class="uninput" name="system.attributes.stamina.value"
+                            value="{{system.attributes.stamina.value}}" min="0" placeholder="0" data-dtype="Number">
+                        {{else}}
                         <span class="value">{{system.attributes.stamina.value}}</span>
+                        {{/if}}
                         <span class="separator">/</span>
                         <span class="max">{{system.attributes.stamina.max}}</span>
                     </div>

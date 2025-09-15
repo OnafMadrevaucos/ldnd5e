@@ -599,6 +599,7 @@ const i18nStrings = {
       closeDeck: "ldnd5e.battle.closeDeck",
       hand: "ldnd5e.battle.hand",
       drawHand: "ldnd5e.battle.drawHand",
+      shuffleDeck: "ldnd5e.battle.shuffleDeck",
       extraDecks: {
          full: "ldnd5e.battle.extraDecks.full",
          discarded: "ldnd5e.battle.extraDecks.discarded",
@@ -667,6 +668,7 @@ const i18nStrings = {
       invalidActorOnBattle: "ldnd5e.messages.invalidActorOnBattle",
 
       emptyBattleData: "ldnd5e.messages.emptyBattleData",
+      fullHand: "ldnd5e.messages.fullHand",
    },
 
    settings: {

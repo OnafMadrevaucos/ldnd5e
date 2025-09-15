@@ -313,6 +313,65 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
   }
 
   /* -------------------------------------------- */
+
+  /**
+ * Prepare actor tatics' items.
+ * @this {UnitSheet}
+ * @param {TaticsL5e} tatic  The updated Tatic.
+ * @async
+ * @protected
+ */
+  async _updateDeckTatic(tatic) {
+    const company = this.actor.system.info.company;
+    // If this unit is part of a company.
+    if(company) {
+      const commander = company.system.info.commander;
+      if(!commander) return;
+
+      const deck = commander.getFlag("ldnd5e", "deck");
+      
+      if(tatic.system.trainning) {
+        deck.piles.tatics.push(tatic.id);
+      } else {
+        deck.piles.tatics = deck.piles.tatics.filter(id => id != tatic.id);
+      }
+
+      await commander.setFlag("ldnd5e", "deck", deck);
+    }
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+ * Prepare actor tatics' items.
+ * @this {UnitSheet}
+ * @param {TaticsL5e} tatic  The updated Tatic.
+ * @param {number} quantity  New train load of a Tatic.
+ * @async
+ * @protected
+ */
+  async _updateDeckTaticQuantity(tatic, quantity) {
+    const company = this.actor.system.info.company;
+    // If this unit is part of a company.
+    if(company) {
+      const commander = company.system.info.commander;
+      if(!commander) return;
+
+      const deck = commander.getFlag("ldnd5e", "deck");
+
+      deck.hand.tatics = deck.hand.tatics.filter(id => id != tatic.id);
+      deck.piles.tatics = deck.piles.tatics.filter(id => id != tatic.id);
+      deck.piles.discarded = deck.piles.discarded.filter(id => id != tatic.id);
+      
+      for(let i = 0; i < quantity; i++) {
+        deck.piles.tatics.push(tatic.id);
+      }
+
+      await commander.setFlag("ldnd5e", "deck", deck);
+    }
+  }
+
+  /* -------------------------------------------- */
   /*  Events Listeners                            */
   /* -------------------------------------------- */
 
@@ -501,7 +560,8 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
       ["system.trainning"]: !tatic.system.trainning,
       ["system.quantity"]: 1                        
     });
-    await tatic.update();
+
+    this._updateDeckTatic(tatic);
   }
 
   /* -------------------------------------------- */
@@ -519,7 +579,13 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
 
     const tatic = this.actor.items.get(taticId);
     const value = foundry.utils.getProperty(tatic, property);
+
+    // Prevent decreasing the quantity to 0.
+    if(value - 1  == 0) return;
+
     await tatic.update({ [property]: value - 1 });
+
+    this._updateDeckTaticQuantity(tatic, tatic.system.quantity);
   }
 
   /* -------------------------------------------- */
@@ -538,6 +604,8 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
     const tatic = this.actor.items.get(taticId);
     const value = foundry.utils.getProperty(tatic, property);
     await tatic.update({ [property]: value + 1 });
+
+    this._updateDeckTaticQuantity(tatic, tatic.system.quantity);
   }
 
   /* -------------------------------------------- */

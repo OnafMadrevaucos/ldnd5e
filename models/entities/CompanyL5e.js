@@ -70,8 +70,8 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
                     max: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 }),
                 }),
                 stamina: new fields.SchemaField({
-                    value: new fields.NumberField({ required: true, nullable: true, integer: true, initial: 0 }),
-                    max: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 }),
+                    value: new fields.NumberField({ required: true, nullable: true, integer: true, min: 0, initial: 0 }),
+                    max: new fields.NumberField({ required: true, nullable: false, integer: true, min: 0, initial: 0 }),
                 }),           
             }),
 

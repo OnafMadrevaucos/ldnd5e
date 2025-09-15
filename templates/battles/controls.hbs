@@ -29,10 +29,22 @@
                     <img class="svg" src="{{icons.deckTiny}}">
                     <span>{{localize 'ldnd5e.battle.hand'}}</span>
                 </h3>
-                <div class="cards-counter">{{hand.counter}} <i class="ra ra-diamonds-card"></i></div>
-                <div class="cards-section">
+                <div class="cards-counter">{{deck.counter.hand}} <i class="ra ra-diamonds-card"></i></div>
+                <div class="deck-section">
                     <ol class="cards-list unlist">
-
+                        {{#each deck.list.hand as |tatic|}}
+                        <li class="tatic-card" data-tatic-id="{{tatic.id}}" data-unit-id="{{tatic.unitId}}">
+                            <div class="card-row">
+                                <img class="gold-icon {{#if tatic.img.svg}} svg{{/if}}" src="{{tatic.img.src}}">
+                                <a class="card-link rollable" data-action="useTatic" data-type="tatic">
+                                    <span class="name">{{tatic.name}}</span>
+                                </a>
+                                <a class="card-control" data-action="discardTatic">
+                                    <i class="fa-solid fa-arrow-turn-down"></i>
+                                </a>
+                            </div>
+                        </li>
+                        {{/each}}
                     </ol>
                 </div>
                 <div class="hand-actions">
@@ -125,25 +137,70 @@
 
     <div class="extra-decks-viewer">
 
-        <div class="cards-section full hidden">
+        <div class="deck-section full hidden">
             <h4 class="title">{{localize 'ldnd5e.battle.extraDecks.full'}}</h4>
-            <ol class="cards-list unlist">
-            </ol>
-            <div class="cards-counter">{{piles.draw}} <i class="ra ra-diamonds-card"></i></div>
+            <div class="deck-container">
+                <div class="cards-counter">{{deck.counter.tatics}} <i class="ra ra-diamonds-card"></i></div>
+                <ol class="cards-list unlist">
+                    {{#each deck.list.piles.tatics as |tatic|}}
+                    <li class="tatic-card" data-tatic-id="{{tatic.id}}" data-unit-id="{{tatic.unitId}}">
+                        <div class="card-row">
+                            <img class="gold-icon {{#if tatic.img.svg}} svg{{/if}}" src="{{tatic.img.src}}">
+                            <a class="card-link rollable" data-action="showTatic">
+                                <span class="name">{{tatic.name}}</span>
+                            </a>
+                        </div>
+                    </li>
+                    {{/each}}
+                </ol>
+                <div class="deck-actions">
+                    <button class="shuffle-card" type="button" data-action="shuffleDeck" data-type="tatic">
+                        <i class="fas fa-shuffle"></i>
+                        {{localize 'ldnd5e.battle.shuffleDeck'}}
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <div class="cards-section discarded hidden">
+        <div class="deck-section discarded hidden">
             <h4 class="title">{{localize 'ldnd5e.battle.extraDecks.discarded'}}</h4>
-            <ol class="cards-list unlist">
-            </ol>
-            <div class="cards-counter">{{piles.discard}} <i class="ra ra-diamonds-card"></i></div>
+            <div class="deck-container">
+                <div class="cards-counter">{{deck.counter.discarded}} <i class="ra ra-diamonds-card"></i></div>
+                <ol class="cards-list unlist">
+                    {{#each deck.list.piles.discarded as |tatic|}}
+                    <li class="tatic-card" data-tatic-id="{{tatic.id}}" data-unit-id="{{tatic.unitId}}">
+                        <div class="card-row">
+                            <img class="gold-icon {{#if tatic.img.svg}} svg{{/if}}" src="{{tatic.img.src}}">
+                            <a class="card-link rollable" data-action="showTatic">
+                                <span class="name">{{tatic.name}}</span>
+                            </a>
+                            <a class="card-control" data-action="restoreTatic">
+                                <i class="fa-solid fa-arrow-turn-up"></i>
+                            </a>
+                        </div>
+                    </li>
+                    {{/each}}
+                </ol>
+            </div>
         </div>
 
-        <div class="cards-section assets hidden">
+        <div class="deck-section assets hidden">
             <h4 class="title">{{localize 'ldnd5e.battle.extraDecks.assets'}}</h4>
-            <ol class="cards-list unlist">
-            </ol>
-            <div class="cards-counter">{{piles.assets}} <i class="ra ra-diamonds-card"></i></div>
+            <div class="deck-container">
+                <div class="cards-counter">{{deck.counter.assets}} <i class="ra ra-diamonds-card"></i></div>
+                <ol class="cards-list unlist">
+                    {{#each deck.list.piles.assets as |tatic|}}
+                    <li class="tatic-card" data-tatic-id="{{tatic.id}}" data-unit-id="{{tatic.unitId}}">
+                        <div class="card-row">
+                            <img class="gold-icon {{#if tatic.img.svg}} svg{{/if}}" src="{{tatic.img.src}}">
+                            <a class="card-link rollable" data-action="showTatic">
+                                <span class="name">{{tatic.name}}</span>
+                            </a>
+                        </div>
+                    </li>
+                    {{/each}}
+                </ol>
+            </div>
         </div>
 
     </div>

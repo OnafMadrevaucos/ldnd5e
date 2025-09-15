@@ -250,6 +250,7 @@
             "closeDeck": "Fechar Baralho",
             "hand": "Táticas Disponíveis",
             "drawHand": "Comprar Cartas",
+            "shuffleDeck": "Embaralhar Cartas",
             "extraDecks": {
                 "full": "Pilha de Compra",
                 "discarded": "Pilha de Descarte",
@@ -304,7 +305,8 @@
             "noShieldEffect": "O Active Effect para Escudos de {actor} está com defeito. Active Effect foi recriado.",
             "noEffectErrors": "Nenhum Actor apresentou erros em seus Active Effects.",
             "invalidActorOnBattle": "{actor} não é um combatente válido e não pode ser adicionado ao campo de batalha.",
-            "emptyBattleData": "Impossível continuar. Os dados da Batalha estão vazios."
+            "emptyBattleData": "Impossível continuar. Os dados da Batalha estão vazios.",
+            "fullHand": "Você não pode comprar mais cartas porque sua mão está cheia."
         },
         "settings": {
             "hideFromGMName": "Esconder Controles de Efeitos do GM",

@@ -98,13 +98,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         const activity = target?.system.activities?.get(activityId);
         const result = dnd5e.utils.parseInputDelta(input, activity ?? target);
         if (result !== undefined) {
-            // Special case handling for Item uses.
-            if (input.dataset.name === "system.uses.value") {
-                target.update({ "system.uses.spent": target.system.uses.max - result });
-            } else if (activity && (input.dataset.name === "uses.value")) {
-                target.updateActivity(activityId, { "uses.spent": activity.uses.max - result });
-            }
-            else target.update({ [input.dataset.name]: result });
+            target.update({ [input.dataset.name]: result });
         }
     }
 
@@ -215,17 +209,17 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
             total: 0
         };
 
-        for(const unitId of this.actor.system.units) {
+        for (const unitId of this.actor.system.units) {
             const unit = game.actors.get(unitId);
-            if(!unit) continue;
+            if (!unit) continue;
 
-            cost.units += unit.system.info.price.value;  
-            
-            for(const tatic of unit.items) {
+            cost.units += unit.system.info.price.value;
+
+            for (const tatic of unit.items) {
                 cost.tatics += (tatic.system.info.price.value * tatic.system.quantity);
             }
-        }    
-        
+        }
+
         cost.total = cost.units + cost.tatics;
 
         context.cost = cost;
@@ -281,11 +275,17 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         const data = this.actor.system;
         const army = data.info.army;
 
-        data.attributes.trainning.max = 0;
+        data.attributes.trainning = {
+            max: 0,
+            value: 0
+        };
 
         // Count the number of combat units.
         for (const uId of this.actor.system.units) {
             const unit = game.actors.get(uId);
+
+            // Ignore if the unit doesn't exist.
+            if (!unit) continue;
 
             // Ignore medical units, for it doesn't count as a combat unit.
             if (unit.system.info.type === unitData.uTypes.medical) continue;
@@ -293,6 +293,11 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
             const dsp = unit.system.combat.dsp;
 
             data.attributes.trainning.max += (dsp.value + dsp.bonus);
+
+            for (const tatic of unit.items) {
+                if (tatic.system.trainning)
+                    data.attributes.trainning.value += tatic.system.quantity;
+            }
         }
 
         data.attributes.trainning.max += army.system.supplies.total;
@@ -376,6 +381,15 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         const actorData = actor.system;
         const mainClass = actorData.attributes.hd.classes.first();
 
+        const oldCompanyId = actor.getFlag('ldnd5e', 'company');
+        // The commander is already part of a company.
+        if (oldCompanyId) {
+            const company = game.actors.get(oldCompanyId);
+
+            if (company)
+                await company.update({ ['system.info.commander']: null });
+        }
+
         const changes = {
             ['system.info.commander']: actor,
 
@@ -390,6 +404,17 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
 
         // Link the company to it's commander's actor.
         await actor.setFlag('ldnd5e', 'company', this.actor.id);
+        await actor.setFlag('ldnd5e', 'deck', {
+            hand: {
+                tatics: [],
+                max: 5
+            },
+            piles: {
+                tatics: [],
+                discarded: [],
+                assets: []
+            }
+        });
     }
 
     /** @inheritdoc */
@@ -474,10 +499,10 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
             } break;
         }
 
-        const unitData = foundry.utils.deepClone(unit.toObject());
+        const unitObj = foundry.utils.deepClone(unit.toObject());
 
         // Create the new unit.        
-        const createdUnit = await Actor.create(unitData, { parent: null });
+        const createdUnit = await Actor.create(unitObj, { parent: null });
         await createdUnit.setFlag("ldnd5e", "isMember", true);
 
         this.actor.system.units.push(createdUnit.id);
@@ -570,7 +595,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         // Remove the unit from the collection.
         const unitCollection = foundry.utils.deepClone(this.actor.system.units);
         // Remove the first instance of the unit from the collection.
-        unitCollection.splice(unitCollection.indexOf(unitId), 1); 
+        unitCollection.splice(unitCollection.indexOf(unitId), 1);
 
         // Update the collection.
         await this.actor.update({ ['system.units']: unitCollection });

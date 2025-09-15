@@ -250,6 +250,7 @@
             "closeDeck": "Close Deck",
             "hand": "Available Tatics",
             "drawHand": "Draw Cards",
+            "shuffleDeck": "Shuffle Deck",
             "extraDecks": {
                 "full": "Draw Pile",
                 "discarded": "Discarded Pile",
@@ -303,7 +304,8 @@
             "noShieldEffect": "The Active Effect for {actor}'s Shields is malfunctioning. Active Effect has been recreated.",
             "noEffectErrors": "No Actor had errors in their Active Effects.",
             "invalidActorOnBattle": "{actor} is invalid and cannot be added to the battle.",
-            "emptyBattleData": "Impossible to continue. The battle data is empty."
+            "emptyBattleData": "Impossible to continue. The battle data is empty.",
+            "fullHand": "You cannot draw any more cards because your hand is full."
         },
         "settings": {
             "hideFromGMName": "Hide GM Effect Controls",
