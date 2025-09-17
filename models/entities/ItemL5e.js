@@ -56,14 +56,17 @@ export default class ItemL5e extends dnd5e.documents.Item5e {
             if (activities?.length) {
                 const { chooseActivity, ...activityConfig } = config;
                 let activity = activities[0];
-                let usageConfig = {activity, ...activityConfig};
                 let dialogConfig = dialog;
                 let messageConfig = message;
                 if (((activities.length > 1)) && !event?.shiftKey) {
                     activity = await ActivityChoiceDialog.create(this);
                 }
-                if (!activity) return;
-                return await this.system.rollActivity(usageConfig, dialogConfig, messageConfig);
+                if (!activity) return false;
+
+                let usageConfig = { activity, ...activityConfig };
+                await this.system.rollActivity(usageConfig, dialogConfig, messageConfig);
+                
+                return true;
             }
         } else super.use(config, dialog, message);
     }

@@ -2423,7 +2423,7 @@
   height: 140px;
   margin-block: 2px;
   margin-inline: 10px;
-  overflow-y: auto;
+  overflow-y: scroll;
 }
 
 .ldnd5e.battle .battle-controls .hand.tatics .cards-list {
@@ -2474,6 +2474,20 @@
 
 .ldnd5e.battle .battle-controls .extra-decks button.active:hover img {
   filter: brightness(1.15);
+}
+
+.ldnd5e.battle .battle-controls .extra-decks button .pip-counter {
+  position: absolute;
+  top: 47%;
+  right: 42%;
+  border-radius: 50%;
+  width: var(--font-size-18);
+  height: var(--font-size-18);
+  background: var(--dnd5e-color-failure);
+  color: var(--color-text-light-1);
+  font-size: var(--font-size-10);
+  line-height: 1.9em;
+  text-align: center;
 }
 
 .ldnd5e.battle .battle-controls .company-summary {
@@ -2577,7 +2591,7 @@
 .ldnd5e.battle .deck-section .deck-container .cards-list {
   flex: 1;
   padding: 0em 1em;
-  overflow-y: auto;
+  overflow-y: scroll;
 }
 
 .ldnd5e.battle .cards-list .tatic-card {
@@ -2599,14 +2613,26 @@
   padding: 4px;
 }
 
-.ldnd5e.battle .cards-list .tatic-card .card-row a {
+.ldnd5e.battle .cards-list .tatic-card .card-row .card-control {
+  flex: 0.1;
+  text-align: center;
+}
+
+.ldnd5e.battle .tatic-card .card-row .card-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.ldnd5e.battle .tatic-card .card-row .card-content .name {
   flex: 1;
   font-weight: bold;
 }
 
-.ldnd5e.battle .cards-list .tatic-card .card-row .card-control {
-  flex: 0.1;
-  text-align: center;
+.ldnd5e.battle .tatic-card .card-row .card-content .unit-link {
+  text-align: end;
+  font-size: var(--font-size-9);
+  opacity: 0.5;
 }
 
 .ldnd5e.battle .deck-section .deck-container .deck-actions {

@@ -331,9 +331,9 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
       const deck = commander.getFlag("ldnd5e", "deck");
       
       if(tatic.system.trainning) {
-        deck.piles.tatics.push(tatic.id);
+        deck.piles.tatics.push(tatic.uuid);
       } else {
-        deck.piles.tatics = deck.piles.tatics.filter(id => id != tatic.id);
+        deck.piles.tatics = deck.piles.tatics.filter(uuid => uuid != tatic.uuid);
       }
 
       await commander.setFlag("ldnd5e", "deck", deck);
@@ -359,12 +359,12 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
 
       const deck = commander.getFlag("ldnd5e", "deck");
 
-      deck.hand.tatics = deck.hand.tatics.filter(id => id != tatic.id);
-      deck.piles.tatics = deck.piles.tatics.filter(id => id != tatic.id);
-      deck.piles.discarded = deck.piles.discarded.filter(id => id != tatic.id);
+      deck.hand.tatics = deck.hand.tatics.filter(uuid => uuid != tatic.uuid);
+      deck.piles.tatics = deck.piles.tatics.filter(uuid => uuid != tatic.uuid);
+      deck.piles.discarded = deck.piles.discarded.filter(uuid => uuid != tatic.uuid);
       
       for(let i = 0; i < quantity; i++) {
-        deck.piles.tatics.push(tatic.id);
+        deck.piles.tatics.push(tatic.uuid);
       }
 
       await commander.setFlag("ldnd5e", "deck", deck);

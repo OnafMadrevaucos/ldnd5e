@@ -619,6 +619,9 @@ const i18nStrings = {
       },
       reset: "ldnd5e.battle.reset",                 
       resetConfirm: "ldnd5e.battle.resetConfirm",
+      restoreCard: "ldnd5e.battle.restoreCard",
+      restoreAllCards: "ldnd5e.battle.restoreAllCards",
+      discardCard: "ldnd5e.battle.discardCard",
    },
 
    categories: {
@@ -669,6 +672,7 @@ const i18nStrings = {
 
       emptyBattleData: "ldnd5e.messages.emptyBattleData",
       fullHand: "ldnd5e.messages.fullHand",
+      emptyDeck: "ldnd5e.messages.emptyDeck",
    },
 
    settings: {

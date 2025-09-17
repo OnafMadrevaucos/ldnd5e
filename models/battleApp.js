@@ -33,6 +33,7 @@ export default class BattleApp extends api.Application5e {
             shuffleDeck: BattleApp.#shuffleDeck,
             discardTatic: BattleApp.#discardTatic,
             restoreTatic: BattleApp.#restoreTatic,
+            restoreAllTatics: BattleApp.#restoreAllTatics,
             showTatic: BattleApp.#showTatic,
             useTatic: BattleApp.#useTatic
         },
@@ -75,6 +76,14 @@ export default class BattleApp extends api.Application5e {
     }
 
     /**
+     * The application state data.
+     * @type {Activity|null}
+     */
+    get state() {
+        return this.#battle.app.state ?? null;
+    }
+
+    /**
      * The world battle data.
      * @type {Activity|null}
      */
@@ -106,7 +115,6 @@ export default class BattleApp extends api.Application5e {
         return this.#battle.local.deck ?? null;
     }
 
-
     #battle;
 
     /* -------------------------------------------- */
@@ -128,9 +136,17 @@ export default class BattleApp extends api.Application5e {
         // Get the world battle data.
         let { app, world } = game.settings.get('ldnd5e', 'battle');
 
+        // Check if applitation data has not been created yet.
         if (!app) {
             app = {
-                mode: this.constructor.MODES.PLAY
+                mode: this.constructor.MODES.PLAY,
+                state: {
+                    sidebar: {
+                        control: false,
+                        viewer: '',
+                        events: false
+                    }
+                }
             };
         }
 
@@ -223,6 +239,8 @@ export default class BattleApp extends api.Application5e {
                 isViewer
             }
         };
+
+        this._validateDeck();
     }
 
     /** @inheritDoc */
@@ -232,6 +250,7 @@ export default class BattleApp extends api.Application5e {
 
         return {
             ...await super._prepareContext(options),
+            state: this.state,
             editable: this.isEditable,
             options: this.options
         };
@@ -365,101 +384,89 @@ export default class BattleApp extends api.Application5e {
    * @protected
    */
     _prepareDeck(context) {
-        const company = this.local.company;
         const deck = this.local.deck;
-        Object.assign(deck, {
-            counter: {
-                hand: deck.hand.tatics.length,
-                tatics: deck.piles.tatics.length,
-                discarded: deck.piles.discarded.length,
-                assets: deck.piles.assets.length
-            }
-        });
 
         deck.list = {
-            hand: deck.hand.tatics.map(taticId => {
-                const units = company.system.units;
-                let tatic = null;
-
-                for (const unitId of units) {
-                    const unit = game.actors.get(unitId);
-                    tatic = unit.items.get(taticId);
-                    if (tatic) break;
-                }
+            hand: deck.hand.tatics.map(taticUuid => {
+                const tatic = fromUuidSync(taticUuid);
+                const unit = tatic.actor;
 
                 return {
-                    id: tatic.id,
-                    unitId: tatic.parent.id,
+                    uuid: tatic.uuid,
                     name: tatic.name,
                     img: {
                         src: tatic.img,
                         svg: tatic.img.endsWith('.svg')
                     },
+                    unit: {
+                        id: unit.id,
+                        name: unit.name
+                    }
                 };
-            }),
+            }).filter(tatic => tatic !== null && tatic !== undefined), // Filter out the nulls
             piles: {
-                tatics: deck.piles.tatics.map(taticId => {
-                    const units = company.system.units;
-                    let tatic = null;
-
-                    for (const unitId of units) {
-                        const unit = game.actors.get(unitId);
-                        tatic = unit.items.get(taticId);
-                        if (tatic) break;
-                    }
+                tatics: deck.piles.tatics.map(taticUuid => {
+                    const tatic = fromUuidSync(taticUuid);
+                    const unit = tatic.actor;
 
                     return {
-                        id: tatic.id,
-                        unitId: tatic.parent.id,
+                        uuid: tatic.uuid,
                         name: tatic.name,
                         img: {
                             src: tatic.img,
                             svg: tatic.img.endsWith('.svg')
                         },
+                        unit: {
+                            id: unit.id,
+                            name: unit.name
+                        }
                     };
-                }),
-                discarded: deck.piles.discarded.map(taticId => {
-                    const units = company.system.units;
-                    let tatic = null;
-
-                    for (const unitId of units) {
-                        const unit = game.actors.get(unitId);
-                        tatic = unit.items.get(taticId);
-                        if (tatic) break;
-                    }
+                }).filter(tatic => tatic !== null && tatic !== undefined), // Filter out the nulls
+                discarded: deck.piles.discarded.map(taticUuid => {
+                    const tatic = fromUuidSync(taticUuid);
+                    const unit = tatic.actor;
 
                     return {
-                        id: tatic.id,
-                        unitId: tatic.parent.id,
+                        uuid: tatic.uuid,
                         name: tatic.name,
                         img: {
                             src: tatic.img,
                             svg: tatic.img.endsWith('.svg')
                         },
+                        unit: {
+                            id: unit.id,
+                            name: unit.name
+                        }
                     };
-                }),
-                assets: deck.piles.assets.map(taticId => {
-                    const units = company.system.units;
-                    let tatic = null;
-
-                    for (const unitId of units) {
-                        const unit = game.actors.get(unitId);
-                        tatic = unit.items.get(taticId);
-                        if (tatic) break;
-                    }
+                }).filter(tatic => tatic !== null && tatic !== undefined), // Filter out the nulls
+                assets: deck.piles.assets.map(assetId => {
+                    const assets = fromUuidSync(assetId);
+                    const unit = tatic.actor;
 
                     return {
-                        id: tatic.id,
-                        unitId: tatic.parent.id,
-                        name: tatic.name,
+                        uuid: assets.uuid,
+                        name: assets.name,
                         img: {
-                            src: tatic.img,
-                            svg: tatic.img.endsWith('.svg')
+                            src: assets.img,
+                            svg: assets.img.endsWith('.svg')
                         },
+                        unit: {
+                            id: unit.id,
+                            name: unit.name
+                        }
                     };
-                }),
+                }).filter(asset => asset !== null && asset !== undefined), // Filter out the nulls
             }
         };
+
+        Object.assign(deck, {
+            counter: {
+                hand: deck.list.hand.length,
+                tatics: deck.list.piles.tatics.length,
+                discarded: deck.list.piles.discarded.length,
+                assets: deck.list.piles.assets.length
+            }
+        });
 
         context.deck = deck;
         return context;
@@ -901,17 +908,16 @@ export default class BattleApp extends api.Application5e {
    * @async
    */
     async _discardTatic(deck, tatic) {
-        for (let taticId of deck.hand.tatics) {
-            if (taticId == tatic.id) {
-                deck.hand.tatics.splice(deck.hand.tatics.indexOf(taticId), 1);
+        for (let taticUuid of deck.hand.tatics) {
+            if (taticUuid == tatic.uuid) {
+                deck.hand.tatics.splice(deck.hand.tatics.indexOf(taticUuid), 1);
                 break;
             }
         }
 
-        deck.piles.discarded.push(tatic.id);
+        deck.piles.discarded.push(tatic.uuid);
 
-        await game.user.setFlag("ldnd5e", "deck", deck);
-        this.render({ force: true });
+        this._updateDeck();
     }
 
     /* -------------------------------------------- */
@@ -924,17 +930,43 @@ export default class BattleApp extends api.Application5e {
    * @async
    */
     async _restoreTatic(deck, tatic) {
-        for (let taticId of deck.piles.discarded) {
-            if (taticId == tatic.id) {
-                deck.piles.discarded.splice(deck.piles.discarded.indexOf(taticId), 1);
+        for (let taticUuid of deck.piles.discarded) {
+            if (taticUuid == tatic.uuid) {
+                deck.piles.discarded.splice(deck.piles.discarded.indexOf(taticUuid), 1);
                 break;
             }
         }
 
-        deck.piles.tatics.push(tatic.id);
+        deck.piles.tatics.push(tatic.uuid);
+    }
 
-        await game.user.setFlag("ldnd5e", "deck", deck);
+    /* -------------------------------------------- */
+
+    /**
+   * Validate all deck entries.
+   * @this {BattleApp}
+   */
+    async _updateDeck() {
+        const deck = this.deck;
+
+        await this.local.commander.setFlag("ldnd5e", "deck", { hand: deck.hand, piles: deck.piles });
         this.render({ force: true });
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Validate all deck entries.
+   * @this {BattleApp}
+   */
+    _validateDeck() {
+        const deck = this.deck;
+
+        deck.hand.tatics = deck.hand.tatics.filter(taticUuid => {
+            let tatic = fromUuidSync(taticUuid);
+            if (!tatic) return false;
+            else return true;
+        });
     }
 
     /* -------------------------------------------- */
@@ -946,14 +978,17 @@ export default class BattleApp extends api.Application5e {
    * @this {BattleApp}
    * @param {PointerEvent} event  The originating click event.
    * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   * @async
    */
-    static #toggleDeckControls(event, target) {
+    static async #toggleDeckControls(event, target) {
         const content = target.closest(".window-content");
 
         const controls = content.querySelector(".battle-controls");
         const viewer = content.querySelector(".extra-decks-viewer");
 
         controls.classList.toggle("active");
+
+        this.state.sidebar.control = controls.classList.contains("active");
 
         // If its closing, hide the viewer as well.
         if (!controls.classList.contains("active")) {
@@ -968,7 +1003,11 @@ export default class BattleApp extends api.Application5e {
 
             // Clear active deck.
             viewer.dataset.deck = '';
+            // Hide the viewer.
+            this.state.sidebar.viewer = '';
         }
+
+        await game.settings.set('ldnd5e', 'battle', this.#battle);
     }
 
     /* -------------------------------------------- */
@@ -979,7 +1018,7 @@ export default class BattleApp extends api.Application5e {
    * @param {PointerEvent} event  The originating click event.
    * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
    */
-    static #toggleExtraDeck(event, target) {
+    static async #toggleExtraDeck(event, target) {
         const container = target.closest(".extra-decks");
         const buttons = container.querySelectorAll("button");
 
@@ -1027,6 +1066,10 @@ export default class BattleApp extends api.Application5e {
             // Set the active deck.
             viewer.dataset.deck = targetDeck;
         }
+
+        // Set the viewer.
+        this.state.sidebar.viewer = viewer.dataset.deck;
+        await game.settings.set('ldnd5e', 'battle', this.#battle);
     }
 
     /* -------------------------------------------- */
@@ -1037,11 +1080,16 @@ export default class BattleApp extends api.Application5e {
    * @param {PointerEvent} event  The originating click event.
    * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
    */
-    static #toggleEventsControls(event, target) {
+    static async #toggleEventsControls(event, target) {
         const content = target.closest(".window-content");
         const controls = content.querySelector(".events-controls");
 
         controls.classList.toggle("active");
+
+        // Set the events control.
+        this.state.sidebar.events = controls.classList.contains("active");
+
+        await game.settings.set('ldnd5e', 'battle', this.#battle);
     }
 
     /* -------------------------------------------- */
@@ -1074,20 +1122,24 @@ export default class BattleApp extends api.Application5e {
         const deck = this.deck;
         const drawAmount = deck.hand.max - deck.hand.tatics.length;
 
+        if(deck.piles.tatics.length == 0) {
+            ui.notifications.info(game.i18n.localize("ldnd5e.messages.emptyDeck"));
+            return;
+        }
+
         if (drawAmount <= 0) {
             ui.notifications.info(game.i18n.localize("ldnd5e.messages.fullHand"));
             return;
         }
 
-        for (let i = 0; i < drawAmount || deck.piles.tatics.length == 0; i++) {
-            const taticId = deck.piles.tatics.shift();
-            deck.hand.tatics.push(taticId);
+        for (let i = 0; i < drawAmount; i++) {
+            if(deck.piles.tatics.length == 0) break;
+
+            const taticUuid = deck.piles.tatics.shift();
+            deck.hand.tatics.push(taticUuid);
         }
 
-        if (this.local.commander)
-            await this.local.commander.setFlag("ldnd5e", "deck", deck);
-
-        this.render(true);
+        this._updateDeck();
     }
 
     /* -------------------------------------------- */
@@ -1112,13 +1164,9 @@ export default class BattleApp extends api.Application5e {
    * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
    */
     static async #discardTatic(event, target) {
-        const unitId = target.closest("li").dataset.unitId;
-        const taticId = target.closest("li").dataset.taticId;
+        const taticUuid = target.closest("li").dataset.taticUuid;
 
-        const unit = game.actors.get(unitId);
-        if (!unit) return;
-
-        const tatic = unit.items.get(taticId);
+        const tatic = await fromUuid(taticUuid);
         if (!tatic) return;
 
         await this._discardTatic(this.deck, tatic);
@@ -1133,16 +1181,32 @@ export default class BattleApp extends api.Application5e {
    * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
    */
     static async #restoreTatic(event, target) {
-        const unitId = target.closest("li").dataset.unitId;
-        const taticId = target.closest("li").dataset.taticId;
+        const taticUuid = target.closest("li").dataset.taticUuid;
 
-        const unit = game.actors.get(unitId);
-        if (!unit) return;
-
-        const tatic = unit.items.get(taticId);
+        const tatic = await fromUuid(taticUuid);
         if (!tatic) return;
 
         await this._restoreTatic(this.deck, tatic);
+        this._updateDeck();
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Restore all tatics in the discard pile.
+   * @this {BattleApp}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+    static async #restoreAllTatics(event, target) {
+        const deck = this.deck;
+        const discarded = foundry.utils.deepClone(this.deck.piles.discarded);
+        for (let taticUuid of discarded) {
+            deck.piles.discarded.splice(deck.piles.discarded.indexOf(taticUuid), 1);
+            deck.piles.tatics.push(taticUuid);
+        }
+
+        this._updateDeck();
     }
 
     /* -------------------------------------------- */
@@ -1154,13 +1218,9 @@ export default class BattleApp extends api.Application5e {
    * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
    */
     static async #showTatic(event, target) {
-        const unitId = target.closest("li").dataset.unitId;
-        const taticId = target.closest("li").dataset.taticId;
+        const taticUuid = target.closest("li").dataset.taticUuid;
 
-        const unit = game.actors.get(unitId);
-        if (!unit) return;
-
-        const tatic = unit.items.get(taticId);
+        const tatic = await fromUuid(taticUuid);
         if (!tatic) return;
 
         tatic.sheet.render(true);
@@ -1175,18 +1235,16 @@ export default class BattleApp extends api.Application5e {
    * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
    */
     static async #useTatic(event, target) {
-        const unitId = target.closest("li").dataset.unitId;
-        const taticId = target.closest("li").dataset.taticId;
+        const taticUuid = target.closest("li").dataset.taticUuid;
 
-        const unit = game.actors.get(unitId);
-        if (!unit) return;
-
-        const tatic = unit.items.get(taticId);
+        const tatic = await fromUuid(taticUuid);
         if (!tatic) return;
 
         if (!event.altKey) {
-            await tatic.use({ event });
-            this._discardTatic(this.deck, tatic);
+            const result = await tatic.use({ event });
+
+            if (result)
+                this._discardTatic(this.deck, tatic);
         } else {
             tatic.sheet.render(true);
         }

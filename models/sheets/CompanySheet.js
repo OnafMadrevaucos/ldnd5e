@@ -404,17 +404,8 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
 
         // Link the company to it's commander's actor.
         await actor.setFlag('ldnd5e', 'company', this.actor.id);
-        await actor.setFlag('ldnd5e', 'deck', {
-            hand: {
-                tatics: [],
-                max: 5
-            },
-            piles: {
-                tatics: [],
-                discarded: [],
-                assets: []
-            }
-        });
+        // Build the commander's deck.
+        await this._buildDeck();
     }
 
     /** @inheritdoc */
@@ -515,6 +506,48 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
     }
 
     /* -------------------------------------------- */
+    /*  Utility Functions                           */
+    /* -------------------------------------------- */
+
+    /**
+     * Build the commander deck.
+     * @protected
+     */
+    async _buildDeck() {
+        const company = this.actor;
+        const commander = company.system.info.commander;
+        const deck = {
+            hand: {
+                tatics: [],
+                max: 5
+            },
+            piles: {
+                tatics: [],
+                discarded: [],
+                assets: []
+            }
+        };
+
+        for (const unitId of company.system.units) {
+            const unit = game.actors.get(unitId);
+
+            if (!unit) continue;
+
+            // Ignore medical units, for it doesn't count as a combat unit.
+            if (unit.system.info.type === unitData.uTypes.medical) continue;
+            
+            unit.items.forEach(tatic => {
+                if (tatic.system.trainning) {
+                    for(let i = 0; i < tatic.system.quantity; i++)
+                        deck.piles.tatics.push(tatic.uuid);
+                }
+            });
+        }
+
+        await commander.setFlag('ldnd5e', 'deck', deck);
+    }
+
+    /* -------------------------------------------- */
     /*  Form Actions                                */
     /* -------------------------------------------- */
 
@@ -537,6 +570,12 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
    * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
    */
     static async #removeCommander(event, target) {
+        const company = this.actor;
+        const commander = company.system.info.commander;
+
+        // Remove the commander's deck from the actor.
+        await commander.unsetFlag('ldnd5e', 'deck');
+
         const changes = {
             ['system.info.commander']: null,
 

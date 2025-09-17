@@ -1,5 +1,5 @@
 <div class="deck-controls">
-    <section class="battle-controls side-controls">
+    <section class="battle-controls side-controls {{#if state.sidebar.control}}active{{/if}}">
         <div class="header">
             <button type="button" class="header-control icon fa-solid fa-xmark"
                 data-tooltip="{{localize 'ldnd5e.battle.closeDeck'}}" aria-label="{{localize 'ldnd5e.battle.close'}}"
@@ -33,13 +33,20 @@
                 <div class="deck-section">
                     <ol class="cards-list unlist">
                         {{#each deck.list.hand as |tatic|}}
-                        <li class="tatic-card" data-tatic-id="{{tatic.id}}" data-unit-id="{{tatic.unitId}}">
+                        <li class="tatic-card" data-tatic-uuid="{{tatic.uuid}}" data-unit-id="{{tatic.unit.id}}">
                             <div class="card-row">
                                 <img class="gold-icon {{#if tatic.img.svg}} svg{{/if}}" src="{{tatic.img.src}}">
-                                <a class="card-link rollable" data-action="useTatic" data-type="tatic">
-                                    <span class="name">{{tatic.name}}</span>
-                                </a>
-                                <a class="card-control" data-action="discardTatic">
+                                <div class="card-content">
+                                    <a class="card-link rollable" data-action="useTatic" data-type="tatic">
+                                        <span class="name">{{tatic.name}}</span>
+                                    </a>
+                                    <a class="unit-link" data-action="clickUnit">
+                                        <span class="unit-name">{{tatic.unit.name}}</span>
+                                    </a>
+                                </div>
+                                <a class="card-control" data-action="discardTatic"
+                                    data-tooltip="{{localize 'ldnd5e.battle.discardCard'}}"
+                                    data-tooltip-direction="RIGHT">
                                     <i class="fa-solid fa-arrow-turn-down"></i>
                                 </a>
                             </div>
@@ -56,13 +63,20 @@
             </filigree-box>
 
             <div class="extra-decks">
-                <button class="full-deck" type="button" data-action="toggleExtraDeck" data-deck="full">
+                <button class="full-deck {{#if (eq state.sidebar.viewer "full")}}active{{/if}}" type="button"
+                    data-action="toggleExtraDeck" data-deck="full">
                     <img class="svg" src="{{icons.full}}">
                 </button>
-                <button class="discarded-deck" type="button" data-action="toggleExtraDeck" data-deck="discarded">
+                <button class="discarded-deck {{#if (eq state.sidebar.viewer "discarded")}}active{{/if}}" type="button"
+                    data-action="toggleExtraDeck" data-deck="discarded">
                     <img class="svg" src="{{icons.discarded}}">
+
+                    <a class="pip-counter {{#if (eq deck.counter.discarded 0)}}hidden{{/if}}">
+                        {{deck.counter.discarded}}
+                    </a>
                 </button>
-                <button class="assets-deck" type="button" data-action="toggleExtraDeck" data-deck="assets">
+                <button class="assets-deck {{#if (eq state.sidebar.viewer "assets")}}active{{/if}}" type="button"
+                    data-action="toggleExtraDeck" data-deck="assets">
                     <img class="svg" src="{{icons.assets}}">
                 </button>
             </div>
@@ -135,20 +149,26 @@
         </div>
     </section>
 
-    <div class="extra-decks-viewer">
+    <div class="extra-decks-viewer {{#if (ne state.sidebar.viewer "")}}active{{/if}}"
+        data-deck="{{state.sidebar.viewer}}">
 
-        <div class="deck-section full hidden">
+        <div class="deck-section full {{#unless (eq state.sidebar.viewer "full")}}hidden{{/unless}}">
             <h4 class="title">{{localize 'ldnd5e.battle.extraDecks.full'}}</h4>
             <div class="deck-container">
                 <div class="cards-counter">{{deck.counter.tatics}} <i class="ra ra-diamonds-card"></i></div>
                 <ol class="cards-list unlist">
                     {{#each deck.list.piles.tatics as |tatic|}}
-                    <li class="tatic-card" data-tatic-id="{{tatic.id}}" data-unit-id="{{tatic.unitId}}">
+                    <li class="tatic-card" data-tatic-uuid="{{tatic.uuid}}" data-unit-id="{{tatic.unit.id}}">
                         <div class="card-row">
                             <img class="gold-icon {{#if tatic.img.svg}} svg{{/if}}" src="{{tatic.img.src}}">
-                            <a class="card-link rollable" data-action="showTatic">
-                                <span class="name">{{tatic.name}}</span>
-                            </a>
+                            <div class="card-content">
+                                <a class="card-link rollable" data-action="showTatic">
+                                    <span class="name">{{tatic.name}}</span>
+                                </a>
+                                <a class="unit-link" data-action="clickUnit">
+                                    <span class="unit-name">{{tatic.unit.name}}</span>
+                                </a>
+                            </div>
                         </div>
                     </li>
                     {{/each}}
@@ -162,40 +182,57 @@
             </div>
         </div>
 
-        <div class="deck-section discarded hidden">
+        <div class="deck-section discarded {{#unless (eq state.sidebar.viewer "discarded")}}hidden{{/unless}}">
             <h4 class="title">{{localize 'ldnd5e.battle.extraDecks.discarded'}}</h4>
             <div class="deck-container">
                 <div class="cards-counter">{{deck.counter.discarded}} <i class="ra ra-diamonds-card"></i></div>
                 <ol class="cards-list unlist">
                     {{#each deck.list.piles.discarded as |tatic|}}
-                    <li class="tatic-card" data-tatic-id="{{tatic.id}}" data-unit-id="{{tatic.unitId}}">
+                    <li class="tatic-card" data-tatic-uuid="{{tatic.uuid}}" data-unit-id="{{tatic.unit.id}}">
                         <div class="card-row">
                             <img class="gold-icon {{#if tatic.img.svg}} svg{{/if}}" src="{{tatic.img.src}}">
-                            <a class="card-link rollable" data-action="showTatic">
-                                <span class="name">{{tatic.name}}</span>
-                            </a>
-                            <a class="card-control" data-action="restoreTatic">
+                            <div class="card-content">
+                                <a class="card-link rollable" data-action="showTatic">
+                                    <span class="name">{{tatic.name}}</span>
+                                </a>
+                                <a class="unit-link" data-action="clickUnit">
+                                    <span class="unit-name">{{tatic.unit.name}}</span>
+                                </a>
+                            </div>
+                            <a class="card-control" data-action="restoreTatic"
+                                data-tooltip="{{localize 'ldnd5e.battle.restoreCard'}}" data-tooltip-direction="RIGHT">
                                 <i class="fa-solid fa-arrow-turn-up"></i>
                             </a>
                         </div>
                     </li>
                     {{/each}}
                 </ol>
+                <div class="deck-actions">
+                    <button class="restore-all-card" type="button" data-action="restoreAllTatics" data-type="tatic">
+                        <i class="fa-solid fa-arrows-up-to-line"></i>
+                        {{localize 'ldnd5e.battle.restoreAllCards'}}
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div class="deck-section assets hidden">
+        <div class="deck-section assets {{#unless (eq state.sidebar.viewer "assets")}}hidden{{/unless}}">
             <h4 class="title">{{localize 'ldnd5e.battle.extraDecks.assets'}}</h4>
             <div class="deck-container">
                 <div class="cards-counter">{{deck.counter.assets}} <i class="ra ra-diamonds-card"></i></div>
                 <ol class="cards-list unlist">
-                    {{#each deck.list.piles.assets as |tatic|}}
-                    <li class="tatic-card" data-tatic-id="{{tatic.id}}" data-unit-id="{{tatic.unitId}}">
+                    {{#each deck.list.piles.assets as |asset|}}
+                    <li class="tatic-card" data-tatic-uuid="{{asset.uuid}}" data-unit-id="{{asset.unit.id}}">
                         <div class="card-row">
-                            <img class="gold-icon {{#if tatic.img.svg}} svg{{/if}}" src="{{tatic.img.src}}">
-                            <a class="card-link rollable" data-action="showTatic">
-                                <span class="name">{{tatic.name}}</span>
-                            </a>
+                            <img class="gold-icon {{#if asset.img.svg}} svg{{/if}}" src="{{asset.img.src}}">
+                            <div class="card-content">
+                                <a class="card-link rollable" data-action="showAsset">
+                                    <span class="name">{{asset.name}}</span>
+                                </a>
+                                <a class="unit-link" data-action="clickUnit">
+                                    <span class="unit-name">{{asset.unit.name}}</span>
+                                </a>
+                            </div>
                         </div>
                     </li>
                     {{/each}}

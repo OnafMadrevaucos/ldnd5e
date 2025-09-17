@@ -54,7 +54,14 @@ export const registerSystemSettings = function () {
         default: {
             // Battle Application data.
             app: {
-                mode: 0
+                mode: 0,
+                state: {
+                    sidebar: {
+                        control: false,
+                        viewer: '',
+                        events: false
+                    }
+                }
             },
             // Global battle data.
             world: {

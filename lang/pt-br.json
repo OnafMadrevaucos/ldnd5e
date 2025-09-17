@@ -9,10 +9,9 @@
     },
     "ldnd5e": {
         "title": "Controle D&D 5º Ed. Lemuriano",
-
-        "titles" : {
-          "ac": "Controle Dano de Armadura",
-          "battle": "Controle de Campo de Batalha"  
+        "titles": {
+            "ac": "Controle Dano de Armadura",
+            "battle": "Controle de Campo de Batalha"
         },
         "npcsStatsTitle": "Estatísticas PnJs em Combate",
         "adSystemTitle": "Sistema de Danos Absorvidos",
@@ -107,7 +106,7 @@
             "res": "Reserva",
             "rea": "Retaguarda"
         },
-         "uProfLevel": {
+        "uProfLevel": {
             "none": "Nenhum",
             "low": "Baixo",
             "medium": "Médio",
@@ -205,7 +204,7 @@
             "editTatic": "Editar Tática",
             "removeTatic": "Remover Tática",
             "isTrainning": "Treinando?",
-            "trainningLoad": "Carga de Treino",            
+            "trainningLoad": "Carga de Treino",
             "delete": "Excluir Unidade"
         },
         "tatics": {
@@ -233,7 +232,6 @@
             "useTatic": "Uso de Tática",
             "mainRecovery": "Recuperação Principal"
         },
-
         "battle": {
             "phases": {
                 "prep": "Preparação",
@@ -262,7 +260,7 @@
             "eventHand": "Evento Sorteado",
             "drawEvent": "Sortear Evento",
             "rowsControl": "Controle das Fileiras",
-            "rowNumber": "Fileira {number}", 
+            "rowNumber": "Fileira {number}",
             "rowEffects": {
                 "blizzard": "Nevasca",
                 "flood": "Enchente",
@@ -270,9 +268,11 @@
                 "rain": "Chuva"
             },
             "reset": "Resetar Campo de Batalha",
-            "resetConfirm": "Isso irá limpar todos os dados da batalha atual."
+            "resetConfirm": "Isso irá limpar todos os dados da batalha atual.",
+            "restoreCard": "Restaurar",
+            "restoreAllCards": "Restaurar Todas",
+            "discardCard": "Descartar"
         },
-
         "messages": {
             "bldgDmgLightArmor": "Armaduras Leves são imunes a avarias causadas por Dano Contundente.",
             "slshDmgHeavyArmor": "Armaduras Pesadas são imunes a avarias causadas por Dano Cortante.",
@@ -306,7 +306,8 @@
             "noEffectErrors": "Nenhum Actor apresentou erros em seus Active Effects.",
             "invalidActorOnBattle": "{actor} não é um combatente válido e não pode ser adicionado ao campo de batalha.",
             "emptyBattleData": "Impossível continuar. Os dados da Batalha estão vazios.",
-            "fullHand": "Você não pode comprar mais cartas porque sua mão está cheia."
+            "fullHand": "Você não pode comprar mais cartas porque sua mão está cheia.",
+            "emptyDeck": "Você não pode comprar mais cartas porque o baralho está vazio."
         },
         "settings": {
             "hideFromGMName": "Esconder Controles de Efeitos do GM",

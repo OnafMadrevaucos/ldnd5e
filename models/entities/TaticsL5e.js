@@ -144,7 +144,8 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
    * @returns {Promise<DamageRoll[]|null>}                     A Promise which resolves to the created Roll instance.
    */
     async rollActivity(config = {}, dialog = {}, message = {}) {
-        return this.#rollDice(config, dialog, message);
+        const result = await this.#rollDice(config, dialog, message);
+        return result;
     }
 
     /* -------------------------------------------- */

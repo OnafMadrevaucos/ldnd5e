@@ -169,12 +169,8 @@ export default class ActivityChoiceDialog extends api.Application5e {
         const { activityId } = target.dataset;
         const activity = this.tatic.system.activities[activityId];
         if (!activity) return;
-
-        await this.tatic.system.rollActivity(
-            { activity, event }, {},
-            { speaker: ChatMessage.getSpeaker({ actor: this.tatic.actor }) }
-        );
-
+       
+        this.#activity = activity;
         this.close();
     }
 
@@ -192,9 +188,9 @@ export default class ActivityChoiceDialog extends api.Application5e {
         return new Promise(resolve => {
             const dialog = new this(tatic, options);
             dialog.addEventListener("close", event => {
-                const data = event.target.data;
+                const activity = event.target.activity ?? null;
 
-                resolve(data ?? null);
+                resolve(activity ?? null);
             }, { once: true });
             dialog.render({ force: true });
         });

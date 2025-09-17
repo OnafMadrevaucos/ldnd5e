@@ -7,7 +7,6 @@
     "TYPES.Item.ldnd5e": {
         "tatic": "Tatic"
     },
-
     "ldnd5e": {
         "title": "Lemurian D&D 5º Ed. Control",
         "titles": {
@@ -206,7 +205,7 @@
             "editTatic": "Edit Tatic",
             "removeTatic": "Remove Tatic",
             "isTrainning": "Is Training?",
-            "trainningLoad": "Training Load",            
+            "trainningLoad": "Training Load",
             "delete": "Delete Unit"
         },
         "tatics": {
@@ -270,7 +269,10 @@
                 "rain": "Rain"
             },
             "reset": "Reset Battlefield",
-            "resetConfirm": "This will clear all the current battle data."
+            "resetConfirm": "This will clear all the current battle data.",
+            "restoreCard": "Restore",
+            "restoreAllCards": "Restore all Cards",
+            "discardCard": "Discard"
         },
         "messages": {
             "bldgDmgLightArmor": "Light Armor is immune to damage caused by Bludgening Damage.",
@@ -305,7 +307,8 @@
             "noEffectErrors": "No Actor had errors in their Active Effects.",
             "invalidActorOnBattle": "{actor} is invalid and cannot be added to the battle.",
             "emptyBattleData": "Impossible to continue. The battle data is empty.",
-            "fullHand": "You cannot draw any more cards because your hand is full."
+            "fullHand": "You cannot draw any more cards because your hand is full.",
+            "emptyDeck": "You cannot draw any more cards because the draw deck is empty."
         },
         "settings": {
             "hideFromGMName": "Hide GM Effect Controls",
