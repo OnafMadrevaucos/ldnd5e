@@ -172,14 +172,15 @@ export default class TaticsSheet extends item.ItemSheet5e {
     async _prepareActivitiesContext(context, options) {
         context.activities = (Object.values(this.item.system.activities) ?? [])
             .map(activity => {
-                const { id, name, type } = activity;
+                const { id, name, type, mainRoll } = activity;
                 return {
                     id: id,
                     name: name,
                     img: {
                         src: `modules/ldnd5e/ui/icons/${type}.svg`,
                         svg: true
-                    }
+                    },
+                    mainRoll
                 };
             });
 

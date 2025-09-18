@@ -166,8 +166,7 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
         const damageType = activity.type;
 
         const rollConfig = {
-            attackMode, event,
-            hookNames: ["damage"],
+            attackMode, event,              
             rolls: [{
                 parts: [formula],
                 options: { type: damageType, types }
@@ -184,9 +183,9 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
                     left: window.innerWidth - 710
                 },
                 window: {
-                    title: game.i18n.localize('ldnd5e.tatics.clash'),
-                    subtitle: this.name,
-                    icon: this.img
+                    title: activity.name,
+                    subtitle: this.parent.name,
+                    icon: this.parent.img
                 }
             }
         }, dialog);
@@ -201,13 +200,28 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
                         targets: this.getTargetDescriptors()
                     }
                 },
-                flavor: game.i18n.localize('ldnd5e.tatics.useTatic'),
+                flavor: `${this.parent.name} - ${activity.name}`,
                 speaker: message.speaker ?? ChatMessage.getSpeaker({ actor: this.parent.actor }),
             }
         };
 
         const rolls = await CONFIG.Dice.DamageRoll.build(rollConfig, dialogConfig, messageConfig);
         if (!rolls?.length) return;
+
+        const result = {
+            unit: this.parent.actor,
+            activity: activity,
+            tatic: {
+                uuid: this.parent.uuid,
+                name: this.parent.name
+            },
+            damageType,
+            formula,
+            total: rolls.reduce((a, b) => a + b.total, 0),
+            rolls
+        };        
+
+        return result;
     }
 
     /* -------------------------------------------- */

@@ -205,7 +205,9 @@
             "removeTatic": "Remover Tática",
             "isTrainning": "Treinando?",
             "trainningLoad": "Carga de Treino",
-            "delete": "Excluir Unidade"
+            "delete": "Excluir Unidade",
+            "isMainRoll": "É Rolagem Principal?",
+            "mainRoll": "Rolagem Principal"
         },
         "tatics": {
             "flavor": "Floreio",
@@ -227,10 +229,15 @@
                 "ib": "Bônus de Ímpeto",
                 "id": "Penalidade de Ímpeto"
             },
-            "invalidActivity": "Data de Atividade Inválida",
+            "invalidActivity": {
+                "name": "O nome da Atividade é inválido.",
+                "type": "O tipo da Atividade é inválido.",
+                "formula": "A fórmula da Atividade é inválida."
+            },
             "clash": "Embate",
             "useTatic": "Uso de Tática",
-            "mainRecovery": "Recuperação Principal"
+            "mainRecovery": "Recuperação Principal",
+            "acceptExtras": "Accept Extras"
         },
         "battle": {
             "phases": {
@@ -271,7 +278,13 @@
             "resetConfirm": "Isso irá limpar todos os dados da batalha atual.",
             "restoreCard": "Restaurar",
             "restoreAllCards": "Restaurar Todas",
-            "discardCard": "Descartar"
+            "discardCard": "Descartar",
+            "extraRoll": {
+                "title": "Escolher Modo de Rolagem",
+                "message": "Você deseja rolar apenas a rolagem principal ou também alguma rolagem extra?",
+                "main": "Somente principais",
+                "extra": "Com extras"
+            }
         },
         "messages": {
             "bldgDmgLightArmor": "Armaduras Leves são imunes a avarias causadas por Dano Contundente.",
@@ -307,7 +320,8 @@
             "invalidActorOnBattle": "{actor} não é um combatente válido e não pode ser adicionado ao campo de batalha.",
             "emptyBattleData": "Impossível continuar. Os dados da Batalha estão vazios.",
             "fullHand": "Você não pode comprar mais cartas porque sua mão está cheia.",
-            "emptyDeck": "Você não pode comprar mais cartas porque o baralho está vazio."
+            "emptyDeck": "Você não pode comprar mais cartas porque o baralho está vazio.",
+            "noMainActivity": "A Tática não possui nenhuma Atividade marcada como principal."
         },
         "settings": {
             "hideFromGMName": "Esconder Controles de Efeitos do GM",

@@ -50,23 +50,59 @@ export default class ItemL5e extends dnd5e.documents.Item5e {
    */
     async use(config = {}, dialog = {}, message = {}) {
         if (this.type === "ldnd5e.tatic") {
+            const mode = config.mode ?? "full";
             const activities = Object.values(this.system.activities);
 
-            let event = config.event;
-            if (activities?.length) {
-                const { chooseActivity, ...activityConfig } = config;
-                let activity = activities[0];
-                let dialogConfig = dialog;
-                let messageConfig = message;
-                if (((activities.length > 1)) && !event?.shiftKey) {
-                    activity = await ActivityChoiceDialog.create(this);
-                }
-                if (!activity) return false;
+            const { chooseActivity, ...activityConfig } = config;
 
-                let usageConfig = { activity, ...activityConfig };
-                await this.system.rollActivity(usageConfig, dialogConfig, messageConfig);
-                
-                return true;
+            // Normal roll method.
+            if (mode === 'full') {
+                let event = config.event;
+                if (activities?.length) {
+                    let activity = activities[0];
+                    let dialogConfig = dialog;
+                    let messageConfig = message;
+                    if (((activities.length > 1)) && !event?.shiftKey) {
+                        activity = await ActivityChoiceDialog.create(this, { mode });
+                    }
+                    if (!activity) return false;
+
+                    let usageConfig = { activity, ...activityConfig };
+                    const result = await this.system.rollActivity(usageConfig, dialogConfig, messageConfig);
+
+                    return result;
+                }
+            }
+            // Rolls only the main activities.
+            else {
+                let result = [];
+
+                let extraActivities = [];
+                if (mode === 'extra') {
+                    if (((activities.length > 1)) && !event?.shiftKey) {
+                        extraActivities = await ActivityChoiceDialog.create(this, { mode });
+                    }
+                }
+
+                const mainActivities = activities.filter(a => a.mainRoll);
+                if (mode === 'main' && mainActivities.length === 0) {
+                    ui.notifications.info(game.i18n.localize("ldnd5e.messages.noMainActivity"));
+                }
+                else {
+                    for (const activity of activities) {
+                        if (activity.mainRoll) {
+                            const usageConfig = { activity, ...activityConfig };
+                            result.push(await this.system.rollActivity(usageConfig, dialog, message));
+                        }
+                    }
+                }
+
+                for (const activity of extraActivities) {
+                    const usageConfig = { activity, ...activityConfig };
+                    result.push(await this.system.rollActivity(usageConfig, dialog, message));
+                }
+
+                return result;
             }
         } else super.use(config, dialog, message);
     }

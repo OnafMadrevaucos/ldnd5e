@@ -290,6 +290,16 @@ const unitData = {
    },
 
    /**
+   * Defines the Unit's Level Label constants.      
+   */
+   uLevelProf: {
+      0: 'none',
+      1: 'low',
+      2: 'medium',
+      3: 'high'
+   },
+
+   /**
    * Defines the Unit Categories constants.      
    */
    categories: {
@@ -326,7 +336,7 @@ const taticsData = {
 *     
 * }}
 */
-const battleData = {
+const battleData = { 
    /**
    * Defines the Effects on Rows constants.      
    */
@@ -525,7 +535,8 @@ const i18nStrings = {
       removeTatic: "ldnd5e.unit.removeTatic",
       isTrainning: "ldnd5e.unit.isTrainning",
       trainningLoad: "ldnd5e.unit.trainningLoad",      
-      delete: "ldnd5e.unit.delete"
+      delete: "ldnd5e.unit.delete",
+      isMainRoll: "ldnd5e.unit.isMainRoll",
    },
 
    tatics: {
@@ -548,10 +559,16 @@ const i18nStrings = {
          ib: "ldnd5e.tatics.activities.ib",
          id: "ldnd5e.tatics.activities.id",
       },
-      invalidActivity: "ldnd5e.tatics.invalidActivity",
+      invalidActivity: {
+         name: "ldnd5e.tatics.invalidActivity.name",
+         type: "ldnd5e.tatics.invalidActivity.type",
+         formula: "ldnd5e.tatics.invalidActivity.formula",
+      },
       clash: "ldnd5e.tatics.clash",
       useTatic: "ldnd5e.tatics.useTatic",
       mainRecovery: "ldnd5e.tatics.mainRecovery",
+      mainRoll: "ldnd5e.tatics.mainRoll",
+      acceptExtras: "ldnd5e.tatics.acceptExtras",
    },
 
    unitType: "ldnd5e.unit",
@@ -622,6 +639,12 @@ const i18nStrings = {
       restoreCard: "ldnd5e.battle.restoreCard",
       restoreAllCards: "ldnd5e.battle.restoreAllCards",
       discardCard: "ldnd5e.battle.discardCard",
+      extraRoll: {
+         title: "ldnd5e.battle.extraRoll.title",
+         message: "ldnd5e.battle.extraRoll.message",
+         main: "ldnd5e.battle.extraRoll.main",
+         extra: "ldnd5e.battle.extraRoll.extra",
+      }      
    },
 
    categories: {
@@ -673,6 +696,7 @@ const i18nStrings = {
       emptyBattleData: "ldnd5e.messages.emptyBattleData",
       fullHand: "ldnd5e.messages.fullHand",
       emptyDeck: "ldnd5e.messages.emptyDeck",
+      noMainActivity: "ldnd5e.messages.noMainActivity",
    },
 
    settings: {

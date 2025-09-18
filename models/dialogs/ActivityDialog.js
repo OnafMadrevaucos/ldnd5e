@@ -8,7 +8,7 @@ export default class ActivityDialog extends api.Dialog5e {
         super(options);
 
         this.#mode = options.mode ?? "create";
- 
+
         if (this.#mode === "edit") {
             this.#data = options.tatic?.system.activities[options.activityId] ?? {};
         }
@@ -26,7 +26,8 @@ export default class ActivityDialog extends api.Dialog5e {
         },
         form: {
             handler: ActivityDialog.#handleFormSubmission,
-            submitOnChange: true
+            submitOnChange: true,
+            closeOnSubmit: false
         },
         position: {
             width: 400
@@ -43,9 +44,6 @@ export default class ActivityDialog extends api.Dialog5e {
         },
         configuration: {
             template: "modules/ldnd5e/templates/dialogs/activity/configuration.hbs"
-        },
-        buttons: {
-            template: "modules/ldnd5e/templates/dialogs/activity/buttons.hbs"
         }
     };
 
@@ -142,32 +140,12 @@ export default class ActivityDialog extends api.Dialog5e {
         });
 
         switch (partId) {
-            case "buttons":
-                return this._prepareButtonsContext(context, options);
             case "configuration":
                 return this._prepareConfigurationContext(context, options);
             default:
                 return context;
         }
-    }
-
-    /* -------------------------------------------- */
-
-    /**
-   * Prepare the context for the buttons.
-   * @param {ApplicationRenderContext} context  Shared context provided by _prepareContext.
-   * @param {HandlebarsRenderOptions} options   Options which configure application rendering behavior.
-   * @returns {Promise<ApplicationRenderContext>}
-   * @protected
-   */
-    async _prepareButtonsContext(context, options) {
-        context.button = {
-            default: true,
-            icon: '<i class="fa-solid fa-plus" inert></i>',
-            label: game.i18n.localize("DND5E.ACTIVITY.Action.Create")
-        };
-        return context;
-    }
+    }   
 
     /* -------------------------------------------- */
 
@@ -224,20 +202,22 @@ export default class ActivityDialog extends api.Dialog5e {
      * @param {FormDataExtended} formData  Data from the dialog.
      */
     static async #handleFormSubmission(event, form, formData) {
-        if (event.type === "submit") {
+        if (event.type === "change") {
+            const nameInput = form.querySelector('.document-name');
+            const numberInput = form.querySelector('input[name="number"]');
+            const mainRollCheck = form.querySelector('dnd5e-checkbox');
             const submittedData = formData.object;
 
             this.#data = {
                 id: this.isEdit ? this.data.id : foundry.utils.randomID(),
-                name: submittedData.name,
-                number: submittedData.number,
+                name: submittedData.name || nameInput.placeholder,
+                number: submittedData.number || numberInput.placeholder,
                 die: submittedData.die,
                 bonus: submittedData.bonus,
                 type: submittedData.type,
-            };
-
-            this.close();
-        }
+                mainRoll: mainRollCheck.checked
+            };            
+        } 
     }
 
     /* -------------------------------------------- */
@@ -255,16 +235,20 @@ export default class ActivityDialog extends api.Dialog5e {
             options.tatic = tatic;
             const dialog = new this(options);
             dialog.addEventListener("close", event => {
-                const data = event.target.data;
+                const data = event.target.data;                
 
-                // If the application was closed without changes, return null.
-                if(!event.target.hasChanges) {
+                if (data.name === "" ) {
+                    ui.notifications.warn(game.i18n.localize("ldnd5e.tatics.invalidActivity.name"));
                     resolve(null);
                 }
 
-                // Invalid data, do not create the activity.
-                if (data.name === "" || data.type === "0" || !data.number) {
-                    ui.notifications.warn(game.i18n.localize("ldnd5e.tatics.invalidActivity"));
+                if (data.type === "0") {
+                    ui.notifications.warn(game.i18n.localize("ldnd5e.tatics.invalidActivity.type"));
+                    resolve(null);
+                }
+
+                if (!data.number) {
+                    ui.notifications.warn(game.i18n.localize("ldnd5e.tatics.invalidActivity.formula"));
                     resolve(null);
                 }
 

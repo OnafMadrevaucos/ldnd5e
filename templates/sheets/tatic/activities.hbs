@@ -1,26 +1,34 @@
 <section class="activities tab {{ tab.cssClass }}" data-tab="{{ tab.id }}" data-group="{{ tab.group }}">
     {{#each activities}}
+    {{#debug this}}{{/debug}}
     <div class="activity card" data-activity-id="{{ id }}">
 
         {{!-- Icon --}}
-        <div class="icon {{#if img.svg}}svg{{/if}}">            
-            <dnd5e-icon src="{{ img.src }}"></dnd5e-icon>            
+        <div class="icon {{#if img.svg}}svg{{/if}}">
+            <dnd5e-icon src="{{ img.src }}"></dnd5e-icon>
         </div>
 
         {{!-- Name --}}
         <div class="name" data-action="editDocument">{{ name }}</div>
 
+        <div class="flags" data-tooltip="{{localize 'ldnd5e.tatics.mainRoll'}}">
+            {{#if mainRoll}}
+            <i class="fa-solid fa-bookmark"></i>
+            {{/if}}
+        </div>
+
+        {{#if @root.editable}}
         {{!-- Controls --}}
         <div class="controls">
 
-            {{#if @root.editable}}
             {{!-- Delete --}}
-            <button type="button" class="unbutton control-button" data-action="deleteDocument"
-                    data-tooltip aria-label="{{ localize "DND5E.ACTIVITY.Action.Delete" }}">
+            <button type="button" class="unbutton control-button" data-action="deleteDocument" data-tooltip
+                aria-label="{{ localize " DND5E.ACTIVITY.Action.Delete" }}">
                 <i class="fas fa-trash" inert></i>
             </button>
-            {{/if}}
+            
         </div>
+        {{/if}}
 
     </div>
     {{/each}}

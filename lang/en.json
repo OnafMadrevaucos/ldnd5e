@@ -206,7 +206,8 @@
             "removeTatic": "Remove Tatic",
             "isTrainning": "Is Training?",
             "trainningLoad": "Training Load",
-            "delete": "Delete Unit"
+            "delete": "Delete Unit",
+            "isMainRoll": "Is Main Roll?"
         },
         "tatics": {
             "flavor": "Flavor",
@@ -228,10 +229,16 @@
                 "ib": "Impetus' Bonus",
                 "id": "Impetus' Penalty"
             },
-            "invalidActivity": "Invalid Activity Data",
+            "invalidActivity": {
+                "name": "The Activity name is invalid.",
+                "type": "The Activity type is invalid.",
+                "formula": "The Activity formula is invalid."
+            },
             "clash": "Clash",
             "useTatic": "Tatic Use",
-            "mainRecovery": "Main Recovery"
+            "mainRecovery": "Main Recovery",
+            "mainRoll": "Main Roll",
+            "acceptExtras": "Accept Extras"
         },
         "battle": {
             "phases": {
@@ -272,7 +279,13 @@
             "resetConfirm": "This will clear all the current battle data.",
             "restoreCard": "Restore",
             "restoreAllCards": "Restore all Cards",
-            "discardCard": "Discard"
+            "discardCard": "Discard",
+            "extraRoll": {
+                "title": "Choose Roll Mode",
+                "message": "Do you want to roll only the main roll or also an extra roll?",
+                "main": "Main only",
+                "extra": "With extras"
+            }
         },
         "messages": {
             "bldgDmgLightArmor": "Light Armor is immune to damage caused by Bludgening Damage.",
@@ -308,7 +321,8 @@
             "invalidActorOnBattle": "{actor} is invalid and cannot be added to the battle.",
             "emptyBattleData": "Impossible to continue. The battle data is empty.",
             "fullHand": "You cannot draw any more cards because your hand is full.",
-            "emptyDeck": "You cannot draw any more cards because the draw deck is empty."
+            "emptyDeck": "You cannot draw any more cards because the draw deck is empty.",
+            "noMainActivity": "A Tática não possui nenhuma Atividade marcada como principal."
         },
         "settings": {
             "hideFromGMName": "Hide GM Effect Controls",

@@ -1,8 +1,12 @@
 <section>
+    {{#debug this}}{{/debug}}
     <menu class="unlist">
         {{#each activities}}
-        <li>
-            <button type="button" data-action="choose" data-activity-id="{{ id }}">
+        <li class="item" data-activity-id="{{ id }}">
+            {{#if (eq @root.mode "extra")}}
+            <dnd5e-checkbox name="item-choice"></dnd5e-checkbox>
+            {{/if}}
+            <button type="button" data-action="choose" {{#if (ne mode "extra" )}}disabled{{/if}}>
                 <span class="icon">
                     {{#with icon}}
                     {{#if svg}}
@@ -18,7 +22,13 @@
         {{/each}}
     </menu>
 
+    {{#if (ne mode "extra")}}
     {{#if controlHint}}
     <div class="control-hint ff-hint">{{{ controlHint }}}</div>
+    {{/if}}
+    {{else}}
+    <button class="dialog-button ok default bright" type="submit" data-action="accept"><i
+            class="{{{ button.icon }}}"></i> {{ button.label }}
+    </button>
     {{/if}}
 </section>

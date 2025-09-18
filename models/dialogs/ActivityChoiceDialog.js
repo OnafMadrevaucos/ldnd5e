@@ -6,6 +6,8 @@ export default class ActivityChoiceDialog extends api.Application5e {
     constructor(tatic, options = {}) {
         super(options);
 
+        this.mode = options.mode ?? "full";
+
         this.#tatic = tatic;
     }
 
@@ -18,7 +20,8 @@ export default class ActivityChoiceDialog extends api.Application5e {
             title: "ldnd5e.tatics.activityTitle"
         },
         actions: {
-            choose: ActivityChoiceDialog.#onChooseActivity
+            choose: ActivityChoiceDialog.#onChooseActivity,
+            accept: ActivityChoiceDialog.#onAcceptActivities
         },
         position: {
             width: 350
@@ -116,12 +119,24 @@ export default class ActivityChoiceDialog extends api.Application5e {
                 `<img src="systems/dnd5e/icons/svg/mouse-left.svg" alt="${game.i18n.localize("DND5E.Controls.LeftClick")}">`
             );
         }
-        const activities = (Object.values(this.#tatic.system.activities) ?? [])
+
+        let activities = (Object.values(this.#tatic.system.activities) ?? [])
             .map(this._prepareActivityContext.bind(this))
             .sort((a, b) => a.sort - b.sort);
 
+        // If mode is 'with extra', filter out main activities.
+        if (this.mode === 'extra') {
+            activities = activities.filter(a => !a.mainRoll);
+        }
+
+        context.mode = this.mode;
         context.controlHint = controlHint;
         context.activities = activities;
+
+        context.button = {
+            label: game.i18n.localize("ldnd5e.tatics.acceptExtras"),
+            icon: "fas fa-check"
+        }
 
         return context;
     }
@@ -145,13 +160,14 @@ export default class ActivityChoiceDialog extends api.Application5e {
      * @protected
      */
     _prepareActivityContext(activity) {
-        const { id, name, type } = activity;
+        const { id, name, type, mainRoll } = activity;
         return {
             id, name,
             icon: {
                 src: `modules/ldnd5e/ui/icons/${type}.svg`,
                 svg: true
-            }
+            },
+            mainRoll
         };
     }
 
@@ -166,11 +182,33 @@ export default class ActivityChoiceDialog extends api.Application5e {
      * @param {HTMLElement} target  The activity button that was clicked.
      */
     static async #onChooseActivity(event, target) {
-        const { activityId } = target.dataset;
+        const li = target.closest("li");
+        const { activityId } = li.dataset;
         const activity = this.tatic.system.activities[activityId];
         if (!activity) return;
-       
+
         this.#activity = activity;
+        this.close();
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+     * Handle choosing an activity.
+     * @this {ActivityChoiceDialog}
+     * @param {PointerEvent} event  The triggering click event.
+     * @param {HTMLElement} target  The activity button that was clicked.
+     */
+    static async #onAcceptActivities(event, target) {
+        this.#activity = [];
+        const itemChoices = this.element.querySelectorAll('dnd5e-checkbox[name="item-choice"]');
+        itemChoices.forEach(itemChoice => {
+            if (itemChoice.checked) {
+                const { activityId } = itemChoice.closest("li").dataset;
+                const activity = this.tatic.system.activities[activityId];
+                if (activity) this.#activity.push(activity);
+            }
+        });
         this.close();
     }
 

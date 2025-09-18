@@ -1,4 +1,4 @@
-import { battleData } from "../scripts/constants.js";
+import { battleData, unitData, taticsData } from "../scripts/constants.js";
 
 const api = dnd5e.applications.api;
 const contextMenu = dnd5e.applications.ContextMenu5e;
@@ -80,7 +80,7 @@ export default class BattleApp extends api.Application5e {
      * @type {Activity|null}
      */
     get state() {
-        return this.#battle.app.state ?? null;
+        return this.#battle.local.app.state ?? null;
     }
 
     /**
@@ -88,7 +88,7 @@ export default class BattleApp extends api.Application5e {
      * @type {Activity|null}
      */
     get app() {
-        return this.#battle.app ?? null;
+        return this.#battle.local.app ?? null;
     }
 
     /**
@@ -133,11 +133,16 @@ export default class BattleApp extends api.Application5e {
     /* -------------------------------------------- */
 
     async _prepareBaseData() {
-        // Get the world battle data.
-        let { app, world } = game.settings.get('ldnd5e', 'battle');
+        const userCompanyId = game.user.character?.getFlag('ldnd5e', 'company');
+        // User has not a company linked to its character.
+        const isViewer = (userCompanyId === null) || (userCompanyId === undefined)
+            || (userCompanyId === '');
 
-        // Check if applitation data has not been created yet.
-        if (!app) {
+        // Get the user battle data.
+        let app = game.user.getFlag('ldnd5e', 'battle');
+
+        // Check if applitation data has not been created yet, or if the user is a viewer.
+        if (!app || isViewer) {
             app = {
                 mode: this.constructor.MODES.PLAY,
                 state: {
@@ -150,64 +155,8 @@ export default class BattleApp extends api.Application5e {
             };
         }
 
-        // Check if the data is empty.
-        if (!world) {
-            world = {
-                scoreboard: {
-                    top: {
-                        attack: 0,
-                        impetus: 0
-                    },
-                    bottom: {
-                        attack: 0,
-                        impetus: 0
-                    }
-                },
-                turns: {
-                    max: 0,
-                    current: 0
-                },
-                events: [],
-                fields: {
-                    top: {
-                        rows: {
-                            1: {
-                                units: [],
-                                effect: ''
-                            },
-                            2: {
-                                units: [],
-                                effect: ''
-                            },
-                            3: {
-                                units: [],
-                                effect: ''
-                            }
-                        }
-                    },
-                    bottom: {
-                        rows: {
-                            1: {
-                                units: [],
-                                effect: ''
-                            },
-                            2: {
-                                units: [],
-                                effect: ''
-                            },
-                            3: {
-                                units: [],
-                                effect: ''
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        const userCompanyId = game.user.character?.getFlag('ldnd5e', 'company');
-        // User has not a company linked to its character.
-        const isViewer = (userCompanyId === null) || (userCompanyId === undefined) || (userCompanyId === '');
+        // Get the world battle data.
+        let world = game.settings.get('ldnd5e', 'battle') ?? game.settings.settings.get('ldnd5e.battle').default;
 
         let deck = game.user.character?.getFlag('ldnd5e', 'deck') ?? null;
 
@@ -229,9 +178,9 @@ export default class BattleApp extends api.Application5e {
         }
 
         this.#battle = {
-            app,
             world,
             local: {
+                app,
                 user: game.user,
                 commander: game.user.character ?? null,
                 company: userCompanyId ? game.actors.get(userCompanyId) : null,
@@ -240,6 +189,7 @@ export default class BattleApp extends api.Application5e {
             }
         };
 
+        // Validate the deck.
         this._validateDeck();
     }
 
@@ -608,7 +558,7 @@ export default class BattleApp extends api.Application5e {
         switch (action) {
             case "delete": {
                 this.world.fields[side].rows[row].units = this.world.fields[side].rows[row].units.filter(u => u !== unitId);
-                await game.settings.set('ldnd5e', 'battle', { app: this.app, world: this.world });
+                await game.settings.set('ldnd5e', 'battle', this.world);
                 return target.remove();
             }
         }
@@ -622,64 +572,7 @@ export default class BattleApp extends api.Application5e {
    * @param {PointerEvent} event  The originating click event.
    */
     async _onResetBattle(event) {
-        const blankData = {
-            // Battle Application data.
-            app: {
-                mode: 0
-            },
-            // Global battle data.
-            world: {
-                scoreboard: {
-                    top: {
-                        attack: 0,
-                        impetus: 0
-                    },
-                    bottom: {
-                        attack: 0,
-                        impetus: 0
-                    }
-                },
-                turns: {
-                    max: 0,
-                    current: 0
-                },
-                events: [],
-                fields: {
-                    top: {
-                        rows: {
-                            1: {
-                                units: [],
-                                effect: ''
-                            },
-                            2: {
-                                units: [],
-                                effect: ''
-                            },
-                            3: {
-                                units: [],
-                                effect: ''
-                            }
-                        }
-                    },
-                    bottom: {
-                        rows: {
-                            1: {
-                                units: [],
-                                effect: ''
-                            },
-                            2: {
-                                units: [],
-                                effect: ''
-                            },
-                            3: {
-                                units: [],
-                                effect: ''
-                            }
-                        }
-                    }
-                }
-            }
-        };
+        const blankData = game.settings.settings.get('ldnd5e.battle').default;
 
         const result = await foundry.applications.api.DialogV2.confirm({
             content: `
@@ -722,8 +615,23 @@ export default class BattleApp extends api.Application5e {
      * @protected
      */
     async _onDragStart(event) {
+        const fields = this.element.querySelector('.fields');
+        const rows = fields.querySelectorAll('.row');
+        const rowsNumbers = fields.querySelectorAll('.row-number');
+
         const li = event.target.closest("li");
         const unit = game.actors.get(li.dataset.unitId);
+
+        rows.forEach(row => {
+            const rowType = row.dataset.rowType;
+            const prof = unit.system.prof[rowType];
+            row.dataset.prof = unitData.uLevelProf[prof];
+        });
+        rowsNumbers.forEach(row => {
+            const rowType = row.dataset.rowType;
+            const prof = unit.system.prof[rowType];
+            row.dataset.prof = unitData.uLevelProf[prof];
+        });
 
         event.dataTransfer.setData("text/plain", JSON.stringify(unit.toDragData()));
         event.dataTransfer.effectAllowed = li?.dataset.dragType ?? null;
@@ -784,6 +692,17 @@ export default class BattleApp extends api.Application5e {
      * @protected
      */
     async _onDrop(event) {
+        const fields = this.element.querySelector('.fields');
+        const rows = fields.querySelectorAll('.row');
+        const rowsNumbers = fields.querySelectorAll('.row-number');
+
+        rows.forEach(row => {
+            delete row.dataset.prof;
+        });
+        rowsNumbers.forEach(row => {
+            delete row.dataset.prof;
+        });
+
 
         const field = event.currentTarget.closest(".field");
         // Drop target.
@@ -843,6 +762,9 @@ export default class BattleApp extends api.Application5e {
      * @private
      */
     async _onMoveUnit(data) {
+        // Ignore if the user is a viewer.
+        if (this.local.isViewer) return;
+
         const fields = this.#battle.world.fields;
 
         // Remove from the old row.
@@ -854,7 +776,7 @@ export default class BattleApp extends api.Application5e {
 
         fields[data.sideName].rows[data.rowName].units.push(data.actor.id);
         // Store.
-        await game.settings.set('ldnd5e', 'battle', { app: this.app, world: this.world });
+        await game.settings.set('ldnd5e', 'battle', this.world);
     }
 
     /**
@@ -865,11 +787,14 @@ export default class BattleApp extends api.Application5e {
      * @param {Actor} data.actor - The actor.
      */
     async _onDropUnit(data) {
+        // Ignore if the user is a viewer.
+        if (this.local.isViewer) return;
+
         const fields = this.#battle.world.fields;
 
         fields[data.sideName].rows[data.rowName].units.push(data.actor.id);
         // Store.
-        await game.settings.set('ldnd5e', 'battle', { app: this.app, world: this.world });
+        await game.settings.set('ldnd5e', 'battle', this.world);
     }
 
     /* -------------------------------------------- */
@@ -960,6 +885,9 @@ export default class BattleApp extends api.Application5e {
    * @this {BattleApp}
    */
     _validateDeck() {
+        // Ignore if the user is a viewer.
+        if (this.local.isViewer) return;
+
         const deck = this.deck;
 
         deck.hand.tatics = deck.hand.tatics.filter(taticUuid => {
@@ -1007,7 +935,7 @@ export default class BattleApp extends api.Application5e {
             this.state.sidebar.viewer = '';
         }
 
-        await game.settings.set('ldnd5e', 'battle', this.#battle);
+        await game.user.setFlag('ldnd5e', 'battle', this.app);
     }
 
     /* -------------------------------------------- */
@@ -1069,7 +997,7 @@ export default class BattleApp extends api.Application5e {
 
         // Set the viewer.
         this.state.sidebar.viewer = viewer.dataset.deck;
-        await game.settings.set('ldnd5e', 'battle', this.#battle);
+        await game.user.setFlag('ldnd5e', 'battle', this.app);
     }
 
     /* -------------------------------------------- */
@@ -1089,7 +1017,7 @@ export default class BattleApp extends api.Application5e {
         // Set the events control.
         this.state.sidebar.events = controls.classList.contains("active");
 
-        await game.settings.set('ldnd5e', 'battle', this.#battle);
+        await game.user.setFlag('ldnd5e', 'battle', this.app);
     }
 
     /* -------------------------------------------- */
@@ -1122,7 +1050,7 @@ export default class BattleApp extends api.Application5e {
         const deck = this.deck;
         const drawAmount = deck.hand.max - deck.hand.tatics.length;
 
-        if(deck.piles.tatics.length == 0) {
+        if (deck.piles.tatics.length == 0) {
             ui.notifications.info(game.i18n.localize("ldnd5e.messages.emptyDeck"));
             return;
         }
@@ -1133,7 +1061,7 @@ export default class BattleApp extends api.Application5e {
         }
 
         for (let i = 0; i < drawAmount; i++) {
-            if(deck.piles.tatics.length == 0) break;
+            if (deck.piles.tatics.length == 0) break;
 
             const taticUuid = deck.piles.tatics.shift();
             deck.hand.tatics.push(taticUuid);
@@ -1241,10 +1169,54 @@ export default class BattleApp extends api.Application5e {
         if (!tatic) return;
 
         if (!event.altKey) {
-            const result = await tatic.use({ event });
+            const choosedMode = await foundry.applications.api.DialogV2.wait({
+                window: { title: game.i18n.localize("ldnd5e.battle.extraRoll.title") },
+                content: `<p>${game.i18n.localize("ldnd5e.battle.extraRoll.message")}</p>`,
+                position: {
+                    width: 400
+                },
+                buttons: [
+                    {
+                        label: game.i18n.localize("ldnd5e.battle.extraRoll.main"),
+                        action: 'main'
+                    },
+                    {
+                        label: game.i18n.localize("ldnd5e.battle.extraRoll.extra"),
+                        action: 'extra'
+                    }
+                ]
+            })
 
-            if (result)
+            let result = await tatic.use({ event, mode: choosedMode });
+            if (!(result instanceof Array)) result = [result];
+
+            if (result) {
+                const scoreboard = this.world.scoreboard;
+
+                for (let res of result) {
+                    switch (res.damageType) {
+                        case taticsData.activities.md: {
+                            scoreboard.bottom.attack += res.total;
+                        } break;
+                        case taticsData.activities.mh: {                            
+                            scoreboard.top.attack -= res.total;
+                            scoreboard.top.attack = Math.max(scoreboard.top.attack, 0);
+                        } break;
+                        case taticsData.activities.ib: {
+                            scoreboard.bottom.impetus += res.total;
+                        } break;
+                        case taticsData.activities.id: {
+                            scoreboard.top.impetus -= res.total;
+                            scoreboard.top.impetus = Math.max(scoreboard.top.impetus, 0);
+                        } break;
+                        default: break;
+                    }
+                }
+
                 this._discardTatic(this.deck, tatic);
+
+                await game.settings.set('ldnd5e', 'battle', this.world);
+            }
         } else {
             tatic.sheet.render(true);
         }

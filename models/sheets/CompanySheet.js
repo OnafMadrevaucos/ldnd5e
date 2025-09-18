@@ -573,6 +573,8 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         const company = this.actor;
         const commander = company.system.info.commander;
 
+        // Remove the company reference from the commander.
+        await commander.unsetFlag('ldnd5e', 'company');
         // Remove the commander's deck from the actor.
         await commander.unsetFlag('ldnd5e', 'deck');
 

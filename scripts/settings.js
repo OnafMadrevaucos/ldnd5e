@@ -44,7 +44,7 @@ export const registerSystemSettings = function () {
         default: false
     });
 
-    // Battle Data
+    // Global battle data.
     game.settings.register("ldnd5e", "battle", {
         name: "ldnd5e.settings.battleDataName",
         hint: "ldnd5e.settings.battleDataHint",
@@ -52,69 +52,56 @@ export const registerSystemSettings = function () {
         config: false,
         type: Object,
         default: {
-            // Battle Application data.
-            app: {
-                mode: 0,
-                state: {
-                    sidebar: {
-                        control: false,
-                        viewer: '',
-                        events: false
-                    }
+            scoreboard: {
+                top: {
+                    attack: 0,
+                    impetus: 0
+                },
+                bottom: {
+                    attack: 0,
+                    impetus: 0
                 }
             },
-            // Global battle data.
-            world: {
-                scoreboard: {
-                    top: {
-                        attack: 0,
-                        impetus: 0
-                    },
-                    bottom: {
-                        attack: 0,
-                        impetus: 0
+            turns: {
+                max: 0,
+                current: 0
+            },
+            events: [],
+            fields: {
+                top: {
+                    rows: {
+                        1: {
+                            units: [],
+                            effect: ''
+                        },
+                        2: {
+                            units: [],
+                            effect: ''
+                        },
+                        3: {
+                            units: [],
+                            effect: ''
+                        }
                     }
                 },
-                turns: {
-                    max: 0,
-                    current: 0
-                },
-                events: [],
-                fields: {
-                    top: {
-                        rows: {
-                            1: {
-                                units: [],
-                                effect: ''
-                            },
-                            2: {
-                                units: [],
-                                effect: ''
-                            },
-                            3: {
-                                units: [],
-                                effect: ''
-                            }
-                        }
-                    },
-                    bottom: {
-                        rows: {
-                            1: {
-                                units: [],
-                                effect: ''
-                            },
-                            2: {
-                                units: [],
-                                effect: ''
-                            },
-                            3: {
-                                units: [],
-                                effect: ''
-                            }
+                bottom: {
+                    rows: {
+                        1: {
+                            units: [],
+                            effect: ''
+                        },
+                        2: {
+                            units: [],
+                            effect: ''
+                        },
+                        3: {
+                            units: [],
+                            effect: ''
                         }
                     }
                 }
             }
+
         }
     });
 }

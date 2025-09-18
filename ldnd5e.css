@@ -17,6 +17,8 @@
   --ldnd5e-color-re-1: #3466db;
   --ldnd5e-color-re-2: #314d8f;
   --ldnd5e-color-re-3: #273165;
+  --ldnd5e-color-enemy-side: #401f25;
+  --ldnd5e-color-ally-side: #333742;
   --ldnd5e-color-prof-none: #7a7971;
   --ldnd5e-color-prof-low: #c78f5e;
   --ldnd5e-color-prof-medium: #5b9b72;
@@ -1938,6 +1940,10 @@
   box-shadow: 0 0 5px var(--color-shadow-primary);
 }
 
+.dialog.activity .main-roll dnd5e-checkbox {
+  flex: 0;
+}
+
 .dialog.activity-choice.tatic {
   border: none;
 }
@@ -1958,6 +1964,20 @@
   text-align: center;
   font-size: var(--font-size-24);
   margin-bottom: 0.75em;
+}
+
+.dialog.activity-choice .unlist li.item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dialog.activity-choice .dialog-button {
+  width: 100%;
+  background: var(--dnd5e-color-card);
+  border: 1px solid var(--color-border-light-2);
+  color: var(--color-dark-5);
+  margin-top: 10px;
 }
 
 /* ----------------------------------------- */
@@ -2161,16 +2181,28 @@
 }
 
 .ldnd5e.battle .fields .field .row.drag-over {
-  box-shadow: inset 0px 0px 10px 1px var(--dnd5e-color-beige);
+  box-shadow: inset 0px 0px 10px 1px var(--ldnd5e-color-prof-none);
+}
+
+.ldnd5e.battle .fields .field .row.drag-over[data-prof="low"] {
+  box-shadow: inset 0px 0px 10px 1px var(--ldnd5e-color-prof-low);
+}
+
+.ldnd5e.battle .fields .field .row.drag-over[data-prof="medium"] {
+  box-shadow: inset 0px 0px 10px 1px var(--ldnd5e-color-prof-medium);
+}
+
+.ldnd5e.battle .fields .field .row.drag-over[data-prof="high"] {
+  box-shadow: inset 0px 0px 10px 1px var(--ldnd5e-color-prof-high);
 }
 
 
 .ldnd5e.battle .fields .top .row {
-  box-shadow: inset 0 5px 15px 1px var(--dnd5e-color-hd-1);
+  box-shadow: inset 0 5px 15px 1px var(--ldnd5e-color-enemy-side);
 }
 
 .ldnd5e.battle .fields .bottom .row {
-  box-shadow: inset 0 5px 15px 1px var(--dnd5e-color-blue-gray-4);
+  box-shadow: inset 0 5px 15px 1px var(--ldnd5e-color-ally-side);
 }
 
 .ldnd5e.battle .fields .field .row .units-list {
@@ -2225,7 +2257,19 @@
 }
 
 .ldnd5e.battle .fields .field .row-numbers .row-number.drag-over {
-  color: var(--dnd5e-color-beige);
+  color: var(--ldnd5e-color-prof-none);
+}
+
+.ldnd5e.battle .fields .field .row-numbers .row-number.drag-over[data-prof="low"] {
+  color: var(--ldnd5e-color-prof-low);
+}
+
+.ldnd5e.battle .fields .field .row-numbers .row-number.drag-over[data-prof="medium"] {
+  color: var(--ldnd5e-color-prof-medium);
+}
+
+.ldnd5e.battle .fields .field .row-numbers .row-number.drag-over[data-prof="high"] {
+  color: var(--ldnd5e-color-prof-high);
 }
 
 .ldnd5e.battle footer {
