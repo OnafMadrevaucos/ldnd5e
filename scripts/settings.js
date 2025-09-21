@@ -1,4 +1,4 @@
-import { i18nStrings } from "../scripts/constants.js";
+import { i18nStrings, battleData } from "../scripts/constants.js";
 
 export const registerSystemSettings = function () {
 
@@ -52,6 +52,7 @@ export const registerSystemSettings = function () {
         config: false,
         type: Object,
         default: {
+            stage: battleData.stages.setup,
             scoreboard: {
                 top: {
                     attack: 0,
@@ -67,6 +68,10 @@ export const registerSystemSettings = function () {
                 current: 0
             },
             events: [],
+            sides: {
+                top: [],
+                bottom: []
+            },
             fields: {
                 top: {
                     rows: {
@@ -101,7 +106,6 @@ export const registerSystemSettings = function () {
                     }
                 }
             }
-
         }
     });
 }

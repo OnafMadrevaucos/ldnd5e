@@ -190,7 +190,8 @@
                 "total": "Total",
                 "units": "Units",
                 "tatics": "Tatics"
-            }
+            },
+            "delete": "Delete Company"
         },
         "unit": {
             "category": "Category",
@@ -241,9 +242,15 @@
             "acceptExtras": "Accept Extras"
         },
         "battle": {
-            "phases": {
+            "stages": {
+                "setup": "Setup",
                 "prep": "Preparation",
                 "combat": "Combat"
+            },
+            "notification": {
+                "title": "No Battle Started",
+                "message": "Drag any company or army below to define the battle's sides and its start.",
+                "start": "Start Battle!"
             },
             "fields": {
                 "top": "Top",
@@ -319,6 +326,7 @@
             "noShieldEffect": "The Active Effect for {actor}'s Shields is malfunctioning. Active Effect has been recreated.",
             "noEffectErrors": "No Actor had errors in their Active Effects.",
             "invalidActorOnBattle": "{actor} is invalid and cannot be added to the battle.",
+            "cannotStartBattle": "Both sides of the battle must have at least one company or army assigned in order to start the battle.",
             "emptyBattleData": "Impossible to continue. The battle data is empty.",
             "fullHand": "You cannot draw any more cards because your hand is full.",
             "emptyDeck": "You cannot draw any more cards because the draw deck is empty.",

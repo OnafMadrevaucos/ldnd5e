@@ -379,7 +379,10 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
     /** @inheritdoc */
     async _onDropCommander(event, actor) {
         const actorData = actor.system;
-        const mainClass = actorData.attributes.hd.classes.first();
+        const mainClass = actor.type === "npc" ? 'npc' : actorData.attributes.hd.classes.first();
+        
+        const classIdentifier = mainClass?.system?.identifier || mainClass;
+        const hitDice = actor.type === "npc" ? actorData.attributes.hd.denomination : actorData.attributes.hd.largestFace;
 
         const oldCompanyId = actor.getFlag('ldnd5e', 'company');
         // The commander is already part of a company.
@@ -393,8 +396,8 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         const changes = {
             ['system.info.commander']: actor,
 
-            ['system.attributes.affinity.class']: mainClass.system.identifier,
-            ['system.attributes.affinity.hitDice']: actorData.attributes.hd.largestFace,
+            ['system.attributes.affinity.class']: classIdentifier,
+            ['system.attributes.affinity.hitDice']: hitDice,
             ['system.attributes.affinity.baseAbilities']: [], // TODO...
             ['system.attributes.affinity.bonus.value']: actorData.abilities.cha.mod,
             ['system.attributes.affinity.bonus.prof']: actorData.attributes.prof,

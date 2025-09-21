@@ -189,7 +189,8 @@
                 "total": "Total",
                 "units": "Unidades",
                 "tatics": "Táticas"
-            }
+            },
+            "delete": "Excluir Companhia"
         },
         "unit": {
             "category": "Categoria",
@@ -241,8 +242,14 @@
         },
         "battle": {
             "phases": {
+                "setup": "Configuração",
                 "prep": "Preparação",
                 "combat": "Combate"
+            },
+            "notification": {
+                "title": "Sem Batalhas Iniciadas",
+                "message": "Arraste qualquer companhia ou exército para cá para definir os lados da batalha e habilitar o seu início.",
+                "start": "Iniciar Batalha!"
             },
             "fields": {
                 "top": "Cima",
@@ -318,6 +325,7 @@
             "noShieldEffect": "O Active Effect para Escudos de {actor} está com defeito. Active Effect foi recriado.",
             "noEffectErrors": "Nenhum Actor apresentou erros em seus Active Effects.",
             "invalidActorOnBattle": "{actor} não é um combatente válido e não pode ser adicionado ao campo de batalha.",
+            "cannotStartBattle": "Ambos os lados da batalha deve ter pelo menos uma companhia ou exército atribuído para que a batalha possa ser iniciada.",
             "emptyBattleData": "Impossível continuar. Os dados da Batalha estão vazios.",
             "fullHand": "Você não pode comprar mais cartas porque sua mão está cheia.",
             "emptyDeck": "Você não pode comprar mais cartas porque o baralho está vazio.",

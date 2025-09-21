@@ -338,6 +338,27 @@ const taticsData = {
 */
 const battleData = { 
    /**
+   * Defines the Battle Stages constants.      
+   */
+   stages: {
+      setup: {
+         value: 'setup',
+         label: 'ldnd5e.battle.stages.setup',
+         icon: 'fas fa-cogs'
+      },
+      prep: {
+         value:'prep',
+         label: 'ldnd5e.battle.stages.prep',
+         icon: 'ra ra-tower'
+      },
+      started: {
+         value:'started',
+         label: 'ldnd5e.battle.stages.started',
+         icon: 'ra ra-crossed-swords'
+      }
+   },
+
+   /**
    * Defines the Effects on Rows constants.      
    */
    rowEffects: {
@@ -518,7 +539,8 @@ const i18nStrings = {
          total: "ldnd5e.company.cost.total",
          units: "ldnd5e.company.cost.units",
          tatics: "ldnd5e.company.cost.tatics"
-      }
+      },
+      delete: "ldnd5e.company.delete",
    },
 
    unit: {
@@ -601,9 +623,15 @@ const i18nStrings = {
    },
 
    battle: {
-      phases: {
-         prep: "ldnd5e.battle.phases.prep",
-         combat: "ldnd5e.battle.phases.combat",
+      stages: {
+         setup: "ldnd5e.battle.stages.setup",
+         prep: "ldnd5e.battle.stages.prep",
+         combat: "ldnd5e.battle.stages.combat",
+      },
+      notification: {
+         title: "ldnd5e.battle.notification.title",
+         message: "ldnd5e.battle.notification.message",
+         start: "ldnd5e.battle.notification.start",         
       },
       fields: {
          top: "ldnd5e.battle.fields.top",
@@ -693,6 +721,7 @@ const i18nStrings = {
 
       invalidActorOnBattle: "ldnd5e.messages.invalidActorOnBattle",
 
+      cannotStartBattle: "ldnd5e.messages.cannotStartBattle",
       emptyBattleData: "ldnd5e.messages.emptyBattleData",
       fullHand: "ldnd5e.messages.fullHand",
       emptyDeck: "ldnd5e.messages.emptyDeck",

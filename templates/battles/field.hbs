@@ -1,19 +1,71 @@
 <section class="field-container">
+
+    <div class="notification{{#unless setupStage}} hidden{{/unless}}">
+
+        <div class="sign">
+            <h1>{{localize 'ldnd5e.battle.notification.title'}}</h1>
+            <span>{{localize 'ldnd5e.battle.notification.message'}}</span>
+
+            <div class="sides">
+
+                <div class="side top dropzone" data-side="top">
+                    {{#unless sides.empty.top}}
+                    <div class="companies-list">
+                        {{#each sides.top}}
+                        <div class="item company" data-uuid="{{uuid}}" data-company-id="{{id}}" data-entry-id="{{id}}"
+                            data-item-name="{{name}}" data-drag-type="move">
+                            <div class="item-row {{#unless @root.isViewer}}draggable{{/unless}}" draggable="true">
+                                <img class="row-company {{#if img.svg}}svg{{/if}}" src="{{img.src}}"
+                                    data-tooltip="{{name}}">
+                            </div>
+                        </div>
+                        {{/each}}
+                    </div>
+                    {{else}}
+                    <span class="empty">{{localize 'ldnd5e.battle.fields.top'}}</span>
+                    {{/unless}}
+                </div>
+                <a {{#if sides.ready}}class="start-battle" data-tooltip="{{localize 'ldnd5e.battle.notification.start'}}"{{/if}} data-action="startBattle" 
+                     {{#unless isGM}}disabled{{/unless}}>                    
+                    <i class="ra ra-crossed-swords"></i>
+                </a>
+                <div class="side bottom dropzone" data-side="bottom">
+                    {{#unless sides.empty.bottom}}
+                    <div class="companies-list">
+                        {{#each sides.bottom}}
+                        <div class="item company" data-uuid="{{uuid}}" data-company-id="{{id}}" data-entry-id="{{id}}"
+                            data-item-name="{{name}}" data-drag-type="move">
+                            <div class="item-row {{#unless @root.isViewer}}draggable{{/unless}}" draggable="true">
+                                <img class="row-company {{#if img.svg}}svg{{/if}}" src="{{img.src}}"
+                                    data-tooltip="{{name}}">
+                            </div>
+                        </div>
+                        {{/each}}
+                    </div>
+                    {{else}}
+                    <span class="empty">{{localize 'ldnd5e.battle.fields.bottom'}}</span>
+                    {{/unless}}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
     <div class="fields">
 
         <div class="top field" data-side="top">
 
             <div class="row-numbers">
-                <span class="row-number" data-row="3" data-row-type="rea" data-tooltip="ldnd5e.uProf.rea">3 <i class="ra ra-arrow-cluster"
-                        inert></i></span>
-                <span class="row-number" data-row="2" data-row-type="res" data-tooltip="ldnd5e.uProf.res">2 <i class="ra ra-sword"
-                        inert></i></span>
-                <span class="row-number" data-row="1" data-row-type="van" data-tooltip="ldnd5e.uProf.van">1 <i class="ra ra-broken-shield"
-                        inert></i></span>
+                <span class="row-number" data-row="3" data-row-type="rea" data-tooltip="ldnd5e.uProf.rea">3 <i
+                        class="ra ra-arrow-cluster" inert></i></span>
+                <span class="row-number" data-row="2" data-row-type="res" data-tooltip="ldnd5e.uProf.res">2 <i
+                        class="ra ra-sword" inert></i></span>
+                <span class="row-number" data-row="1" data-row-type="van" data-tooltip="ldnd5e.uProf.van">1 <i
+                        class="ra ra-broken-shield" inert></i></span>
             </div>
 
             <div class="rows">
-                <div class="top row" data-row="3" data-row-type="rea" data-drag-counter="0">
+                <div class="top row dropzone" data-row="3" data-row-type="rea" data-drag-counter="0">
                     <ol class="units-list unlist">
                         {{#each rowUnits.top.rows.2.units}}
                         <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}"
@@ -26,7 +78,7 @@
                     </ol>
                 </div>
 
-                <div class="center row" data-row="2" data-row-type="res" data-drag-counter="0">
+                <div class="center row dropzone" data-row="2" data-row-type="res" data-drag-counter="0">
                     <ol class="units-list unlist">
                         {{#each rowUnits.top.rows.1.units}}
                         <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}"
@@ -39,7 +91,7 @@
                     </ol>
                 </div>
 
-                <div class="bottom row" data-row="1" data-row-type="van" data-drag-counter="0">
+                <div class="bottom row dropzone" data-row="1" data-row-type="van" data-drag-counter="0">
                     <ol class="units-list unlist">
                         {{#each rowUnits.top.rows.0.units}}
                         <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}"
@@ -60,13 +112,16 @@
         <div class="bottom field" data-side="bottom">
 
             <div class="row-numbers">
-                <span class="row-number" data-row="1" data-row-type="van" data-tooltip="ldnd5e.uProf.van">1 <i class="ra ra-broken-shield" inert></i></span>
-                <span class="row-number" data-row="2" data-row-type="res" data-tooltip="ldnd5e.uProf.res">2 <i class="ra ra-sword" inert></i></span>
-                <span class="row-number" data-row="3" data-row-type="rea" data-tooltip="ldnd5e.uProf.rea">3 <i class="ra ra-arrow-cluster" inert></i></span>
+                <span class="row-number" data-row="1" data-row-type="van" data-tooltip="ldnd5e.uProf.van">1 <i
+                        class="ra ra-broken-shield" inert></i></span>
+                <span class="row-number" data-row="2" data-row-type="res" data-tooltip="ldnd5e.uProf.res">2 <i
+                        class="ra ra-sword" inert></i></span>
+                <span class="row-number" data-row="3" data-row-type="rea" data-tooltip="ldnd5e.uProf.rea">3 <i
+                        class="ra ra-arrow-cluster" inert></i></span>
             </div>
 
             <div class="rows">
-                <div class="top row" data-row="1" data-row-type="van" data-drag-counter="0">
+                <div class="top row dropzone" data-row="1" data-row-type="van" data-drag-counter="0">
                     <ol class="units-list unlist">
                         {{#each rowUnits.bottom.rows.0.units}}
                         <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}"
@@ -79,7 +134,7 @@
                     </ol>
                 </div>
 
-                <div class="center row" data-row="2" data-row-type="res" data-drag-counter="0">
+                <div class="center row dropzone" data-row="2" data-row-type="res" data-drag-counter="0">
                     <ol class="units-list unlist">
                         {{#each rowUnits.bottom.rows.1.units}}
                         <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}"
@@ -92,7 +147,7 @@
                     </ol>
                 </div>
 
-                <div class="bottom row" data-row="3" data-row-type="rea" data-drag-counter="0">
+                <div class="bottom row dropzone" data-row="3" data-row-type="rea" data-drag-counter="0">
                     <ol class="units-list unlist">
                         {{#each rowUnits.bottom.rows.2.units}}
                         <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}"
@@ -142,15 +197,15 @@
 
     <footer>
         <div class="pill battle-phase">
-            <i class="ra {{phase.icon}}"></i>
-            {{phase.label}}
+            <i class="{{stage.icon}}"></i>
+            {{localize stage.label}}
         </div>
 
         <div class="pill turn-counter">
             {{#with turns}}
             <div class="meter progress turns" role="meter" aria-valuemin="0" aria-valuenow="{{value}}"
                 aria-valuetext="{{value}}" aria-valuemax="{{max}}"
-                style="--bar-percentage: {{pct}}%; --stamina-limit: {{limit}}%;">
+                style="--bar-percentage: {{pct}}%; --stamina-limit: 50%;">
                 <div class="label">
                     <i class="ra ra-lightning-bolt" inert=""></i>
                     <span class="value">{{current}}</span>

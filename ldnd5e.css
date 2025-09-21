@@ -23,6 +23,21 @@
   --ldnd5e-color-prof-low: #c78f5e;
   --ldnd5e-color-prof-medium: #5b9b72;
   --ldnd5e-color-prof-high: #386eb3;
+  --ldnd5e-color-notification-side: #33374236;
+}
+
+@keyframes small-pulsate {
+  0% {
+    text-shadow: 0 0 0px rgba(255, 255, 255, 0.5);
+  }
+
+  50% {
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+  }
+
+  100% {
+    text-shadow: 0 0 0px rgba(255, 255, 255, 0.5);
+  }
 }
 
 /* ----------------------------------------- */
@@ -2103,6 +2118,96 @@
   box-shadow: 0 0 5px #000;
 }
 
+.ldnd5e.battle .field-container .notification {
+  position: fixed;
+  top: 10px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 25px);
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 0;
+  justify-content: center;
+  padding-inline: 0;
+  text-shadow: none;
+  z-index: 100;
+}
+
+.ldnd5e.battle .field-container .notification .sign {
+  align-self: center;
+  background-color: var(--dnd5e-color-dark-gray);
+  box-shadow: 0px 2px 2px 0px var(--dnd5e-color-crimson);
+  padding: 10px 25px;
+  text-align: center;
+  width: 100%;
+}
+
+.ldnd5e.battle .notification .sign .sides {
+  height: 100px;
+  display: flex;
+  flex-direction: row;
+  padding: 10px 5px;
+}
+
+.ldnd5e.battle .notification .sides .side {
+  flex: 1;
+  background-color: var(--ldnd5e-color-notification-side);
+  border-radius: 4px;
+  padding: 5px;
+}
+
+.ldnd5e.battle .notification .sides .side:has(.empty) {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.ldnd5e.battle .notification .sides .side .empty {
+  align-content: center;
+  color: var(--dnd5e-color-blue-gray-3);
+  font-family: var(--dnd5e-font-roboto-slab);
+  font-size: var(--font-size-24);
+  font-variant: petite-caps;
+  font-style: italic;
+  opacity: 0.5;
+}
+
+.ldnd5e.battle .notification .sides .side .companies-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  height: fit-content;
+  gap: 5px;
+}
+
+.ldnd5e.battle .notification .sides .side .company {
+  border-radius: 4px;
+}
+
+.ldnd5e.battle .notification .sides .side .company img {
+  width: 32px;
+  height: 32px;
+}
+
+.ldnd5e.battle .notification .sides a {
+  font-size: var(--font-size-30);
+  align-self: center;
+  text-shadow: none;
+  color: var(--dnd5e-color-crimson);
+  margin-inline: 5px;
+}
+
+
+.ldnd5e.battle .notification .sides a.start-battle {
+  animation: small-pulsate 3s infinite ease-in-out;
+}
+
+.ldnd5e.battle .notification .sides a.start-battle:hover {
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+  animation: none;
+}
+
 .ldnd5e.battle .fields {
   display: flex;
   flex-direction: column;
@@ -2182,6 +2287,7 @@
 
 .ldnd5e.battle .fields .field .row.drag-over {
   box-shadow: inset 0px 0px 10px 1px var(--ldnd5e-color-prof-none);
+  animation: pulsate 3s infinite ease-in-out;
 }
 
 .ldnd5e.battle .fields .field .row.drag-over[data-prof="low"] {

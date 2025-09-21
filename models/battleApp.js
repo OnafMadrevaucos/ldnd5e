@@ -25,6 +25,7 @@ export default class BattleApp extends api.Application5e {
             dropdown: true // habilita o dropdown no header
         },
         actions: {
+            startBattle: BattleApp.#startBattle,
             toggleDeckControls: BattleApp.#toggleDeckControls,
             toggleExtraDeck: BattleApp.#toggleExtraDeck,
             toggleEventsControls: BattleApp.#toggleEventsControls,
@@ -45,7 +46,7 @@ export default class BattleApp extends api.Application5e {
             width: 900,
             height: 825
         },
-        dragDrop: [{ dropSelector: '.row' }]
+        dragDrop: [{ dropSelector: '.dropzone' }]
     };
 
     /* -------------------------------------------- */
@@ -220,6 +221,37 @@ export default class BattleApp extends api.Application5e {
             events: 'modules/ldnd5e/ui/icons/battle/events.svg',
         };
 
+        context.sides = {
+            top: this.world.sides.top.map(companyId => {
+                const company = game.actors.get(companyId);
+                return company ? {
+                    id: company.id,
+                    name: company.name,
+                    img: {
+                        src: company.img,
+                        svg: company.img.endsWith('.svg')
+                    }
+                } : null;
+            }),
+            bottom: this.world.sides.bottom.map(companyId => {
+                const company = game.actors.get(companyId);
+                return company ? {
+                    uuid: company.uuid,
+                    id: company.id,
+                    name: company.name,
+                    img: {
+                        src: company.img,
+                        svg: company.img.endsWith('.svg')
+                    }
+                } : null;
+            }),
+            ready: this.world.sides.top.length > 0 && this.world.sides.bottom.length > 0,
+            empty: {
+                top: this.world.sides.top.length === 0,
+                bottom: this.world.sides.bottom.length === 0
+            }
+        }
+
         context.score = {
             enemy: {
                 attack: this.world.scoreboard.top.attack,
@@ -250,19 +282,16 @@ export default class BattleApp extends api.Application5e {
 
     /** @inheritDoc */
     async _prepareFieldContext(context, options) {
-        context.phase = {
-            label: game.i18n.localize('ldnd5e.battle.phases.prep'),
-            icon: 'ra-tower'
-        }
+        context.setupStage = (this.world.stage.value === battleData.stages.setup.value);
+        context.stage = this.world.stage;
 
-        context.turns = {
-            elapsed: 5,
-            max: 20,
-            current: 20 - 5,
-            value: ((20 - 5) / 20),
-            limit: Math.clamp((10 / 20) * 100, 0, 100),
-            pct: Math.clamp(((20 - 5) / 20) * 100, 0, 100)
-        };
+        context.turns = this.world.turns;
+
+        Object.assign(context.turns, {
+            elapsed: context.turns.max - context.turns.current,
+            value: ((context.turns.max - context.turns.current) / context.turns.max),
+            pct: Math.clamp(((context.turns.max - context.turns.current) / context.turns.max) * 100, 0, 100)
+        });
 
         return context;
     }
@@ -473,7 +502,7 @@ export default class BattleApp extends api.Application5e {
         // Enable Drag & Drop funtion to rows.
         new dragDrop({
             dragSelector: ".draggable",
-            dropSelector: ".row",
+            dropSelector: ".dropzone",
             callbacks: {
                 dragstart: this._onDragStart.bind(this),
                 dragenter: this._onDragEnter.bind(this),
@@ -494,7 +523,8 @@ export default class BattleApp extends api.Application5e {
             unit.addEventListener("contextmenu ", contextMenu.triggerEvent);
         }
 
-        new contextMenu(this.element, "li.unit", [], { onOpen: this._onOpenContextMenu.bind(this), jQuery: false });
+        new contextMenu(this.element, "li.unit", [], { onOpen: this._onOpenUnitContextMenu.bind(this), jQuery: false });
+        new contextMenu(this.element, "div.item.company", [], { onOpen: this._onOpenSideContextMenu.bind(this), jQuery: false });
     }
 
     /* -------------------------------------------- */
@@ -517,14 +547,16 @@ export default class BattleApp extends api.Application5e {
         ];
     }
 
+    /* -------------------------------------------- */
+
     /**
-   * Prepare an array of context menu options which are available for inventory items.
+   * Prepare an array of context menu options which are available for field units items.
    * @param {UnitL5e} unit         The unit.
    * @param {HTMLElement} element  The unit's rendered element.
    * @returns {ContextMenuEntry[]}
    * @protected
    */
-    _getContextOptions(unit, element) {
+    _getUnitContextOptions(unit, element) {
         let options = [];
 
         // Unit options.
@@ -533,7 +565,31 @@ export default class BattleApp extends api.Application5e {
             name: "ldnd5e.unit.delete",
             icon: '<i class="fas fa-trash fa-fw"></i>',
             condition: () => true,
-            callback: li => this._onAction(li, "delete")
+            callback: li => this._onAction(li, "deleteUnit")
+        });
+
+        return options;
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Prepare an array of context menu options which are available for side company items.
+   * @param {UnitL5e} unit         The unit.
+   * @param {HTMLElement} element  The unit's rendered element.
+   * @returns {ContextMenuEntry[]}
+   * @protected
+   */
+    _getSideContextOptions(unit, element) {
+        let options = [];
+
+        // Unit options.
+        options.push({
+            id: "delete",
+            name: "ldnd5e.company.delete",
+            icon: '<i class="fas fa-trash fa-fw"></i>',
+            condition: () => true,
+            callback: div => this._onAction(div, "deleteCompany")
         });
 
         return options;
@@ -551,17 +607,24 @@ export default class BattleApp extends api.Application5e {
    * @private
    */
     async _onAction(target, action, { event } = {}) {
-        const side = target.closest(".field").dataset.side;
-        const row = target.closest(".row").dataset.row;
-        const unitId = target.dataset.unitId;
-
         switch (action) {
-            case "delete": {
+            case "deleteUnit": {
+                const side = target.closest(".field").dataset.side;
+                const row = target.closest(".row").dataset.row;
+                const unitId = target.dataset.unitId;
+
                 this.world.fields[side].rows[row].units = this.world.fields[side].rows[row].units.filter(u => u !== unitId);
-                await game.settings.set('ldnd5e', 'battle', this.world);
-                return target.remove();
-            }
+            } break;
+            case "deleteCompany": {
+                const side = target.closest(".side").dataset.side;
+                const companyId = target.dataset.companyId;
+
+                this.world.sides[side] = this.world.sides[side].filter(c => c !== companyId);
+            } break;
         }
+
+        await game.settings.set('ldnd5e', 'battle', this.world);
+        return target.remove();
     }
 
     /* -------------------------------------------- */
@@ -593,18 +656,36 @@ export default class BattleApp extends api.Application5e {
         }
     }
 
+    /* -------------------------------------------- */
+
     /**
-     * Handle opening the context menu.
+     * Handle opening the field units context menu.
      * @param {HTMLElement} element  The element the context menu was triggered for.
      * @protected
      */
-    _onOpenContextMenu(element) {
+    _onOpenUnitContextMenu(element) {
         const { unitId } = element.closest("[data-unit-id]")?.dataset ?? {};
         const unit = game.actors.get(unitId);
 
-        ui.context.menuItems = this._getContextOptions(unit, element);
+        ui.context.menuItems = this._getUnitContextOptions(unit, element);
         Hooks.callAll("dnd5e.getItemContextOptions", unit, ui.context.menuItems);
     }
+
+    /* -------------------------------------------- */
+
+    /**
+     * Handle opening the field units context menu.
+     * @param {HTMLElement} element  The element the context menu was triggered for.
+     * @protected
+     */
+    _onOpenSideContextMenu(element) {
+        const { companyId } = element.closest("[data-company-id]")?.dataset ?? {};
+        const company = game.actors.get(companyId);
+
+        ui.context.menuItems = this._getSideContextOptions(company, element);
+        Hooks.callAll("dnd5e.getItemContextOptions", company, ui.context.menuItems);
+    }
+
     /* -------------------------------------------- */
     /*  Drag & Drop                                 */
     /* -------------------------------------------- */
@@ -692,6 +773,95 @@ export default class BattleApp extends api.Application5e {
      * @protected
      */
     async _onDrop(event) {
+        // Drop target.
+        const dropzone = event.currentTarget;
+
+        if (dropzone.classList.contains("row")) {
+            await this._onRowDrop(event, dropzone);
+        }
+        else if (dropzone.classList.contains("side")) {
+            await this._onSideDrop(event, dropzone);
+        }
+
+        // Re-render
+        this.render(true);
+    }
+
+    /**
+     * Handle dropping an actor onto the battlefield.
+     * @param {DragEvent} event  The drop event.
+     * @param {HTMLElement} battleSide  The element receiving the drop.
+     * @protected
+     */
+    async _onSideDrop(event, battleSide) {
+        // Drop data.
+        const data = foundry.applications.ux.TextEditor.getDragEventData(event);
+        if (data.type !== "Actor") return;
+
+        // Obtain Actor.
+        const actor = await fromUuid(data.uuid);
+        if (!actor) return;
+
+        if (actor.type !== 'ldnd5e.army' && actor.type !== 'ldnd5e.company') {
+            ui.notifications.warn(game.i18n.format("ldnd5e.messages.invalidActorOnBattle", { actor: actor.name }), { localize: true });
+            return;
+        }
+
+        const companies = [];
+        if (actor.type === 'ldnd5e.army') {
+            for (const companyId of actor.system.companies) {
+                const company = game.actors.get(companyId);
+                if (!company) continue;
+
+                let commander = company.system.info.commander;
+                if (!commander) continue;
+
+                if (commander.type === 'npc')
+                    commander = game.users.activeGM.character;
+
+                companies.push({
+                    id: company.id,
+                    name: company.name,
+                    img: {
+                        src: company.img,
+                        svg: company.img.endsWith('.svg')
+                    },
+                    commander: commander.id
+                });
+            }
+        } else {
+            let commander = actor.system.info.commander;
+            if (!commander) return;
+
+            if (commander.type === 'npc')
+                commander = game.users.activeGM.character;
+
+            companies.push({
+                id: company.id,
+                name: company.name,
+                img: {
+                    src: company.img,
+                    svg: company.img.endsWith('.svg')
+                },
+                commander: commander.id
+            });
+        }
+
+        const sideName = battleSide.dataset.side;
+        companies.forEach(companyId => {
+            if (!this.world.sides[sideName].includes(companyId)) this.world.sides[sideName].push(companyId);
+        });
+
+        await game.settings.set('ldnd5e', 'battle', this.world);
+    }
+
+    /**
+     * Handle dropping an actor onto the battlefield.
+     * @param {DragEvent} event  The drop event.
+     * @param {HTMLElement} unitRow  The element receiving the drop.
+     * @protected
+     */
+    async _onRowDrop(event, unitRow) {
         const fields = this.element.querySelector('.fields');
         const rows = fields.querySelectorAll('.row');
         const rowsNumbers = fields.querySelectorAll('.row-number');
@@ -703,22 +873,17 @@ export default class BattleApp extends api.Application5e {
             delete row.dataset.prof;
         });
 
-
         const field = event.currentTarget.closest(".field");
-        // Drop target.
-        const rowEl = event.currentTarget.closest(".row");
-        if (!rowEl) return;
+        const rowNumber = unitRow.dataset.row;
 
-        const rowNumber = rowEl.dataset.row;
-
-        let dragCounter = Number(rowEl.dataset.dragCounter);
+        let dragCounter = Number(unitRow.dataset.dragCounter);
         dragCounter = dragCounter > 0 ? dragCounter - 1 : 0;
-        rowEl.dataset.dragCounter = dragCounter;
+        unitRow.dataset.dragCounter = dragCounter;
 
         const rowNumberSpan = field.querySelector(`.row-number[data-row="${rowNumber}"]`);
 
         if (dragCounter <= 0) {
-            rowEl.classList.remove("drag-over");
+            unitRow.classList.remove("drag-over");
             rowNumberSpan.classList.remove("drag-over");
         }
 
@@ -735,8 +900,8 @@ export default class BattleApp extends api.Application5e {
             return;
         }
 
-        const rowName = rowEl.dataset.row;
-        const sideName = rowEl.closest(".field")?.dataset.side;
+        const rowName = unitRow.dataset.row;
+        const sideName = unitRow.closest(".field")?.dataset.side;
 
         if (!rowName || !sideName) return;
 
@@ -748,9 +913,6 @@ export default class BattleApp extends api.Application5e {
                 await this._onDropUnit({ actor, sideName, rowName });
             } break
         }
-
-        // Re-render
-        this.render(true);
     }
 
     /**
@@ -899,6 +1061,26 @@ export default class BattleApp extends api.Application5e {
 
     /* -------------------------------------------- */
     /*  Form Actions                                */
+    /* -------------------------------------------- */
+
+    /**
+   * Start a battle.
+   * @this {BattleApp}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+    static async #startBattle(event, target) {
+        if ((this.world.sides.bottom.length == 0 || this.world.sides.top.length == 0)) {
+            ui.notifications.warn(game.i18n.localize("ldnd5e.messages.cannotStartBattle"));
+            return;
+        }
+
+        this.world.stage = battleData.stages.prep;
+
+        await game.settings.set('ldnd5e', 'battle', this.world);
+        this.render(true);
+    }
+
     /* -------------------------------------------- */
 
     /**
@@ -1198,7 +1380,7 @@ export default class BattleApp extends api.Application5e {
                         case taticsData.activities.md: {
                             scoreboard.bottom.attack += res.total;
                         } break;
-                        case taticsData.activities.mh: {                            
+                        case taticsData.activities.mh: {
                             scoreboard.top.attack -= res.total;
                             scoreboard.top.attack = Math.max(scoreboard.top.attack, 0);
                         } break;
