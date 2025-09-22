@@ -1,4 +1,61 @@
 <section class="field-container">
+<<<<<<< Updated upstream
+=======
+
+    <div class="sidebar-overlay{{#unless state.sidebar.overlay}} hidden{{/unless}}"></div>
+
+    <div class="notification{{#unless setupStage}} hidden{{/unless}}">
+
+        <div class="sign">
+            <h1>{{localize 'ldnd5e.battle.notification.title'}}</h1>
+            <span>{{localize 'ldnd5e.battle.notification.message'}}</span>
+
+            <div class="sides">
+
+                <div class="side top dropzone" data-side="top">
+                    {{#unless sides.empty.top}}
+                    <div class="companies-list">
+                        {{#each sides.top}}
+                        <div class="item company" data-uuid="{{uuid}}" data-company-id="{{id}}" data-entry-id="{{id}}"
+                            data-item-name="{{name}}" data-drag-type="move">
+                            <div class="item-row {{#unless @root.isViewer}}draggable{{/unless}}" draggable="true">
+                                <img class="row-company {{#if img.svg}}svg{{/if}}" src="{{img.src}}"
+                                    data-tooltip="{{name}}">
+                            </div>
+                        </div>
+                        {{/each}}
+                    </div>
+                    {{else}}
+                    <span class="empty">{{localize 'ldnd5e.battle.fields.top'}}</span>
+                    {{/unless}}
+                </div>
+                <a {{#if sides.ready}}class="start-battle" data-tooltip="{{localize 'ldnd5e.battle.notification.start'}}"{{/if}} data-action="startBattle" 
+                     {{#unless isGM}}disabled{{/unless}}>                    
+                    <i class="ra ra-crossed-swords"></i>
+                </a>
+                <div class="side bottom dropzone" data-side="bottom">
+                    {{#unless sides.empty.bottom}}
+                    <div class="companies-list">
+                        {{#each sides.bottom}}
+                        <div class="item company" data-uuid="{{uuid}}" data-company-id="{{id}}" data-entry-id="{{id}}"
+                            data-item-name="{{name}}" data-drag-type="move">
+                            <div class="item-row {{#unless @root.isViewer}}draggable{{/unless}}" draggable="true">
+                                <img class="row-company {{#if img.svg}}svg{{/if}}" src="{{img.src}}"
+                                    data-tooltip="{{name}}">
+                            </div>
+                        </div>
+                        {{/each}}
+                    </div>
+                    {{else}}
+                    <span class="empty">{{localize 'ldnd5e.battle.fields.bottom'}}</span>
+                    {{/unless}}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+>>>>>>> Stashed changes
     <div class="fields">
 
         <div class="top field">
@@ -64,10 +121,16 @@
 
         <div class="sidebar">
 
+<<<<<<< Updated upstream
             <div class="deck-controls">
+=======
+            {{#unless isViewer}}
+            <div class="main-controls">
+>>>>>>> Stashed changes
                 <button class="deck-button" data-action="toggleDeckControls">
                     <img src="{{icons.deck}}" alt="{{localize 'ldnd5e.battle.openDeck'}}">
                 </button>
+                
                 <button class="event-button {{#unless isGM}}hidden{{/unless}}" data-action="toggleEventsControls">
                     <img src="{{icons.events}}" alt="{{localize 'ldnd5e.battle.openEvents'}}">
                 </button>

@@ -76,7 +76,7 @@ export default class adControl extends Application {
    static get defaultOptions() {
       return foundry.utils.mergeObject(super.defaultOptions, {
          id: constants.moduleName,
-         classes: [constants.moduleName, (CONFIG.IsDnD2 ? "dnd5e2" : "dnd5e")],
+         classes: [constants.moduleName, (CONFIG.IsDnD2 ? "dnd5e2" : "dnd5e"), 'ad-control'],
          template: constants.templates.mainTemplate,
          width: 900,
          height: 650,

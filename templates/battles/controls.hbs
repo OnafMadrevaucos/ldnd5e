@@ -119,9 +119,51 @@
 
         </section>
 
+<<<<<<< Updated upstream
     </section>
 
     <div class="extra-decks-viewer">
+=======
+                </filigree-box>
+
+            </section>
+
+            <section class="units-summary">
+
+                <filigree-box class="units flexcol">
+                    <h3 {{#if multipleCompanies}}class ="multiple-companies" data-action="toggleCompanySelect"{{/if}}>
+                        <i class="ra ra-knight-helmet" inert></i>
+                        <span>{{localize 'ldnd5e.battle.units'}}</span>
+                    </h3>
+                    <ul class="units-list unlist">
+                        {{#each units as |unit|}}
+                        <li class="unit draggable" data-unit-id="{{unit.id}}" data-drag-type="link" draggable="true">
+                            <a class="unit-link rollable" data-action="clickUnit">
+                                <img class="gold-icon" src="{{unit.img}}">
+                                <span class="name">{{unit.name}}</span>
+                            </a>
+                        </li>
+                        {{/each}}
+                    </ul>
+                </filigree-box>
+
+            </section>
+
+        </div>
+    </section>
+
+    <div class="company-tabs {{#if state.sidebar.tabs}}active{{/if}}">
+        {{#each companies as |company idx|}}
+        <a class="item control {{#if (eq ../currentCompanyIdx idx)}}active{{/if}}" type="button"
+            data-action="switchCompany" data-idx="{{idx}}" data-tooltip="{{company.name}}", data-tooltip-direction="LEFT">
+            <img class="gold-icon{{#if company.img.svg}} svg{{/if}}" src="{{company.img.src}}">
+        </a>
+        {{/each}}
+    </div>
+
+    <div class="extra-decks-viewer {{#if (ne state.sidebar.viewer "")}}active{{/if}}"
+        data-deck="{{state.sidebar.viewer}}">
+>>>>>>> Stashed changes
 
         <div class="cards-section full hidden">
             <h4 class="title">{{localize 'ldnd5e.battle.extraDecks.full'}}</h4>
