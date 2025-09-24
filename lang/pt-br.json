@@ -208,7 +208,8 @@
             "trainningLoad": "Carga de Treino",
             "delete": "Excluir Unidade",
             "isMainRoll": "É Rolagem Principal?",
-            "mainRoll": "Rolagem Principal"
+            "mainRoll": "Rolagem Principal",
+            "deployed": "Unidade Mobilizada"
         },
         "tatics": {
             "flavor": "Floreio",

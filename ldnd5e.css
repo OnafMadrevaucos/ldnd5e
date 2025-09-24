@@ -2708,6 +2708,14 @@
   gap: 5px;
 }
 
+.ldnd5e.battle .units-list .unit .unit-link .name {
+  flex: 1;
+}
+.ldnd5e.battle .units-list .unit .unit-link i {
+  color: var(--dnd5e-color-gold);
+  font-size: var(--font-size-18);
+}
+
 .ldnd5e.battle .deck-controls .extra-decks-viewer {
   position: absolute;
   height: 80%;

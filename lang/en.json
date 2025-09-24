@@ -208,7 +208,8 @@
             "isTrainning": "Is Training?",
             "trainningLoad": "Training Load",
             "delete": "Delete Unit",
-            "isMainRoll": "Is Main Roll?"
+            "isMainRoll": "Is Main Roll?",
+            "deployed": "Unit Deployed"
         },
         "tatics": {
             "flavor": "Flavor",

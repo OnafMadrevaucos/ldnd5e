@@ -316,20 +316,8 @@ export default class BattleApp extends api.Application5e {
         // Initialize the application data.
         await this._prepareBaseData();
 
-        return {
-            ...await super._prepareContext(options),
-            state: this.state,
-            editable: this.isEditable,
-            options: this.options
-        };
-    }
-
-    /* -------------------------------------------- */
-
-    /** @inheritDoc */
-    async _preparePartContext(partId, context, options) {
-        context = await super._preparePartContext(partId, context, options);
-
+        const context = await super._prepareContext(options);
+        
         Object.assign(context, {
             isGM: this.local.user.isGM,
             isViewer: this.local.isViewer
@@ -363,6 +351,20 @@ export default class BattleApp extends api.Application5e {
 
         // Prepare all the unit context for display.
         this._prepareUnits(context);
+
+        return {
+            ...context,
+            state: this.state,
+            editable: this.isEditable,
+            options: this.options
+        };
+    }
+
+    /* -------------------------------------------- */
+
+    /** @inheritDoc */
+    async _preparePartContext(partId, context, options) {
+        context = await super._preparePartContext(partId, context, options);
 
         switch (partId) {
             case "field":
@@ -581,6 +583,21 @@ export default class BattleApp extends api.Application5e {
    * @protected
    */
     _prepareUnits(context) {
+        const world = this.battle.world;
+
+        context.rowUnits = {
+            top: {
+                rows: Object.entries(world.fields.top.rows).map(([n, { units }]) => ({
+                    units: units.map(unit => game.actors.get(unit))
+                }))
+            },
+            bottom: {
+                rows: Object.entries(world.fields.bottom.rows).map(([n, { units }]) => ({
+                    units: units.map(unit => game.actors.get(unit))
+                }))
+            }
+        };
+
         // If user is not a viewer, prepare its company's units list.
         if (!context.isViewer) {
 
@@ -598,28 +615,29 @@ export default class BattleApp extends api.Application5e {
             if (company) {
                 Object.entries(company.system.unitsList).forEach(([type, units]) => {
                     if (['light', 'heavy', 'special'].includes(type)) {
-                        unitsList.push(...units);
+                        for (let unit of units) {
+                            let unitFound = false;
+                            for (let field of Object.values(world.fields)) {
+                                for (let row of Object.values(field.rows)) {
+                                    if (row.units.includes(unit.id)) {
+                                        unit.deployed = true;
+                                        unitFound = true;
+                                        break;
+                                    } else {
+                                        unit.deployed = false;
+                                    }
+                                }
+
+                                if (unitFound) break;
+                            }
+                            unitsList.push(unit);
+                        }
                     }
                 });
 
                 context.units = unitsList;
             }
         }
-
-        const world = this.battle.world;
-
-        context.rowUnits = {
-            top: {
-                rows: Object.entries(world.fields.top.rows).map(([n, { units }]) => ({
-                    units: units.map(unit => game.actors.get(unit))
-                }))
-            },
-            bottom: {
-                rows: Object.entries(world.fields.bottom.rows).map(([n, { units }]) => ({
-                    units: units.map(unit => game.actors.get(unit))
-                }))
-            }
-        };
 
         return context;
     }
@@ -804,7 +822,7 @@ export default class BattleApp extends api.Application5e {
         }
 
         await game.settings.set('ldnd5e', 'battle', this.world);
-        return target.remove();
+        this.render({ force: true });
     }
 
     /* -------------------------------------------- */
@@ -896,6 +914,10 @@ export default class BattleApp extends api.Application5e {
 
         event.dataTransfer.setData("text/plain", JSON.stringify(unit.toDragData()));
         event.dataTransfer.effectAllowed = li?.dataset.dragType ?? null;
+
+        // Toggle the overlay only when the event didn't start from a field row.
+        if (!li.closest(".fields"))
+            this._toggleOverLay(false);
     }
 
     /**
@@ -1083,38 +1105,12 @@ export default class BattleApp extends api.Application5e {
 
         switch (event.dataTransfer.effectAllowed) {
             case "move": {
-                await this._onMoveUnit({ actor, sideName, rowName });
+                await this._onDropUnit({ actor, sideName, rowName });
             } break;
             default: {
                 await this._onDropUnit({ actor, sideName, rowName });
             } break
         }
-    }
-
-    /**
-     * Handle the move of a unit from one row to another.
-     * @param {object} data - The event data.
-     * @param {string} data.sideName - The name of the side.
-     * @param {string} data.rowName - The name of the row.
-     * @param {Actor} data.actor - The actor.
-     * @private
-     */
-    async _onMoveUnit(data) {
-        // Ignore if the user is a viewer.
-        if (this.local.isViewer) return;
-
-        const fields = this.#battle.world.fields;
-
-        // Remove from the old row.
-        Object.values(fields).forEach(field => {
-            Object.values(field.rows).forEach(row => {
-                row.units = row.units.filter(u => u !== data.actor.id);
-            });
-        });
-
-        fields[data.sideName].rows[data.rowName].units.push(data.actor.id);
-        // Store.
-        await game.settings.set('ldnd5e', 'battle', this.world);
     }
 
     /**
@@ -1130,6 +1126,13 @@ export default class BattleApp extends api.Application5e {
 
         const fields = this.#battle.world.fields;
 
+        // Remove from the old row, if any.
+        Object.values(fields).forEach(field => {
+            Object.values(field.rows).forEach(row => {
+                row.units = row.units.filter(u => u !== data.actor.id);
+            });
+        });
+
         fields[data.sideName].rows[data.rowName].units.push(data.actor.id);
         // Store.
         await game.settings.set('ldnd5e', 'battle', this.world);
@@ -1143,14 +1146,16 @@ export default class BattleApp extends api.Application5e {
    * Toggle the sidebar overlay.
    * @this {BattleApp}
    */
-    async _toggleOverLay() {
+    async _toggleOverLay(update = true) {
         const html = this.element;
         const overlay = html.querySelector('.sidebar-overlay');
 
         overlay.classList.toggle('hidden');
 
-        this.app.state.sidebar.overlay = !overlay.classList.contains('hidden');
-        await game.user.setFlag('ldnd5e', 'battle', this.app);
+        if (update) {
+            this.app.state.sidebar.overlay = !overlay.classList.contains('hidden');
+            await game.user.setFlag('ldnd5e', 'battle', this.app);
+        }
     }
 
     /* -------------------------------------------- */
@@ -1222,14 +1227,21 @@ export default class BattleApp extends api.Application5e {
     /* -------------------------------------------- */
 
     /**
-   * Validate all deck entries.
+   * Update deck entries.
    * @this {BattleApp}
    */
     async _updateDeck() {
         const deck = this.deck;
 
         if (game.user.isGM) {
-            await this.local.user.setFlag("ldnd5e", "deck", { hand: deck.hand, piles: deck.piles });
+            const companyId = this.local.company[this.currentCompanyIdx]?.id ?? null;
+            const company = game.actors.get(companyId);
+            if(!company) return;
+
+            const commander = company.system.info.commander;
+            if(!commander) return;  
+
+            await commander.setFlag("ldnd5e", "deck", { hand: deck.hand, piles: deck.piles });
         } else {
             await this.local.commander.setFlag("ldnd5e", "deck", { hand: deck.hand, piles: deck.piles });
         }

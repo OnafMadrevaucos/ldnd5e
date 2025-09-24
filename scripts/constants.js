@@ -559,6 +559,7 @@ const i18nStrings = {
       trainningLoad: "ldnd5e.unit.trainningLoad",      
       delete: "ldnd5e.unit.delete",
       isMainRoll: "ldnd5e.unit.isMainRoll",
+      deployed: "ldnd5e.unit.deployed"
    },
 
    tatics: {
@@ -672,7 +673,7 @@ const i18nStrings = {
          message: "ldnd5e.battle.extraRoll.message",
          main: "ldnd5e.battle.extraRoll.main",
          extra: "ldnd5e.battle.extraRoll.extra",
-      }      
+      }            
    },
 
    categories: {

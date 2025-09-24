@@ -135,10 +135,11 @@
                     </h3>
                     <ul class="units-list unlist">
                         {{#each units as |unit|}}
-                        <li class="unit draggable" data-unit-id="{{unit.id}}" data-drag-type="link" draggable="true">
+                        <li class="unit {{#unless unit.deployed}} draggable{{/unless}}" data-unit-id="{{unit.id}}" data-drag-type="link" draggable="{{~unit.deployed}}">
                             <a class="unit-link rollable" data-action="clickUnit">
                                 <img class="gold-icon" src="{{unit.img}}">
                                 <span class="name">{{unit.name}}</span>
+                                {{#if unit.deployed}}<i class="ra ra-skull-trophy" data-tooltip="{{localize 'ldnd5e.unit.deployed'}}"></i>{{/if}}
                             </a>
                         </li>
                         {{/each}}
