@@ -1,0 +1,8 @@
+<nav class="battle-tabs" data-group="primary" aria-roledescription="{{localize 'SHEETS.FormNavLabel'}}">
+    {{#each tabs}}
+    <a class="item control {{#if active}}active{{/if}}" data-action="tab" data-group="primary"
+       data-tab="{{ tab }}" data-tooltip aria-label="{{name}}">
+        <img class="gold-icon {{#if img.svg}}svg{{/if}}" src="{{img.src}}">
+    </a>
+    {{/each}}
+</nav>

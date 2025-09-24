@@ -405,6 +405,12 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
 
         await this.actor.update(changes);
 
+        // Update all units' company references.
+        for(const uId of this.actor.system.units) {
+            const unit = game.actors.get(uId);
+            await unit.update({ ['system.info.company']: this.actor });
+        }
+
         // Link the company to it's commander's actor.
         await actor.setFlag('ldnd5e', 'company', this.actor.id);
         // Build the commander's deck.

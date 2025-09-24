@@ -322,53 +322,42 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
  * @protected
  */
   async _updateDeckTatic(tatic) {
+    // TODO: Prevent any update if a battle is active.
+
     const company = this.actor.system.info.company;
     // If this unit is part of a company.
-    if(company) {
+    if (company) {
       const commander = company.system.info.commander;
-      if(!commander) return;
+      if (!commander) return;
 
-      const deck = commander.getFlag("ldnd5e", "deck");
-      
-      if(tatic.system.trainning) {
-        deck.piles.tatics.push(tatic.uuid);
-      } else {
-        deck.piles.tatics = deck.piles.tatics.filter(uuid => uuid != tatic.uuid);
-      }
-
-      await commander.setFlag("ldnd5e", "deck", deck);
+      await this._buildDeck(commander);            
     }
   }
 
   /* -------------------------------------------- */
 
-  /**
- * Prepare actor tatics' items.
- * @this {UnitSheet}
- * @param {TaticsL5e} tatic  The updated Tatic.
- * @param {number} quantity  New train load of a Tatic.
- * @async
- * @protected
- */
-  async _updateDeckTaticQuantity(tatic, quantity) {
-    const company = this.actor.system.info.company;
-    // If this unit is part of a company.
-    if(company) {
-      const commander = company.system.info.commander;
-      if(!commander) return;
-
-      const deck = commander.getFlag("ldnd5e", "deck");
-
-      deck.hand.tatics = deck.hand.tatics.filter(uuid => uuid != tatic.uuid);
-      deck.piles.tatics = deck.piles.tatics.filter(uuid => uuid != tatic.uuid);
-      deck.piles.discarded = deck.piles.discarded.filter(uuid => uuid != tatic.uuid);
-      
-      for(let i = 0; i < quantity; i++) {
-        deck.piles.tatics.push(tatic.uuid);
+  async _buildDeck(commander) {
+    let deck = {
+      hand: {
+        tatics: [],
+        max: 5
+      },
+      piles: {
+        tatics: [],
+        discarded: [],
+        assets: []
       }
+    };
 
-      await commander.setFlag("ldnd5e", "deck", deck);
-    }
+    this.actor.items.forEach(tatic => {
+      if (tatic.system.trainning) {
+        for(let i = 0; i < tatic.system.quantity; i++) {
+          deck.piles.tatics.push(tatic.uuid);
+        }
+      } 
+    });
+
+    await commander.setFlag("ldnd5e", "deck", deck);
   }
 
   /* -------------------------------------------- */
@@ -558,10 +547,10 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
     const tatic = this.actor.items.get(taticId);
     await tatic.update({
       ["system.trainning"]: !tatic.system.trainning,
-      ["system.quantity"]: 1                        
+      ["system.quantity"]: 1
     });
 
-    this._updateDeckTatic(tatic);
+    this._updateDeckTatic();
   }
 
   /* -------------------------------------------- */
@@ -581,11 +570,11 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
     const value = foundry.utils.getProperty(tatic, property);
 
     // Prevent decreasing the quantity to 0.
-    if(value - 1  == 0) return;
+    if (value - 1 == 0) return;
 
     await tatic.update({ [property]: value - 1 });
 
-    this._updateDeckTaticQuantity(tatic, tatic.system.quantity);
+    this._updateDeckTatic();
   }
 
   /* -------------------------------------------- */
@@ -605,7 +594,7 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
     const value = foundry.utils.getProperty(tatic, property);
     await tatic.update({ [property]: value + 1 });
 
-    this._updateDeckTaticQuantity(tatic, tatic.system.quantity);
+    this._updateDeckTatic();
   }
 
   /* -------------------------------------------- */

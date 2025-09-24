@@ -1,0 +1,7 @@
+<div class="dialog-buttons flexrow">
+    {{#if isEdit}}
+    <button class="dialog-button ok default bright" type="submit" data-action="editActivity">{{{ button.icon }}} {{ button.label }}</button>
+    {{else}}    
+    <button class="dialog-button ok default bright" type="submit" data-action="createActivity">{{{ button.icon }}} {{ button.label }}</button>
+    {{/if}}
+</div>

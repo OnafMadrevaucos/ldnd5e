@@ -27,6 +27,8 @@ export default class BattleApp extends api.Application5e {
         actions: {
             startBattle: BattleApp.#startBattle,
             toggleDeckControls: BattleApp.#toggleDeckControls,
+            toggleCompanySelect: BattleApp.#toggleCompanySelect,
+            switchCompany: BattleApp.#switchCompany,
             toggleExtraDeck: BattleApp.#toggleExtraDeck,
             toggleEventsControls: BattleApp.#toggleEventsControls,
             clickUnit: BattleApp.#clickUnit,
@@ -61,7 +63,7 @@ export default class BattleApp extends api.Application5e {
         },
         events: {
             template: "modules/ldnd5e/templates/battles/events.hbs"
-        }
+        },
     };
 
     /* -------------------------------------------- */
@@ -121,6 +123,16 @@ export default class BattleApp extends api.Application5e {
     /* -------------------------------------------- */
 
     /**
+    * The current selected company index.
+    * @type {Number|null}
+    */
+    get currentCompanyIdx() {
+        return this.app.state.currentCompanyIdx ?? 0;
+    }
+
+    /* -------------------------------------------- */
+
+    /**
      * Is this PseudoDocument sheet editable by the current User?
      * This is governed by the editPermission threshold configured for the class.
      * @type {boolean}
@@ -133,11 +145,33 @@ export default class BattleApp extends api.Application5e {
     /*  Rendering                                   */
     /* -------------------------------------------- */
 
+    /**
+     * Prepares the base data for the Battle App.
+     * This is run every time the user opens the app, and is responsible for setting up the app's internal state.
+     * @private
+     */
     async _prepareBaseData() {
+        // Get the world battle data.
+        let world = game.settings.get('ldnd5e', 'battle') ?? game.settings.settings.get('ldnd5e.battle').default;
+
+        let local = await this._prepareLocalData(world);
+
+        this.#battle = {
+            world,
+            local
+        };
+
+        // Validate the deck.
+        this._validateDeck();
+    }
+
+    /* -------------------------------------------- */
+
+    async _prepareLocalData(world) {
         const userCompanyId = game.user.character?.getFlag('ldnd5e', 'company');
         // User has not a company linked to its character.
-        const isViewer = (userCompanyId === null) || (userCompanyId === undefined)
-            || (userCompanyId === '');
+        const isViewer = ((userCompanyId === null) || (userCompanyId === undefined)
+            || (userCompanyId === '')) && !game.user.isGM;
 
         // Get the user battle data.
         let app = game.user.getFlag('ldnd5e', 'battle');
@@ -150,49 +184,132 @@ export default class BattleApp extends api.Application5e {
                     sidebar: {
                         control: false,
                         viewer: '',
-                        events: false
-                    }
+                        events: false,
+                        tabs: false,
+                        overlay: false
+                    },
+                    currentCompanyIdx: 0
                 }
             };
         }
 
-        // Get the world battle data.
-        let world = game.settings.get('ldnd5e', 'battle') ?? game.settings.settings.get('ldnd5e.battle').default;
+        const deck = await this._prepareLocalDeck(app, world, userCompanyId);
 
-        let deck = game.user.character?.getFlag('ldnd5e', 'deck') ?? null;
+        // Build the company data.
+        let company = null;
+        let commander = null;
 
-        // If user is commander but has no deck data, create it.        
-        if (!deck && userCompanyId) {
-            deck = {
-                hand: {
-                    tatics: [],
-                    max: 5
-                },
-                piles: {
-                    tatics: [],
-                    discarded: [],
-                    assets: []
+        // If the user is GM, get all the NPC's companies in the battle.
+        if (game.user.isGM) {
+            company = [];
+
+            world.sides.top.forEach(c => {
+                const data = game.actors.get(c.id);
+                const commander = data.system.info.commander;
+                c.ally = false;
+                if (!commander || (commander.type === 'npc')) {
+                    company.push(c);
                 }
-            };
+            });
 
-            await game.user.character?.setFlag('ldnd5e', 'deck', deck);
+            world.sides.bottom.forEach(c => {
+                const data = game.actors.get(c.id);
+                const commander = data.system.info.commander;
+                c.ally = true;
+                if (!commander || (commander.type === 'npc')) {
+                    company.push(c);
+                }
+            });
+        }
+        // If the user is not GM, get only its company.
+        else {
+            let isAlly = false;
+            for (let i = 0; i < world.sides.top.length; i++) {
+                const c = world.sides.top[i];
+                if (c.id === userCompanyId && !isAlly) {
+                    isAlly = true;
+                    i = 0;
+                }
+
+                c.ally = isAlly;
+            }
+
+            // If the user company has not been found in the top companies, all bottom companies are allies.
+            if (!isAlly) {
+                for (let i = 0; i < world.sides.top.length; i++) {
+                    const c = world.sides.top[i];
+                    c.ally = true;
+                }
+            }
+
+            company = userCompanyId ? game.actors.get(userCompanyId) : null;
+            commander = company?.system.info.commander ?? null;
         }
 
-        this.#battle = {
-            world,
-            local: {
-                app,
-                user: game.user,
-                commander: game.user.character ?? null,
-                company: userCompanyId ? game.actors.get(userCompanyId) : null,
-                deck: deck,
-                isViewer
+        let side = 'none';
+        if (userCompanyId) {
+            let sideData = world.sides.top.find(s => s.id === userCompanyId);
+            if (sideData) side = 'top';
+            else {
+                sideData = world.sides.bottom.find(s => s.id === userCompanyId);
+                if (sideData) side = 'bottom';
+            }
+        }
+
+        const local = {
+            app,
+            user: game.user,
+            commander: commander,
+            company,
+            side,
+            deck,
+            isViewer,
+            isGM: game.user.isGM
+        };
+
+        return local;
+    }
+
+    /* -------------------------------------------- */
+
+    async _prepareLocalDeck(app, world, userCompanyId = null) {
+        let deck = {
+            hand: {
+                tatics: [],
+                max: 5
+            },
+            piles: {
+                tatics: [],
+                discarded: [],
+                assets: []
             }
         };
 
-        // Validate the deck.
-        this._validateDeck();
+        if (game.user.isGM) {
+            const companyId = world.sides.top[app.state.currentCompanyIdx]?.id ?? null;
+            if (!companyId) return deck;
+
+            const company = game.actors.get(companyId);
+            if (!company) return deck;
+
+            const commander = company.system.info.commander;
+            if (!commander) return deck;
+
+            deck = (commander.getFlag('ldnd5e', 'deck')) ?? deck;
+        } else {
+            let _deck = (game.user.character?.getFlag('ldnd5e', 'deck')) ?? null;
+
+            // If user is commander but has no deck data, create it.        
+            if (!_deck && userCompanyId) {
+                await game.user.character?.setFlag('ldnd5e', 'deck', deck);
+            }
+            else if (_deck) deck = _foundry.utils.deepClone(_deck);
+        }
+
+        return deck;
     }
+
+    /* -------------------------------------------- */
 
     /** @inheritDoc */
     async _prepareContext(options) {
@@ -207,6 +324,8 @@ export default class BattleApp extends api.Application5e {
         };
     }
 
+    /* -------------------------------------------- */
+
     /** @inheritDoc */
     async _preparePartContext(partId, context, options) {
         context = await super._preparePartContext(partId, context, options);
@@ -218,33 +337,12 @@ export default class BattleApp extends api.Application5e {
 
         context.icons = {
             deck: 'modules/ldnd5e/ui/icons/battle/deck.svg',
-            events: 'modules/ldnd5e/ui/icons/battle/events.svg',
+            events: 'modules/ldnd5e/ui/icons/battle/events.svg'
         };
 
         context.sides = {
-            top: this.world.sides.top.map(companyId => {
-                const company = game.actors.get(companyId);
-                return company ? {
-                    id: company.id,
-                    name: company.name,
-                    img: {
-                        src: company.img,
-                        svg: company.img.endsWith('.svg')
-                    }
-                } : null;
-            }),
-            bottom: this.world.sides.bottom.map(companyId => {
-                const company = game.actors.get(companyId);
-                return company ? {
-                    uuid: company.uuid,
-                    id: company.id,
-                    name: company.name,
-                    img: {
-                        src: company.img,
-                        svg: company.img.endsWith('.svg')
-                    }
-                } : null;
-            }),
+            top: this.world.sides.top,
+            bottom: this.world.sides.bottom,
             ready: this.world.sides.top.length > 0 && this.world.sides.bottom.length > 0,
             empty: {
                 top: this.world.sides.top.length === 0,
@@ -302,8 +400,11 @@ export default class BattleApp extends api.Application5e {
     async _prepareControlsContext(context, options) {
         if (context.isViewer) return context;
 
-        context.title = game.i18n.format('ldnd5e.battle.deck', { name: this.local.company.name });
-
+        if (this.local.user.isGM) {
+            context.title = game.i18n.format('ldnd5e.battle.deck', { name: this.local.company[this.currentCompanyIdx]?.name ?? '' });
+        } else {
+            context.title = game.i18n.format('ldnd5e.battle.deck', { name: this.local.company.name });
+        }
         Object.assign(context.icons, {
             deckTiny: 'modules/ldnd5e/ui/icons/battle/deck-tiny.svg',
             full: 'modules/ldnd5e/ui/icons/battle/full-deck.svg',
@@ -314,10 +415,32 @@ export default class BattleApp extends api.Application5e {
         // Prepare the commander's deck.
         this._prepareDeck(context);
 
-        context.company = this.local.company;
+        let company = null;
+
+        if (this.local.user.isGM) {
+            const companyId = this.local.company[this.currentCompanyIdx]?.id ?? null;
+            company = game.actors.get(companyId);
+
+            context.companies = this.local.company;
+            context.multipleCompanies = true;
+            context.currentCompanyIdx = this.currentCompanyIdx;
+        } else {
+            company = this.local.company;
+        }
+
+        context.company = company;
 
         // Prepare the commander's combat skills.
-        context.skills = this.local.company.system.combat;
+        context.skills = company?.system.combat || {};
+
+        return context;
+    }
+
+    /* -------------------------------------------- */
+
+    /** @inheritDoc */
+    async _prepareTabsContext(context, options) {
+        context.tabs = this.tabs;
 
         return context;
     }
@@ -363,7 +486,7 @@ export default class BattleApp extends api.Application5e {
    * @protected
    */
     _prepareDeck(context) {
-        const deck = this.local.deck;
+        const deck = foundry.utils.deepClone(this.local.deck);
 
         deck.list = {
             hand: deck.hand.tatics.map(taticUuid => {
@@ -460,16 +583,27 @@ export default class BattleApp extends api.Application5e {
     _prepareUnits(context) {
         // If user is not a viewer, prepare its company's units list.
         if (!context.isViewer) {
-            const company = this.local.company;
 
+            let company = null;
             const unitsList = [];
-            Object.entries(company.system.unitsList).forEach(([type, units]) => {
-                if (['light', 'heavy', 'special'].includes(type)) {
-                    unitsList.push(...units);
-                }
-            });
 
-            context.units = unitsList;
+            if (this.local.user.isGM) {
+                const companyId = this.local.company[this.currentCompanyIdx]?.id ?? null;
+                company = game.actors.get(companyId);
+            } else {
+                const companyId = this.local.company.id;
+                company = game.actors.get(companyId);
+            }
+
+            if (company) {
+                Object.entries(company.system.unitsList).forEach(([type, units]) => {
+                    if (['light', 'heavy', 'special'].includes(type)) {
+                        unitsList.push(...units);
+                    }
+                });
+
+                context.units = unitsList;
+            }
         }
 
         const world = this.battle.world;
@@ -497,6 +631,15 @@ export default class BattleApp extends api.Application5e {
     /** @inheritDoc */
     _onRender(context, options) {
         super._onRender(context, options);
+
+        this.activateListeners();
+    }
+
+    /**
+     * Activate listeners for context menu on units.
+     * @return {void}
+     */
+    activateListeners() {
         const dragDrop = CONFIG.ux.DragDrop;
 
         // Enable Drag & Drop funtion to rows.
@@ -511,14 +654,9 @@ export default class BattleApp extends api.Application5e {
             }
         }).bind(this.element);
 
-        this.activateListeners();
-    }
+        const overlay = this.element.querySelector('.sidebar-overlay');
+        overlay.addEventListener("click", this._onOverlayClick.bind(this));
 
-    /**
-     * Activate listeners for context menu on units.
-     * @return {void}
-     */
-    activateListeners() {
         for (const unit of this.element.querySelectorAll("li.unit")) {
             unit.addEventListener("contextmenu ", contextMenu.triggerEvent);
         }
@@ -529,6 +667,42 @@ export default class BattleApp extends api.Application5e {
 
     /* -------------------------------------------- */
     /*  Event Listeners                             */
+    /* -------------------------------------------- */
+
+    async _onOverlayClick(event) {
+        event.stopPropagation();
+
+        const html = this.element;
+        if (this.app.state.sidebar.control) {
+
+            const controls = html.querySelector('.deck-controls[data-application-part="controls"]');
+
+            const tabs = controls.querySelector('.company-tabs');
+            const viewer = controls.querySelector('.extra-decks-viewer');
+            const battle = controls.querySelector('.battle-controls');
+
+            tabs.classList.remove('active');
+            viewer.classList.remove('active');
+            battle.classList.remove('active');
+
+            this.app.state.sidebar.control = false;
+            this.app.state.sidebar.viewer = '';
+            this.app.state.sidebar.tabs = false;
+
+        } else if (this.app.state.sidebar.events) {
+            const controls = html.querySelector('.events-controls[data-application-part="events"]');
+
+            controls.classList.remove('active');
+            this.app.state.sidebar.control = false;
+
+
+        }
+
+        event.target.classList.add('hidden');
+        this.app.state.sidebar.overlay = false;
+        await game.user.setFlag('ldnd5e', 'battle', this.app);
+    }
+
     /* -------------------------------------------- */
 
     /**
@@ -545,6 +719,12 @@ export default class BattleApp extends api.Application5e {
                 onClick: (event) => this._onResetBattle(event)
             }
         ];
+    }
+
+    /* -------------------------------------------- */
+
+    _onChangeTab() {
+
     }
 
     /* -------------------------------------------- */
@@ -816,10 +996,8 @@ export default class BattleApp extends api.Application5e {
                 let commander = company.system.info.commander;
                 if (!commander) continue;
 
-                if (commander.type === 'npc')
-                    commander = game.users.activeGM.character;
-
                 companies.push({
+                    uuid: company.uuid,
                     id: company.id,
                     name: company.name,
                     img: {
@@ -833,10 +1011,8 @@ export default class BattleApp extends api.Application5e {
             let commander = actor.system.info.commander;
             if (!commander) return;
 
-            if (commander.type === 'npc')
-                commander = game.users.activeGM.character;
-
             companies.push({
+                uuid: company.uuid,
                 id: company.id,
                 name: company.name,
                 img: {
@@ -964,6 +1140,22 @@ export default class BattleApp extends api.Application5e {
     /* -------------------------------------------- */
 
     /**
+   * Toggle the sidebar overlay.
+   * @this {BattleApp}
+   */
+    async _toggleOverLay() {
+        const html = this.element;
+        const overlay = html.querySelector('.sidebar-overlay');
+
+        overlay.classList.toggle('hidden');
+
+        this.app.state.sidebar.overlay = !overlay.classList.contains('hidden');
+        await game.user.setFlag('ldnd5e', 'battle', this.app);
+    }
+
+    /* -------------------------------------------- */
+
+    /**
    * Shuffles a Deck's array using Fisher-Yates algorithm.
    * @this {BattleApp}
    * @param {object|Array} deck    The deck array.
@@ -1036,7 +1228,11 @@ export default class BattleApp extends api.Application5e {
     async _updateDeck() {
         const deck = this.deck;
 
-        await this.local.commander.setFlag("ldnd5e", "deck", { hand: deck.hand, piles: deck.piles });
+        if (game.user.isGM) {
+            await this.local.user.setFlag("ldnd5e", "deck", { hand: deck.hand, piles: deck.piles });
+        } else {
+            await this.local.commander.setFlag("ldnd5e", "deck", { hand: deck.hand, piles: deck.piles });
+        }
         this.render({ force: true });
     }
 
@@ -1117,7 +1313,48 @@ export default class BattleApp extends api.Application5e {
             this.state.sidebar.viewer = '';
         }
 
+        this._toggleOverLay();
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Toggles the deck controls.
+   * @this {BattleApp}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   * @async
+   */
+    static async #toggleCompanySelect(event, target) {
+        const content = target.closest(".window-content");
+        const companyTabs = content.querySelector(".company-tabs");
+
+        companyTabs.classList.toggle("active");
+        this.state.sidebar.tabs = companyTabs.classList.contains("active");
+
         await game.user.setFlag('ldnd5e', 'battle', this.app);
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Toggles the deck controls.
+   * @this {BattleApp}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   * @async
+   */
+    static async #switchCompany(event, target) {
+        const companyTabs = target.closest(".company-tabs");
+        const tabs = companyTabs.querySelectorAll(".item");
+
+        tabs.forEach(tab => tab.classList.remove("active"));
+        target.classList.add("active");
+
+        this.app.state.currentCompanyIdx = Number(target.dataset.idx ?? 0);
+
+        await game.user.setFlag('ldnd5e', 'battle', this.app);
+        this.render({ force: true });
     }
 
     /* -------------------------------------------- */
@@ -1199,7 +1436,7 @@ export default class BattleApp extends api.Application5e {
         // Set the events control.
         this.state.sidebar.events = controls.classList.contains("active");
 
-        await game.user.setFlag('ldnd5e', 'battle', this.app);
+        this._toggleOverLay();
     }
 
     /* -------------------------------------------- */

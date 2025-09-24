@@ -129,7 +129,7 @@
             <section class="units-summary">
 
                 <filigree-box class="units flexcol">
-                    <h3>
+                    <h3 {{#if multipleCompanies}}class ="multiple-companies" data-action="toggleCompanySelect"{{/if}}>
                         <i class="ra ra-knight-helmet" inert></i>
                         <span>{{localize 'ldnd5e.battle.units'}}</span>
                     </h3>
@@ -149,6 +149,15 @@
 
         </div>
     </section>
+
+    <div class="company-tabs {{#if state.sidebar.tabs}}active{{/if}}">
+        {{#each companies as |company idx|}}
+        <a class="item control {{#if (eq ../currentCompanyIdx idx)}}active{{/if}}" type="button"
+            data-action="switchCompany" data-idx="{{idx}}" data-tooltip="{{company.name}}", data-tooltip-direction="LEFT">
+            <img class="gold-icon{{#if company.img.svg}} svg{{/if}}" src="{{company.img.src}}">
+        </a>
+        {{/each}}
+    </div>
 
     <div class="extra-decks-viewer {{#if (ne state.sidebar.viewer "")}}active{{/if}}"
         data-deck="{{state.sidebar.viewer}}">
