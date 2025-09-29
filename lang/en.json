@@ -207,6 +207,7 @@
             "removeTatic": "Remove Tatic",
             "isTrainning": "Is Training?",
             "trainningLoad": "Training Load",
+            "show": "Show Unit",
             "delete": "Delete Unit",
             "isMainRoll": "Is Main Roll?",
             "deployed": "Unit Deployed"
@@ -293,7 +294,8 @@
                 "message": "Do you want to roll only the main roll or also an extra roll?",
                 "main": "Main only",
                 "extra": "With extras"
-            }
+            },
+            "targetField": "Target Field"
         },
         "messages": {
             "bldgDmgLightArmor": "Light Armor is immune to damage caused by Bludgening Damage.",

@@ -84,6 +84,9 @@ export default class ItemL5e extends dnd5e.documents.Item5e {
                     }
                 }
 
+                // If extra activities are null, it represent that the user canceled the dialog. Abort.
+                if(!extraActivities) return;
+
                 const mainActivities = activities.filter(a => a.mainRoll);
                 if (mode === 'main' && mainActivities.length === 0) {
                     ui.notifications.info(game.i18n.localize("ldnd5e.messages.noMainActivity"));

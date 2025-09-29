@@ -326,6 +326,28 @@ const taticsData = {
       mh: "mh",
       ib: "ib",
       id: "id",
+   },
+
+   /**
+    * Defines the Tatics Activity Icons constants.
+    * */
+   activityIcons: {
+      md: {
+         src: 'modules/ldnd5e/ui/icons/md.svg',
+         svg: true
+      },
+      mh: {
+         src: 'modules/ldnd5e/ui/icons/mh.svg',
+         svg: true
+      },
+      ib: {
+         src: 'modules/ldnd5e/ui/icons/ib.svg',
+         svg: true
+      },
+      id: {
+         src: 'modules/ldnd5e/ui/icons/id.svg',
+         svg: true
+      },
    }
 }
 
@@ -557,6 +579,7 @@ const i18nStrings = {
       removeTatic: "ldnd5e.unit.removeTatic",
       isTrainning: "ldnd5e.unit.isTrainning",
       trainningLoad: "ldnd5e.unit.trainningLoad",      
+      show: "ldnd5e.unit.show",
       delete: "ldnd5e.unit.delete",
       isMainRoll: "ldnd5e.unit.isMainRoll",
       deployed: "ldnd5e.unit.deployed"
@@ -673,7 +696,8 @@ const i18nStrings = {
          message: "ldnd5e.battle.extraRoll.message",
          main: "ldnd5e.battle.extraRoll.main",
          extra: "ldnd5e.battle.extraRoll.extra",
-      }            
+      }, 
+      targetField: "ldnd5e.battle.targetField",           
    },
 
    categories: {

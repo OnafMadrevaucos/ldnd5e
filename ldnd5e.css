@@ -1669,6 +1669,7 @@
   z-index: 2;
 }
 
+.ldnd5e.battle .tatic-card .unit-info .impetus,
 .ldnd5e.unit .ability-scores .mod {
   font-weight: bold;
   font-size: var(--font-size-16);
@@ -1681,6 +1682,7 @@
   background: rgba(0, 0, 0, 0.45);
 }
 
+.ldnd5e.battle .tatic-card .unit-info .impetus .sign,
 .ldnd5e.unit .ability-scores .sign {
   color: var(--color-text-light-6);
 }
@@ -2865,13 +2867,30 @@
   flex-direction: column;
   flex: 1;
 }
+.ldnd5e.battle .tatic-card .card-row .card-content.hand {
+  flex-direction: row;
+}
 
 .ldnd5e.battle .tatic-card .card-row .card-content .name {
   flex: 1;
   font-weight: bold;
 }
 
-.ldnd5e.battle .tatic-card .card-row .card-content .unit-link {
+.ldnd5e.battle .tatic-card .card-row .card-content .unit-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.ldnd5e.battle .tatic-card .card-content .unit-info .impetus {
+  align-self: flex-end;
+}
+
+.ldnd5e.battle .tatic-card .card-content .unit-info .impetus i {
+  color: var(--dnd5e-color-gold);
+}
+
+.ldnd5e.battle .tatic-card .card-content .unit-info .unit-link {
   text-align: end;
   font-size: var(--font-size-9);
   opacity: 0.5;

@@ -37,13 +37,22 @@
                         <li class="tatic-card" data-tatic-uuid="{{tatic.uuid}}" data-unit-id="{{tatic.unit.id}}">
                             <div class="card-row">
                                 <img class="gold-icon {{#if tatic.img.svg}} svg{{/if}}" src="{{tatic.img.src}}">
-                                <div class="card-content">
+                                <div class="card-content hand">
                                     <a class="card-link rollable" data-action="useTatic" data-type="tatic">
                                         <span class="name">{{tatic.name}}</span>
                                     </a>
-                                    <a class="unit-link" data-action="clickUnit">
-                                        <span class="unit-name">{{tatic.unit.name}}</span>
-                                    </a>
+                                    <div class="unit-info">
+                                        {{#with tatic.unit}}
+                                        <span class="impetus">
+                                            <span class="sign">{{ impetus.sign }}</span>
+                                            {{ impetus.mod }}
+                                            <i class="ra ra-all-for-one" inert></i>
+                                        </span>
+                                        {{/with}}
+                                        <a class="unit-link" data-action="clickUnit">
+                                            <span class="unit-name">{{tatic.unit.name}}</span>
+                                        </a>
+                                    </div>
                                 </div>
                                 <a class="card-control" data-action="discardTatic"
                                     data-tooltip="{{localize 'ldnd5e.battle.discardCard'}}"
@@ -64,11 +73,11 @@
             </filigree-box>
 
             <div class="extra-decks">
-                <button class="full-deck {{#if (eq state.sidebar.viewer "full")}}active{{/if}}" type="button"
+                <button class="full-deck {{#if (eq state.sidebar.viewer " full")}}active{{/if}}" type="button"
                     data-action="toggleExtraDeck" data-deck="full">
                     <img class="svg" src="{{icons.full}}">
                 </button>
-                <button class="discarded-deck {{#if (eq state.sidebar.viewer "discarded")}}active{{/if}}" type="button"
+                <button class="discarded-deck {{#if (eq state.sidebar.viewer " discarded")}}active{{/if}}" type="button"
                     data-action="toggleExtraDeck" data-deck="discarded">
                     <img class="svg" src="{{icons.discarded}}">
 
@@ -76,7 +85,7 @@
                         {{deck.counter.discarded}}
                     </a>
                 </button>
-                <button class="assets-deck {{#if (eq state.sidebar.viewer "assets")}}active{{/if}}" type="button"
+                <button class="assets-deck {{#if (eq state.sidebar.viewer " assets")}}active{{/if}}" type="button"
                     data-action="toggleExtraDeck" data-deck="assets">
                     <img class="svg" src="{{icons.assets}}">
                 </button>
@@ -129,17 +138,19 @@
             <section class="units-summary">
 
                 <filigree-box class="units flexcol">
-                    <h3 {{#if multipleCompanies}}class ="multiple-companies" data-action="toggleCompanySelect"{{/if}}>
+                    <h3 {{#if multipleCompanies}}class="multiple-companies" data-action="toggleCompanySelect" {{/if}}>
                         <i class="ra ra-knight-helmet" inert></i>
                         <span>{{localize 'ldnd5e.battle.units'}}</span>
                     </h3>
                     <ul class="units-list unlist">
                         {{#each units as |unit|}}
-                        <li class="unit {{#unless unit.deployed}} draggable{{/unless}}" data-unit-id="{{unit.id}}" data-drag-type="link" draggable="{{~unit.deployed}}">
+                        <li class="unit {{#unless unit.deployed}} draggable{{/unless}}" data-unit-id="{{unit.id}}"
+                            data-drag-type="link" draggable="{{#unless unit.deployed}}true{{else}}false{{/unless}}">
                             <a class="unit-link rollable" data-action="clickUnit">
                                 <img class="gold-icon" src="{{unit.img}}">
                                 <span class="name">{{unit.name}}</span>
-                                {{#if unit.deployed}}<i class="ra ra-skull-trophy" data-tooltip="{{localize 'ldnd5e.unit.deployed'}}"></i>{{/if}}
+                                {{#if unit.deployed}}<i class="ra ra-skull-trophy"
+                                    data-tooltip="{{localize 'ldnd5e.unit.deployed'}}"></i>{{/if}}
                             </a>
                         </li>
                         {{/each}}
@@ -154,7 +165,8 @@
     <div class="company-tabs {{#if state.sidebar.tabs}}active{{/if}}">
         {{#each companies as |company idx|}}
         <a class="item control {{#if (eq ../currentCompanyIdx idx)}}active{{/if}}" type="button"
-            data-action="switchCompany" data-idx="{{idx}}" data-tooltip="{{company.name}}", data-tooltip-direction="LEFT">
+            data-action="switchCompany" data-idx="{{idx}}" data-tooltip="{{company.name}}" ,
+            data-tooltip-direction="LEFT">
             <img class="gold-icon{{#if company.img.svg}} svg{{/if}}" src="{{company.img.src}}">
         </a>
         {{/each}}
@@ -163,7 +175,7 @@
     <div class="extra-decks-viewer {{#if (ne state.sidebar.viewer "")}}active{{/if}}"
         data-deck="{{state.sidebar.viewer}}">
 
-        <div class="deck-section full {{#unless (eq state.sidebar.viewer "full")}}hidden{{/unless}}">
+        <div class="deck-section full {{#unless (eq state.sidebar.viewer " full")}}hidden{{/unless}}">
             <h4 class="title">{{localize 'ldnd5e.battle.extraDecks.full'}}</h4>
             <div class="deck-container">
                 <div class="cards-counter">{{deck.counter.tatics}} <i class="ra ra-diamonds-card"></i></div>
@@ -193,7 +205,7 @@
             </div>
         </div>
 
-        <div class="deck-section discarded {{#unless (eq state.sidebar.viewer "discarded")}}hidden{{/unless}}">
+        <div class="deck-section discarded {{#unless (eq state.sidebar.viewer " discarded")}}hidden{{/unless}}">
             <h4 class="title">{{localize 'ldnd5e.battle.extraDecks.discarded'}}</h4>
             <div class="deck-container">
                 <div class="cards-counter">{{deck.counter.discarded}} <i class="ra ra-diamonds-card"></i></div>
@@ -227,7 +239,7 @@
             </div>
         </div>
 
-        <div class="deck-section assets {{#unless (eq state.sidebar.viewer "assets")}}hidden{{/unless}}">
+        <div class="deck-section assets {{#unless (eq state.sidebar.viewer " assets")}}hidden{{/unless}}">
             <h4 class="title">{{localize 'ldnd5e.battle.extraDecks.assets'}}</h4>
             <div class="deck-container">
                 <div class="cards-counter">{{deck.counter.assets}} <i class="ra ra-diamonds-card"></i></div>

@@ -1,5 +1,5 @@
 import ActivityDialog from "../dialogs/ActivityDialog.js";
-import { unitData } from "../../scripts/constants.js";
+import { taticsData, unitData } from "../../scripts/constants.js";
 
 const { api: api, item: item } = dnd5e.applications;
 
@@ -176,10 +176,7 @@ export default class TaticsSheet extends item.ItemSheet5e {
                 return {
                     id: id,
                     name: name,
-                    img: {
-                        src: `modules/ldnd5e/ui/icons/${type}.svg`,
-                        svg: true
-                    },
+                    img: taticsData.activityIcons[type],
                     mainRoll
                 };
             });

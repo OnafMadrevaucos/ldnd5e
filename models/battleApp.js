@@ -191,6 +191,8 @@ export default class BattleApp extends api.Application5e {
                     currentCompanyIdx: 0
                 }
             };
+        } else {
+            this._validateApplication(app);
         }
 
         const deck = await this._prepareLocalDeck(app, world, userCompanyId);
@@ -317,7 +319,7 @@ export default class BattleApp extends api.Application5e {
         await this._prepareBaseData();
 
         const context = await super._prepareContext(options);
-        
+
         Object.assign(context, {
             isGM: this.local.user.isGM,
             isViewer: this.local.isViewer
@@ -504,7 +506,8 @@ export default class BattleApp extends api.Application5e {
                     },
                     unit: {
                         id: unit.id,
-                        name: unit.name
+                        name: unit.name,
+                        impetus: unit.system.abilities.wll
                     }
                 };
             }).filter(tatic => tatic !== null && tatic !== undefined), // Filter out the nulls
@@ -758,13 +761,22 @@ export default class BattleApp extends api.Application5e {
         let options = [];
 
         // Unit options.
-        options.push({
-            id: "delete",
-            name: "ldnd5e.unit.delete",
-            icon: '<i class="fas fa-trash fa-fw"></i>',
-            condition: () => true,
-            callback: li => this._onAction(li, "deleteUnit")
-        });
+        options.push(
+            {
+                id: "show",
+                name: "ldnd5e.unit.show",
+                icon: '<i class="fas fa-eye"></i>',
+                condition: () => true,
+                callback: li => this._onAction(li, "showUnit")
+            },
+            {
+                id: "delete",
+                name: "ldnd5e.unit.delete",
+                icon: '<i class="fas fa-trash fa-fw"></i>',
+                condition: () => true,
+                callback: li => this._onAction(li, "deleteUnit")
+            }
+        );
 
         return options;
     }
@@ -805,24 +817,38 @@ export default class BattleApp extends api.Application5e {
    * @private
    */
     async _onAction(target, action, { event } = {}) {
+        let worldChanged = false;
+
         switch (action) {
+            case "showUnit": {
+                const side = target.closest(".field").dataset.side;
+                const row = target.closest(".row").dataset.row;
+                const unitId = target.dataset.unitId;
+
+                const unit = game.actors.get(unitId);
+                unit.sheet.render({ force: true, focus: true });
+            } break;
             case "deleteUnit": {
                 const side = target.closest(".field").dataset.side;
                 const row = target.closest(".row").dataset.row;
                 const unitId = target.dataset.unitId;
 
                 this.world.fields[side].rows[row].units = this.world.fields[side].rows[row].units.filter(u => u !== unitId);
+                worldChanged = true;
             } break;
             case "deleteCompany": {
                 const side = target.closest(".side").dataset.side;
                 const companyId = target.dataset.companyId;
 
                 this.world.sides[side] = this.world.sides[side].filter(c => c !== companyId);
+                worldChanged = true;
             } break;
         }
 
-        await game.settings.set('ldnd5e', 'battle', this.world);
-        this.render({ force: true });
+        if (worldChanged) {
+            await game.settings.set('ldnd5e', 'battle', this.world);
+            this.render({ force: true });
+        }
     }
 
     /* -------------------------------------------- */
@@ -1150,7 +1176,8 @@ export default class BattleApp extends api.Application5e {
         const html = this.element;
         const overlay = html.querySelector('.sidebar-overlay');
 
-        overlay.classList.toggle('hidden');
+        if(this.state.sidebar.overlay) overlay.classList.add('hidden');
+        else overlay.classList.remove('hidden');
 
         if (update) {
             this.app.state.sidebar.overlay = !overlay.classList.contains('hidden');
@@ -1236,10 +1263,10 @@ export default class BattleApp extends api.Application5e {
         if (game.user.isGM) {
             const companyId = this.local.company[this.currentCompanyIdx]?.id ?? null;
             const company = game.actors.get(companyId);
-            if(!company) return;
+            if (!company) return;
 
             const commander = company.system.info.commander;
-            if(!commander) return;  
+            if (!commander) return;
 
             await commander.setFlag("ldnd5e", "deck", { hand: deck.hand, piles: deck.piles });
         } else {
@@ -1265,6 +1292,23 @@ export default class BattleApp extends api.Application5e {
             if (!tatic) return false;
             else return true;
         });
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Validate all deck entries.
+   * @this {BattleApp}
+   */
+    _validateApplication(app) {
+        const sidebar = app.state.sidebar;
+
+        if(!sidebar.control && !sidebar.events) {
+            sidebar.viewer = '';
+            sidebar.overlay = false;
+
+            this._toggleOverLay();
+        }
     }
 
     /* -------------------------------------------- */
@@ -1304,7 +1348,8 @@ export default class BattleApp extends api.Application5e {
         const controls = content.querySelector(".battle-controls");
         const viewer = content.querySelector(".extra-decks-viewer");
 
-        controls.classList.toggle("active");
+        if(this.state.sidebar.control) controls.classList.remove("active");
+        else controls.classList.add("active");
 
         this.state.sidebar.control = controls.classList.contains("active");
 
@@ -1341,7 +1386,9 @@ export default class BattleApp extends api.Application5e {
         const content = target.closest(".window-content");
         const companyTabs = content.querySelector(".company-tabs");
 
-        companyTabs.classList.toggle("active");
+        if(this.state.sidebar.tabs) companyTabs.classList.remove("active");
+        else companyTabs.classList.add("active");
+
         this.state.sidebar.tabs = companyTabs.classList.contains("active");
 
         await game.user.setFlag('ldnd5e', 'battle', this.app);
@@ -1443,7 +1490,8 @@ export default class BattleApp extends api.Application5e {
         const content = target.closest(".window-content");
         const controls = content.querySelector(".events-controls");
 
-        controls.classList.toggle("active");
+        if(this.state.sidebar.events) controls.classList.remove("active");
+        else controls.classList.add("active");
 
         // Set the events control.
         this.state.sidebar.events = controls.classList.contains("active");
@@ -1594,10 +1642,18 @@ export default class BattleApp extends api.Application5e {
    * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
    */
     static async #useTatic(event, target) {
-        const taticUuid = target.closest("li").dataset.taticUuid;
+        const li = target.closest("li");
+        const taticUuid = li.dataset.taticUuid;
+        const unitId = li.dataset.unitId;
 
         const tatic = await fromUuid(taticUuid);
         if (!tatic) return;
+
+        const unit = game.actors.get(unitId);
+        if (!unit) return;
+
+        const side = this.local.side === 'none' ? 'top' : this.local.side;
+        const impetusBonus = unit.system.abilities.wll.value;
 
         if (!event.altKey) {
             const choosedMode = await foundry.applications.api.DialogV2.wait({
@@ -1618,27 +1674,47 @@ export default class BattleApp extends api.Application5e {
                 ]
             })
 
+            if (!choosedMode) return;
+
             let result = await tatic.use({ event, mode: choosedMode });
             if (!(result instanceof Array)) result = [result];
 
             if (result) {
                 const scoreboard = this.world.scoreboard;
 
+                scoreboard[side].impetus += impetusBonus;
+
                 for (let res of result) {
                     switch (res.damageType) {
                         case taticsData.activities.md: {
-                            scoreboard.bottom.attack += res.total;
+                            if (res.targetField === 'a')
+                                scoreboard.bottom.attack += res.total;
+                            else if (res.targetField === 'e')
+                                scoreboard.top.attack += res.total;
                         } break;
                         case taticsData.activities.mh: {
-                            scoreboard.top.attack -= res.total;
-                            scoreboard.top.attack = Math.max(scoreboard.top.attack, 0);
+                            if (res.targetField === 'a') {
+                                scoreboard.top.attack -= res.total;
+                                scoreboard.top.attack = Math.max(scoreboard.top.attack, 0);
+                            } else if (res.targetField === 'e') {
+                                scoreboard.bottom.attack -= res.total;
+                                scoreboard.bottom.attack = Math.max(scoreboard.bottom.attack, 0);
+                            }
                         } break;
                         case taticsData.activities.ib: {
-                            scoreboard.bottom.impetus += res.total;
+                            if (res.targetField === 'a')
+                                scoreboard.bottom.impetus += res.total;
+                            else if (res.targetField === 'e')
+                                scoreboard.top.impetus += res.total;
                         } break;
                         case taticsData.activities.id: {
-                            scoreboard.top.impetus -= res.total;
-                            scoreboard.top.impetus = Math.max(scoreboard.top.impetus, 0);
+                            if (res.targetField === 'a') {
+                                scoreboard.bottom.impetus -= res.total;
+                                scoreboard.bottom.impetus = Math.max(scoreboard.top.impetus, 0);
+                            } else if (res.targetField === 'e') {
+                                scoreboard.top.impetus -= res.total;
+                                scoreboard.top.impetus = Math.max(scoreboard.top.impetus, 0);
+                            }
                         } break;
                         default: break;
                     }

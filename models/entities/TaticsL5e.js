@@ -125,10 +125,11 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
    *                                          either a die term or a flat term.
    */
     getRollData() {
-        let data = {};
+        let data = this.system;
 
         data.flags = { ...this.flags };
         data.name = this.name;
+
         return data;
     }
 
@@ -163,13 +164,15 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
         const attackMode = "roll";
         const rollType = "damage";
         const formula = `${activity.number}d${activity.die}${activity.bonus}`;
-        const damageType = activity.type;
+        const taticType = activity.type;
 
         const rollConfig = {
-            attackMode, event,              
+            attackMode,
+            event,  
+            data: this.getRollData(),         
             rolls: [{
-                parts: [formula],
-                options: { type: damageType, types }
+                parts: [formula],                
+                options: { type: taticType, targetField: 'a', fields: ['a', 'e'] }
             }],
         };
 
@@ -205,7 +208,7 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
             }
         };
 
-        const rolls = await CONFIG.Dice.DamageRoll.build(rollConfig, dialogConfig, messageConfig);
+        const rolls = await CONFIG.Dice.TaticsRoll.build(rollConfig, dialogConfig, messageConfig);
         if (!rolls?.length) return;
 
         const result = {
@@ -215,7 +218,8 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
                 uuid: this.parent.uuid,
                 name: this.parent.name
             },
-            damageType,
+            damageType: taticType,
+            targetField: rolls[0].options.targetField,
             formula,
             total: rolls.reduce((a, b) => a + b.total, 0),
             rolls

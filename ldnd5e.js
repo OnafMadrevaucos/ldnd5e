@@ -24,6 +24,7 @@ import UnitSheet from "./models/sheets/UnitSheet.js";
 import ArmySheet from "./models/sheets/ArmySheet.js";
 import TaticsL5e from "./models/entities/TaticsL5e.js";
 import TaticsSheet from "./models/sheets/TaticsSheet.js";
+import TaticsRoll from "./scripts/TaticsRoll.js";
 
 const typeArmy = "ldnd5e.army";
 const typeCompany = "ldnd5e.company";
@@ -38,6 +39,8 @@ Hooks.once("init", function () {
     registerRPGAwesome();
 
     CONFIG.DND5E = dnd5e.config;
+
+    CONFIG.Dice.TaticsRoll = TaticsRoll;
 
     // Load D&D Currency Manager library;
     CONFIG.CurrencyManager = dnd5e.applications.CurrencyManager;
@@ -281,9 +284,12 @@ Hooks.on('dnd5e.preRollInitiative', (actor, roll) => {
     patchIniciativeRollRoutines(actor, roll);
 });
 
-Hooks.on('dnd5e.preRollDamage', (item, rollData) => {
-    const button = rollData.event.currentTarget;
-    item.rolledVersatile = (button.dataset.action == 'versatile');
+Hooks.on('dnd5e.preRollDamageV2', (config, dialog, message) => {
+    const button = config.event.currentTarget;
+    item.rolledVersatile = (button.dataset.action == 'twoHanded');
+});
+Hooks.on('dnd5e.buildDamageRollConfig', (rolls, config, dialog, message) => {
+    const i = 0;
 });
 Hooks.on('dnd5e.rollDamage', (item, rollData) => {
     //await ecs.patchRollDamage(item, rollData);

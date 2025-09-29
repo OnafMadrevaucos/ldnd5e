@@ -206,6 +206,7 @@
             "removeTatic": "Remover Tática",
             "isTrainning": "Treinando?",
             "trainningLoad": "Carga de Treino",
+            "show": "Mostrar Unidade",
             "delete": "Excluir Unidade",
             "isMainRoll": "É Rolagem Principal?",
             "mainRoll": "Rolagem Principal",
@@ -292,7 +293,8 @@
                 "message": "Você deseja rolar apenas a rolagem principal ou também alguma rolagem extra?",
                 "main": "Somente principais",
                 "extra": "Com extras"
-            }
+            },
+            "targetField": "Campo Alvo"
         },
         "messages": {
             "bldgDmgLightArmor": "Armaduras Leves são imunes a avarias causadas por Dano Contundente.",
