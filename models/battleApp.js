@@ -191,8 +191,6 @@ export default class BattleApp extends api.Application5e {
                     currentCompanyIdx: 0
                 }
             };
-        } else {
-            this._validateApplication(app);
         }
 
         const deck = await this._prepareLocalDeck(app, world, userCompanyId);
@@ -938,7 +936,13 @@ export default class BattleApp extends api.Application5e {
             row.dataset.prof = unitData.uLevelProf[prof];
         });
 
-        event.dataTransfer.setData("text/plain", JSON.stringify(unit.toDragData()));
+        const dragData = unit.toDragData();
+        dragData.origin = {
+            field: li.closest(".field").dataset.side,
+            row: li.closest(".row").dataset.row
+        }
+
+        event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
         event.dataTransfer.effectAllowed = li?.dataset.dragType ?? null;
 
         // Toggle the overlay only when the event didn't start from a field row.
@@ -1090,6 +1094,10 @@ export default class BattleApp extends api.Application5e {
         const rows = fields.querySelectorAll('.row');
         const rowsNumbers = fields.querySelectorAll('.row-number');
 
+        // Drop data.
+        const data = foundry.applications.ux.TextEditor.getDragEventData(event);
+        if (data.type !== "Actor") return;
+
         rows.forEach(row => {
             delete row.dataset.prof;
         });
@@ -1098,7 +1106,11 @@ export default class BattleApp extends api.Application5e {
         });
 
         const field = event.currentTarget.closest(".field");
+        const fieldSide = field.dataset.side;
         const rowNumber = unitRow.dataset.row;
+
+        // Check if the drop is on the same row and side. In this case, ignore the drop.
+        if(data.origin.field === fieldSide && data.origin.row === rowNumber) return;        
 
         let dragCounter = Number(unitRow.dataset.dragCounter);
         dragCounter = dragCounter > 0 ? dragCounter - 1 : 0;
@@ -1109,11 +1121,7 @@ export default class BattleApp extends api.Application5e {
         if (dragCounter <= 0) {
             unitRow.classList.remove("drag-over");
             rowNumberSpan.classList.remove("drag-over");
-        }
-
-        // Drop data.
-        const data = foundry.applications.ux.TextEditor.getDragEventData(event);
-        if (data.type !== "Actor") return;
+        }        
 
         // Obtain Actor.
         const actor = await fromUuid(data.uuid);
@@ -1292,24 +1300,7 @@ export default class BattleApp extends api.Application5e {
             if (!tatic) return false;
             else return true;
         });
-    }
-
-    /* -------------------------------------------- */
-
-    /**
-   * Validate all deck entries.
-   * @this {BattleApp}
-   */
-    _validateApplication(app) {
-        const sidebar = app.state.sidebar;
-
-        if(!sidebar.control && !sidebar.events) {
-            sidebar.viewer = '';
-            sidebar.overlay = false;
-
-            this._toggleOverLay();
-        }
-    }
+    }   
 
     /* -------------------------------------------- */
     /*  Form Actions                                */
@@ -1652,7 +1643,8 @@ export default class BattleApp extends api.Application5e {
         const unit = game.actors.get(unitId);
         if (!unit) return;
 
-        const side = this.local.side === 'none' ? 'top' : this.local.side;
+        const allySide = this.local.side === 'none' ? 'top' : this.local.side;
+        const enemySide = allySide === 'top' ? 'bottom' : 'top';
         const impetusBonus = unit.system.abilities.wll.value;
 
         if (!event.altKey) {
@@ -1682,38 +1674,40 @@ export default class BattleApp extends api.Application5e {
             if (result) {
                 const scoreboard = this.world.scoreboard;
 
-                scoreboard[side].impetus += impetusBonus;
+                scoreboard[allySide].impetus += impetusBonus;
 
                 for (let res of result) {
+                    if(!res) continue;
+
                     switch (res.damageType) {
                         case taticsData.activities.md: {
                             if (res.targetField === 'a')
-                                scoreboard.bottom.attack += res.total;
+                                scoreboard[allySide].attack += res.total;
                             else if (res.targetField === 'e')
-                                scoreboard.top.attack += res.total;
+                                scoreboard[enemySide].attack += res.total;
                         } break;
                         case taticsData.activities.mh: {
                             if (res.targetField === 'a') {
-                                scoreboard.top.attack -= res.total;
-                                scoreboard.top.attack = Math.max(scoreboard.top.attack, 0);
+                                scoreboard[enemySide].attack -= res.total;
+                                scoreboard[enemySide].attack = Math.max(scoreboard[enemySide].attack, 0);
                             } else if (res.targetField === 'e') {
-                                scoreboard.bottom.attack -= res.total;
-                                scoreboard.bottom.attack = Math.max(scoreboard.bottom.attack, 0);
+                                scoreboard[allySide].attack -= res.total;
+                                scoreboard[allySide].attack = Math.max(scoreboard[allySide].attack, 0);
                             }
                         } break;
                         case taticsData.activities.ib: {
                             if (res.targetField === 'a')
-                                scoreboard.bottom.impetus += res.total;
+                                scoreboard[allySide].impetus += res.total;
                             else if (res.targetField === 'e')
-                                scoreboard.top.impetus += res.total;
+                                scoreboard[enemySide].impetus += res.total;
                         } break;
                         case taticsData.activities.id: {
                             if (res.targetField === 'a') {
-                                scoreboard.bottom.impetus -= res.total;
-                                scoreboard.bottom.impetus = Math.max(scoreboard.top.impetus, 0);
+                                scoreboard[allySide].impetus -= res.total;
+                                scoreboard[allySide].impetus = Math.max(scoreboard[allySide].impetus, 0);
                             } else if (res.targetField === 'e') {
-                                scoreboard.top.impetus -= res.total;
-                                scoreboard.top.impetus = Math.max(scoreboard.top.impetus, 0);
+                                scoreboard[enemySide].impetus -= res.total;
+                                scoreboard[enemySide].impetus = Math.max(scoreboard[enemySide].impetus, 0);
                             }
                         } break;
                         default: break;

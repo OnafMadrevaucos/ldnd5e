@@ -175,7 +175,7 @@
     <div class="extra-decks-viewer {{#if (ne state.sidebar.viewer "")}}active{{/if}}"
         data-deck="{{state.sidebar.viewer}}">
 
-        <div class="deck-section full {{#unless (eq state.sidebar.viewer " full")}}hidden{{/unless}}">
+        <div class="deck-section full {{#unless (eq state.sidebar.viewer "full")}}hidden{{/unless}}">
             <h4 class="title">{{localize 'ldnd5e.battle.extraDecks.full'}}</h4>
             <div class="deck-container">
                 <div class="cards-counter">{{deck.counter.tatics}} <i class="ra ra-diamonds-card"></i></div>
@@ -205,7 +205,7 @@
             </div>
         </div>
 
-        <div class="deck-section discarded {{#unless (eq state.sidebar.viewer " discarded")}}hidden{{/unless}}">
+        <div class="deck-section discarded {{#unless (eq state.sidebar.viewer "discarded")}}hidden{{/unless}}">
             <h4 class="title">{{localize 'ldnd5e.battle.extraDecks.discarded'}}</h4>
             <div class="deck-container">
                 <div class="cards-counter">{{deck.counter.discarded}} <i class="ra ra-diamonds-card"></i></div>
@@ -239,7 +239,7 @@
             </div>
         </div>
 
-        <div class="deck-section assets {{#unless (eq state.sidebar.viewer " assets")}}hidden{{/unless}}">
+        <div class="deck-section assets {{#unless (eq state.sidebar.viewer "assets")}}hidden{{/unless}}">
             <h4 class="title">{{localize 'ldnd5e.battle.extraDecks.assets'}}</h4>
             <div class="deck-container">
                 <div class="cards-counter">{{deck.counter.assets}} <i class="ra ra-diamonds-card"></i></div>
