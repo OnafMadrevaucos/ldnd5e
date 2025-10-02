@@ -279,7 +279,6 @@
             "rowNumber": "Fileira {number}",
             "rowEffects": {
                 "blizzard": "Nevasca",
-                "flood": "Enchente",
                 "fog": "Neblina",
                 "rain": "Chuva"
             },

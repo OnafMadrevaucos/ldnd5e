@@ -317,6 +317,7 @@ export default class BattleApp extends api.Application5e {
         await this._prepareBaseData();
 
         const context = await super._prepareContext(options);
+        const world = this.battle.world;
 
         Object.assign(context, {
             isGM: this.local.user.isGM,
@@ -348,6 +349,33 @@ export default class BattleApp extends api.Application5e {
                 impetus: this.world.scoreboard.bottom.impetus
             }
         }
+
+        context.fields = {
+            top: {
+                rows: Object.entries(world.fields.top.rows).map(([n, { effect }]) => ({
+                    number: Number(n),
+                    label: game.i18n.format('ldnd5e.battle.rowNumber', { number: n }),
+                    hasEffect: effect !== null,
+                    effect: {
+                        value: effect,
+                        icon: battleData.rowEffectsIcons[effect] ?? '',
+                        label: effect ? game.i18n.localize(`ldnd5e.battle.rowEffects.${effect}`) : ''
+                    }
+                }))
+            },
+            bottom: {
+                rows: Object.entries(world.fields.bottom.rows).map(([n, { effect }]) => ({
+                    number: Number(n),
+                    label: game.i18n.format('ldnd5e.battle.rowNumber', { number: n }),
+                    hasEffect: effect !== null,
+                    effect: {
+                        value: effect,
+                        icon: battleData.rowEffectsIcons[effect] ?? '',
+                        label: effect ? game.i18n.localize(`ldnd5e.battle.rowEffects.${effect}`) : ''
+                    }
+                }))
+            }
+        };
 
         // Prepare all the unit context for display.
         this._prepareUnits(context);
@@ -386,6 +414,10 @@ export default class BattleApp extends api.Application5e {
         context.stage = this.world.stage;
 
         context.turns = this.world.turns;
+
+        context.effects = Object.values(this.world.fields).map(f => {
+            return Object.values(f.rows).map(r => r.effect);
+        });
 
         Object.assign(context.turns, {
             elapsed: context.turns.max - context.turns.current,
@@ -451,30 +483,12 @@ export default class BattleApp extends api.Application5e {
 
     /** @inheritDoc */
     async _prepareEventsContext(context, options) {
-        const world = this.battle.world;
-
-        context.fields = {
-            top: {
-                rows: Object.entries(world.fields.top.rows).map(([n, { effect }]) => ({
-                    number: Number(n),
-                    label: game.i18n.format('ldnd5e.battle.rowNumber', { number: n }),
-                    effect
-                }))
-            },
-            bottom: {
-                rows: Object.entries(world.fields.top.rows).map(([n, { effect }]) => ({
-                    number: Number(n),
-                    label: game.i18n.format('ldnd5e.battle.rowNumber', { number: n }),
-                    effect
-                }))
-            }
-        };
-
-        context.rowEffects = [{ value: '', label: '—' },
-        ...Object.values(battleData.rowEffects).map(effect => ({
-            value: effect,
-            label: game.i18n.localize(`ldnd5e.battle.rowEffects.${effect}`)
-        }))
+        context.rowEffects = [
+            { value: '', label: '—' },
+            ...Object.values(battleData.rowEffects).map(effect => ({
+                value: effect,
+                label: game.i18n.localize(`ldnd5e.battle.rowEffects.${effect}`)
+            }))
         ];
 
         return context;
@@ -678,6 +692,10 @@ export default class BattleApp extends api.Application5e {
 
         for (const unit of this.element.querySelectorAll("li.unit")) {
             unit.addEventListener("contextmenu ", contextMenu.triggerEvent);
+        }
+
+        for (const select of this.element.querySelectorAll(".events-controls .row-effect")) {
+            select.addEventListener("change", this._onRowEffectChange.bind(this));
         }
 
         new contextMenu(this.element, "li.unit", [], { onOpen: this._onOpenUnitContextMenu.bind(this), jQuery: false });
@@ -909,6 +927,17 @@ export default class BattleApp extends api.Application5e {
     }
 
     /* -------------------------------------------- */
+
+    async _onRowEffectChange(event) {
+        const { rowNumber, rowField } = event.target.closest(".row").dataset;
+
+        this.world.fields[rowField].rows[rowNumber].effect = event.target.value;
+        await game.settings.set('ldnd5e', 'battle', this.world);
+
+        this.render({ force: true });
+    }
+
+    /* -------------------------------------------- */
     /*  Drag & Drop                                 */
     /* -------------------------------------------- */
 
@@ -1110,7 +1139,7 @@ export default class BattleApp extends api.Application5e {
         const rowNumber = unitRow.dataset.row;
 
         // Check if the drop is on the same row and side. In this case, ignore the drop.
-        if(data.origin.field === fieldSide && data.origin.row === rowNumber) return;        
+        if (data.origin.field === fieldSide && data.origin.row === rowNumber) return;
 
         let dragCounter = Number(unitRow.dataset.dragCounter);
         dragCounter = dragCounter > 0 ? dragCounter - 1 : 0;
@@ -1121,7 +1150,7 @@ export default class BattleApp extends api.Application5e {
         if (dragCounter <= 0) {
             unitRow.classList.remove("drag-over");
             rowNumberSpan.classList.remove("drag-over");
-        }        
+        }
 
         // Obtain Actor.
         const actor = await fromUuid(data.uuid);
@@ -1184,7 +1213,7 @@ export default class BattleApp extends api.Application5e {
         const html = this.element;
         const overlay = html.querySelector('.sidebar-overlay');
 
-        if(this.state.sidebar.overlay) overlay.classList.add('hidden');
+        if (this.state.sidebar.overlay) overlay.classList.add('hidden');
         else overlay.classList.remove('hidden');
 
         if (update) {
@@ -1300,7 +1329,7 @@ export default class BattleApp extends api.Application5e {
             if (!tatic) return false;
             else return true;
         });
-    }   
+    }
 
     /* -------------------------------------------- */
     /*  Form Actions                                */
@@ -1339,7 +1368,7 @@ export default class BattleApp extends api.Application5e {
         const controls = content.querySelector(".battle-controls");
         const viewer = content.querySelector(".extra-decks-viewer");
 
-        if(this.state.sidebar.control) controls.classList.remove("active");
+        if (this.state.sidebar.control) controls.classList.remove("active");
         else controls.classList.add("active");
 
         this.state.sidebar.control = controls.classList.contains("active");
@@ -1377,7 +1406,7 @@ export default class BattleApp extends api.Application5e {
         const content = target.closest(".window-content");
         const companyTabs = content.querySelector(".company-tabs");
 
-        if(this.state.sidebar.tabs) companyTabs.classList.remove("active");
+        if (this.state.sidebar.tabs) companyTabs.classList.remove("active");
         else companyTabs.classList.add("active");
 
         this.state.sidebar.tabs = companyTabs.classList.contains("active");
@@ -1481,12 +1510,11 @@ export default class BattleApp extends api.Application5e {
         const content = target.closest(".window-content");
         const controls = content.querySelector(".events-controls");
 
-        if(this.state.sidebar.events) controls.classList.remove("active");
+        if (this.state.sidebar.events) controls.classList.remove("active");
         else controls.classList.add("active");
 
         // Set the events control.
         this.state.sidebar.events = controls.classList.contains("active");
-
         this._toggleOverLay();
     }
 
@@ -1677,7 +1705,7 @@ export default class BattleApp extends api.Application5e {
                 scoreboard[allySide].impetus += impetusBonus;
 
                 for (let res of result) {
-                    if(!res) continue;
+                    if (!res) continue;
 
                     switch (res.damageType) {
                         case taticsData.activities.md: {

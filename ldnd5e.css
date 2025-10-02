@@ -2278,13 +2278,24 @@
   flex: 1;
   border: 1px solid var(--dnd5e-color-gold);
   border-radius: 4px;
+  background: url("ui/fields/mud/mud.jpg") no-repeat top center / cover,
+    rgba(0, 0, 0, 0.5);
+  background-blend-mode: multiply;
+  ;
 }
 
 .ldnd5e.battle .fields .field .row {
   display: flex;
   flex-direction: row;
-
   height: 33.34%;
+}
+
+.ldnd5e.battle .fields .field .row .effect-icon {
+  position: absolute;
+  right: 6.5em;
+  font-size: var(--font-size-16);
+  color: var(--dnd5e-color-gold);
+  padding: 5px;
 }
 
 .ldnd5e.battle .fields .field .row.drag-over {
@@ -2713,6 +2724,7 @@
 .ldnd5e.battle .units-list .unit .unit-link .name {
   flex: 1;
 }
+
 .ldnd5e.battle .units-list .unit .unit-link i {
   color: var(--dnd5e-color-gold);
   font-size: var(--font-size-18);
@@ -2867,6 +2879,7 @@
   flex-direction: column;
   flex: 1;
 }
+
 .ldnd5e.battle .tatic-card .card-row .card-content.hand {
   flex-direction: row;
 }
@@ -3363,16 +3376,57 @@
 }
 
 /* ----------------------------------------- */
-/*  DnD5e Actor Sheets
-/* ----------------------------------------- */
-.dnd5e.actor.sheet .center-pane h4.company {
-  text-align: center;
-  border-bottom: none;
+/*  Fields Effects Animations
+/* ----------------------------------------- 
+.blizzard::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  background-image: radial-gradient(white 1px, transparent 2px);
+  background-size: 20px 20px;
+  animation: snowfall 10s linear infinite;
+}
+
+.fog::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.2), transparent 70%),
+              radial-gradient(circle at 80% 40%, rgba(255,255,255,0.15), transparent 60%);
+  backdrop-filter: blur(4px);
+  animation: fogmove 30s ease-in-out infinite alternate;
+}
+
+.rain::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  background-image: 
+    linear-gradient(transparent, rgba(255,255,255,0.3) 50%, transparent),
+    linear-gradient(transparent, rgba(255,255,255,0.2) 50%, transparent);
+  background-size: 2px 40px, 1px 20px;
+  animation: rainfall 0.5s linear infinite;
+}
+
+@keyframes rainfall {
+  from { background-position: 0 0, 50px 0; }
+  to   { background-position: -10px 40px, 40px 20px; }
+}
+
+@keyframes fogmove {
+  from { transform: translateX(-5%); }
+  to   { transform: translateX(5%); }
+}
+
+@keyframes snowfall {
+  0% { background-position: 0 -100%; }
+  100% { background-position: 0 100%; }
 }
 
 /* ----------------------------------------- */
-/*  LDnD5e Unit Sheets
-/* ----------------------------------------- */
-.dnd5e.actor.sheet.actor.unit .sheet-body .ability-scores {
-  flex: 0 0 100%;
-}

@@ -280,7 +280,6 @@
             "rowNumber": "Row {number}",
             "rowEffects": {
                 "blizzard": "Blizzard",
-                "flood": "Flood",
                 "fog": "Fog",
                 "rain": "Rain"
             },

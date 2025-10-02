@@ -27,8 +27,9 @@
                     <span class="empty">{{localize 'ldnd5e.battle.fields.top'}}</span>
                     {{/unless}}
                 </div>
-                <a {{#if sides.ready}}class="start-battle" data-tooltip="{{localize 'ldnd5e.battle.notification.start'}}"{{/if}} data-action="startBattle" 
-                     {{#unless isGM}}disabled{{/unless}}>                    
+                <a {{#if sides.ready}}class="start-battle"
+                    data-tooltip="{{localize 'ldnd5e.battle.notification.start'}}" {{/if}} data-action="startBattle"
+                    {{#unless isGM}}disabled{{/unless}}>
                     <i class="ra ra-crossed-swords"></i>
                 </a>
                 <div class="side bottom dropzone" data-side="bottom">
@@ -67,7 +68,13 @@
             </div>
 
             <div class="rows">
-                <div class="top row dropzone" data-row="3" data-row-type="rea" data-drag-counter="0">
+                <div class="top row dropzone{{#if fields.top.rows.2.hasEffect}} effect{{/if}}" data-row="3"
+                    data-row-type="rea" data-drag-counter="0">
+                    {{#if fields.top.rows.2.hasEffect}}
+                    <span class="effect-icon" data-tooltip="{{fields.top.rows.2.effect.label}}"><i
+                            class="fas {{fields.top.rows.2.effect.icon}}"></i>
+                    </span>
+                    {{/if}}
                     <ol class="units-list unlist">
                         {{#each rowUnits.top.rows.2.units}}
                         <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}"
@@ -80,7 +87,13 @@
                     </ol>
                 </div>
 
-                <div class="center row dropzone" data-row="2" data-row-type="res" data-drag-counter="0">
+                <div class="center row dropzone{{#if fields.top.rows.1.hasEffect}} effect{{/if}}" data-row="2"
+                    data-row-type="res" data-drag-counter="0">
+                    {{#if fields.top.rows.1.hasEffect}}
+                    <span class="effect-icon" data-tooltip="{{fields.top.rows.1.effect.label}}"><i
+                            class="fas {{fields.top.rows.1.effect.icon}}"></i>
+                    </span>
+                    {{/if}}
                     <ol class="units-list unlist">
                         {{#each rowUnits.top.rows.1.units}}
                         <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}"
@@ -94,6 +107,11 @@
                 </div>
 
                 <div class="bottom row dropzone" data-row="1" data-row-type="van" data-drag-counter="0">
+                    {{#if fields.top.rows.0.hasEffect}}
+                    <span class="effect-icon" data-tooltip="{{fields.top.rows.0.effect.label}}"><i
+                            class="fas {{fields.top.rows.0.effect.icon}}"></i>
+                    </span>
+                    {{/if}}
                     <ol class="units-list unlist">
                         {{#each rowUnits.top.rows.0.units}}
                         <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}"
@@ -124,6 +142,11 @@
 
             <div class="rows">
                 <div class="top row dropzone" data-row="1" data-row-type="van" data-drag-counter="0">
+                    {{#if fields.bottom.rows.0.hasEffect}}
+                    <span class="effect-icon" data-tooltip="{{fields.bottom.rows.0.effect.label}}"><i
+                            class="fas {{fields.bottom.rows.0.effect.icon}}"></i>
+                    </span>
+                    {{/if}}
                     <ol class="units-list unlist">
                         {{#each rowUnits.bottom.rows.0.units}}
                         <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}"
@@ -137,6 +160,11 @@
                 </div>
 
                 <div class="center row dropzone" data-row="2" data-row-type="res" data-drag-counter="0">
+                    {{#if fields.bottom.rows.1.hasEffect}}
+                    <span class="effect-icon" data-tooltip="{{fields.bottom.rows.1.effect.label}}"><i
+                            class="fas {{fields.bottom.rows.1.effect.icon}}"></i>
+                    </span>
+                    {{/if}}
                     <ol class="units-list unlist">
                         {{#each rowUnits.bottom.rows.1.units}}
                         <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}"
@@ -150,6 +178,11 @@
                 </div>
 
                 <div class="bottom row dropzone" data-row="3" data-row-type="rea" data-drag-counter="0">
+                    {{#if fields.bottom.rows.2.hasEffect}}
+                    <span class="effect-icon" data-tooltip="{{fields.bottom.rows.2.effect.label}}"><i
+                            class="fas {{fields.bottom.rows.2.effect.icon}}"></i>
+                    </span>
+                    {{/if}}
                     <ol class="units-list unlist">
                         {{#each rowUnits.bottom.rows.2.units}}
                         <li class="item unit" data-uuid="{{uuid}}" data-unit-id="{{id}}" data-entry-id="{{id}}"
@@ -171,7 +204,7 @@
                 <button class="deck-button" data-action="toggleDeckControls">
                     <img src="{{icons.deck}}" alt="{{localize 'ldnd5e.battle.openDeck'}}">
                 </button>
-                
+
                 <button class="event-button {{#unless isGM}}hidden{{/unless}}" data-action="toggleEventsControls">
                     <img src="{{icons.events}}" alt="{{localize 'ldnd5e.battle.openEvents'}}">
                 </button>

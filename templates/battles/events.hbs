@@ -1,4 +1,4 @@
-<section class="events-controls side-controls">
+<section class="events-controls side-controls {{#if state.sidebar.events}}active{{/if}}">
     <section class="header">
         <button type="button" class="header-control icon fa-solid fa-xmark"
             data-tooltip="{{localize 'ldnd5e.battle.closeDeck'}}" aria-label="{{localize 'ldnd5e.battle.close'}}"
@@ -29,7 +29,7 @@
                 <i class="ra ra-sideswipe" inert></i>
                 <span>{{localize 'ldnd5e.battle.rowsControl'}}</span>
             </h3>
-            <div class="rows-list unlist">               
+            <div class="rows-list unlist">
                 <div class="top-rows field-rows">
                     <label class="field-name">{{localize 'ldnd5e.battle.fields.top'}}</label>
 
@@ -38,7 +38,8 @@
                         <label>{{label}}</label>
                         <div class="form-fields">
                             <select class="row-effect">
-                                {{ selectOptions @root.rowEffects labelAttr="label" valueAttr="value" selected=effect }}
+                                {{ selectOptions @root.rowEffects labelAttr="label" valueAttr="value"
+                                selected=effect.value }}
                             </select>
                         </div>
                     </div>
@@ -53,7 +54,8 @@
                         <label>{{label}}</label>
                         <div class="form-fields">
                             <select class="row-effect">
-                                {{ selectOptions @root.rowEffects labelAttr="label" valueAttr="value" }}
+                                {{ selectOptions @root.rowEffects labelAttr="label" valueAttr="value"
+                                selected=effect.value }}
                             </select>
                         </div>
                     </div>

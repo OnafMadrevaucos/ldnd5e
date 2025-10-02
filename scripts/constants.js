@@ -385,9 +385,17 @@ const battleData = {
    */
    rowEffects: {
       blizzard: 'blizzard',
-      flood: 'flood',
       fog: 'fog',
       rain: 'rain',
+   },
+
+   /**
+   * Defines the Effects on Rows constants.      
+   */
+   rowEffectsIcons: {
+      blizzard: 'fa-snowflake',
+      fog: 'fa-smog',
+      rain: 'fa-cloud-showers-heavy',
    }
 }
 
@@ -682,7 +690,6 @@ const i18nStrings = {
       rowsControl: "ldnd5e.battle.rowsControl",
       rowEffects: {
          blizzard: "ldnd5e.battle.rowEffects.blizzard",
-         flood: "ldnd5e.battle.rowEffects.flood",
          fog: "ldnd5e.battle.rowEffects.fog",
          rain: "ldnd5e.battle.rowEffects.rain",                           
       },
