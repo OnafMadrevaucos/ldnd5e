@@ -28,7 +28,7 @@ export default class ActorL5e extends documents.Actor5e {
     }
 
     /** @override */
-    prepareDerivedData() {
+    async prepareDerivedData() {
         super.prepareDerivedData();  
         
         const actorData = this;
@@ -44,8 +44,8 @@ export default class ActorL5e extends documents.Actor5e {
                 data.attributes.ac.lan = das.prepareLAN(data);
                 data.attributes.ac.ldo = das.prepareLDO(data); 
 
-                if(CONFIG.adControl) {
-                    CONFIG.adControl.refresh(true);
+                if(CONFIG.adControl && !CONFIG.isV13) {
+                    await CONFIG.adControl.render({force: true});
                 }
 
                 const dasEnabled = (this.getFlag("ldnd5e","dasEnabled") ?? true);
@@ -166,6 +166,8 @@ export default class ActorL5e extends documents.Actor5e {
     }
 
     async configL5e() {
+        var hasError = false;
+
         const armorFlag = this.getFlag("ldnd5e", "armorEffect");
         const shieldFlag = this.getFlag("ldnd5e", "shieldEffect");        
 
@@ -199,7 +201,10 @@ export default class ActorL5e extends documents.Actor5e {
                 this.setFlag("ldnd5e", "shieldEffect", {effectID: createdEffects[1]._id, shieldID: "none"});                             
             }); 
 
-            await this.setFlag("ldnd5e", "L5eConfigured", true);  
+            await this.setFlag("ldnd5e", "L5eConfigured", true); 
+            
+            this.configArmorData();
+            hasError = true;
         }
         else if(!armorFlag) {
 
@@ -221,6 +226,9 @@ export default class ActorL5e extends documents.Actor5e {
             }); 
 
             await this.setFlag("ldnd5e", "L5eConfigured", true); 
+
+            this.configArmorData();
+            hasError = true;
         }
         else if(!shieldFlag) {
             // Active Effect padrão usado para controlar os efeitos de avaria dos Escudos.
@@ -241,7 +249,12 @@ export default class ActorL5e extends documents.Actor5e {
             }); 
 
             await this.setFlag("ldnd5e", "L5eConfigured", true);
+
+            this.configArmorData();
+            hasError = true;
         }
+
+        return hasError;
     }
     async fullAsyncConfigL5e() {
         var hasError = false;

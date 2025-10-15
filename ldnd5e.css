@@ -366,9 +366,254 @@
 }
 
 /* ----------------------------------------- */
-/*  Entity Sheets Specifically               */
+/*  Absorved Damage Control  V2.0            */
 /* ----------------------------------------- */
-.ldnd5e.sheet {
+.ldnd5e.ad-control2 {  
+}
+
+.ad-control2:not(.minimized)::before {
+  content: var(--dnd5e-npc-header-content, none);
+  background: url(ui/armor-damage-banner.jpg) no-repeat top center / cover;
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 450px;
+  border-radius: 5px 5px 0 0;
+  opacity: 0.05;
+  mask-image: linear-gradient(to bottom, black, transparent);
+  z-index: -1;
+}
+
+.ad-control2 .options {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
+
+.ad-control2 .options>* {
+  flex: 1;
+}
+
+.ad-control2 .options a {
+  flex: 0;
+  align-content: center;
+}
+
+.ad-control2 [data-application-part="tabs"] {
+  margin-block: 5px;
+}
+
+.ad-control2 .items-list {
+  margin: 0;
+}
+
+.ad-control2 .items-list .item-name .title {
+  flex: 1;
+}
+
+.ad-control2 .items-list .item-name h4.title {
+  margin: 0;
+  color: inherit;
+}
+
+.ldnd5e.ad-control2 .items-list .item-attribute {
+  width: 75px;
+  gap: 5px;
+}
+
+.ldnd5e.ad-control2 .items-list .item-attribute.exhaustion {
+  width: 170px;
+}
+
+.ldnd5e.ad-control2 .items-list .item-detail .half-dl {
+  color: #cb2327;
+  font-weight: bold;
+}
+
+.ad-control2 .items-list .item-name .owner-portrait {
+  width: 32px;
+}
+
+.ad-control2 .items-list .item .item-name .owner-portrait {
+  background-color: #bfbfbfc7;
+  border-radius: 50%;
+}
+
+.ldnd5e.ad-control2 .items-list .item .item-detail span {
+  font-weight: bold;
+}
+
+.ldnd5e.ad-control2 .items-list .item .item-detail span.abs {
+  font-size: var(--font-size-11);
+  font-weight: normal;
+}
+
+.ldnd5e.ad-control2 .items-list .item .item-detail span.real i {
+  color: var(--dnd5e-color-gold);
+}
+
+.ldnd5e.ad-control2 .items-list .item .item-detail span.abs i {
+  color: var(--dnd5e-color-application-damage);
+}
+
+.ldnd5e.ad-control2 .items-list .item .item-detail.total-exhaust,
+.ldnd5e.ad-control2 .items-list .item .item-detail.total-damage,
+.ldnd5e.ad-control2 .items-list .header .item-detail {
+  font-weight: bolder;
+}
+
+.ldnd5e.ad-control2 .items-list .item .item-detail.total-damage {
+  font-size: 14px;
+}
+
+.ad-control2 .items-list .item-row {
+  color: var(--color-text-dark-primary);
+}
+
+.ad-control2 .clickable:hover {
+  cursor: pointer;
+  text-shadow: 0 0 6px var(--color-shadow-primary);
+}
+
+.ad-control2 img.clickable:hover {
+  box-shadow: 0 0 6px var(--color-shadow-primary);
+}
+
+.ad-control2 .item[data-unarmored="true"] .item-image.clickable:hover {
+  cursor: default;
+  box-shadow: none;
+}
+
+/* ----------------------------------------- */
+/*  Absorved Damage Dialog  V2.0             */
+/* ----------------------------------------- */
+.ad-dialog {
+  background: var(--dnd5e-application-background);
+  border: none;
+}
+
+.ad-dialog>.window-header .window-title {
+  visibility: visible;
+}
+
+.ad-dialog .dialog-content .currency {
+  margin: 5px 0px -2px 5px;
+}
+
+.ad-dialog .dialog-buttons {
+  display: flex;
+  flex-direction: column;
+}
+
+.ad-dialog .dialog-buttons div {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  width: 100%;
+}
+
+.ad-dialog .dialog-buttons .dialog-buttons-title {
+  gap: 0;
+}
+
+.ad-dialog .dialog-buttons .dialog-buttons-title div {
+  padding: 2px;
+  border: 1px solid var(--dnd5e-color-gold);
+  justify-content: center;
+  font-weight: bold;
+}
+
+.ad-dialog .dialog-buttons .dialog-buttons-title div.single-border {
+  border-radius: 4px;
+}
+
+.ad-dialog .dialog-buttons .dialog-buttons-title div:not(.single-border):first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+.ad-dialog .dialog-buttons .dialog-buttons-title div:not(.single-border):last-child {
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+}
+
+.ad-dialog .dialog-buttons .dialog-buttons-title div.repair-click i {
+  align-self: center;
+}
+
+.ad-dialog .dialog-buttons .dialog-buttons-title div.repair-click i:hover {
+  cursor: pointer;
+  text-shadow: 0 0 6px var(--color-shadow-primary);
+}
+
+.ad-dialog .dialog-buttons .dialog-buttons-title div.repair-click i.smith-repair {
+  color: var(--dnd5e-color-gold);
+}
+
+.ad-dialog .dialog-buttons .buttons button {
+  border: none;
+  background: var(--button-background-color);
+  flex: 1;
+}
+
+/* ----------------------------------------- */
+/*  Player's Character List Config  V2.0     */
+/* ----------------------------------------- */
+.ad-config {
+  background: var(--dnd5e-application-background);
+  border: none;
+}
+
+.ad-config .dialog-content {
+  overflow: auto;
+}
+
+.ad-config .item-list {
+  overflow-y: auto;
+}
+
+.ad-config .item-list .select-all button {
+  flex: 1;
+  background: transparent;
+  border: none;
+}
+
+.ad-config .item-list .select-all button:hover {
+  box-shadow: none;
+  text-shadow: 0 0 5px var(--color-shadow-primary);
+}
+
+.ad-config .item-list .item .item-row {
+  flex: 1;
+  flex-direction: row;
+  padding: 5px;
+}
+
+.ad-config .item .item-row .actor-card {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
+
+.ad-config .item .item-row .actor-card .actor-image {
+  width: 32px;
+}
+
+.ad-config .item .item-row h4 {
+  flex: 1;
+  margin: 0;
+  line-height: 1.25em;
+}
+
+.ad-config .dialog-buttons button {
+  border: none;
+  background: var(--button-background-color);
+  flex: 1;
+}
+
+/* ----------------------------------------- */
+/*  Absorved Damage Control                  */
+/* ----------------------------------------- */
+.ldnd5e.ad-control {
   /* ----------------------------------------- */
   /*  Element Styles                           */
   /* ----------------------------------------- */
@@ -2278,10 +2523,11 @@
   flex: 1;
   border: 1px solid var(--dnd5e-color-gold);
   border-radius: 4px;
+  /* TODO: Para a versão 1.4.0, implementar controle de terreno.
   background: url("ui/fields/mud/mud.jpg") no-repeat top center / cover,
     rgba(0, 0, 0, 0.5);
   background-blend-mode: multiply;
-  ;
+  */
 }
 
 .ldnd5e.battle .fields .field .row {

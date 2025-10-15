@@ -1,0 +1,8 @@
+<section class="dialog-buttons">
+    {{#each buttons as |button id|}}
+    <button data-action="{{id}}Click">
+        {{{button.icon}}}
+        {{{button.label}}}
+    </button>
+    {{/each}}
+</section>

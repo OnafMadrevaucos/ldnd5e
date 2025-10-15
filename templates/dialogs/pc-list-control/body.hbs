@@ -1,0 +1,24 @@
+<section class="dialog-content">
+    <div class="items-section card">
+        <ol class="item-list unlist pcs-list">
+            <li class="item items-header header select-all">
+                <div class="item-row">
+                    <button type="checkbox" value="false" data-action="selectAll">
+                        <h4>{{localize "ldnd5e.selectAll"}}</h4>
+                    </button>
+                </div>
+            </li>
+            {{#each actors as |actor id|}}
+            <li class="item pc-item" data-actor-id="{{actor.id}}">
+                <div class="item-row">
+                    <input type="checkbox" value="{{actor.dasEnabled}}" {{#if actor.dasEnabled}}checked{{/if}} readonly/>
+                    <a class="actor-card" data-action="toggleActor">
+                        <img class="actor-image gold-icon" src="{{actor.img}}" />
+                        <h4>{{actor.name}}</h4>
+                    </a>
+                </div>
+            </li>
+            {{/each}}
+        </ol>
+    </div>
+</section>

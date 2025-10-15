@@ -1,0 +1,119 @@
+<section class="pc-list tab {{ tab.cssClass }}" data-tab="{{ tab.id }}" data-group="{{ tab.group }}">
+    {{#with equips.armor as |equip|}}
+    <section class="items-list armor-list" data-item-list="armor">
+        <div class="items-section card">
+            <div class="items-header header">
+                <div class="item-name">
+                    <h3 class="title">{{localize equip.label}}</h3>
+                    <div class="item-detail item-attribute lan-title">{{localize "ldnd5e.ownerLan"}}</div>
+                    <div class="item-detail owner-portrait"></div>
+                </div>
+                <div class="item-detail item-attribute">{{localize "ldnd5e.pdTitle"}}</div>
+                <div class="item-detail item-attribute">{{localize "ldnd5e.sdTitle"}}</div>
+                <div class="item-detail item-attribute">{{localize "ldnd5e.bdTitle"}}</div>
+                <div class="item-detail item-attribute total-damage">{{localize "ldnd5e.tdTitle"}}</div>
+            </div>
+
+            <ol class="item-list unlist">
+                {{#each equip.items as |item iid|}}
+                <li class="item flexrow {{equip.css}}" data-item-id="{{item.id}}" data-owner-id="{{item.actor.id}}"
+                    data-unarmored="{{item.unarmored}}">
+                    <div class="item-row">
+                        <div class="item-name">
+                            <img class="item-image gold-icon clickable" src="{{ item.img }}"
+                                data-tooltip="{{ item.name }}" data-action="showEquip">
+                            <div class="name name-stacked">
+                                <h4 class="title{{#unless item.equipped}} item-desequip{{/unless}}">{{item.name~}}</h4>
+                            </div>
+                            {{#if item.equipped}}
+                            <div class="item-detail item-attribute lan-value">{{item.actor.system.attributes.ac.lan}}
+                            </div>
+                            {{/if}}
+                            <img class="owner-portrait clickable" src="{{ item.actor.img }}"
+                                data-tooltip="{{ item.actor.name }}" data-action="showActor">
+                        </div>
+                        <div class="item-detail item-attribute clickable {{#if item.equipped}}dl-control {{/if}}{{#unless item.equipped}}item-desequip{{/unless}}"
+                            data-dl-type="pierc" data-action="doDamage">
+                            <span class="real">{{item.system.armor.DL.pierc}} <i class="ra ra-cracked-shield"></i></span>
+                            <span class="abs {{#if item.system.armor.HalfAD.pierc}}half-dl{{/if}}">{{item.system.armor.AD.pierc}} {{#if item.system.armor.HalfAD.pierc}}<i class="fa-solid fa-shield-halved"></i>{{else}}<i class="fa-solid fa-shield"></i>{{/if}}</span>
+                        </div>
+                        <div class="item-detail item-attribute clickable {{#if item.equipped}}dl-control {{#if item.system.armor.HalfAD.slsh}}half-dl{{/if}} {{/if}}{{#unless item.equipped}}item-desequip{{/unless}}"
+                            data-dl-type="slsh" data-action="doDamage">
+                            <span class="real">{{item.system.armor.DL.slsh}} <i class="ra ra-cracked-shield"></i></span>
+                            <span class="abs {{#if item.system.armor.HalfAD.slsh}}half-dl{{/if}}">{{item.system.armor.AD.slsh}} {{#if item.system.armor.HalfAD.slsh}}<i class="fa-solid fa-shield-halved"></i>{{else}}<i class="fa-solid fa-shield"></i>{{/if}}</span>
+                        </div>
+                        <div class="item-detail item-attribute clickable {{#if item.equipped}}dl-control {{#if item.system.armor.HalfAD.bldg}}half-dl{{/if}} {{/if}}{{#unless item.equipped}}item-desequip{{/unless}}"
+                            data-dl-type="bldg" data-action="doDamage">
+                            <span class="real">{{item.system.armor.DL.bldg}} <i class="ra ra-cracked-shield"></i></span>
+                            <span class="abs {{#if item.system.armor.HalfAD.bldg}}half-dl{{/if}}">{{item.system.armor.AD.bldg}} {{#if item.system.armor.HalfAD.bldg}}<i class="fa-solid fa-shield-halved"></i>{{else}}<i class="fa-solid fa-shield"></i>{{/if}}</span>
+                        </div>
+                        <div
+                            class="item-detail item-attribute total-damage {{#if item.destroyed}}full-repair-control{{/if}}">
+                            {{item.system.armor.RealDL}}</div>
+                    </div>
+                </li>
+                {{/each}}
+            </ol>
+        </div>
+    </section>
+    {{/with}}
+
+    {{#with equips.shield as |equip|}}
+    <section class="items-list armor-list" data-item-list="armor">
+        <div class="items-section card">
+            <div class="items-header header">
+                <div class="item-name">
+                    <h3 class="title">{{localize equip.label}}</h3>
+                    <div class="item-detail item-attribute lan-title">{{localize "ldnd5e.ownerLdo"}}</div>
+                    <div class="item-detail owner-portrait"></div>
+                </div>
+                <div class="item-detail item-attribute">{{localize "ldnd5e.pdTitle"}}</div>
+                <div class="item-detail item-attribute">{{localize "ldnd5e.sdTitle"}}</div>
+                <div class="item-detail item-attribute">{{localize "ldnd5e.bdTitle"}}</div>
+                <div class="item-detail item-attribute total-damage">{{localize "ldnd5e.tdTitle"}}</div>
+            </div>
+
+            <ol class="item-list unlist">
+                {{#each equip.items as |item iid|}}
+                <li class="item flexrow {{equip.css}}" data-item-id="{{item.id}}" data-owner-id="{{item.actor.id}}"
+                    data-unarmored="{{item.unarmored}}">
+                    <div class="item-row">
+                        <div class="item-name">
+                            <img class="item-image gold-icon clickable" src="{{ item.img }}"
+                                data-tooltip="{{ item.name }}" data-action="showEquip">
+                            <div class="name name-stacked">
+                                <h4 class="title{{#unless item.equipped}} item-desequip{{/unless}}">{{item.name~}}</h4>
+                            </div>
+                            {{#if item.equipped}}
+                            <div class="item-detail item-attribute lan-value">{{item.actor.system.attributes.ac.ldo}}
+                            </div>
+                            {{/if}}
+                            <img class="owner-portrait clickable" src="{{ item.actor.img }}"
+                                data-tooltip="{{ item.actor.name }}" data-action="showActor">
+                        </div>
+                        <div class="item-detail item-attribute clickable {{#if item.equipped}}dl-control {{/if}}{{#unless item.equipped}}item-desequip{{/unless}}"
+                            data-dl-type="pierc" data-action="doDamage">
+                            <span class="real">{{item.system.armor.DL.pierc}} <i class="ra ra-cracked-shield"></i></span>
+                            <span class="abs {{#if item.system.armor.HalfAD.pierc}}half-dl{{/if}}">{{item.system.armor.AD.pierc}} {{#if item.system.armor.HalfAD.pierc}}<i class="fa-solid fa-shield-halved"></i>{{else}}<i class="fa-solid fa-shield"></i>{{/if}}</span>
+                        </div>
+                        <div class="item-detail item-attribute clickable {{#if item.equipped}}dl-control {{#if item.system.armor.HalfAD.slsh}}half-dl{{/if}} {{/if}}{{#unless item.equipped}}item-desequip{{/unless}}"
+                            data-dl-type="slsh" data-action="doDamage">
+                            <span class="real">{{item.system.armor.DL.slsh}} <i class="ra ra-cracked-shield"></i></span>
+                            <span class="abs {{#if item.system.armor.HalfAD.slsh}}half-dl{{/if}}">{{item.system.armor.AD.slsh}} {{#if item.system.armor.HalfAD.slsh}}<i class="fa-solid fa-shield-halved"></i>{{else}}<i class="fa-solid fa-shield"></i>{{/if}}</span>
+                        </div>
+                        <div class="item-detail item-attribute clickable {{#if item.equipped}}dl-control {{#if item.system.armor.HalfAD.bldg}}half-dl{{/if}} {{/if}}{{#unless item.equipped}}item-desequip{{/unless}}"
+                            data-dl-type="bldg" data-action="doDamage">
+                            <span class="real">{{item.system.armor.DL.bldg}} <i class="ra ra-cracked-shield"></i></span>
+                            <span class="abs {{#if item.system.armor.HalfAD.bldg}}half-dl{{/if}}">{{item.system.armor.AD.bldg}} {{#if item.system.armor.HalfAD.bldg}}<i class="fa-solid fa-shield-halved"></i>{{else}}<i class="fa-solid fa-shield"></i>{{/if}}</span>
+                        </div>
+                        <div
+                            class="item-detail item-attribute total-damage {{#if item.destroyed}}full-repair-control{{/if}}">
+                            {{item.system.armor.RealDL}}</div>
+                    </div>
+                </li>
+                {{/each}}
+            </ol>
+        </div>
+    </section>
+    {{/with}}
+</section>

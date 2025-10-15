@@ -1,0 +1,41 @@
+<section class="exaust-list tab {{ tab.cssClass }}" data-tab="{{ tab.id }}" data-group="{{ tab.group }}">
+    <ol class="items-list unlist exhaust-list">
+        <div class="items-section card">
+            <div class="items-header header">
+                <div class="item-name">
+                    <h3 class="title">{{localize 'TYPES.Actor.characterPl'}}</h3>
+                    <div class="item-detail owner-portrait"></div>
+                </div>
+                <div class="item-detail item-attribute exhaustion">{{localize "ldnd5e.exauTitle"}}</div>
+                <div class="item-detail item-attribute total-exhaust">{{localize "ldnd5e.tdTitle"}}</div>
+            </div>
+
+            <ol class="item-list unlist">
+                {{#each pcs.list as |actor aid|}}
+                {{#if actor.showActor}}
+                <li class="item flexrow {{section.css}}" data-owner-id="{{actor.id}}">
+                    <div class="item-row">
+                        <div class="item-name flexrow">
+                            <img class="item-image gold-icon clickable" src="{{ actor.img }}"
+                                data-tooltip="{{ actor.name }}" data-action="showActor">
+                            <div class="name name-stacked">
+                                <h4 class="title">{{actor.name~}}</h4>
+                            </div>
+                        </div>
+                        <div class="item-detail item-attribute exhaustion exaust-pips">
+                            {{#each actor.exhaustLvl as |lvl lid|}}
+                            <input class="exaust-pip" type="radio" id="{{actor.id}}.exaustLvl{{lid}}"
+                                name="{{actor.id}}" data-n="{{lid}}" data-action="updateExhaustion" value="{{lid}}"
+                                {{#if lvl}}checked{{/if}} />
+                            {{/each}}
+                        </div>
+                        <div class="item-detail item-attribute total-exhaust">{{actor.system.attributes.exhaustion}}
+                        </div>
+                    </div>
+                </li>
+                {{/if}}
+                {{/each}}
+            </ol>
+        </div>
+    </ol>
+</section>

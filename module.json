@@ -18,21 +18,7 @@
     "dnd5e"
   ],
   "relationships": {
-    "requires": [
-      {
-        "id": "dnd5e",
-        "compatibility": {}
-      },      
-      {
-        "id": "dnd5e-pt-BR",
-        "type": "module",
-        "compatibility": {}
-      },
-      {
-        "id": "babele",
-        "type": "module",
-        "compatibility": {}
-      },
+    "requires": [  
       {
         "id": "lib-wrapper",
         "type": "module",

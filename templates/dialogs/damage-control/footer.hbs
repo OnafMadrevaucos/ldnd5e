@@ -1,0 +1,23 @@
+<section class="dialog-buttons">
+    <div class="dialog-buttons-title">
+        <div class="dialog-button-header {{#if unarmored}}single-border{{/if}}">
+            <label>{{ localize "ldnd5e.dlControlDamageBtn" }}</label>
+        </div>
+        {{#unless unarmored}}
+        <div class="dialog-button-header repair-click">
+            <label>{{ localize "ldnd5e.dlControlRepairsBtn" }}</label>
+            <i class="ra ra-anvil" data-tooltip="{{ repairTooltip }}" data-action="smithRepair"></i>
+        </div>
+        {{/unless}}
+    </div>    
+    <div class="buttons">
+        {{#each buttons as |button id|}}
+        {{#unless button.hidden}}
+        <button data-action="{{id}}Click">
+            {{{button.icon}}}
+            {{{button.label}}}
+        </button>
+        {{/unless}}
+        {{/each}}
+    </div>
+</section>

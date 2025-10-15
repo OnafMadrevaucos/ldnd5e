@@ -25,6 +25,7 @@
          "templates/sheets/unit/body.hbs",
 
          "templates/sheets/tatic/header.hbs",
+         "templates/sheets/tatic/body.hbs",
          "templates/sheets/tatic/activities.hbs",
          "templates/sheets/tatic/description.hbs",
 
@@ -37,6 +38,12 @@
 
          "templates/dialogs/medical-restauration/body.hbs",
          "templates/dialogs/medical-restauration/footer.hbs",
+
+         "templates/battles/companies.hbs",
+         "templates/battles/controls.hbs",
+         "templates/battles/events.hbs",
+         "templates/battles/field.hbs",
+         "templates/battles/tabs.hbs",
     ];
 
     templates = templates.map((t) => `modules/ldnd5e/${t}`);

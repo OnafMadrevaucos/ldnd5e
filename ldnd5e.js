@@ -6,7 +6,10 @@ import { preloadTemplates } from "./scripts/templates.js";
 import { registerSystemSettings } from "./scripts/settings.js"
 
 import { constants, gmControl, battleControl } from "./scripts/constants.js";
-import adControl from "./models/adControl.js";
+
+import ADControl from "./models/adControl.js";
+import ADControlV2 from "./models/adControlV2.js";
+
 import BattleApp from "./models/battleApp.js";
 
 import * as das from "./scripts/DASystem.js"
@@ -32,13 +35,16 @@ const typeUnit = "ldnd5e.unit";
 
 const typeTatic = "ldnd5e.tatic";
 
+const isV13 = !foundry.utils.isNewerVersion("13", game.version);
+
 Hooks.once("init", function () {
-    console.log("LDnD5e | Inicializando o Módulo Lemurian D&D 5th Edition...");
+    console.log("LD&D 5e | Inicializando o Módulo Lemurian D&D 5th Edition...");
 
     registerSystemSettings();
     registerRPGAwesome();
 
     CONFIG.DND5E = dnd5e.config;
+    CONFIG.isV13 = isV13;
 
     CONFIG.Dice.TaticsRoll = TaticsRoll;
 
@@ -116,6 +122,18 @@ Hooks.once('ready', () => {
     if (!game.modules.get('lib-wrapper')?.active && game.user.isGM)
         ui.notifications.error("LD&D 5e necessita do módulo 'libWrapper'. Favor instalá-lo e ativá-lo.");
 
+    if(!game.settings.get('ldnd5e', 'massiveCombatRules')) {
+        const Actors = foundry.documents.collections.Actors;
+
+        Actors.unregisterSheet('ldnd5e', ArmySheet);
+        Actors.unregisterSheet('ldnd5e', CompanySheet);
+        Actors.unregisterSheet('ldnd5e', UnitSheet);
+
+        const Items = foundry.documents.collections.Items;
+
+        Items.unregisterSheet('ldnd5e', TaticsSheet);
+    }
+
     Hooks.on("renderCombatTracker", async (app, html, data) => {
         // Sair se não tiver Combates ativos.
         if (!data.combat) return;
@@ -123,8 +141,8 @@ Hooks.once('ready', () => {
         // Create groups
         ars.manageGroups(app.popOut);
 
-        if (CONFIG.adControl)
-            CONFIG.adControl.refresh(true);
+        if (CONFIG.ADControl)
+            CONFIG.ADControl.render({force: true});
     });
 
     // Re-render the combat tracker in case the initial render was missed
@@ -147,7 +165,7 @@ Hooks.on("renderActorDirectory", async (app, html, data) => {
 Hooks.on('renderActorSheetV2', async (app, html, data) => {
     const actor = app.actor;
 
-    if (!CONFIG.adControl && actor.type == "character") {
+    if (!CONFIG.ADControl && actor.type == "character") {
         actor.configArmorData();
 
         const isActorL5e = actor.getFlag("ldnd5e", "L5eConfigured");
@@ -231,7 +249,7 @@ Hooks.on('updateActor', async (document, data, options, userId) => {
                 app.render(true);
             })
         }
-    }
+    }     
 });
 Hooks.on('dnd5e.restCompleted', (actor, result, config) => {
     patchLongRest(actor, result, config);
@@ -325,9 +343,9 @@ function registerRPGAwesome() {
 
 async function renderACControl() {
     // Cria um instância do Controle de Dano Absorvido
-    const form = new adControl();
+    const app = isV13 ? new ADControlV2() : new ADControl();
 
-    return await form.render(true);
+    return await app.render({force: true});
 }
 
 async function renderBattleControl() {
@@ -461,7 +479,6 @@ async function patchItemPreUpdate(actor, item, change) {
 }
 
 async function patchItemPreDelete(actor, item) {
-
     if (["armor", "shield"].includes(item?.subtype)) {
         await das.computeEquipArmorShield(actor, item, das.ACTION_TYPE.DELETE);
     }

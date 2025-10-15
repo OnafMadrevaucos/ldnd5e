@@ -2,7 +2,7 @@ import { constants, UnarmoredClasses, i18nStrings } from "../scripts/constants.j
 import adControl from "../models/adControl.js";
 import { DND5E } from "../../../systems/dnd5e/dnd5e.mjs";
 
-const NIVEL_DA = [
+export const NIVEL_DA = [
     { valor: 2, mod: "-1" },
     { valor: 4, mod: "-2" },
     { valor: 6, mod: "-4" },
@@ -11,7 +11,7 @@ const NIVEL_DA = [
     { valor: 20, mod: "-6" }
 ];
 
-const NIVEL_DA_ESCUDO = [
+export const NIVEL_DA_ESCUDO = [
     { valor: 2, mod: "+0" },
     { valor: 3, mod: "-1" },
     { valor: 4, mod: "-1" },
@@ -53,8 +53,7 @@ export const ACTION_TYPE = {
  * @returns {number<LAN>}   Valor do Lan.
  * @public
 */
-export const prepareLAN = function (data) {
-
+export function prepareLAN(data) {
     const armor = data.attributes.ac;
     const armorType = armor.equippedArmor?.system.type.value;
     const armorProf = data.traits.armorProf;
@@ -94,8 +93,7 @@ export const prepareLAN = function (data) {
  * @returns {number<LAN>}   Valor do Lan.
  * @public
 */
-export const prepareLDO = function (data) {
-
+export function prepareLDO(data) {
     const armor = data.attributes.ac;
     return armor.base;
 }
@@ -106,7 +104,7 @@ export const prepareLDO = function (data) {
  * @returns {number<LAN>}   Valor do Lan.
  * @public
 */
-export const computaDA = async function (item, owner, tipoDano) {
+export async function computaDA(item, owner, tipoDano) {
     const itemData = item.system;
     const tipoArmor = itemData.type.value;
     const result = {
@@ -183,7 +181,7 @@ export const computaDA = async function (item, owner, tipoDano) {
                     if (armorEffect) result.effectsID.normal = armorEffect.effectID;
                     else {
                         // No Armor Effect was found, config Actor to LDnD5E.
-                        await owner.fullAsyncConfigL5e();
+                        await owner.configL5e();
 
                         armorEffect = owner.getFlag("ldnd5e", "armorEffect");
                         result.effectsID.normal = armorEffect.effectID;
@@ -193,7 +191,7 @@ export const computaDA = async function (item, owner, tipoDano) {
                     if (shieldEffect) result.effectsID.escudo = shieldEffect.effectID;
                     else {
                         // No Armor Effect was found, config Actor to LDnD5E.
-                        await owner.fullAsyncConfigL5e();
+                        await owner.configL5e();
 
                         shieldEffect = owner.getFlag("ldnd5e", "shieldEffect");
                         result.effectsID.escudo = shieldEffect.effectID;
@@ -215,7 +213,7 @@ export const computaDA = async function (item, owner, tipoDano) {
  * @returns {number<LAN>}   Valor do Lan.
  * @public
 */
-export const computaHALF = async function (item, owner, tipoDano) {
+export async function computaHALF(item, owner, tipoDano) {
     const itemData = item.system;
     const tipoArmor = itemData.type.value;
     const result = {
@@ -299,7 +297,7 @@ export const computaHALF = async function (item, owner, tipoDano) {
                 if (tipoArmor === TIPO_ARMOR.SHIELD) result.temMudanca.escudo = true;
                 else result.temMudanca.normal = true;
 
-                itemData.armor.RealDL = Math.max(0,Number(itemData.armor.DL[tipoDano]));
+                itemData.armor.RealDL = Math.max(0, Number(itemData.armor.DL[tipoDano]));
                 itemData.armor.ACPenalty = (itemData.type.value === TIPO_ARMOR.SHIELD ? NIVEL_DA_ESCUDO[itemData.armor.RealDL - 1].mod : NIVEL_DA[itemData.armor.RealDL - 1].mod);
 
                 if (result.temMudanca.normal) {
@@ -307,7 +305,7 @@ export const computaHALF = async function (item, owner, tipoDano) {
                     if (armorEffect) result.effectsID.normal = armorEffect.effectID;
                     else {
                         // No Armor Effect was found, config Actor to LDnD5E.
-                        await owner.fullAsyncConfigL5e();
+                        await owner.configL5e();
 
                         armorEffect = owner.getFlag("ldnd5e", "armorEffect");
                         result.effectsID.normal = armorEffect.effectID;
@@ -317,7 +315,7 @@ export const computaHALF = async function (item, owner, tipoDano) {
                     if (shieldEffect) result.effectsID.escudo = shieldEffect.effectID;
                     else {
                         // No Armor Effect was found, config Actor to LDnD5E.
-                        await owner.fullAsyncConfigL5e();
+                        await owner.configL5e();
 
                         shieldEffect = owner.getFlag("ldnd5e", "shieldEffect");
                         result.effectsID.escudo = shieldEffect.effectID;
@@ -339,7 +337,7 @@ export const computaHALF = async function (item, owner, tipoDano) {
  * @returns {number<LAN>}   Valor do Lan.
  * @public
 */
-export const computaSUB = function (item, owner, damageType, options = {}) {
+export async function computaSUB(item, owner, damageType, options = {}) {
     const itemData = item.system;
     const tipoArmor = itemData.type.value;
     const result = {
@@ -419,7 +417,7 @@ export const computaSUB = function (item, owner, damageType, options = {}) {
  * @returns {number<LAN>}   Valor do Lan.
  * @public
 */
-export const computaZERAR = function (item, owner) {
+export function computaZERAR(item, owner) {
     const itemData = item.system;
     const tipoArmor = itemData.type.value;
     const result = {
@@ -470,7 +468,7 @@ export const computaZERAR = function (item, owner) {
  * @returns {number<LAN>}   Valor do Lan.
  * @public
 */
-export const computaREST = function (item, owner, amountRecovered) {
+export function computaREST(item, owner, amountRecovered) {
     const itemData = item.system;
     const tipoArmor = itemData.type.value;
     const result = {
@@ -539,7 +537,7 @@ export const computaREST = function (item, owner, amountRecovered) {
 }
 
 /** @inheritdoc */
-export const toMessage = async function (messageData = {}) {
+export async function toMessage(messageData = {}) {
     const html = await renderTemplate(constants.templates.newDLTemplate, messageData);
 
     // Create the ChatMessage data object
@@ -554,11 +552,8 @@ export const toMessage = async function (messageData = {}) {
     ChatMessage.create(chatData, {});
 }
 
-export const prepareActiveEffects = async function (item, owner, result, options = {}) {
-
-    //@TODO: Implementar controle para que as armaduras ao serem desequipadas parem de tentar apagar o Efeito mesmo quando ele já foi apagado.
-    //       Implementar um controle para mostrar mensagens no chat quando certos Níveis de Avaraias é atingido.      
-    //
+export async function prepareActiveEffects(item, owner, result, options = {}) {
+  
     var effect = null;
     const itemData = foundry.utils.deepClone(item.system);
     const NivelDL = Math.max(0, itemData.armor.RealDL);
@@ -604,27 +599,42 @@ export const prepareActiveEffects = async function (item, owner, result, options
 
     let repairSucess = false;
     // Realiza reparo no item.
-    if (options?.repair) {  
+    if (options?.repair) {
         const tool = owner.system.tools?.['smith'];
-        if (!options.smithRepairChk && !tool) {
-            info = game.i18n.localize(i18nStrings.messages.noTool);
-            ui.notifications.warn(info);
-            return;
-        } else {
-            repairSucess = await rollRepair(item, owner, options);
-            if (repairSucess == null) return;
 
-            if (!repairSucess) {
-                info = game.i18n.format(i18nStrings.messages.repairFailed, { item: item.name });
-            } else {
-                if (options?.fullRepair) {
-                    info = game.i18n.format(i18nStrings.messages.reconstructedMessage, { item: item.name });
-                    itemData.armor.destroyed = false;
-                } else
+        // Reparo com ferramentas próprias.
+        if (!options.smithRepair) {
+            // Se o jogador não possui ferramentas para realizar o reparo, aborte.
+            if (!tool) {
+                info = game.i18n.localize(i18nStrings.messages.noTool);
+                ui.notifications.warn(info);
+                return false;
+            }
+            // Realize o teste de tentativa de reparo. 
+            else {
+                repairSucess = await rollRepair(item, owner, options);
+                if (repairSucess == null) return false;
+
+                if (!repairSucess) {
+                    info = game.i18n.format(i18nStrings.messages.repairFailed, { item: item.name });
+                    return false;
+                } else {
                     info = game.i18n.format(i18nStrings.messages.repairMessage, { item: item.name, penalty: ACPenalty });
+                }
             }
         }
-        
+        // Reparo com ajuda de Ferreiro. 
+        else {
+            repairSucess = true;
+            
+            if (options?.fullRepair) {
+                info = game.i18n.format(i18nStrings.messages.reconstructedMessage, { item: item.name });
+                itemData.armor.destroyed = false;
+            } else {
+                info = game.i18n.format(i18nStrings.messages.repairMessage, { item: item.name, penalty: ACPenalty });
+            }
+        }
+
         await computeRepairCost(options?.price, owner);
     }
 
@@ -657,9 +667,11 @@ export const prepareActiveEffects = async function (item, owner, result, options
 
     if (result.temMudanca.mensagem || options?.repair)
         await this.toMessage(messageData);
+
+    return true;
 }
 
-export const computeRepairCost = async function (cost, actor) {
+export async function computeRepairCost(cost, actor) {
     const curr = convertCurrency(foundry.utils.deepClone(actor.system.currency));
     const price = convertCurrency({ pp: 0, gp: cost, ep: 0, sp: 0, cp: 0 });
 
@@ -675,7 +687,7 @@ export const computeRepairCost = async function (cost, actor) {
     CONFIG.CurrencyManager.convertCurrency(actor);
 }
 
-export const convertCurrency = function (curr) {
+export function convertCurrency(curr) {
     const conversion = Object.entries(CONFIG.DND5E.currencies);
     let total = 0;
     conversion.reverse();
@@ -688,7 +700,7 @@ export const convertCurrency = function (curr) {
     return { total: total, curr: { pp: 0, gp: total, ep: 0, sp: 0, cp: 0 } };
 }
 
-export const rollRepair = async function (item, owner, options = {}) {
+export async function rollRepair(item, owner, options = {}) {
     if (!options.smithRepairChk) {
         const config = {
             tool: 'smith',
@@ -702,7 +714,7 @@ export const rollRepair = async function (item, owner, options = {}) {
     } else return true;
 }
 
-export const rollFatigue = async function (item, owner, options = {}) {
+export async function rollFatigue(item, owner, options = {}) {
     const itemData = item.system;
     const saveCD = 8 + itemData.armor.RealDL;
 
@@ -710,14 +722,14 @@ export const rollFatigue = async function (item, owner, options = {}) {
     return roll[0].isSuccess;
 }
 
-export const verifyRepairCost = function (cost, owner) {
+export function verifyRepairCost(cost, owner) {
     const curr = convertCurrency(foundry.utils.deepClone(owner.system.currency));
     const price = convertCurrency({ pp: 0, gp: cost, ep: 0, sp: 0, cp: 0 });
 
     return (price.total > curr.total);
 }
 
-export const computeEquipArmorShield = async function (actor, item, action) {
+export async function computeEquipArmorShield(actor, item, action) {
     const data = actor.system;
     const equip = {
         armor: data.attributes.ac.equippedArmor,

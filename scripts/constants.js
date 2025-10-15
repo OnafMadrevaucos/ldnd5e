@@ -440,9 +440,7 @@ const i18nStrings = {
    dlControlRepairLvl: "ldnd5e.dlControlRepairLvl",
    dlControlDamageBtn: "ldnd5e.dllControlDamageBtn",
    dlControlRepairsBtn: "ldnd5e.dllControlRepairsBtn",
-
    dlControlSmithRepair: "ldnd5e.dlControlSmithRepair",
-   dlControlNotSmithRepair: "ldnd5e.dlControlNotSmithRepair",
 
    dlControlRepairDC: "ldnd5e.dlControlRepairDC",
 
@@ -723,6 +721,7 @@ const i18nStrings = {
       fithDLMessage: "ldnd5e.messages.fithDLMessage",
       sixthDLMessage: "ldnd5e.messages.sixthDLMessage",
       itemDestroyed: "ldnd5e.messages.itemDestroyed",
+      itemUndamaged: "ldnd5e.messages.itemUndamaged",
       repairToExpensive: "ldnd5e.messages.repairToExpensive",
       repairMessage: "ldnd5e.messages.repairMessage",
       reconstructedMessage: "ldnd5e.messages.reconstructedMessage",
