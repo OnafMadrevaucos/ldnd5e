@@ -1,147 +1,165 @@
 <header class="sheet-header">
-    {{!-- Portrait & Vitals --}}
-    <div class="left">
 
-        {{!-- Portrait --}}
-        <div class="portrait">
-
-            <img src="{{ portrait.src }}" alt="{{ actor.name }}" {{~#if (and editable portrait.path)}}
-                data-action="editImage" data-edit="{{ portrait.path }}" {{~else}} data-action="showArtwork" {{/if}}>
-
-            <div class="right level-badge prestige-badge badge" data-tooltip="ldnd5e.army.prestige"
-                data-tooltip-direction="DOWN">
-                {{ system.attributes.prestige.mod }}
-            </div>
-
+    <div class="center flexcol">
+        {{#if isModel}}
+        <div class="model-notification">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            {{ localize 'ldnd5e.company.model' }}
         </div>
-
-        {{!-- Vitals --}}
-        <div class="bottom vitals">
-
-            {{!-- Max Morale --}}
-            <div class="left ac hp-max">
-
-                <div class="moral-badge badge" aria-label="{{ localize 'ldnd5e.army.supplies.min' }}">
-                    <div data-attribution="supplies.min" data-attribution-caption="ldnd5e.army.supplies.min"
-                        data-tooltip-direction="DOWN">
-                        {{ system.attributes.hp.max }}
-                    </div>
-                </div>
-
-            </div>
-
-            {{!-- HP (Total Morale) --}}
-            <div class="right">
-
-                {{!-- HP --}}
-                {{#with system.attributes.hp}}
-                <div class="meter hit-points sectioned">
-                    <div class="progress hit-points" role="meter" data-action="editHP" aria-valuemin="0" aria-valuenow="{{ value }}"
-                        aria-valuemax="{{ max }}" style="--bar-percentage: {{ pct }}%">
-                        <div class="label">
-                            <span class="value">{{ value }}</span>
-                        </div>
-                        <input type="text" name="system.attributes.hp.value" data-dtype="Number" placeholder="0"
-                            value="{{ value }}" inputmode="numeric" pattern="^[+=\-]?\d*" hidden>
-                    </div>
-                </div>
-                {{/with}}
-
-                {{! -- Fatigue --}}
-                <div class="meter sectioned attribute-title morale">
-                    <span>{{ localize 'ldnd5e.uAbilities.mrl' }}</span>
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    {{!-- Other Statistics --}}
-    <div class="right stats">
+        {{/if}}
 
         <div class="top">
 
-            {{!-- Name, Organization & Type --}}
+            {{!-- Portrait & Vitals --}}
             <div class="left">
 
-                {{!-- Name --}}
-                {{#if editable}}
-                <input type="text" name="name" class="document-name uninput" value="{{ actor._source.name }}">
-                {{else}}
-                <div class="document-name">{{ actor.name }}</div>
-                {{/if}}
+                {{!-- Portrait --}}
+                <div class="portrait">
 
-                {{!-- Organization & Type --}}
-                <ul class="labels unlist">
+                    <img src="{{ portrait.src }}" alt="{{ actor.name }}" {{~#if (and editable portrait.path)}}
+                        data-action="editImage" data-edit="{{ portrait.path }}" {{~else}} data-action="showArtwork"
+                        {{/if}}>
 
-                    {{!-- Army --}}
-                    {{#if hasArmy}}
-                    <li class="company-army">
-                        <span>{{ army.name }}</span>
-                    </li>
-                    {{/if}}
-
-                    {{!-- Marshal --}}
-                    {{#if hasMarshal}}
-                    <li class="company-marshal">
-                        <span>{{ marshal.name }}</span>
-                    </li>
-                    {{/if}}
-
-                </ul>
-
-            </div>
-
-            {{!-- Resting, Special Traits, & Proficiency --}}
-            <div class="right">
-
-                <div class="right {{type}}-badge badge" data-tooltip="ldnd5e.company.{{type}}"
-                    data-tooltip-direction="DOWN">
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="middle">
-
-            {{!-- Commander --}}
-            <div class="commander">
-                <div class="commander-header">{{localize 'ldnd5e.company.commander'}}</div>
-                <div class="commander-info">
-                    {{#if hasCommander}}
-                    <img class="commander-portrait" role="button" aria-label="{{commander.name}}"
-                        src="{{commander.img}}"></img>
-                    <h4 data-action="viewCommander">{{commander.name}}</h4>
-                    <button type="button" class="config-button unbutton" data-action="removeCommander"
-                        data-tooltip="ldnd5e.company.removeCommander"
-                        aria-label="{{ localize 'ldnd5e.company.removeCommander' }}">
-                        <i class="fas fa-trash" inert></i>
-                    </button>
-                    {{else}}
-                    <span class="empty">{{localize 'ldnd5e.company.noCommander'}}</span>
-                    {{/if}}
-                </div>
-            </div>
-
-            {{!-- Abilities --}}
-            <div class="ability-scores card flexrow">
-                {{#each system.abilities}}
-                <div class="ability-score" data-ability="{{ key }}">
-                    <img src="{{ icon }}" alt="{{ label }}">
-                    <a class="label {{ key }} rollable ability-check" data-action="roll" data-type="ability">
-                        {{ label }}
-                    </a>
-                    <div class="mod">
-                        <span class="sign">{{ sign }}</span>{{ mod }}
+                    <div class="right level-badge prestige-badge badge" data-tooltip="ldnd5e.army.prestige"
+                        data-tooltip-direction="DOWN">
+                        {{ system.attributes.prestige.mod }}
                     </div>
+
                 </div>
-                {{/each}}
+
+                {{!-- Vitals --}}
+                <div class="bottom vitals">
+
+                    {{!-- Max Morale --}}
+                    <div class="left ac hp-max">
+
+                        <div class="moral-badge badge" aria-label="{{ localize 'ldnd5e.army.supplies.min' }}">
+                            <div data-attribution="supplies.min" data-attribution-caption="ldnd5e.army.supplies.min"
+                                data-tooltip-direction="DOWN">
+                                {{ system.attributes.hp.max }}
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {{!-- HP (Total Morale) --}}
+                    <div class="right">
+
+                        {{!-- HP --}}
+                        {{#with system.attributes.hp}}
+                        <div class="meter hit-points sectioned">
+                            <div class="progress hit-points" role="meter" data-action="editHP" aria-valuemin="0"
+                                aria-valuenow="{{ value }}" aria-valuemax="{{ max }}"
+                                style="--bar-percentage: {{ pct }}%">
+                                <div class="label">
+                                    <span class="value">{{ value }}</span>
+                                </div>
+                                <input type="text" name="system.attributes.hp.value" data-dtype="Number" placeholder="0"
+                                    value="{{ value }}" inputmode="numeric" pattern="^[+=\-]?\d*" hidden>
+                            </div>
+                        </div>
+                        {{/with}}
+
+                        {{! -- Fatigue --}}
+                        <div class="meter sectioned attribute-title morale">
+                            <span>{{ localize 'ldnd5e.uAbilities.mrl' }}</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {{!-- Other Statistics --}}
+            <div class="right stats">
+
+                <div class="top">
+
+                    {{!-- Name, Organization & Type --}}
+                    <div class="left">
+
+                        {{!-- Name --}}
+                        {{#if editable}}
+                        <input type="text" name="name" class="document-name uninput" value="{{ actor._source.name }}">
+                        {{else}}
+                        <div class="document-name">{{ actor.name }}</div>
+                        {{/if}}
+
+                        {{!-- Organization & Type --}}
+                        <ul class="labels unlist">
+
+                            {{!-- Army --}}
+                            {{#if hasArmy}}
+                            <li class="company-army">
+                                <span>{{ army.name }}</span>
+                            </li>
+                            {{/if}}
+
+                            {{!-- Marshal --}}
+                            {{#if hasMarshal}}
+                            <li class="company-marshal">
+                                <span>{{ marshal.name }}</span>
+                            </li>
+                            {{/if}}
+
+                        </ul>
+
+                    </div>
+
+                    {{!-- Resting, Special Traits, & Proficiency --}}
+                    <div class="right">
+
+                        <div class="right {{type}}-badge badge" data-tooltip="ldnd5e.company.{{type}}"
+                            data-tooltip-direction="DOWN">
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="middle">
+
+                    {{!-- Commander --}}
+                    <div class="commander">
+                        <div class="commander-header">{{localize 'ldnd5e.company.commander'}}</div>
+                        <div class="commander-info">
+                            {{#if hasCommander}}
+                            <img class="commander-portrait" role="button" aria-label="{{commander.name}}"
+                                src="{{commander.img}}"></img>
+                            <h4 data-action="viewCommander">{{commander.name}}</h4>
+                            <button type="button" class="config-button unbutton" data-action="removeCommander"
+                                data-tooltip="ldnd5e.company.removeCommander"
+                                aria-label="{{ localize 'ldnd5e.company.removeCommander' }}">
+                                <i class="fas fa-trash" inert></i>
+                            </button>
+                            {{else}}
+                            <span class="empty">{{localize 'ldnd5e.company.noCommander'}}</span>
+                            {{/if}}
+                        </div>
+                    </div>
+
+                    {{!-- Abilities --}}
+                    <div class="ability-scores card flexrow{{#if isModel}} disabled{{/if}}">
+                        {{#each system.abilities}}
+                        <div class="ability-score" data-ability="{{ key }}">
+                            <img src="{{ icon }}" alt="{{ label }}">
+                            <a class="label {{ key }} rollable ability-check" data-action="roll" data-type="ability">
+                                {{ label }}
+                            </a>
+                            <div class="mod">
+                                <span class="sign">{{ sign }}</span>{{ mod }}
+                            </div>
+                        </div>
+                        {{/each}}
+                    </div>
+
+                </div>
+
             </div>
 
         </div>
 
-    </div>
+        <div>
+
 </header>

@@ -552,6 +552,8 @@ const i18nStrings = {
    },
 
    company: {
+      model: "ldnd5e.company.model",
+      full: "ldnd5e.company.full",
       commander: "ldnd5e.company.commander",
       removeCommander: "ldnd5e.company.removeCommander",
       noCommander: "ldnd5e.company.noCommander",
@@ -572,6 +574,7 @@ const i18nStrings = {
    },
 
    unit: {
+      model: "ldnd5e.unit.model",
       category: "ldnd5e.unit.category",
       categoryDescription: "ldnd5e.unit.categoryDescription",
       descriptionTitle: "ldnd5e.unit.descriptionTitle",
@@ -602,6 +605,11 @@ const i18nStrings = {
       trainning: "ldnd5e.tatics.trainning",
       damage: "ldnd5e.tatics.damage",
       configuration: "ldnd5e.tatics.configuration",
+      details: {
+         use: 'ldnd5e.tatics.details.use',
+         single: 'ldnd5e.tatics.details.single',
+         unique: 'ldnd5e.tatics.details.unique',
+      },
       activity: "ldnd5e.tatics.activity",
       activityTitle: "ldnd5e.tatics.activityTitle",
       activityType: "ldnd5e.tatics.activityType",
@@ -620,7 +628,7 @@ const i18nStrings = {
       useTatic: "ldnd5e.tatics.useTatic",
       mainRecovery: "ldnd5e.tatics.mainRecovery",
       mainRoll: "ldnd5e.tatics.mainRoll",
-      acceptExtras: "ldnd5e.tatics.acceptExtras",
+      acceptExtras: "ldnd5e.tatics.acceptExtras",      
    },
 
    unitType: "ldnd5e.unit",

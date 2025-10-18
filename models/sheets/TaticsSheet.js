@@ -51,6 +51,9 @@ export default class TaticsSheet extends item.ItemSheet5e {
             template: "modules/ldnd5e/templates/sheets/tatic/tabs/activities.hbs",
             scrollable: [""]
         },
+        details: {
+            template: "modules/ldnd5e/templates/sheets/tatic/tabs/details.hbs",
+        },
         description: {
             template: "modules/ldnd5e/templates/sheets/tatic/tabs/description.hbs",
         },
@@ -61,6 +64,7 @@ export default class TaticsSheet extends item.ItemSheet5e {
     /** @override */
     static TABS = [
         { tab: "description", label: "DND5E.ITEM.SECTIONS.Description" },
+        { tab: "details", label: "DND5E.ITEM.SECTIONS.Details" },
         { tab: "activities", label: "DND5E.ITEM.SECTIONS.Activities" },
     ];
 
@@ -137,6 +141,7 @@ export default class TaticsSheet extends item.ItemSheet5e {
         switch (partId) {
             case "header": await this._prepareHeaderContext(context, options); break;
             case "activities": await this._prepareActivitiesContext(context, options); break;
+            case "details": await this._prepareDetailsContext(context, options); break;
             case "description": await this._prepareDescriptionContext(context, options); break;
         }
 
@@ -182,6 +187,19 @@ export default class TaticsSheet extends item.ItemSheet5e {
             });
 
 
+        return context;
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+     * Prepare rendering context for the description tab.
+     * @param {ApplicationRenderContext} context  Context being prepared.
+     * @param {HandlebarsRenderOptions} options   Options which configure application rendering behavior.
+     * @returns {ApplicationRenderContext}
+     * @protected
+     */
+    async _prepareDetailsContext(context, options) {
         return context;
     }
 

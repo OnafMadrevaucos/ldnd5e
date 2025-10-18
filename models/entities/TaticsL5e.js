@@ -40,6 +40,12 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
             trainning: new fields.BooleanField({ required: true, nullable: false, initial: false }),
             // Flag indicando se a Tática é a habilidade de recuperação da unidade médica.
             mainRecovery: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+            details: new fields.SchemaField({
+                // Se a Tática é de uso unico.
+                single: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+                // Se a Tática é única.
+                unique: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+            }),
             attributes: new fields.SchemaField({
                 // Se a Tática é uma ação de preparação.
                 prep: new fields.BooleanField({ required: true, nullable: false, initial: false }),
@@ -65,6 +71,7 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
             info: this.info,
             quantity: this.quantity,
             trainning: this.trainning,
+            details: this.details,
             attributes: this.attributes,
             activities: this.activities,
         }
@@ -75,6 +82,10 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
     /**@inheritdoc */
     prepareDerivedData() {
         this.labels = {};
+
+        if(this.details.unique) {
+            this.quantity = 1;
+        }
 
         // Main recoveries only can be used on the Preparation Phase.
         if (this.system.mainRecovery) {

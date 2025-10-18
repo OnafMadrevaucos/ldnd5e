@@ -29,6 +29,18 @@ export default class ItemL5e extends dnd5e.documents.Item5e {
         }
     }
 
+    /* -------------------------------------------- */
+
+    /** @inheritDoc */
+    prepareEmbeddedDocuments() {
+        // Do not prepare embedded documents for tatics, for now...
+        if(this.type === "ldnd5e.tatic") return;
+        
+        super.prepareEmbeddedDocuments();       
+    }
+
+    /* -------------------------------------------- */
+
     /**@override */
     getChatData(htmlOptions = {}) {
         const data = super.getChatData(htmlOptions);
@@ -85,7 +97,7 @@ export default class ItemL5e extends dnd5e.documents.Item5e {
                 }
 
                 // If extra activities are null, it represent that the user canceled the dialog. Abort.
-                if(!extraActivities) return;
+                if (!extraActivities) return;
 
                 const mainActivities = activities.filter(a => a.mainRoll);
                 if (mode === 'main' && mainActivities.length === 0) {

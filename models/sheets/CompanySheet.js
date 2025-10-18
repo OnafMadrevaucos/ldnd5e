@@ -13,7 +13,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         classes: ["dnd5e2", "sheet", "actor", "ldnd5e", "company", "standard-form", "npc", "interactable"],
         position: {
             width: 720,
-            height: 750
+            height: 765
         },
         viewPermission: CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER,
         actions: {
@@ -41,12 +41,21 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
     };
 
     /* -------------------------------------------- */
+    /*  Properties                                  */
+    /* -------------------------------------------- */
+
+    get isModel() {
+        return this.actor.system.info.army === null;
+    }
+
+
+    /* -------------------------------------------- */
     /*  Rendering                                   */
     /* -------------------------------------------- */
 
     /** @inheritDoc */
     async _onRender(context, options) {
-        await super._onRender(context, options);
+        await super._onRender(context, options);        
 
         // Set toggle state and add status class to frame
         this._renderModeToggle();
@@ -109,11 +118,13 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         const context = await super._prepareContext(options);
 
         // Set editable the current form mode.
-        context.editable = this.isEditable && (this._mode === this.constructor.MODES.EDIT);
+        context.editable = this.isEditable && (this._mode === this.constructor.MODES.EDIT);  
 
+        // Prepare the actor data for rendering.
         Object.assign(context, {
             actor: this.actor,
             system: this.actor.system,
+            isModel: this.isModel,
             hasArmy: !!this.actor.system.info.army,
             army: this.actor.system.info.army || null,
             hasMarshal: !!this.actor.system.info.army?.system.info.commander,
@@ -300,7 +311,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
             }
         }
 
-        data.attributes.trainning.max += army.system.supplies.total;
+        data.attributes.trainning.max += army?.system.supplies.total ?? 0;
 
         data.attributes.trainning.value = Math.min(data.attributes.trainning.value, data.attributes.trainning.max);
         data.attributes.trainning.pct = (data.attributes.trainning.value / data.attributes.trainning.max) * 100;
@@ -378,6 +389,11 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
 
     /** @inheritdoc */
     async _onDropCommander(event, actor) {
+        if(this.isModel) {
+            ui.notifications.warn(game.i18n.localize("ldnd5e.company.model"));
+            return false;
+        }
+
         const actorData = actor.system;
         const mainClass = actor.type === "npc" ? 'npc' : actorData.attributes.hd.classes.first();
         
@@ -433,6 +449,9 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         // Count the number of units of each type.
         for (const uId of this.actor.system.units) {
             const unit = game.actors.get(uId);
+            // Ignore if the unit doesn't exist.
+            if(!unit) continue;
+
             unitCount[unit.system.info.type] += 1;
         }
 
@@ -661,7 +680,10 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
    * @param {PointerEvent} event  The originating click event.
    * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
    */
-    static async #roll(event, target) {
+    static async #roll(event, target) {        
+        // Ignore if this is a model sheet.
+        if(this.isModel) return;
+
         if (!target.classList.contains("rollable")) return;
 
         switch (target.dataset.type) {
@@ -688,6 +710,10 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
    */
     static async #companyRest(event, target) {
         event.preventDefault();
+
+        // Ignore if this is a model sheet.
+        if(this.isModel) return;
+
         const data = this.actor.system;
         const result = await MedicalRestaurationBrowser.create(this.actor, { force: true });
 
@@ -695,8 +721,6 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         const hasRestauration = rolls.length > 0;
         const totalHealed = rolls.reduce((a, b) => a + b.total, 0);
         const staminaRestored = data.attributes.stamina.max - data.attributes.stamina.value;
-
-
 
         await this.actor.update({
             ['system.attributes.hp.value']: Math.min(data.attributes.hp.max, data.attributes.hp.value + totalHealed),

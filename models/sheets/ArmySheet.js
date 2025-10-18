@@ -125,9 +125,11 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
         });
 
         context.companies = [];
-        this.actor.system.companies.forEach(companyId => {
+        for (const companyId of this.actor.system.companies) {
             const company = game.actors.get(companyId);
-            if (!company) return false;
+
+            // Ignore if the company doesn't exist.
+            if (!company) continue;
 
             const unitCount = {
                 light: 0,
@@ -138,15 +140,16 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
 
             for (const uId of company.system.units) {
                 const unit = game.actors.get(uId);
-                if (!unit) return false;
+
+                // Ignore if the unit doesn't exist.
+                if (!unit) continue;
 
                 unitCount[unit.system.info.type] += 1;
             }
 
             company.unitCount = unitCount;
-
             context.companies.push(company);
-        });
+        }
 
         //Verify if the army is starving.
         const supplies = this.actor.system.supplies;
@@ -338,6 +341,9 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
             for (const companyId of companyCollection) {
                 const company = game.actors.get(companyId);
 
+                // Ignore if the company doesn't exist.
+                if (!company) continue;
+
                 await company.update({
                     ['system.info.army']: this.actor,
                     ['system.attributes.affinity.bonus.prestige']: this.actor.system.prestige.mod
@@ -367,7 +373,7 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
             const companyData = foundry.utils.deepClone(actor.toObject());
 
             // Create a new company and add it to the army.
-            const createdCompany = await Actor.create(companyData, {parent: null});
+            const createdCompany = await Actor.create(companyData, { parent: null });
             await createdCompany.setFlag("ldnd5e", "isMember", true);
 
             companyCollection.push(createdCompany.id);
@@ -405,9 +411,13 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
         await this.actor.update({ [`system.info.commander`]: null });
 
         // Remove the commander from all companies.
-        for (const company of this.actor.system.companies) {
-            const companyActor = game.actors.get(company);
-            await companyActor.update({ [`system.info.army`]: null });
+        for (const companyId of this.actor.system.companies) {
+            const company = game.actors.get(companyId);
+
+            // Ignore if the company doesn't exist.
+            if (!company) continue;
+
+            await company.update({ [`system.info.army`]: null });
         }
     }
 
@@ -425,6 +435,9 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
 
         const companyId = item.dataset.itemId;
         const company = game.actors.get(companyId);
+
+        // Ignore if the company doesn't exist.
+        if (!company) return;
 
         // Open the company sheet.
         company.sheet.render(true);
@@ -448,8 +461,11 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
 
         // Update the collection.
         await this.actor.update({ ['system.companies']: companyCollection });
-        // Remove the company.
-        await company.delete();
+
+        if (company) {
+            // Remove the company.
+            await company.delete();
+        }
     }
 
     /* -------------------------------------------- */

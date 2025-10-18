@@ -66,47 +66,45 @@ Hooks.once("init", function () {
     CONFIG.Item.documentClass = ItemL5e;
     CONFIG.Actor.documentClass = ActorL5e;
 
-    if (game.settings.get('ldnd5e', 'massiveCombatRules')) {
-        Object.assign(CONFIG.Actor.dataModels, {
-            [typeArmy]: ArmyL5e,
-            [typeCompany]: CompanyL5e,
-            [typeUnit]: UnitL5e
-        });
+    Object.assign(CONFIG.Actor.dataModels, {
+        [typeArmy]: ArmyL5e,
+        [typeCompany]: CompanyL5e,
+        [typeUnit]: UnitL5e
+    });
 
-        const Actors = foundry.documents.collections.Actors;
+    const Actors = foundry.documents.collections.Actors;
 
-        Actors.registerSheet('ldnd5e', ArmySheet, {
-            types: ['ldnd5e.army'],
-            makeDefault: true,
-            label: "Exército"
-        });
+    Actors.registerSheet('ldnd5e', ArmySheet, {
+        types: ['ldnd5e.army'],
+        makeDefault: true,
+        label: "Exército"
+    });
 
-        Actors.registerSheet('ldnd5e', CompanySheet, {
-            types: ['ldnd5e.company'],
-            makeDefault: true,
-            label: "Companhia"
-        });
+    Actors.registerSheet('ldnd5e', CompanySheet, {
+        types: ['ldnd5e.company'],
+        makeDefault: true,
+        label: "Companhia"
+    });
 
-        Actors.registerSheet('ldnd5e', UnitSheet, {
-            types: ['ldnd5e.unit'],
-            makeDefault: true,
-            label: "Unidade"
-        });
+    Actors.registerSheet('ldnd5e', UnitSheet, {
+        types: ['ldnd5e.unit'],
+        makeDefault: true,
+        label: "Unidade"
+    });
 
-        Object.assign(CONFIG.Item.dataModels, {
-            [typeTatic]: TaticsL5e,
-        });
+    Object.assign(CONFIG.Item.dataModels, {
+        [typeTatic]: TaticsL5e,
+    });
 
-        const Items = foundry.documents.collections.Items;
+    const Items = foundry.documents.collections.Items;
 
-        Items.registerSheet('ldnd5e', TaticsSheet, {
-            types: ['ldnd5e.tatic'],
-            makeDefault: true,
-            label: "Tática"
-        });
+    Items.registerSheet('ldnd5e', TaticsSheet, {
+        types: ['ldnd5e.tatic'],
+        makeDefault: true,
+        label: "Tática"
+    });
 
-        CONFIG.DND5E.defaultArtwork.Item[typeTatic] = "modules/ldnd5e/ui/icons/tatics-dark.svg";
-    }
+    CONFIG.DND5E.defaultArtwork.Item[typeTatic] = "modules/ldnd5e/ui/icons/tatics-dark.svg";
 
     preloadTemplates();
 
@@ -121,32 +119,6 @@ Hooks.once('ready', () => {
     // Verifica se algums módulos necessários estão ativos.
     if (!game.modules.get('lib-wrapper')?.active && game.user.isGM)
         ui.notifications.error("LD&D 5e necessita do módulo 'libWrapper'. Favor instalá-lo e ativá-lo.");
-
-    if(!game.settings.get('ldnd5e', 'massiveCombatRules')) {
-        const Actors = foundry.documents.collections.Actors;
-
-        Actors.unregisterSheet('ldnd5e', ArmySheet);
-        Actors.unregisterSheet('ldnd5e', CompanySheet);
-        Actors.unregisterSheet('ldnd5e', UnitSheet);
-
-        const Items = foundry.documents.collections.Items;
-
-        Items.unregisterSheet('ldnd5e', TaticsSheet);
-    }
-
-    Hooks.on("renderCombatTracker", async (app, html, data) => {
-        // Sair se não tiver Combates ativos.
-        if (!data.combat) return;
-
-        // Create groups
-        ars.manageGroups(app.popOut);
-
-        if (CONFIG.ADControl)
-            CONFIG.ADControl.render({force: true});
-    });
-
-    // Re-render the combat tracker in case the initial render was missed
-    ui.combat.render(true);
 });
 
 Hooks.on("renderActorDirectory", async (app, html, data) => {
@@ -156,8 +128,22 @@ Hooks.on("renderActorDirectory", async (app, html, data) => {
         const entryId = item.dataset.entryId;
         const entry = app.options.collection.get(entryId);
 
+        // Ignora a entrada se ela não existir.
+        if(!entry) continue;    
+
         if ([typeCompany, typeUnit].includes(entry.type) && entry.getFlag('ldnd5e', 'isMember')) {
             item.classList.add('member');
+        }
+    }
+});
+
+Hooks.on("renderDialogV2", (app, html, data, options) => {
+    const select = html.querySelector('.dialog-content select[name="type"]');
+    if (select) {
+        if (!game.settings.get("ldnd5e", "massiveCombatRules")) {
+            for (let option of select.options) {
+                if (option.value.includes('ldnd5e')) option.remove();
+            }
         }
     }
 });
@@ -249,7 +235,7 @@ Hooks.on('updateActor', async (document, data, options, userId) => {
                 app.render(true);
             })
         }
-    }     
+    }
 });
 Hooks.on('dnd5e.restCompleted', (actor, result, config) => {
     patchLongRest(actor, result, config);
@@ -345,7 +331,7 @@ async function renderACControl() {
     // Cria um instância do Controle de Dano Absorvido
     const app = isV13 ? new ADControlV2() : new ADControl();
 
-    return await app.render({force: true});
+    return await app.render({ force: true });
 }
 
 async function renderBattleControl() {

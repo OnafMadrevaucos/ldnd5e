@@ -173,6 +173,8 @@
             "config": "Configurar"
         },
         "company": {
+            "model": "Essa companhia é apenas um modelo, para alterações procure a copia dessa companhia em um exército existente.",
+            "full": "A companhia já está cheia e não pode receber mais nenhuma unidade.",
             "commander": "Comandante",
             "noCommander": "Arraste um Actor até aqui...",
             "removeCommander": "Remover Comandante",
@@ -189,9 +191,10 @@
                 "units": "Unidades",
                 "tatics": "Táticas"
             },
-            "delete": "Excluir Companhia"
+            "delete": "Excluir Companhia"            
         },
         "unit": {
+            "model": "Essa unidade é apenas um modelo, para alterações procure a copia dessa unidade em uma companhia existente.",
             "category": "Categoria",
             "categoryDescription": "Cada categoria de unidade possui Atributos Base, nos quais o general necessita ter um valor 13 ou mais em pelo menos um deles para conseguir controlar a unidade de forma eficiente.",
             "descriptionTitle": "Descrição de Unidade",
@@ -222,6 +225,11 @@
             "trainning": "Treina.",
             "damage": "Dano à Moral",
             "configuration": "Configuração",
+            "details": {
+                "use": "Uso em Batalha",
+                "single": "Uso Único",
+                "unique": "Tática Única"
+            },
             "activity": "Atividade",
             "activityTitle": "Nova Atividade",
             "activityType": "Tipo de Atividade",

@@ -13,7 +13,7 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
     classes: ["dnd5e2", "sheet", "actor", "ldnd5e", "unit", "standard-form", "npc", "interactable"],
     position: {
       width: 750,
-      height: 700
+      height: 740
     },
     viewPermission: CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER,
     actions: {
@@ -44,6 +44,14 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
       template: "modules/ldnd5e/templates/sheets/unit/body.hbs",
     },
   };
+
+  /* -------------------------------------------- */
+  /*  Properties                                  */
+  /* -------------------------------------------- */
+
+  get isModel() {
+    return this.actor.system.info.company === null;
+  }
 
   /* -------------------------------------------- */
   /*  Properties                                  */
@@ -145,6 +153,7 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
       actor: this.actor,
       system: this.actor.system,
       fullPrice: this.actor.system.fullPrice,
+      isModel: this.isModel,
       hasCompany: !!this.actor.system.info.company,
       company: this.actor.system.info.company || null,
       hasCommander: !!this.actor.system.info.company?.system.info.commander,
@@ -327,10 +336,10 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
     const company = this.actor.system.info.company;
     // If this unit is part of a company.
     if (company) {
-      const commander = company.system.info.commander;
+      const commander = company?.system.info.commander ?? null;
       if (!commander) return;
 
-      await this._buildDeck(commander);            
+      await this._buildDeck(commander);
     }
   }
 
@@ -351,10 +360,10 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
 
     this.actor.items.forEach(tatic => {
       if (tatic.system.trainning) {
-        for(let i = 0; i < tatic.system.quantity; i++) {
+        for (let i = 0; i < tatic.system.quantity; i++) {
           deck.piles.tatics.push(tatic.uuid);
         }
-      } 
+      }
     });
 
     await commander.setFlag("ldnd5e", "deck", deck);
@@ -384,6 +393,11 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
 
   /** @override */
   async _onDropItem(event, data) {
+    const windowContent = this.element.querySelector(".window-content");
+    if (windowContent.classList.contains("disabled")) {
+      ui.notifications.warn(game.i18n.localize("ldnd5e.unit.model"));
+      return;
+    }
     const item = await Item.implementation.fromDropData(data);
 
     await this.actor.createEmbeddedDocuments("Item", [item]);
@@ -498,6 +512,9 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
    * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
    */
   static async #useTatic(event, target) {
+    // Ignore if this is a model sheet.
+    if (this.isModel) return;
+
     const taticId = target.closest('.tatic')?.dataset.itemId;
     if (!taticId) return;
 
@@ -516,6 +533,9 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
    * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
    */
   static async #roll(event, target) {
+    // Ignore if this is a model sheet.
+    if (this.isModel) return;
+
     if (!target.classList.contains("rollable")) return;
 
     switch (target.dataset.type) {

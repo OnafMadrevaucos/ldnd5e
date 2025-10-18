@@ -22,7 +22,7 @@
     <div class="middle main-content">
 
         <section class="basic-skills">
-            <filigree-box class="skills flexcol">
+            <filigree-box class="skills flexcol {{#if isModel}}disabled{{/if}}">
                 <h3>
                     <i class="ra ra-battered-axe" inert></i>
                     <span>{{localize 'ldnd5e.unit.combat'}}</span>
@@ -61,7 +61,7 @@
 
             </filigree-box>
 
-            <filigree-box class="saves flexcol">
+            <filigree-box class="saves flexcol {{#if isModel}}disabled{{/if}}">
                 <h3>
                     <i class="fas fa-shield-heart" inert></i>
                     <span class="roboto-upper">{{ localize "DND5E.ClassSaves" }}</span>

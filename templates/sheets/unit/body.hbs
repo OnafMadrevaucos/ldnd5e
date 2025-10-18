@@ -74,7 +74,7 @@
     <div class="middle main-content flexrow">
 
         <section class="basic-skills">
-            <filigree-box class="skills flexcol">
+            <filigree-box class="skills flexcol{{#if isModel}} disabled{{/if}}">
                 <h3>
                     <i class="ra ra-battered-axe" inert></i>
                     <span class="roboto-upper">{{localize 'ldnd5e.unit.combat'}}</span>
@@ -94,7 +94,7 @@
 
             </filigree-box>
 
-            <filigree-box class="saves flexcol">
+            <filigree-box class="saves flexcol{{#if isModel}} disabled{{/if}}">
                 <h3>
                     <i class="fas fa-shield-heart" inert></i>
                     <span class="roboto-upper">{{ localize "DND5E.ClassSaves" }}</span>
@@ -120,6 +120,7 @@
                     <h3 class="item-name flexrow">{{localize 'ldnd5e.unit.tatics'}}</h3>
 
                     {{#unless isMedical}}
+                    <div class="item-detail item-attribute single"></div>
                     <div class="item-detail item-attribute prep" data-tooltip="ldnd5e.tatics.prep">
                         <i class="fas fa-flask"></i>
                     </div>
@@ -158,6 +159,9 @@
                                 </div>
                             </div>
                             {{#unless @root.isMedical}}
+                            <div class="item-detail item-attribute single" data-tooltip="ldnd5e.tatics.details.single">
+                                {{#if tatic.system.details.single}}<i class="fas fa-fire-flame-curved"></i>{{/if}}
+                            </div>
                             <div class="item-detail item-attribute prep">
                                 {{#if tatic.system.attributes.prep}}<i
                                     class="fa-solid fa-check"></i>{{else}}&mdash;{{/if}}
@@ -182,8 +186,8 @@
                             <div class="item-detail item-controls always-visible">
                                 <button type="button"
                                     class="config-button item-control  item-action unbutton trainning{{#if tatic.system.trainning}} active{{/if}}"
-                                    data-action="toggleTraining" data-tooltip="ldnd5e.unit.isTrainning" data-tooltip-direction="LEFT"
-                                    aria-label="{{ localize 'ldnd5e.unit.isTrainning' }}">
+                                    data-action="toggleTraining" data-tooltip="ldnd5e.unit.isTrainning"
+                                    data-tooltip-direction="LEFT" aria-label="{{ localize 'ldnd5e.unit.isTrainning' }}">
                                     <i class="ra ra-archery-target" inert></i>
                                 </button>
                                 <button type="button"
@@ -202,22 +206,26 @@
                         </div>
                         {{#if tatic.system.trainning}}
                         <div class="item-footer">
-                            <div class="item-detail item-quantity" data-column-id="quantity">
+                            <div class="item-detail item-quantity{{#if tatic.system.details.unique}} unique{{/if}}" data-column-id="quantity">
                                 <span class="quantity-label">
                                     {{ localize 'ldnd5e.unit.trainningLoad' }}
                                     <i class="ra ra-diamonds-card" inert></i>
                                 </span>
+                                {{#unless tatic.system.details.unique}}
                                 <a class="adjustment-button always-interactive" data-action="decrease"
                                     data-property="system.quantity">
                                     <i class="fa-solid fa-minus" inert=""></i>
                                 </a>
-                                <input type="text" class="always-interactive" value="{{system.quantity}}" placeholder="0"
-                                    data-dtype="Number" data-name="system.quantity" inputmode="numeric"
+                                <input type="text" class="always-interactive" value="{{system.quantity}}"
+                                    placeholder="0" data-dtype="Number" data-name="system.quantity" inputmode="numeric"
                                     pattern="[+=\-]?\d*" min="0" aria-label="Quantity">
                                 <a class="adjustment-button always-interactive" data-action="increase"
                                     data-property="system.quantity">
                                     <i class="fa-solid fa-plus" inert=""></i>
                                 </a>
+                                {{else}}
+                                <span>{{system.quantity}}</span>
+                                {{/unless}}
                             </div>
                         </div>
                         {{/if}}

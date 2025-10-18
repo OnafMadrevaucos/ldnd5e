@@ -281,7 +281,7 @@
   font-size: x-large;
 }
 
-.ldnd5e .form-group label {
+.ldnd5e:not(.sheet) .form-group label {
   flex: 2;
   color: #4b4a44;
   font-weight: bold;
@@ -368,8 +368,7 @@
 /* ----------------------------------------- */
 /*  Absorved Damage Control  V2.0            */
 /* ----------------------------------------- */
-.ldnd5e.ad-control2 {  
-}
+.ldnd5e.ad-control2 {}
 
 .ad-control2:not(.minimized)::before {
   content: var(--dnd5e-npc-header-content, none);
@@ -1260,7 +1259,7 @@
 
 .ldnd5e.army .banner {
   position: absolute;
-  top: 95px;
+  top: 90px;
   right: 1.65em;
   width: 24px;
   text-align: center;
@@ -1715,10 +1714,38 @@
   text-shadow: 0 0 5px var(--color-shadow-primary);
 }
 
+.ldnd5e.army .items-section .item-controls {
+  width: 30px;
+}
+
+.ldnd5e.army .items-section .item-attribute {
+  width: 45px;
+}
+
 .ldnd5e div[data-application-part="body"] {
   padding-inline: 12px;
   height: 100%;
   margin-block: 10px;
+}
+
+.ldnd5e .sheet-header .model-notification {
+  background-color: var(--color-level-warning-bg);
+  border-color: var(--color-level-warning);
+  border-radius: 4px;
+  color: var(--color-light-2);
+  padding: 5px;
+}
+
+.ldnd5e.company .sheet-header>div {
+  width: 100%;
+  gap: 12px;
+}
+
+.ldnd5e.company .sheet-header div.top {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+  z-index: 1;
 }
 
 .ldnd5e.company .hit-points .label {
@@ -2108,6 +2135,10 @@
 .ldnd5e.unit .tatic .item-footer .item-quantity i.ra {
   font-size: var(--font-size-15);
   margin-right: 5px;
+}
+
+.ldnd5e.unit .tatic .item-footer .item-quantity.unique {
+  height: 26px;
 }
 
 .ldnd5e.unit .proficiencies .proficiency,
@@ -2559,6 +2590,10 @@
 
 .ldnd5e.battle .fields .field .row.drag-over[data-prof="high"] {
   box-shadow: inset 0px 0px 10px 1px var(--ldnd5e-color-prof-high);
+}
+
+.ldnd5e.battle .fields .field .row.drag-over .effect-icon {
+  right: 0.15em;
 }
 
 

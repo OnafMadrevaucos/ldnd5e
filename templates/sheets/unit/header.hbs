@@ -1,4 +1,12 @@
 <header class="sheet-header flexcol">
+
+    {{#if isModel}}
+    <div class="model-notification">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        {{ localize 'ldnd5e.unit.model' }}
+    </div>
+    {{/if}}
+
     <div class="center">
 
         {{!-- Portrait --}}

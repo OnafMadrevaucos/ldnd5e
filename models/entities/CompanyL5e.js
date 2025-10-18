@@ -3,8 +3,8 @@ import { i18nStrings, unitData } from "../../scripts/constants.js";
 const DND5E = dnd5e.config;
 
 export default class CompanyL5e extends foundry.abstract.TypeDataModel {
-    constructor(data, options) { 
-        super(data, options); 
+    constructor(data, options) {
+        super(data, options);
 
         const i = 0;
     }
@@ -26,16 +26,16 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
                 type: new fields.StringField({ required: true, label: "ldnd5e.company.type" }),
             }),
             currency: new fields.SchemaField({
-                cp: new fields.SchemaField({                    
+                cp: new fields.SchemaField({
                     value: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 })
                 }),
-                sp: new fields.SchemaField({                    
+                sp: new fields.SchemaField({
                     value: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 })
                 }),
-                gp: new fields.SchemaField({                    
+                gp: new fields.SchemaField({
                     value: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 })
                 }),
-                ep: new fields.SchemaField({                    
+                ep: new fields.SchemaField({
                     value: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 })
                 }),
                 pp: new fields.SchemaField({
@@ -72,7 +72,7 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
                 stamina: new fields.SchemaField({
                     value: new fields.NumberField({ required: true, nullable: true, integer: true, min: 0, initial: 0 }),
                     max: new fields.NumberField({ required: true, nullable: false, integer: true, min: 0, initial: 0 }),
-                }),           
+                }),
             }),
 
             combat: new fields.SchemaField({
@@ -112,7 +112,7 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
             heavy: 2,
             special: 1,
             medical: 1
-        }        
+        }
 
         this.system = {
             info: this.info,
@@ -162,6 +162,9 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
             for (const uId of this.units) {
                 const unit = game.actors.get(uId);
 
+                // Ignore if the unit doesn't exist.
+                if (!unit) continue;
+
                 // Ignore medical units, for it doesn't count as a combat unit.
                 if (unit.system.info.type === unitData.uTypes.medical) continue;
 
@@ -202,6 +205,9 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
         for (const uId of this.units) {
             const unit = game.actors.get(uId);
 
+            // Ignore if the unit doesn't exist.
+            if (!unit) continue;
+
             // Ignore medical units, for it doesn't count as a combat unit.
             if (unit.system.info.type === unitData.uTypes.medical) continue;
 
@@ -215,7 +221,7 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
 
         data.attributes.hp.max = totalHP;
         data.attributes.hp.value = Math.min(data.attributes.hp.value, data.attributes.hp.max);
-        data.attributes.hp.pct = (data.attributes.hp.value / data.attributes.hp.max) * 100;           
+        data.attributes.hp.pct = (data.attributes.hp.value / data.attributes.hp.max) * 100;
     }
 
     /* -------------------------------------------- */
@@ -239,6 +245,9 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
             // Count the number of combat units.
             for (const uId of this.units) {
                 const unit = game.actors.get(uId);
+
+                // Ignore if the unit doesn't exist.
+                if (!unit) continue;
 
                 // Ignore medical units, for it doesn't count as a combat unit.
                 if (unit.system.info.type === unitData.uTypes.medical) continue;
@@ -324,6 +333,9 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
 
         for (const id of this.system.units) {
             const unit = game.actors.get(id);
+
+            // Ignore if the unit doesn't exist.
+            if(!unit) continue;
 
             units[unit.system.info.type].push(unit);
         }

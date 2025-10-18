@@ -1,0 +1,22 @@
+<section class="details tab {{ tab.cssClass }}" data-tab="{{ tab.id }}" data-group="{{ tab.group }}">
+    
+    <fieldset>
+        <legend>{{localize 'ldnd5e.tatics.details.use'}}</legend>
+
+        <div class="form-group split-group">
+            <label>{{localize 'ldnd5e.tatics.details.single'}}</label>
+            <div class="form-fields">        
+                <dnd5e-checkbox name="system.details.single" tabindex="0"{{#if system.details.single}} checked{{/if}}{{#unless editable}} disabled{{/unless}} ></dnd5e-checkbox>        
+            </div>
+        </div>
+
+        <div class="form-group split-group">
+            <label>{{localize 'ldnd5e.tatics.details.unique'}}</label>
+            <div class="form-fields">        
+                <dnd5e-checkbox name="system.details.unique" tabindex="1"{{#if system.details.unique}} checked{{/if}} {{#unless editable}} disabled{{/unless}}></dnd5e-checkbox>        
+            </div>            
+        </div>
+
+    </fieldset>
+
+</section>

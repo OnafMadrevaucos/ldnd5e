@@ -127,7 +127,7 @@ export default class ADControlV2 extends api.Application5e {
       context.tabs = this._getTabs();
 
       // Prepare actor's list for display.
-      context.pcs = this._prepareActorsList(context);
+      context.pcs = this._prepareActorsList();
 
       this.context = {
          ...context,
@@ -180,11 +180,8 @@ export default class ADControlV2 extends api.Application5e {
          shield: { label: "ldnd5e.shieldLabel", items: [], tipoShield: true, dataset: { type: "equipament", subtype: "", armorType: "" } }
       };
 
-      // Obtain all PCs' equipament items.
-      for (let actor of context.pcs.list) {
-         // Actor was marked to be hidden.
-         if (!actor.showActor) continue;
-
+      // Obtain all visible PCs' equipament items.
+      for (let actor of context.pcs.dasVisible) {
          const items = actor.configArmorData();
          // Organize items.
          for (let i of items) {
@@ -214,24 +211,23 @@ export default class ADControlV2 extends api.Application5e {
 
    /**
   * Prepare actor's list for display.
-  * @param {ApplicationRenderContext} context  Context being prepared.
   * @returns {object}
   * @protected
   */
-   _prepareActorsList(context) {
+   _prepareActorsList() {
       const pcs = {
          label: "ldnd5e.pcsLabel",
-         list: []
+         list: [],   // List of all Player's Characters actors.
+         dasVisible: [] // List of all Player's Characters actors that are visible.
       };
 
       for (let actor of game.actors) {
          if (actor.type == "character") {
-
             // Se falso, o PC não irá aparecer na lista. 
-            const dasEnabled = actor.getFlag("ldnd5e", "dasEnabled");
+            const dasEnabled = actor.getFlag("ldnd5e", "dasEnabled");            
 
-            // By default, don't show the actor.
-            actor.showActor = false;
+            // By default, show the actor only if the user has marked it to show.
+            actor.showActor = dasEnabled;
 
             // Obtain actor's equipped armor.
             const equippedArmor = actor.system.attributes.ac.equippedArmor;
@@ -240,20 +236,15 @@ export default class ADControlV2 extends api.Application5e {
             if (!equippedArmor) {
                let hasValidClass = false;
                for (let c of Object.keys(actor.classes)) {
-                  if (c == 'barbarian' || c == 'monk') {
-                     actor.showActor = dasEnabled;
+                  if (c == 'barbarian' || c == 'monk') {                     
                      hasValidClass = true;
                      break;
                   }
                }
 
-               // If actor is not a barbarian or a monk, don't add it to the list.
-               if (!hasValidClass) continue;
-            }
-            // If actor have armor, show it only if the user has marked it to show. 
-            else {
-               actor.showActor = dasEnabled;
-            }
+               // If actor is not a barbarian or a monk, don't add it to the visible list.
+               if (!hasValidClass) actor.invalidArmor = true;
+            }            
 
             actor.exhaustLvl = {
                0: false,
@@ -267,8 +258,14 @@ export default class ADControlV2 extends api.Application5e {
 
             actor.exhaustLvl[actor.system.attributes.exhaustion] = true;
 
-            // Add actor to the list of actors with valid armor type.
+            // All actors are added to the PCs'list.
             pcs.list.push(actor);
+
+            // If actor is visible, add it to the visible list.
+            if (actor.showActor && !actor.invalidArmor) {
+               // Add actor to the list only it has avalid armor type.
+               pcs.dasVisible.push(actor);
+            }
          }
       }
 

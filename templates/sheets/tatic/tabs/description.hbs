@@ -48,7 +48,6 @@
 
 {{#*inline ".description"}}
 <div class="card description {{#if collapsible}}collapsible{{/if}}
-{{#debug this}}{{/debug}}
      {{~#unless (lookup @root.expanded target)}} collapsed{{/unless}}
      {{~#unless enriched}} empty{{/unless}}" data-target="{{ target }}" {{~#if collapsible}}
     data-action="toggleCollapsed" data-expand-id="{{ target }}" {{/if}}>
