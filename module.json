@@ -128,7 +128,9 @@
       "unit": {}
     },
     "Item": {
-      "tatic": {}
+      "tatic": {},
+      "event": {},
+      "asset": {}
     }
   },
   "languages": [

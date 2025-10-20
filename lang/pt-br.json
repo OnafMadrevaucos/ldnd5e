@@ -5,6 +5,8 @@
         "unit": "Unidade"
     },
     "TYPES.Item.ldnd5e": {
+        "asset": "Insumo",
+        "event": "Evento",
         "tatic": "Tática"
     },
     "ldnd5e": {
@@ -212,7 +214,31 @@
             "delete": "Excluir Unidade",
             "isMainRoll": "É Rolagem Principal?",
             "mainRoll": "Rolagem Principal",
-            "deployed": "Unidade Mobilizada"
+            "deployed": "Unidade Mobilizada",
+            "assetsTitle": "Lista de Insumos",
+            "assets": "Insumos",
+            "totalAssetsCost": "Custo Total dos Insumos",
+            "removeAsset": "Remover Insumo"
+        },
+        "assets": {
+            "type": "Tipo",
+            "types": {
+                "alch": "Alquímico",
+                "cint": "Contra-Intel.",
+                "equp": "Equipamento",
+                "intl": "Intel."
+            },
+            "qtd": "Quantidade",
+            "price": "Preço"
+        },
+        "events": {
+            "attr": {
+                "baix": "Baixas",
+                "infr": "Informação",
+                "limt": "Limitação",
+                "prep": "Preparação",
+                "imps": "Impasse"
+            }
         },
         "tatics": {
             "flavor": "Floreio",
@@ -243,6 +269,14 @@
                 "name": "O nome da Atividade é inválido.",
                 "type": "O tipo da Atividade é inválido.",
                 "formula": "A fórmula da Atividade é inválida."
+            },
+            "cr": {
+                "0": "Básico",
+                "1": "Complexidade 1",
+                "2": "Complexidade 2",
+                "3": "Complexidade 3",
+                "4": "Complexidade 4",
+                "5": "Complexidade 5"
             },
             "clash": "Embate",
             "useTatic": "Uso de Tática",

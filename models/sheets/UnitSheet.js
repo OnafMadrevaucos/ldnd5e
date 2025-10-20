@@ -1,4 +1,4 @@
-import { constants, i18nStrings, unitData } from "../../scripts/constants.js";
+import { assetsData, constants, i18nStrings, unitData } from "../../scripts/constants.js";
 import CategoryEditor from "../dialogs/CategoryEditor.js";
 
 const { api: api, sheets: sheets } = foundry.applications;
@@ -18,9 +18,9 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
     viewPermission: CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER,
     actions: {
       removeTatic: UnitSheet.#removeTatic,
+      removeAsset: UnitSheet.#removeAsset,
       showConfiguration: UnitSheet.#showConfiguration,
-      showDescription: UnitSheet.#showDescription,
-      editDescription: UnitSheet.#editDescription,
+      showTooltip: UnitSheet.#showTooltip,
       changeProf: UnitSheet.#changeProf,
       showTatic: UnitSheet.#showTatic,
       useTatic: UnitSheet.#useTatic,
@@ -53,9 +53,34 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
     return this.actor.system.info.company === null;
   }
 
-  /* -------------------------------------------- */
-  /*  Properties                                  */
-  /* -------------------------------------------- */
+  get unitButtons() {
+    return this.#unitButtons;
+  }
+
+  #unitButtons = {
+    description: {
+      name: "description",
+      active: false,
+      icon: {
+        current: "modules/ldnd5e/ui/icons/description.svg",
+        src: {
+          active: "modules/ldnd5e/ui/icons/description-gold.svg",
+          inactive: "modules/ldnd5e/ui/icons/description.svg"
+        }
+      }
+    },
+    assets: {
+      name: "assets",
+      active: false,
+      icon: {
+        current: "modules/ldnd5e/ui/icons/assets.svg",
+        src: {
+          active: "modules/ldnd5e/ui/icons/assets-gold.svg",
+          inactive: "modules/ldnd5e/ui/icons/assets.svg"
+        }
+      }
+    }
+  };
 
   /**
   * A map of proficiency level labels.
@@ -97,6 +122,8 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
       .forEach(i => i.addEventListener("change", this._onChangeInputDelta.bind(this)));
   }
 
+  /* -------------------------------------------- */
+
   /**
    * Handle re-rendering the mode toggle on ownership changes.
    * @protected
@@ -120,6 +147,41 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
       toggle.remove();
     }
   }
+
+  /* -------------------------------------------- */
+
+  /** @inheritDoc */
+  _onClose() {
+    // Reset unit buttons state to default.
+    this.#unitButtons = {
+      description: {
+        name: "description",
+        active: false,
+        icon: {
+          current: "modules/ldnd5e/ui/icons/description.svg",
+          src: {
+            active: "modules/ldnd5e/ui/icons/description-gold.svg",
+            inactive: "modules/ldnd5e/ui/icons/description.svg"
+          }
+        }
+      },
+      assets: {
+        name: "assets",
+        active: false,
+        icon: {
+          current: "modules/ldnd5e/ui/icons/assets.svg",
+          src: {
+            active: "modules/ldnd5e/ui/icons/assets-gold.svg",
+            inactive: "modules/ldnd5e/ui/icons/assets.svg"
+          }
+        }
+      }
+    };
+
+    super._onClose();
+  }
+
+  /* -------------------------------------------- */
 
   /**
      * Handle input changes to numeric form fields, allowing them to accept delta-typed inputs.
@@ -162,7 +224,6 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
       isHeavy: this.actor.system.info.type === unitData.uTypes.heavy,
       isSpecial: this.actor.system.info.type === unitData.uTypes.special,
       isMedical: this.isMedical,
-      editDescription: this.actor.getFlag("ldnd5e", "editingDescription") || false,
     });
 
     // Prepare the actor's unit types.
@@ -190,7 +251,7 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
 
     switch (partId) {
       case "header": await this._prepareHeaderContext(context, options); break;
-      case "body": break;
+      case "body": await this._prepareBodyContext(context, options); break;
       case "footer": break;
     }
 
@@ -208,6 +269,33 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
    */
   async _prepareHeaderContext(context, options) {
     context.portrait = this._preparePortrait(context);
+    return context;
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Prepare rendering context for the body.
+   * @param {ApplicationRenderContext} context  Context being prepared.
+   * @param {HandlebarsRenderOptions} options   Options which configure application rendering behavior.
+   * @returns {ApplicationRenderContext}
+   * @protected
+   */
+  async _prepareBodyContext(context, options) {
+    // Prepare the unit buttons.    
+    context.buttons = this._prepareUnitButtons();
+
+    // Prepare Unit's assets.
+    context.assets = this._prepareAssets();
+
+    // Calculate total assets cost.
+    let totalAssetsCost = 0;
+    context.assets.forEach(asset => {
+      totalAssetsCost += asset.price.value * asset.quantity;
+    });
+    context.totalAssetsCost = totalAssetsCost;
+
+    return context;
   }
 
   /* -------------------------------------------- */
@@ -316,9 +404,78 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
  * @protected
  */
   _prepareTatics(context) {
-    const items = this.actor.items;
+    const items = this.actor.items.filter(i => i.type === "ldnd5e.tatic");
+    const tatics = [
+      { label: game.i18n.localize('ldnd5e.tatics.cr.0'), items: [] },
+      { label: game.i18n.localize('ldnd5e.tatics.cr.1'), items: [] },
+      { label: game.i18n.localize('ldnd5e.tatics.cr.2'), items: [] },
+      { label: game.i18n.localize('ldnd5e.tatics.cr.3'), items: [] },
+      { label: game.i18n.localize('ldnd5e.tatics.cr.4'), items: [] },
+      { label: game.i18n.localize('ldnd5e.tatics.cr.5'), items: [] },
+    ];
 
-    context.tatics = items;
+    items.forEach(item => {
+      tatics[item.system.info.cr].items.push(item);
+    });
+
+    context.tatics = tatics;
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+ * Prepare sheet buttons.
+ * @returns {object}
+ * @protected
+ */
+  _prepareUnitButtons() {
+    const buttons = this.element.querySelectorAll(".unit-info .unit-buttons a.icon");
+    const tooltips = this.element.querySelectorAll(".unit-info .unit-tooltip");
+
+    for (const tooltip of tooltips) {
+      const name = tooltip.dataset.name;
+      const btnState = this.unitButtons[name];
+
+      btnState.active = tooltip.classList.contains("active");
+    }
+
+    for (const button of buttons) {
+      const name = button.dataset.name;
+      const btnState = this.unitButtons[name];
+
+      btnState.icon.current = btnState.active ? btnState.icon.src.active : btnState.icon.src.inactive;
+    }
+
+    return this.unitButtons;
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+ * Prepare Unit's assets.
+ * @returns {object}
+ * @protected
+ */
+  _prepareAssets() {
+    const items = this.actor.items.filter(i => i.type === "ldnd5e.asset");
+    const assets = [];
+
+    items.forEach(item => {
+      assets.push({
+        uuid: item.uuid,
+        id: item.id,
+        name: item.name,
+        img: item.img,
+        quantity: item.system.quantity,
+        price: item.system.info.price,
+        assetType: {
+          label: game.i18n.localize(`ldnd5e.assets.types.${item.system.info.type}`),
+          icon: assetsData.typesIcons[item.system.info.type]
+        },
+      });
+    });
+
+    return assets;
   }
 
   /* -------------------------------------------- */
@@ -418,7 +575,29 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
     const taticId = item.dataset.itemId;
     const tatic = this.actor.items.get(taticId);
 
+    // Ignore if no tatic found.
+    if (!tatic) return;
+
     await this.actor.deleteEmbeddedDocuments("Item", [tatic.id]);
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Removes an asset from the unit.
+   * @this {UnitSheet}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+  static async #removeAsset(event, target) {
+    const item = target.closest('li.item');
+    const assetId = item.dataset.itemId;
+    const asset = this.actor.items.get(assetId);
+
+    // Ignore if no asset found.
+    if (!asset) return;
+
+    await this.actor.deleteEmbeddedDocuments("Item", [asset.id]);
   }
 
   /* -------------------------------------------- */
@@ -444,30 +623,32 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
    * @param {PointerEvent} event  The originating click event.
    * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
    */
-  static async #showDescription(event, target) {
+  static async #showTooltip(event, target) {
     const button = target.closest("a");
-    button.classList.toggle("active");
+    const clickedName = button.dataset.name;
 
-    const description = document.querySelector(".description-tooltip");
-    description.classList.toggle("active");
+    const unitInfo = target.closest(".unit-info");
+    const buttons = unitInfo.querySelectorAll("a.icon");
+    const tooltips = unitInfo.querySelectorAll(".unit-tooltip");
 
-    // If the button is being deactivated, also disable the edit mode.
-    if (!button.classList.contains("active"))
-      await this.actor.setFlag("ldnd5e", "editingDescription", false);
-  }
+    buttons.forEach(btn => {
+      const btnState = this.unitButtons[btn.dataset.name];
 
-  /* -------------------------------------------- */
+      if (btnState.name !== clickedName) btnState.active = false;
+      else btnState.active = !btnState.active;
 
-  /**
-   * Opens the unit's description editor.
-   * @this {UnitSheet}
-   * @param {PointerEvent} event  The originating click event.
-   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
-   */
-  static async #editDescription(event, target) {
-    target.classList.toggle("active");
+      btnState.icon.current = btnState.active ? btnState.icon.src.active : btnState.icon.src.inactive;
 
-    await this.actor.setFlag("ldnd5e", "editingDescription", target.classList.contains("active"));
+      const img = btn.querySelector("img.svg");
+      img.src = btnState.icon.current;
+    });
+
+    tooltips.forEach(tooltip => {
+      if (tooltip.dataset.name !== clickedName)
+        tooltip.classList.remove("active");
+      else
+        tooltip.classList.toggle("active");
+    });
   }
 
   /* -------------------------------------------- */
@@ -583,16 +764,22 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
    */
   static async #decrease(event, target) {
     const property = target.dataset.property;
-    const taticId = target.closest(".tatic")?.dataset.itemId;
-    if (!taticId) return;
+    const itemId = target.closest(".item")?.dataset.itemId;
+    if (!itemId) return;
 
-    const tatic = this.actor.items.get(taticId);
-    const value = foundry.utils.getProperty(tatic, property);
+    const item = this.actor.items.get(itemId);
+    const value = foundry.utils.getProperty(item, property);
 
-    // Prevent decreasing the quantity to 0.
-    if (value - 1 == 0) return;
+    // There is no sense in a 0 number of tatics.
+    if (item.type === "ldnd5e.tetics") {
+      // Prevent decreasing the quantity to 0.
+      if (value - 1 == 0) return;
+    } else {
+      // Prevent decreasing below 0.
+      if (value - 1 < 0) return;
+    }
 
-    await tatic.update({ [property]: value - 1 });
+    await item.update({ [property]: value - 1 });
 
     this._updateDeckTatic();
   }
@@ -607,12 +794,12 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
    */
   static async #increase(event, target) {
     const property = target.dataset.property;
-    const taticId = target.closest(".tatic")?.dataset.itemId;
-    if (!taticId) return;
+    const itemId = target.closest(".item")?.dataset.itemId;
+    if (!itemId) return;
 
-    const tatic = this.actor.items.get(taticId);
-    const value = foundry.utils.getProperty(tatic, property);
-    await tatic.update({ [property]: value + 1 });
+    const item = this.actor.items.get(itemId);
+    const value = foundry.utils.getProperty(item, property);
+    await item.update({ [property]: value + 1 });
 
     this._updateDeckTatic();
   }

@@ -1991,21 +1991,30 @@
   padding-block: 5px;
 }
 
-.ldnd5e.unit .unit-description {
+.ldnd5e.unit .unit-buttons {
+  display: flex;
+  flex-direction: row;
   flex: 4;
   font-size: var(--font-size-18);
+  gap: 5px;
 }
 
-.ldnd5e.unit .unit-description .active {
-  color: var(--dnd5e-color-gold);
+.ldnd5e.unit .unit-buttons img {
+  height: var(--font-size-24);
 }
 
-.ldnd5e.unit .unit-info .description-tooltip {
+.ldnd5e.unit .unit-buttons .active img {
+  fill: var(--dnd5e-color-gold);
+}
+
+.ldnd5e.unit .unit-info .unit-tooltip {
+  display: flex;
+  flex-direction: column;
   position: absolute;
-  height: 25em;
-  width: 40em;
   top: 2.5em;
   left: -40em;
+  height: 25em;
+  width: 40em;
   background: url(ui/texture1.webp) no-repeat top center / auto 770px, var(--dnd5e-color-parchment) url(ui/texture2.webp) no-repeat bottom center / auto 300px;
   border-top-right-radius: 4px;
   border-bottom-right-radius: 4px;
@@ -2016,44 +2025,104 @@
   transition: all 0.5s ease-in-out;
 }
 
-.ldnd5e.unit .unit-info .description-tooltip.active {
+.ldnd5e.unit .unit-info .unit-tooltip.active {
   left: 0;
   transition: all 0.5s ease-in-out;
 }
 
-.ldnd5e.unit .unit-info .description-tooltip * {
+.ldnd5e.unit .unit-info .unit-tooltip * {
   color: var(--color-dark-2);
 }
 
-.ldnd5e.unit .unit-info .description-tooltip h4 {
+.ldnd5e.unit .unit-info .unit-tooltip h4 {
   text-align: center;
-}
-
-
-.ldnd5e.unit .unit-info .description-tooltip .edit-description {
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 5px;
-  cursor: pointer;
-}
-
-.ldnd5e.unit .unit-info .description-tooltip .edit-description.active * {
-  color: #491d25;
 }
 
 .ldnd5e.unit .unit-info .description-tooltip span {
   border: none;
 }
 
-.ldnd5e.unit .unit-info .description-tooltip .flavor {
+.ldnd5e.unit .unit-info .description-tooltip .description-viewer .flavor {
   font-style: italic;
   text-align: end;
 }
 
-.ldnd5e.unit .unit-info .description-tooltip .description {
+.ldnd5e.unit .unit-info .description-tooltip .description-viewer .description {
   font-weight: bold;
   font-size: var(--font-size-14);
+}
+
+.ldnd5e.unit .unit-info .description-tooltip .description-editor {
+  flex: 1;
+}
+
+.ldnd5e.unit .unit-info .description-tooltip .description-editor .textbox {
+  display: flex;
+  flex-direction: column;
+}
+
+.ldnd5e.unit .unit-info .description-tooltip .description-editor .textbox.flavor {
+  flex: 1;
+}
+
+.ldnd5e.unit .unit-info .description-tooltip .description-editor .textbox.description {
+  flex: 3;
+}
+
+.ldnd5e.unit .unit-info .description-tooltip .description-editor .textbox textarea {
+  flex: 1;
+  resize: none;
+}
+
+.ldnd5e.unit .unit-info .unit-tooltip.assets-tooltip {
+  height: 26.5em;
+}
+
+.ldnd5e.unit .assets-tooltip .total-cost {
+  position: absolute;
+  top: 2em;
+  right: 0.5em;
+  padding: 5px;
+  width: 7.5em;
+}
+
+.ldnd5e.unit .assets-tooltip .items-list {
+  overflow-y: auto;
+}
+
+.ldnd5e.unit .assets-tooltip .item-detail.qtd {
+  width: 65px;
+}
+
+.ldnd5e.unit .assets-tooltip .total-cost *,
+.ldnd5e.unit .assets-tooltip .header * {
+  color: var(--color-text-primary);
+}
+
+.ldnd5e.unit .assets-tooltip .items-list .item .item-detail {
+  gap: 5px;
+}
+
+.ldnd5e.unit .assets-tooltip .item .item-detail.qtd input {
+  color: var(--color-text-primary);
+  text-align: center;
+}
+
+.ldnd5e.unit .assets-tooltip .item .item-detail.qtd,
+.ldnd5e.unit .assets-tooltip .item .item-detail.type {
+  font-size: var(--font-size-16);
+}
+
+.ldnd5e.unit .assets-tooltip .item-controls {
+  width: 30px !important;
+}
+
+.ldnd5e.unit .assets-tooltip .price span {
+  font-weight: bold;
+}
+
+.ldnd5e.unit .assets-tooltip .price span:has(.currency) {
+  line-height: 0;
 }
 
 .ldnd5e.unit .unit-price {
@@ -2082,6 +2151,8 @@
 .ldnd5e.unit .tatics-list {
   flex: 3;
   align-self: baseline;
+  height: 265px;
+  overflow-y: auto;
 }
 
 .ldnd5e.unit .tatics-list .tatic .trainning {
@@ -2142,6 +2213,7 @@
 }
 
 .ldnd5e.unit .proficiencies .proficiency,
+.ldnd5e.event .attributes .attribute
 .ldnd5e.tatic .attributes .attribute,
 .ldnd5e.tatic .main-recovery button {
   width: 1.75em;
@@ -2151,6 +2223,7 @@
 }
 
 .ldnd5e.unit:has(.editable) .proficiencies .proficiency:hover,
+.ldnd5e.event:has(.editable) .attributes .attribute:hover,
 .ldnd5e.tatic:has(.editable) .attributes .attribute:hover,
 .ldnd5e.tatic:has(.editable) .main-recovery button:hover {
   cursor: pointer;
@@ -2166,10 +2239,17 @@
   color: var(--dnd5e-color-gold);
 }
 
+.ldnd5e.event .attributes,
 .ldnd5e.tatic .attributes {
   gap: 5px;
 }
 
+.ldnd5e.event .attributes .attribute,
+.ldnd5e.tatic .attributes .attribute {
+  padding: 5px;
+}
+
+.ldnd5e.event .attributes .attribute.active,
 .ldnd5e.tatic .attributes .attribute.active {
   background-color: var(--dnd5e-color-gold);
 }
@@ -2187,13 +2267,52 @@
 }
 
 .ldnd5e.tatic .attributes .attribute.pers.active {
-  color: #60c757;
+  color: #48a740;
 }
 
 .ldnd5e.tatic .info-block .value .formula:hover {
   cursor: pointer;
   text-shadow: 0 0 10px var(--color-shadow-primary);
 }
+
+.ldnd5e.asset .asset-type a {
+  font-size: var(--font-size-24);
+}
+
+.ldnd5e.asset .asset-type a:hover {
+  cursor: default;
+  text-shadow: none;
+}
+
+.ldnd5e.event .info-block .info-grid .info-lg .label,
+.ldnd5e.asset .info-block .info-grid .info-lg .label {
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.ldnd5e.event .info-block span,
+.ldnd5e.asset .info-block span {
+  font-size: var(--font-size-16);
+}
+
+.ldnd5e.event .attributes .attribute.baix.active {
+  color: #1f1f1f;
+}
+.ldnd5e.event .attributes .attribute.infr.active {
+  color: #ac3b3b;
+}
+.ldnd5e.event .attributes .attribute.limt.active {
+  color: #4141ac;
+}
+.ldnd5e.event .attributes .attribute.prep.active {
+  color: #edde0b;
+}
+.ldnd5e.event .attributes .attribute.imps.active {
+  color: #48a740;
+}
+
+
+
 
 .application.dnd5e2.dialog.activity.tatic {
   background: url(ui/texture-gray1.webp) no-repeat top left, url(ui/texture-gray2.webp) no-repeat bottom right, var(--dnd5e-color-parchment);

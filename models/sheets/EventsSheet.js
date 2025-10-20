@@ -5,14 +5,14 @@ const { api: api, item: item } = dnd5e.applications;
 
 const TextEditor$b = foundry.applications.ux.TextEditor.implementation;
 
-export default class TaticsSheet extends item.ItemSheet5e {
+export default class EventsSheet extends item.ItemSheet5e {
     static MODES = {
         PLAY: 0,
         EDIT: 1
     }
 
     static DEFAULT_OPTIONS = {
-        classes: ["ldnd5e", "tatic"],
+        classes: ["ldnd5e", "event"],
         position: {
             width: 500,
             height: 400
@@ -20,12 +20,10 @@ export default class TaticsSheet extends item.ItemSheet5e {
         editingDescriptionTarget: null,
         viewPermission: CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER,
         actions: {
-            editDescription: this.#editDescription,
-            toggleAttr: this.#toggleAttr,
-            toggleRecovery: this.#toggleRecovery,
-            editDocument: this.#editDocument,
-            deleteDocument: this.#deleteDocument,
-            roll: this.#roll
+            editDescription: EventsSheet.#editDescription,                     
+            editDocument: EventsSheet.#editDocument,
+            deleteDocument: EventsSheet.#deleteDocument,
+            toggleAttr: EventsSheet.#toggleAttr
         },
         form: {
             submitOnChange: true,
@@ -41,21 +39,18 @@ export default class TaticsSheet extends item.ItemSheet5e {
     /** @inheritdoc */
     static PARTS = {
         header: {
-            template: "modules/ldnd5e/templates/sheets/tatic/header.hbs",
+            template: "modules/ldnd5e/templates/sheets/event/header.hbs",
         },
         tabs: {
             template: "systems/dnd5e/templates/shared/horizontal-tabs.hbs",
             templates: ["templates/generic/tab-navigation.hbs"]
         },
         activities: {
-            template: "modules/ldnd5e/templates/sheets/tatic/tabs/activities.hbs",
+            template: "modules/ldnd5e/templates/sheets/event/tabs/activities.hbs",
             scrollable: [""]
         },
-        details: {
-            template: "modules/ldnd5e/templates/sheets/tatic/tabs/details.hbs",
-        },
         description: {
-            template: "modules/ldnd5e/templates/sheets/tatic/tabs/description.hbs",
+            template: "modules/ldnd5e/templates/sheets/event/tabs/description.hbs",
         },
     };
 
@@ -64,7 +59,6 @@ export default class TaticsSheet extends item.ItemSheet5e {
     /** @override */
     static TABS = [
         { tab: "description", label: "DND5E.ITEM.SECTIONS.Description" },
-        { tab: "details", label: "DND5E.ITEM.SECTIONS.Details" },
         { tab: "activities", label: "DND5E.ITEM.SECTIONS.Activities" },
     ];
 
@@ -82,8 +76,6 @@ export default class TaticsSheet extends item.ItemSheet5e {
     /** @inheritDoc */
     async _onRender(context, options) {
         await super._onRender(context, options);
-
-        this.element.querySelector(".cr input")?.addEventListener('input', event => this._onCRChange(event));
 
         if (this.editingDescriptionTarget) {
             this.element.querySelectorAll("prose-mirror").forEach(editor => editor.addEventListener("save", () => {
@@ -141,7 +133,6 @@ export default class TaticsSheet extends item.ItemSheet5e {
         switch (partId) {
             case "header": await this._prepareHeaderContext(context, options); break;
             case "activities": await this._prepareActivitiesContext(context, options); break;
-            case "details": await this._prepareDetailsContext(context, options); break;
             case "description": await this._prepareDescriptionContext(context, options); break;
         }
 
@@ -159,9 +150,6 @@ export default class TaticsSheet extends item.ItemSheet5e {
      */
     async _prepareHeaderContext(context, options) {
         context.portrait = this._preparePortrait(context);
-
-        context.isMedical = this.item.isEmbedded && this.actor.system.info.type === unitData.uTypes.medical;
-
         return context;
     }
 
@@ -187,19 +175,6 @@ export default class TaticsSheet extends item.ItemSheet5e {
             });
 
 
-        return context;
-    }
-
-    /* -------------------------------------------- */
-
-    /**
-     * Prepare rendering context for the description tab.
-     * @param {ApplicationRenderContext} context  Context being prepared.
-     * @param {HandlebarsRenderOptions} options   Options which configure application rendering behavior.
-     * @returns {ApplicationRenderContext}
-     * @protected
-     */
-    async _prepareDetailsContext(context, options) {
         return context;
     }
 
@@ -242,7 +217,7 @@ export default class TaticsSheet extends item.ItemSheet5e {
    * @protected
    */
     _preparePortrait(context) {
-        const defaultArtwork = Item.implementation.getDefaultArtwork(this.item._source)?.img;
+        const defaultArtwork = Actor.implementation.getDefaultArtwork(this.item._source)?.img;
         return {
             src: this.item.img ?? defaultArtwork,
             // TODO: Not sure the best way to update the parent texture from this sheet if this is a token actor.
@@ -265,26 +240,7 @@ export default class TaticsSheet extends item.ItemSheet5e {
         }
     }
 
-    /* -------------------------------------------- */
-
-    /**
-     * The user has changed the CR.
-     * @param {PointerEvent} event  The triggering event.
-     * @protected
-     */
-    _onCRChange(event) {
-        const input = event.currentTarget;
-
-        let val = parseInt(input.value);
-
-        const min = 0;
-        const max = 5;
-
-        if (val > max) input.value = max;
-        if (val < min) input.value = min;
-    }
-
-    /* -------------------------------------------- */
+    /* -------------------------------------------- */    
 
     /**
    * Handle expanding the description editor.
@@ -296,36 +252,6 @@ export default class TaticsSheet extends item.ItemSheet5e {
         if (target.ariaDisabled) return;
         this.editingDescriptionTarget = target.dataset.target;
         this.render();
-    }
-
-    /* -------------------------------------------- */
-
-    /**
-   * Handle toggling attributes.
-   * @this {ItemSheet5e}
-   * @param {Event} event         Triggering click event.
-   * @param {HTMLElement} target  Button that was clicked.
-   */
-    static async #toggleAttr(event, target) {
-        const attr = target.dataset.attr;
-        const attributes = this.item.system.attributes;
-        attributes[attr] = !attributes[attr];
-
-        await this.item.update({ "system.attributes": attributes });
-    }
-
-    /* -------------------------------------------- */
-
-    /**
-   * Handle toggling if this tatic is part of the main recovey action.
-   * @this {ItemSheet5e}
-   * @param {Event} event         Triggering click event.
-   * @param {HTMLElement} target  Button that was clicked.
-   */
-    static async #toggleRecovery(event, target) {
-        const mainRecovery = !this.item.system.mainRecovery;
-
-        await this.item.update({ "system.mainRecovery": mainRecovery });
     }
 
     /* -------------------------------------------- */
@@ -367,24 +293,16 @@ export default class TaticsSheet extends item.ItemSheet5e {
     /* -------------------------------------------- */
 
     /**
-   * Handle activity's roll.
+   * Handle toggling attributes.
    * @this {ItemSheet5e}
    * @param {Event} event         Triggering click event.
    * @param {HTMLElement} target  Button that was clicked.
    */
-    static async #roll(event, target) {
-        if (!target.classList.contains("rollable")) return;
-        switch (target.dataset.type) {
-            case "activity": {
-                const activityId = target.dataset.id;
-                const activity = this.item.system.activities[activityId];
-                if (!activity) return;
+    static async #toggleAttr(event, target) {
+        const attr = target.dataset.attr;
+        const attributes = this.item.system.attributes;
+        attributes[attr] = !attributes[attr];
 
-                return this.item.system.rollActivity(
-                    { activity, event }, {},
-                    { speaker: ChatMessage.getSpeaker({ actor: this.actor }) }
-                );
-            };
-        }
+        await this.item.update({ "system.attributes": attributes });
     }
 }

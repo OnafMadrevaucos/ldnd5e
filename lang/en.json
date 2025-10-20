@@ -5,6 +5,8 @@
         "unit": "Unit"
     },
     "TYPES.Item.ldnd5e": {
+        "asset": "Asset",
+        "event": "Event",
         "tatic": "Tatic"
     },
     "ldnd5e": {
@@ -212,7 +214,31 @@
             "show": "Show Unit",
             "delete": "Delete Unit",
             "isMainRoll": "Is Main Roll?",
-            "deployed": "Unit Deployed"
+            "deployed": "Unit Deployed",
+            "assetsTitle": "Unit's Assets",
+            "assets": "Unit Assets",
+            "totalAssetsCost": "Total Assets Cost",
+            "removeAsset": "Remove Asset"
+        },
+        "assets": {
+            "type": "Type",
+            "types": {
+                "alch": "Alchemical",
+                "cint": "Counter-Intel",
+                "equp": "Equipment",
+                "intl": "Intel"
+            },
+            "qtd": "Quantity",
+            "price": "Price"
+        },
+        "events": {
+            "attr": {
+                "baix": "Casualties",
+                "infr": "Information",
+                "limt": "Limitation",
+                "prep": "Preparation",
+                "imps": "Impasse"
+            }
         },
         "tatics": {
             "flavor": "Flavor",
@@ -225,7 +251,7 @@
             "trainning": "Train.",
             "damage": "Moral Damage",
             "configuration": "Configuration",
-             "details": {
+            "details": {
                 "use": "Field Use",
                 "single": "Single Use?",
                 "unique": "Unique?"
@@ -243,6 +269,14 @@
                 "name": "The Activity name is invalid.",
                 "type": "The Activity type is invalid.",
                 "formula": "The Activity formula is invalid."
+            },
+            "cr": {
+                "0": "Basic",
+                "1": "Complexity 1",
+                "2": "Complexity 2",
+                "3": "Complexity 3",
+                "4": "Complexity 4",
+                "5": "Complexity 5"
             },
             "clash": "Clash",
             "useTatic": "Tatic Use",

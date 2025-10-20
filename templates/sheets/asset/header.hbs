@@ -1,0 +1,52 @@
+<section class="sheet-header">
+    {{!-- Image --}}
+    <div class="left">
+
+        <img class="item-image" src="{{portrait.src}}" alt="{{ name.value }}" {{~#if (and editable portrait.path)}}
+            data-action="editImage" data-edit="{{ portrait.path }}" {{else}} data-action="showArtwork" {{/if}}>
+
+    </div>
+
+    {{!-- Name & Attributes --}}
+    <div class="middle identity-info">
+
+        {{!-- Name --}}
+        {{#if editable}}
+        <input type="text" name="name" class="document-name uninput" value="{{ item._source.name }}">
+        {{else}}
+        <div class="document-name">{{ item.name }}</div>
+        {{/if}}
+
+    </div>
+
+    {{!-- Type & Price --}}
+    <div class="right common-fields ">
+
+        <div class="asset-type">
+            {{#if editable}}
+            <select class="unselect" name="system.info.type">
+                {{ selectOptions types selected=system.info.type valueAttr="value" labelAttr="label" }}
+            </select>
+            {{else}}
+            <a data-tooltip="{{lookup (lookup types system.info.type) "label"}}"><i class="{{typeIcon}}"></i></a>
+            {{/if}}
+        </div>
+
+        <div class="price">
+            {{#if editable}}
+            <input type="text" name="system.info.price.value" class="price uninput"
+                value="{{ system.info.price.value }}">
+            <select class="unselect" name="system.info.price.denomination">
+                {{ selectOptions CONFIG.currencies selected=system.info.price.denomination
+                labelAttr="abbreviation" }}
+            </select>
+            {{else}}
+            <span class="value">{{ dnd5e-numberFormat system.info.price.value }}</span>
+            <i class="currency {{ system.info.price.denomination }}"
+                aria-label="{{ lookup (lookup CONFIG.currencies system.info.price.denomination) 'label' }}"></i>
+            {{/if}}
+        </div>
+
+    </div>
+
+</section>

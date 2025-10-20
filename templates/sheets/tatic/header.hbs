@@ -22,7 +22,7 @@
             <li class="attribute-item" data-tooltip="ldnd5e.tatics.prep">
                 {{#unless isMedical}}
                 <button class="attribute prep {{#if system.attributes.prep}}active{{/if}}"
-                    data-action="toggleAttr" data-attr="prep">
+                    data-action="toggleAttr" data-attr="prep" {{#unless editable}} disabled{{/unless}}>
                     <i class="fas fa-flask"></i>
                 </button>
                 {{else}}
@@ -34,7 +34,7 @@
             <li class="attribute-item" data-tooltip="ldnd5e.tatics.surp">
                 {{#unless isMedical}}
                 <button class="attribute surp {{#if system.attributes.surp}}active{{/if}}"
-                    data-action="toggleAttr" data-attr="surp">
+                    data-action="toggleAttr" data-attr="surp" {{#unless editable}} disabled{{/unless}}>
                     <i class="fas fa-triangle-exclamation"></i>
                 </button>
                 {{else}}
@@ -46,7 +46,7 @@
             <li class="attribute-item" data-tooltip="ldnd5e.tatics.reac">
                 {{#unless isMedical}}
                 <button class="attribute reac {{#if system.attributes.reac}}active{{/if}}"
-                    data-action="toggleAttr" data-attr="reac">
+                    data-action="toggleAttr" data-attr="reac" {{#unless editable}} disabled{{/unless}}>
                     <i class="fas fa-arrows-rotate"></i>
                 </button>
                 {{else}}
@@ -58,7 +58,7 @@
             <li class="attribute-item" data-tooltip="ldnd5e.tatics.pers">
                 {{#unless isMedical}}
                 <button class="attribute pers {{#if system.attributes.pers}}active{{/if}}"
-                    data-action="toggleAttr" data-attr="pers">
+                    data-action="toggleAttr" data-attr="pers" {{#unless editable}} disabled{{/unless}}>
                     <i class="fas fa-infinity"></i>
                 </button>
                 {{else}}

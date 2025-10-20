@@ -311,7 +311,58 @@ const unitData = {
 }
 
 /**
-* Defines the Unit constants.
+* Defines the Assets constants.
+*
+* @enum {{
+*    activities: object, 
+* }}
+*/
+const assetsData = {
+   /**
+   * Defines the Assets Types constants.      
+   */
+   types: {
+      alch: "alch",
+      cint: "cint",
+      equp: "equp",
+      intl: "intl"
+   },
+
+   /**
+   * Defines the Assets Types icons.      
+   */
+   typesIcons: {
+      alch: "ra ra-fizzing-flask",
+      cint: "fas fa-eye-slash",
+      equp: "ra ra-sword",
+      intl: "fas fa-eye"
+   },
+
+   /**
+    * Defines the Tatics Activity Icons constants.
+    * */
+   activityIcons: {
+      md: {
+         src: 'modules/ldnd5e/ui/icons/md.svg',
+         svg: true
+      },
+      mh: {
+         src: 'modules/ldnd5e/ui/icons/mh.svg',
+         svg: true
+      },
+      ib: {
+         src: 'modules/ldnd5e/ui/icons/ib.svg',
+         svg: true
+      },
+      id: {
+         src: 'modules/ldnd5e/ui/icons/id.svg',
+         svg: true
+      },
+   }
+}
+
+/**
+* Defines the Tatics constants.
 *
 * @enum {{
 *    activities: object, 
@@ -358,7 +409,7 @@ const taticsData = {
 *     
 * }}
 */
-const battleData = { 
+const battleData = {
    /**
    * Defines the Battle Stages constants.      
    */
@@ -369,12 +420,12 @@ const battleData = {
          icon: 'fas fa-cogs'
       },
       prep: {
-         value:'prep',
+         value: 'prep',
          label: 'ldnd5e.battle.stages.prep',
          icon: 'ra ra-tower'
       },
       started: {
-         value:'started',
+         value: 'started',
          label: 'ldnd5e.battle.stages.started',
          icon: 'ra ra-crossed-swords'
       }
@@ -579,7 +630,7 @@ const i18nStrings = {
       categoryDescription: "ldnd5e.unit.categoryDescription",
       descriptionTitle: "ldnd5e.unit.descriptionTitle",
       flavor: "ldnd5e.unit.flavor",
-      description: "ldnd5e.unit.description",
+      description: "ldnd5e.unit.description",      
       price: "ldnd5e.unit.price",
       combat: "ldnd5e.unit.combat",
       tatics: "ldnd5e.unit.tatics",
@@ -587,11 +638,37 @@ const i18nStrings = {
       editTatic: "ldnd5e.unit.editTatic",
       removeTatic: "ldnd5e.unit.removeTatic",
       isTrainning: "ldnd5e.unit.isTrainning",
-      trainningLoad: "ldnd5e.unit.trainningLoad",      
+      trainningLoad: "ldnd5e.unit.trainningLoad",
       show: "ldnd5e.unit.show",
       delete: "ldnd5e.unit.delete",
       isMainRoll: "ldnd5e.unit.isMainRoll",
-      deployed: "ldnd5e.unit.deployed"
+      deployed: "ldnd5e.unit.deployed",
+      assetsTitle: "ldnd5e.unit.assetsTitle",
+      assets: "ldnd5e.unit.assets",
+      totalAssetsCost: "ldnd5e.unit.totalAssetsCost",
+      removeAsset: "ldnd5e.unit.removeAsset",
+   },
+
+   assets: {
+      type: "ldnd5e.assets.type",      
+      types: {
+         alch: "ldnd5e.assets.types.alch",
+         cint: "ldnd5e.assets.types.cint",
+         equp: "ldnd5e.assets.types.equp",
+         intl: "ldnd5e.assets.types.intl"
+      },
+      qtd: "ldnd5e.assets.qtd",
+      price: "ldnd5e.assets.price",
+   },
+
+   events: {      
+      attr: {
+         baix: "ldnd5e.events.attr.baix",
+         infr: "ldnd5e.events.attr.infr",
+         limt: "ldnd5e.events.attr.limt",
+         prep: "ldnd5e.events.attr.prep",
+         imps: "ldnd5e.events.attr.imps"
+      }
    },
 
    tatics: {
@@ -624,11 +701,19 @@ const i18nStrings = {
          type: "ldnd5e.tatics.invalidActivity.type",
          formula: "ldnd5e.tatics.invalidActivity.formula",
       },
+      cr: {
+         0: "ldnd5e.tatics.cr.0",
+         1: "ldnd5e.tatics.cr.1",
+         2: "ldnd5e.tatics.cr.2",
+         3: "ldnd5e.tatics.cr.3",
+         4: "ldnd5e.tatics.cr.4",
+         5: "ldnd5e.tatics.cr.5",
+      },
       clash: "ldnd5e.tatics.clash",
       useTatic: "ldnd5e.tatics.useTatic",
       mainRecovery: "ldnd5e.tatics.mainRecovery",
       mainRoll: "ldnd5e.tatics.mainRoll",
-      acceptExtras: "ldnd5e.tatics.acceptExtras",      
+      acceptExtras: "ldnd5e.tatics.acceptExtras",
    },
 
    unitType: "ldnd5e.unit",
@@ -669,7 +754,7 @@ const i18nStrings = {
       notification: {
          title: "ldnd5e.battle.notification.title",
          message: "ldnd5e.battle.notification.message",
-         start: "ldnd5e.battle.notification.start",         
+         start: "ldnd5e.battle.notification.start",
       },
       fields: {
          top: "ldnd5e.battle.fields.top",
@@ -697,9 +782,9 @@ const i18nStrings = {
       rowEffects: {
          blizzard: "ldnd5e.battle.rowEffects.blizzard",
          fog: "ldnd5e.battle.rowEffects.fog",
-         rain: "ldnd5e.battle.rowEffects.rain",                           
+         rain: "ldnd5e.battle.rowEffects.rain",
       },
-      reset: "ldnd5e.battle.reset",                 
+      reset: "ldnd5e.battle.reset",
       resetConfirm: "ldnd5e.battle.resetConfirm",
       restoreCard: "ldnd5e.battle.restoreCard",
       restoreAllCards: "ldnd5e.battle.restoreAllCards",
@@ -709,8 +794,8 @@ const i18nStrings = {
          message: "ldnd5e.battle.extraRoll.message",
          main: "ldnd5e.battle.extraRoll.main",
          extra: "ldnd5e.battle.extraRoll.extra",
-      }, 
-      targetField: "ldnd5e.battle.targetField",           
+      },
+      targetField: "ldnd5e.battle.targetField",
    },
 
    categories: {
@@ -804,4 +889,18 @@ const battleControl = {
    button: true
 };
 
-export { constants, UnarmoredClasses, NDs, gmControl, battleControl, i18nStrings, suppliesData, armyData, unitData, taticsData, battleData };
+export {
+   constants,
+   UnarmoredClasses,
+   NDs,
+   gmControl,
+   battleControl, 
+   i18nStrings, 
+
+   suppliesData, 
+   armyData, 
+   unitData, 
+   assetsData, 
+   taticsData, 
+   battleData
+};

@@ -34,7 +34,7 @@ export default class ItemL5e extends dnd5e.documents.Item5e {
     /** @inheritDoc */
     prepareEmbeddedDocuments() {
         // Do not prepare embedded documents for tatics, for now...
-        if(this.type === "ldnd5e.tatic") return;
+        if(this.type.includes("ldnd5e")) return;
         
         super.prepareEmbeddedDocuments();       
     }

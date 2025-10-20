@@ -28,11 +28,17 @@ import ArmySheet from "./models/sheets/ArmySheet.js";
 import TaticsL5e from "./models/entities/TaticsL5e.js";
 import TaticsSheet from "./models/sheets/TaticsSheet.js";
 import TaticsRoll from "./scripts/TaticsRoll.js";
+import AssetsL5e from "./models/entities/AssetsL5e.js";
+import AssetsSheet from "./models/sheets/AssetsSheet.js";
+import EventsL5e from "./models/entities/EventsL5e.js";
+import EventsSheet from "./models/sheets/EventsSheet.js";
 
 const typeArmy = "ldnd5e.army";
 const typeCompany = "ldnd5e.company";
 const typeUnit = "ldnd5e.unit";
 
+const typeAsset = "ldnd5e.asset";
+const typeEvent = "ldnd5e.event";
 const typeTatic = "ldnd5e.tatic";
 
 const isV13 = !foundry.utils.isNewerVersion("13", game.version);
@@ -93,17 +99,33 @@ Hooks.once("init", function () {
     });
 
     Object.assign(CONFIG.Item.dataModels, {
+        [typeAsset]: AssetsL5e,
+        [typeEvent]: EventsL5e,
         [typeTatic]: TaticsL5e,
     });
 
     const Items = foundry.documents.collections.Items;
 
+    Items.registerSheet('ldnd5e', AssetsSheet, {
+        types: ['ldnd5e.asset'],
+        makeDefault: true,
+        label: "Insumo"
+    });
+
+    Items.registerSheet('ldnd5e', EventsSheet, {
+        types: ['ldnd5e.event'],
+        makeDefault: true,
+        label: "Evento"
+    });
+    
     Items.registerSheet('ldnd5e', TaticsSheet, {
         types: ['ldnd5e.tatic'],
         makeDefault: true,
         label: "Tática"
     });
 
+    CONFIG.DND5E.defaultArtwork.Item[typeAsset] = "modules/ldnd5e/ui/icons/assets-dark.svg";
+    CONFIG.DND5E.defaultArtwork.Item[typeEvent] = "modules/ldnd5e/ui/icons/events-dark.svg";
     CONFIG.DND5E.defaultArtwork.Item[typeTatic] = "modules/ldnd5e/ui/icons/tatics-dark.svg";
 
     preloadTemplates();
@@ -248,6 +270,10 @@ Hooks.on('createItem', async (document, data, options, userId) => {
 
     if (document.type === typeTatic && document.img === "modules/ldnd5e/ui/icons/tatics-dark.svg")
         document.update({ 'img': "modules/ldnd5e/ui/icons/tatics.svg" });
+    else if (document.type === typeAsset && document.img === "modules/ldnd5e/ui/icons/assets-dark.svg")
+        document.update({ 'img': "modules/ldnd5e/ui/icons/assets.svg" });
+    else if (document.type === typeEvent && document.img === "modules/ldnd5e/ui/icons/events-dark.svg")
+        document.update({ 'img': "modules/ldnd5e/ui/icons/events.svg" });
 });
 Hooks.on('preUpdateItem', async (document, change, options, userId) => {
     patchItemPreUpdate(document.actor, document, change);

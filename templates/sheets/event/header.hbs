@@ -1,0 +1,56 @@
+<section class="sheet-header">
+    {{!-- Image --}}
+    <div class="left">
+
+        <img class="item-image" src="{{portrait.src}}" alt="{{ name.value }}" {{~#if (and editable portrait.path)}}
+            data-action="editImage" data-edit="{{ portrait.path }}" {{else}} data-action="showArtwork" {{/if}}>
+
+    </div>
+
+    {{!-- Name & Attributes --}}
+    <div class="middle identity-info">
+
+        {{!-- Name --}}
+        {{#if editable}}
+        <input type="text" name="name" class="document-name uninput" value="{{ item._source.name }}">
+        {{else}}
+        <div class="document-name">{{ item.name }}</div>
+        {{/if}}
+
+        {{!-- Attributes --}}
+        <ul class="attributes unlist flexrow">
+            <li class="attribute-item" data-tooltip="ldnd5e.events.attr.baix">                
+                <button class="attribute baix {{#if system.attributes.baix}}active{{/if}}"
+                    data-action="toggleAttr" data-attr="baix" {{#unless editable}} disabled{{/unless}}>
+                    <i class="ra ra-skull"></i>
+                </button>                
+            </li>  
+            <li class="attribute-item" data-tooltip="ldnd5e.events.attr.infr">                
+                <button class="attribute infr {{#if system.attributes.infr}}active{{/if}}"
+                    data-action="toggleAttr" data-attr="infr" {{#unless editable}} disabled{{/unless}}>
+                    <i class="fas fa-comments"></i>
+                </button>                
+            </li>
+            <li class="attribute-item" data-tooltip="ldnd5e.events.attr.limt">                
+                <button class="attribute limt {{#if system.attributes.limt}}active{{/if}}"
+                    data-action="toggleAttr" data-attr="limt" {{#unless editable}} disabled{{/unless}}>
+                    <i class="ra ra-player-shot"></i>
+                </button>                
+            </li>
+            <li class="attribute-item" data-tooltip="ldnd5e.events.attr.prep">                
+                <button class="attribute prep {{#if system.attributes.prep}}active{{/if}}"
+                    data-action="toggleAttr" data-attr="prep" {{#unless editable}} disabled{{/unless}}>
+                    <i class="fas fa-flask"></i>
+                </button>                
+            </li>
+            <li class="attribute-item" data-tooltip="ldnd5e.events.attr.imps">                
+                <button class="attribute imps {{#if system.attributes.imps }}active{{/if}}"
+                    data-action="toggleAttr" data-attr="imps" {{#unless editable}} disabled{{/unless}}>
+                    <i class="ra ra-crossed-axes"></i>
+                </button>                
+            </li>          
+        </ul>
+
+    </div>
+
+</section>

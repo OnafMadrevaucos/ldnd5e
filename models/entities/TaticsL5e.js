@@ -67,14 +67,7 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
 
     /**@inheritdoc */
     prepareBaseData() {
-        this.system = {
-            info: this.info,
-            quantity: this.quantity,
-            trainning: this.trainning,
-            details: this.details,
-            attributes: this.attributes,
-            activities: this.activities,
-        }
+        // Nothing to do.
     }
 
     /* -------------------------------------------- */
@@ -88,10 +81,10 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
         }
 
         // Main recoveries only can be used on the Preparation Phase.
-        if (this.system.mainRecovery) {
-            this.system.attributes.surp = false;
-            this.system.attributes.reac = false;
-            this.system.attributes.pers = false;
+        if (this.mainRecovery) {
+            this.attributes.surp = false;
+            this.attributes.reac = false;
+            this.attributes.pers = false;
         }
     }
 
@@ -110,9 +103,9 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
             value: dnd5e.utils.formatModifier(impetus)
         }];
 
-        if (Object.keys(this.system.activities).length > 0) {
+        if (Object.keys(this.activities).length > 0) {
             context.info.push({
-                value: Object.values(this.system.activities).reduce((a, b) => {
+                value: Object.values(this.activities).reduce((a, b) => {
                     const formula = `${b.number}d${b.die}${b.bonus}`;
 
                     return `${a}
@@ -136,7 +129,7 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
    *                                          either a die term or a flat term.
    */
     getRollData() {
-        let data = this.system;
+        let data = this;
 
         data.flags = { ...this.flags };
         data.name = this.name;

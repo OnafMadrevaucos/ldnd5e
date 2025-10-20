@@ -151,7 +151,9 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
         this.fullPrice = foundry.utils.deepClone(this.system.info.price) || { value: 0, denomination: "gp" };
 
         this.system.tatics.forEach(tatic => {
-            this.fullPrice.value += (tatic.system.info.price.value * tatic.system.quantity);
+            // Add price only for the tatics that are trained.
+            if(tatic.system.trainning) 
+                this.fullPrice.value += (tatic.system.info.price.value * tatic.system.quantity);
         });
     }
 

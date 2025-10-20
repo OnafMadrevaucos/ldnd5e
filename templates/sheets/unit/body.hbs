@@ -21,9 +21,13 @@
 
         <div class="unit-info flexrow">
 
-            <div class="unit-description">
-                <a {{#if editDescription}}class="active" {{/if}}><i class="fa-solid fa-comment"
-                        data-action="showDescription"></i></a>
+            <div class="unit-buttons">
+                {{#each buttons as |button|}}
+                <a class="icon {{#if button.active}}active{{/if}}" data-action="showTooltip"
+                    data-name="{{button.name}}">
+                    <img class="svg" src="{{button.icon.current}}">
+                </a>
+                {{/each}}
             </div>
 
             <div class="unit-price card flexrow" data-tooltip="ldnd5e.unit.price">
@@ -36,12 +40,11 @@
                 {{/if}}
             </div>
 
-            <div class="description-tooltip{{#if editDescription}} active{{/if}}">
+            <div class="unit-tooltip description-tooltip{{#if buttons.description.active}} active{{/if}}"
+                data-name="description">
                 <h4>{{localize 'ldnd5e.unit.descriptionTitle'}}</h4>
-                <a class="edit-description{{#if editDescription}} active{{/if}}" data-action="editDescription"><i
-                        class="fas fa-feather"></i></a>
 
-                {{#unless editDescription}}
+                {{#unless editable}}
                 <div class="description-viewer flexcol">
                     <span class="flavor" aria-placeholder="Flavor Text">{{system.info.flavor}}</span>
                     <hr class="ampersand">
@@ -49,14 +52,14 @@
                 </div>
                 {{else}}
                 <div class="description-editor flexcol">
-                    <div class="textbox textbox-half">
+                    <div class="textbox textbox-half flavor">
                         <h3 class="icon">
                             <i class="fa-solid fa-quote-left"></i>
                             <span>{{localize 'ldnd5e.unit.flavor'}}</span>
                         </h3>
                         <textarea class="untext" name="system.info.flavor">{{ system.info.flavor }}</textarea>
                     </div>
-                    <div class="textbox textbox-half">
+                    <div class="textbox textbox-half description">
                         <h3 class="icon">
                             <i class="fa-solid fa-quote-left"></i>
                             <span>{{localize 'ldnd5e.unit.description'}}</span>
@@ -67,172 +70,249 @@
                 {{/unless}}
             </div>
 
+            <div class="unit-tooltip assets-tooltip{{#if buttons.assets.active}} active{{/if}}" data-name="assets">
+                <h4>{{localize 'ldnd5e.unit.assetsTitle'}}</h4>
+                <div class="total-cost price card flexrow" data-tooltip="ldnd5e.unit.totalAssetsCost">
+                    <span><i class="currency gp"></i></span>
+                    <span class="price">{{totalAssetsCost}}</span>
+                </div>
+                <div class="items-list assets-list">
+                    <div class="items-section card" data-column-min-width="250">
+                        <div class="items-header header">
+                            <h3 class="item-name flexrow">{{localize 'ldnd5e.unit.assets'}}</h3>
+                            <div class="item-detail item-attribute qtd">{{localize 'ldnd5e.assets.qtd'}}</div>
+                            <div class="item-detail item-attribute type">{{localize 'ldnd5e.assets.type'}}</div>
+                            <div class="item-detail item-attribute price">{{localize 'ldnd5e.assets.price'}}</div>
+                            <div class="item-detail item-controls"></div>
+                        </div>
+
+                        <ol class="item-list unlist">
+                            {{#each assets as |asset|}}
+                            <li class="item asset" data-uuid="{{ asset.uuid }}" data-item-id="{{ asset.id }}"
+                                data-entry-id="{{ asset.id }}" data-item-name="{{ asset.name }}">
+                                {{!-- Row Summary --}}
+                                <div class="item-row draggable">
+                                    {{!-- Item Name --}}
+                                    <div class="item-name item-action item-tooltip" role="button" data-type="asset"
+                                        aria-label="{{ asset.name }}">
+                                        <div class="image-container">
+                                            <img class="item-image gold-icon" src="{{ asset.img }}"
+                                                alt="{{ asset.name }}" draggable="false">
+                                        </div>
+                                        <div class="name name-stacked">
+                                            <span class="title">{{ asset.name }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="item-detail item-attribute qtd">
+                                        <a class="adjustment-button always-interactive" data-action="decrease"
+                                            data-property="system.quantity">
+                                            <i class="fa-solid fa-minus" inert=""></i>
+                                        </a>
+                                        <input type="text" class="always-interactive" value="{{ asset.quantity }}"
+                                            placeholder="0" data-dtype="Number" data-name="system.quantity"
+                                            inputmode="numeric" pattern="[+=\-]?\d*" min="0" aria-label="Quantity"
+                                            draggable="true">
+                                        <a class="adjustment-button always-interactive" data-action="increase"
+                                            data-property="system.quantity">
+                                            <i class="fa-solid fa-plus" inert=""></i>
+                                        </a>
+                                    </div>
+                                    <div class="item-detail item-attribute type"
+                                        data-tooltip="{{asset.assetType.label}}">
+                                        <i class="{{asset.assetType.icon}}"></i>
+                                    </div>
+                                    <div class="item-detail item-attribute price">
+                                        <span class="price">{{ asset.price.value }}</span>
+                                        <span><i class="currency {{asset.price.denomination}}"></i></span>
+                                    </div>
+
+                                    <div class="item-detail item-controls always-visible">
+                                        <button type="button"
+                                            class="config-button item-control unbutton item-action always-interactive"
+                                            data-action="removeAsset" data-tooltip="ldnd5e.unit.removeAsset"
+                                            aria-label="{{ localize 'ldnd5e.unit.removeAsset' }}">
+                                            <i class="fas fa-trash" inert></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </li>
+                            {{/each}}
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-    </div>
+        <div class="middle main-content flexrow">
 
-    <div class="middle main-content flexrow">
+            <section class="basic-skills">
+                <filigree-box class="skills flexcol{{#if isModel}} disabled{{/if}}">
+                    <h3>
+                        <i class="ra ra-battered-axe" inert></i>
+                        <span class="roboto-upper">{{localize 'ldnd5e.unit.combat'}}</span>
+                    </h3>
+                    <ul class="skills-list unslist">
+                        {{#each skills as |skill|}}
+                        <li data-key="{{skill.key}}" class="skill">
+                            <a class="name rollable" data-action="roll" data-type="skill"><i
+                                    class="{{skill.icon}}"></i>{{skill.label}}</a>
+                            <div class="bonus">
+                                <span class="sign">{{skill.sign}}</span>
+                                {{skill.mod}}
+                            </div>
+                        </li>
+                        {{/each}}
+                    </ul>
 
-        <section class="basic-skills">
-            <filigree-box class="skills flexcol{{#if isModel}} disabled{{/if}}">
-                <h3>
-                    <i class="ra ra-battered-axe" inert></i>
-                    <span class="roboto-upper">{{localize 'ldnd5e.unit.combat'}}</span>
-                </h3>
-                <ul class="skills-list unslist">
-                    {{#each skills as |skill|}}
-                    <li data-key="{{skill.key}}" class="skill">
-                        <a class="name rollable" data-action="roll" data-type="skill"><i
-                                class="{{skill.icon}}"></i>{{skill.label}}</a>
-                        <div class="bonus">
-                            <span class="sign">{{skill.sign}}</span>
-                            {{skill.mod}}
+                </filigree-box>
+
+                <filigree-box class="saves flexcol{{#if isModel}} disabled{{/if}}">
+                    <h3>
+                        <i class="fas fa-shield-heart" inert></i>
+                        <span class="roboto-upper">{{ localize "DND5E.ClassSaves" }}</span>
+                    </h3>
+                    <ul class="saves-list unlist">
+                        <li data-ability="dsp" class="save">
+                            <a class="name rollable" data-action="roll" data-type="save"><i
+                                    class="{{skills.dsp.icon}}"></i>{{skills.dsp.label}}</a>
+                            <div class="bonus">
+                                <span class="sign">{{skills.dsp.save.sign}}</span>
+                                {{skills.dsp.save.mod}}
+                            </div>
+                        </li>
+
+                    </ul>
+
+                </filigree-box>
+            </section>
+
+            <section class="items-list tatics-list" data-unit-list="tatics">
+                {{#each tatics as |t|}}
+                <div class="items-section card" data-column-min-width="250">
+                    <div class="items-header header">
+                        <h3 class="item-name flexrow">{{t.label}}</h3>
+
+                        {{#unless isMedical}}
+                        <div class="item-detail item-attribute single"></div>
+                        <div class="item-detail item-attribute prep" data-tooltip="ldnd5e.tatics.prep">
+                            <i class="fas fa-flask"></i>
                         </div>
-                    </li>
-                    {{/each}}
-                </ul>
-
-            </filigree-box>
-
-            <filigree-box class="saves flexcol{{#if isModel}} disabled{{/if}}">
-                <h3>
-                    <i class="fas fa-shield-heart" inert></i>
-                    <span class="roboto-upper">{{ localize "DND5E.ClassSaves" }}</span>
-                </h3>
-                <ul class="saves-list unlist">
-                    <li data-ability="dsp" class="save">
-                        <a class="name rollable" data-action="roll" data-type="save"><i
-                                class="{{skills.dsp.icon}}"></i>{{skills.dsp.label}}</a>
-                        <div class="bonus">
-                            <span class="sign">{{skills.dsp.save.sign}}</span>
-                            {{skills.dsp.save.mod}}
+                        <div class="item-detail item-attribute surp" data-tooltip="ldnd5e.tatics.surp">
+                            <i class="fas fa-triangle-exclamation"></i>
                         </div>
-                    </li>
-
-                </ul>
-
-            </filigree-box>
-        </section>
-
-        <section class="items-list tatics-list" data-unit-list="tatics">
-            <div class="items-section card" data-column-min-width="250">
-                <div class="items-header header">
-                    <h3 class="item-name flexrow">{{localize 'ldnd5e.unit.tatics'}}</h3>
-
-                    {{#unless isMedical}}
-                    <div class="item-detail item-attribute single"></div>
-                    <div class="item-detail item-attribute prep" data-tooltip="ldnd5e.tatics.prep">
-                        <i class="fas fa-flask"></i>
+                        <div class="item-detail item-attribute reac" data-tooltip="ldnd5e.tatics.reac">
+                            <i class="fas fa-arrows-rotate"></i>
+                        </div>
+                        <div class="item-detail item-attribute pers" data-tooltip="ldnd5e.tatics.pers">
+                            <i class="fas fa-infinity"></i>
+                        </div>
+                        {{else}}
+                        <div class="item-detail item-attribute main-recovery" data-tooltip="ldnd5e.tatics.mainRecovery">
+                            <i class="fas fa-house-medical-flag"></i>
+                        </div>
+                        {{/unless}}
+                        <div class="item-detail item-controls"></div>
                     </div>
-                    <div class="item-detail item-attribute surp" data-tooltip="ldnd5e.tatics.surp">
-                        <i class="fas fa-triangle-exclamation"></i>
-                    </div>
-                    <div class="item-detail item-attribute reac" data-tooltip="ldnd5e.tatics.reac">
-                        <i class="fas fa-arrows-rotate"></i>
-                    </div>
-                    <div class="item-detail item-attribute pers" data-tooltip="ldnd5e.tatics.pers">
-                        <i class="fas fa-infinity"></i>
-                    </div>
-                    {{else}}
-                    <div class="item-detail item-attribute main-recovery" data-tooltip="ldnd5e.tatics.mainRecovery">
-                        <i class="fas fa-house-medical-flag"></i>
-                    </div>
-                    {{/unless}}
-                    <div class="item-detail item-controls"></div>
-                </div>
 
-                <ol class="item-list unlist">
-                    {{#each tatics as |tatic|}}
-                    <li class="item tatic" data-uuid="{{ tatic.uuid }}" data-item-id="{{ tatic.id }}"
-                        data-entry-id="{{ tatic.id }}" data-item-name="{{ tatic.name }}">
-                        {{!-- Row Summary --}}
-                        <div class="item-row draggable">
-                            {{!-- Item Name --}}
-                            <div class="item-name item-action item-tooltip" role="button" data-action="useTatic"
-                                data-type="tatic" aria-label="{{ tatic.name }}">
-                                <div class="image-container">
-                                    <img class="item-image gold-icon" src="{{ tatic.img }}" alt="{{ tatic.name }}"
-                                        draggable="false">
+                    <ol class="item-list unlist">
+                        {{#each t.items as |tatic|}}
+                        <li class="item tatic" data-uuid="{{ tatic.uuid }}" data-item-id="{{ tatic.id }}"
+                            data-entry-id="{{ tatic.id }}" data-item-name="{{ tatic.name }}">
+                            {{!-- Row Summary --}}
+                            <div class="item-row draggable">
+                                {{!-- Item Name --}}
+                                <div class="item-name item-action item-tooltip" role="button" data-action="useTatic"
+                                    data-type="tatic" aria-label="{{ tatic.name }}">
+                                    <div class="image-container">
+                                        <img class="item-image gold-icon" src="{{ tatic.img }}" alt="{{ tatic.name }}"
+                                            draggable="false">
+                                    </div>
+                                    <div class="name name-stacked">
+                                        <span class="title">{{ tatic.name }}</span>
+                                    </div>
                                 </div>
-                                <div class="name name-stacked">
-                                    <span class="title">{{ tatic.name }}</span>
+                                {{#unless @root.isMedical}}
+                                <div class="item-detail item-attribute single"
+                                    data-tooltip="ldnd5e.tatics.details.single">
+                                    {{#if tatic.system.details.single}}<i class="fas fa-fire-flame-curved"></i>{{/if}}
                                 </div>
-                            </div>
-                            {{#unless @root.isMedical}}
-                            <div class="item-detail item-attribute single" data-tooltip="ldnd5e.tatics.details.single">
-                                {{#if tatic.system.details.single}}<i class="fas fa-fire-flame-curved"></i>{{/if}}
-                            </div>
-                            <div class="item-detail item-attribute prep">
-                                {{#if tatic.system.attributes.prep}}<i
-                                    class="fa-solid fa-check"></i>{{else}}&mdash;{{/if}}
-                            </div>
-                            <div class="item-detail item-attribute surp">
-                                {{#if tatic.system.attributes.surp}}<i
-                                    class="fa-solid fa-check"></i>{{else}}&mdash;{{/if}}
-                            </div>
-                            <div class="item-detail item-attribute reac">
-                                {{#if tatic.system.attributes.reac}}<i
-                                    class="fa-solid fa-check"></i>{{else}}&mdash;{{/if}}
-                            </div>
-                            <div class="item-detail item-attribute pers">
-                                {{#if tatic.system.attributes.pers}}<i
-                                    class="fa-solid fa-check"></i>{{else}}&mdash;{{/if}}
-                            </div>
-                            {{else}}
-                            <div class="item-detail item-attribute main-recovery">
-                                {{#if tatic.system.mainRecovery}}<i class="fa-solid fa-check"></i>{{else}}&mdash;{{/if}}
-                            </div>
-                            {{/unless}}
-                            <div class="item-detail item-controls always-visible">
-                                <button type="button"
-                                    class="config-button item-control  item-action unbutton trainning{{#if tatic.system.trainning}} active{{/if}}"
-                                    data-action="toggleTraining" data-tooltip="ldnd5e.unit.isTrainning"
-                                    data-tooltip-direction="LEFT" aria-label="{{ localize 'ldnd5e.unit.isTrainning' }}">
-                                    <i class="ra ra-archery-target" inert></i>
-                                </button>
-                                <button type="button"
-                                    class="config-button unbutton item-control item-action always-interactive"
-                                    data-action="showTatic" data-tooltip="ldnd5e.unit.editTatic" data-edit-item
-                                    aria-label="{{ localize 'ldnd5e.unit.editTatic' }}">
-                                    <i class="fas fa-pen-to-square" inert></i>
-                                </button>
-                                <button type="button"
-                                    class="config-button item-control unbutton item-action always-interactive"
-                                    data-action="removeTatic" data-tooltip="ldnd5e.unit.removeTatic"
-                                    aria-label="{{ localize 'ldnd5e.unit.removeTatic' }}">
-                                    <i class="fas fa-trash" inert></i>
-                                </button>
-                            </div>
-                        </div>
-                        {{#if tatic.system.trainning}}
-                        <div class="item-footer">
-                            <div class="item-detail item-quantity{{#if tatic.system.details.unique}} unique{{/if}}" data-column-id="quantity">
-                                <span class="quantity-label">
-                                    {{ localize 'ldnd5e.unit.trainningLoad' }}
-                                    <i class="ra ra-diamonds-card" inert></i>
-                                </span>
-                                {{#unless tatic.system.details.unique}}
-                                <a class="adjustment-button always-interactive" data-action="decrease"
-                                    data-property="system.quantity">
-                                    <i class="fa-solid fa-minus" inert=""></i>
-                                </a>
-                                <input type="text" class="always-interactive" value="{{system.quantity}}"
-                                    placeholder="0" data-dtype="Number" data-name="system.quantity" inputmode="numeric"
-                                    pattern="[+=\-]?\d*" min="0" aria-label="Quantity">
-                                <a class="adjustment-button always-interactive" data-action="increase"
-                                    data-property="system.quantity">
-                                    <i class="fa-solid fa-plus" inert=""></i>
-                                </a>
+                                <div class="item-detail item-attribute prep">
+                                    {{#if tatic.system.attributes.prep}}<i
+                                        class="fa-solid fa-check"></i>{{else}}&mdash;{{/if}}
+                                </div>
+                                <div class="item-detail item-attribute surp">
+                                    {{#if tatic.system.attributes.surp}}<i
+                                        class="fa-solid fa-check"></i>{{else}}&mdash;{{/if}}
+                                </div>
+                                <div class="item-detail item-attribute reac">
+                                    {{#if tatic.system.attributes.reac}}<i
+                                        class="fa-solid fa-check"></i>{{else}}&mdash;{{/if}}
+                                </div>
+                                <div class="item-detail item-attribute pers">
+                                    {{#if tatic.system.attributes.pers}}<i
+                                        class="fa-solid fa-check"></i>{{else}}&mdash;{{/if}}
+                                </div>
                                 {{else}}
-                                <span>{{system.quantity}}</span>
+                                <div class="item-detail item-attribute main-recovery">
+                                    {{#if tatic.system.mainRecovery}}<i
+                                        class="fa-solid fa-check"></i>{{else}}&mdash;{{/if}}
+                                </div>
                                 {{/unless}}
+                                <div class="item-detail item-controls always-visible">
+                                    <button type="button"
+                                        class="config-button item-control  item-action unbutton trainning{{#if tatic.system.trainning}} active{{/if}}"
+                                        data-action="toggleTraining" data-tooltip="ldnd5e.unit.isTrainning"
+                                        data-tooltip-direction="LEFT"
+                                        aria-label="{{ localize 'ldnd5e.unit.isTrainning' }}">
+                                        <i class="ra ra-archery-target" inert></i>
+                                    </button>
+                                    <button type="button"
+                                        class="config-button unbutton item-control item-action always-interactive"
+                                        data-action="showTatic" data-tooltip="ldnd5e.unit.editTatic" data-edit-item
+                                        aria-label="{{ localize 'ldnd5e.unit.editTatic' }}">
+                                        <i class="fas fa-pen-to-square" inert></i>
+                                    </button>
+                                    <button type="button"
+                                        class="config-button item-control unbutton item-action always-interactive"
+                                        data-action="removeTatic" data-tooltip="ldnd5e.unit.removeTatic"
+                                        aria-label="{{ localize 'ldnd5e.unit.removeTatic' }}">
+                                        <i class="fas fa-trash" inert></i>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                        {{/if}}
-                    </li>
-                    {{/each}}
-                </ol>
-            </div>
-        </section>
+                            {{#if tatic.system.trainning}}
+                            <div class="item-footer">
+                                <div class="item-detail item-quantity{{#if tatic.system.details.unique}} unique{{/if}}"
+                                    data-column-id="quantity">
+                                    <span class="quantity-label">
+                                        {{ localize 'ldnd5e.unit.trainningLoad' }}
+                                        <i class="ra ra-diamonds-card" inert></i>
+                                    </span>
+                                    {{#unless tatic.system.details.unique}}
+                                    <a class="adjustment-button always-interactive" data-action="decrease"
+                                        data-property="system.quantity">
+                                        <i class="fa-solid fa-minus" inert=""></i>
+                                    </a>
+                                    <input type="text" class="always-interactive" value="{{system.quantity}}"
+                                        placeholder="0" data-dtype="Number" data-name="system.quantity"
+                                        inputmode="numeric" pattern="[+=\-]?\d*" min="0" aria-label="Quantity">
+                                    <a class="adjustment-button always-interactive" data-action="increase"
+                                        data-property="system.quantity">
+                                        <i class="fa-solid fa-plus" inert=""></i>
+                                    </a>
+                                    {{else}}
+                                    <span>{{system.quantity}}</span>
+                                    {{/unless}}
+                                </div>
+                            </div>
+                            {{/if}}
+                        </li>
+                        {{/each}}
+                    </ol>
+                </div>
+                {{/each}}
+            </section>
+        </div>
     </div>
-</div>
