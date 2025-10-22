@@ -771,7 +771,7 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
     const value = foundry.utils.getProperty(item, property);
 
     // There is no sense in a 0 number of tatics.
-    if (item.type === "ldnd5e.tetics") {
+    if (item.type === "ldnd5e.tatic") {
       // Prevent decreasing the quantity to 0.
       if (value - 1 == 0) return;
     } else {

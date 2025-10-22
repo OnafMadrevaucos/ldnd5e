@@ -252,10 +252,20 @@
             "damage": "Moral Damage",
             "configuration": "Configuration",
             "details": {
+                "impetusBonus": "Impetus Bonus",
+                "isStealth": "Stealth",
+                "stealthDC": "DC",
                 "use": "Field Use",
-                "single": "Single Use?",
-                "unique": "Unique?"
+                "single": "Single Use",
+                "unique": "Unique",
+                "actions": "Commander Action",
+                "actionsInfo": "Select the actions that this tatic gives to the commander during the battle.",
+                "events": "Tatic Events",
+                "eventsInfo": "Select the events that this tatic can trigger during the battle."
             },
+            "invalidItem": "'{name}' is not a valid item. The item must be an Event or a Treat.",
+            "removeAction": "Remove Action",
+            "removeEvent": "Remove Event",
             "activity": "Activity",
             "activityTitle": "New Activity",
             "activityType": "Activity Type",

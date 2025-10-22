@@ -1,20 +1,155 @@
 <section class="details tab {{ tab.cssClass }}" data-tab="{{ tab.id }}" data-group="{{ tab.group }}">
-    
-    <fieldset>
+
+    <fieldset class="tatic-use">
         <legend>{{localize 'ldnd5e.tatics.details.use'}}</legend>
 
         <div class="form-group split-group">
+            <label>{{ localize "DND5E.ACTIVATION.FIELDS.activation.label" }}</label>
+            <div class="form-fields">
+                <select name="system.details.activation">
+                    {{ selectOptions activationTypes selected=system.details.activation valueAttr="value"
+                    labelAttr="label" }}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group split-group">
+            <label>{{ localize "ldnd5e.tatics.details.impetusBonus" }}</label>
+            <div class="form-fields">
+                <input type="text" class="always-interactive" value="{{ system.details.impetusBonus }}" placeholder="0"
+                    data-dtype="Number" name="system.details.impetusBonus" inputmode="numeric" pattern="[+=\-]?\d*"
+                    {{#unless editable}} disabled{{/unless}}>
+            </div>
+        </div>
+
+        <div class="form-group split-group stealth">
+            <label>{{ localize "ldnd5e.tatics.details.isStealth" }}?</label>
+            <div class="form-fields">
+                <dnd5e-checkbox name="system.details.stealth" tabindex="0" {{#if system.details.stealth}}
+                    checked{{/if}}{{#unless editable}} disabled{{/unless}}></dnd5e-checkbox>
+            </div>
+            {{#if system.details.stealth}}
+            <div class="form-fields">
+                <label>{{ localize "ldnd5e.tatics.details.stealthDC" }}:</label>
+                <input type="text" class="always-interactive" value="{{ system.details.stealthDC }}" placeholder="{{ localize "ldnd5e.tatics.details.stealthDC" }}"
+                    data-dtype="Number" name="system.details.stealthDC" inputmode="numeric" pattern="[+=\-]?\d*" min="0"
+                    {{#unless editable}} disabled{{/unless}}>
+            </div>
+            {{/if}}
+        </div>        
+
+        <div class="form-group split-group">
             <label>{{localize 'ldnd5e.tatics.details.single'}}</label>
-            <div class="form-fields">        
-                <dnd5e-checkbox name="system.details.single" tabindex="0"{{#if system.details.single}} checked{{/if}}{{#unless editable}} disabled{{/unless}} ></dnd5e-checkbox>        
+            <div class="form-fields">
+                <dnd5e-checkbox name="system.details.single" tabindex="0" {{#if system.details.single}}
+                    checked{{/if}}{{#unless editable}} disabled{{/unless}}></dnd5e-checkbox>
             </div>
         </div>
 
         <div class="form-group split-group">
             <label>{{localize 'ldnd5e.tatics.details.unique'}}</label>
-            <div class="form-fields">        
-                <dnd5e-checkbox name="system.details.unique" tabindex="1"{{#if system.details.unique}} checked{{/if}} {{#unless editable}} disabled{{/unless}}></dnd5e-checkbox>        
-            </div>            
+            <div class="form-fields">
+                <dnd5e-checkbox name="system.details.unique" tabindex="1" {{#if system.details.unique}} checked{{/if}}
+                    {{#unless editable}} disabled{{/unless}}></dnd5e-checkbox>
+            </div>
+        </div>
+
+    </fieldset>
+
+    <fieldset class="tatic-action">
+        <legend>{{localize 'ldnd5e.tatics.details.actions'}}</legend>
+
+        <ol class="items-list actions-list unlist">
+            {{#each actions as |action|}}
+            <li class="item action" data-uuid="{{ action.uuid }}" data-item-id="{{ action.id }}"
+                data-entry-id="{{ action.id }}" data-item-name="{{ action.name }}">
+                {{!-- Row Summary --}}
+                <div class="item-row draggable">
+                    {{!-- Item Name --}}
+                    <div class="item-name item-action" role="button" data-type="action" aria-label="{{ action.name }}">
+                        <div class="image-container">
+                            <img class="item-image gold-icon" src="{{ action.img }}" alt="{{ action.name }}"
+                                draggable="false">
+                        </div>
+                        <div class="name name-stacked" data-action="showAction">
+                            <span class="title">{{ action.name }}</span>
+                        </div>
+                    </div>
+                    {{!-- Remove Asset --}}
+                    {{#if @root.editable}}
+                    <div class="item-detail item-controls always-visible">
+                        <button type="button" class="config-button item-control unbutton item-action always-interactive"
+                            data-action="removeAction" data-tooltip="ldnd5e.tatics.removeAction"
+                            aria-label="{{ localize 'ldnd5e.tatics.removeAction' }}">
+                            <i class="fas fa-trash" inert></i>
+                        </button>
+                    </div>
+                    {{/if}}
+                </div>
+            </li>
+            {{/each}}
+        </ol>
+
+        <div class="form-group">
+            <p class="hint centered drop-area">{{localize 'ldnd5e.tatics.details.actionsInfo'}}</p>
+        </div>
+
+    </fieldset>
+
+    <fieldset class="tatic-events">
+        <legend>{{localize 'ldnd5e.tatics.details.events'}}</legend>
+
+        <ol class="items-list events-list unlist">
+            {{#each events as |event|}}
+            <li class="item event" data-uuid="{{ event.uuid }}" data-item-id="{{ event.id }}"
+                data-entry-id="{{ event.id }}" data-item-name="{{ event.name }}">
+                {{!-- Row Summary --}}
+                <div class="item-row draggable">
+                    {{!-- Item Name --}}
+                    <div class="item-name item-action" role="button" data-type="event" aria-label="{{ event.name }}">
+                        <div class="image-container">
+                            <img class="item-image gold-icon" src="{{ event.img }}" alt="{{ event.name }}"
+                                draggable="false">
+                        </div>
+                        <div class="name name-stacked" data-action="showEvent">
+                            <span class="title">{{ event.name }}</span>
+                        </div>
+                    </div>
+                    {{!-- Quantity --}}
+                    <div class="item-detail item-attribute qtd">
+                        {{#if @root.editable}}
+                        <a class="adjustment-button always-interactive" data-action="decrease"
+                            data-property="system.info.quantity">
+                            <i class="fa-solid fa-minus" inert=""></i>
+                        </a>
+                        <input type="text" class="always-interactive" value="{{ event.quantity }}" placeholder="0"
+                            data-dtype="Number" data-name="system.info.quantity" inputmode="numeric"
+                            pattern="[+=\-]?\d*" min="0" aria-label="Quantity" data-id="{{event.id}}">
+                        <a class="adjustment-button always-interactive" data-action="increase"
+                            data-property="system.info.quantity">
+                            <i class="fa-solid fa-plus" inert=""></i>
+                        </a>
+                        {{else}}
+                        <span>{{ event.quantity }}</span>
+                        {{/if}}
+                    </div>
+                    {{!-- Remove Asset --}}
+                    {{#if @root.editable}}
+                    <div class="item-detail item-controls always-visible">
+                        <button type="button" class="config-button item-control unbutton item-action always-interactive"
+                            data-action="removeEvent" data-tooltip="ldnd5e.tatics.removeEvent"
+                            aria-label="{{ localize 'ldnd5e.tatics.removeEvent' }}">
+                            <i class="fas fa-trash" inert></i>
+                        </button>
+                    </div>
+                    {{/if}}
+                </div>
+            </li>
+            {{/each}}
+        </ol>
+
+        <div class="form-group">
+            <p class="hint centered drop-area">{{localize 'ldnd5e.tatics.details.eventsInfo'}}</p>
         </div>
 
     </fieldset>

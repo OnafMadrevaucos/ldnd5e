@@ -73,6 +73,62 @@
       "flags": {}
     },
     {
+      "name": "exercitos",
+      "label": "Exércitos",
+      "path": "packs/exercitos",
+      "type": "Actor",
+      "system": "dnd5e",
+      "flags": {}
+    },
+    {
+      "name": "companhias",
+      "label": "Companhias",
+      "path": "packs/companhias",
+      "type": "Actor",
+      "system": "dnd5e",
+      "flags": {}
+    },
+    {
+      "name": "unidades",
+      "label": "Unidades",
+      "path": "packs/unidades",
+      "type": "Actor",
+      "system": "dnd5e",
+      "flags": {}
+    },
+    {
+      "name": "acoes",
+      "label": "Ações de Comandante",
+      "path": "packs/acoes",
+      "type": "Item",
+      "system": "dnd5e",
+      "flags": {}
+    },
+    {
+      "name": "taticas",
+      "label": "Táticas",
+      "path": "packs/taticas",
+      "type": "Item",
+      "system": "dnd5e",
+      "flags": {}
+    },
+    {
+      "name": "eventos",
+      "label": "Eventos",
+      "path": "packs/eventos",
+      "type": "Item",
+      "system": "dnd5e",
+      "flags": {}
+    },
+    {
+      "name": "insumos",
+      "label": "Insumos",
+      "path": "packs/insumos",
+      "type": "Item",
+      "system": "dnd5e",
+      "flags": {}
+    },
+    {
       "name": "talentos",
       "label": "Talentos",
       "path": "packs/talentos",
@@ -96,8 +152,31 @@
       "color": "#459136",
       "packs": [
         "regras"
-      ],
+      ],      
       "folders": [
+        {
+          "name": "Militar",
+          "sorting": "m",
+          "color": "#459136",
+          "packs": [
+            "acoes",
+            "taticas",
+            "insumos",
+            "eventos"
+          ],
+          "folders": [
+            {
+              "name": "Atores",
+              "sorting": "m",
+              "color": "#459136",
+              "packs": [
+                "exercitos",
+                "companhias",
+                "unidades"
+              ]
+            }            
+          ]
+        },
         {
           "name": "Habilidades",
           "sorting": "m",

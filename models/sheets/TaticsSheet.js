@@ -20,12 +20,18 @@ export default class TaticsSheet extends item.ItemSheet5e {
         editingDescriptionTarget: null,
         viewPermission: CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER,
         actions: {
-            editDescription: this.#editDescription,
-            toggleAttr: this.#toggleAttr,
-            toggleRecovery: this.#toggleRecovery,
-            editDocument: this.#editDocument,
-            deleteDocument: this.#deleteDocument,
-            roll: this.#roll
+            editDescription: TaticsSheet.#editDescription,
+            toggleAttr: TaticsSheet.#toggleAttr,
+            toggleRecovery: TaticsSheet.#toggleRecovery,
+            showAction: TaticsSheet.#showAction,
+            removeAction: TaticsSheet.#removeAction,
+            showEvent: TaticsSheet.#showEvent,
+            removeEvent: TaticsSheet.#removeEvent,
+            editDocument: TaticsSheet.#editDocument,
+            deleteDocument: TaticsSheet.#deleteDocument,
+            roll: TaticsSheet.#roll,
+            decrease: TaticsSheet.#decrease,
+            increase: TaticsSheet.#increase
         },
         form: {
             submitOnChange: true,
@@ -84,6 +90,7 @@ export default class TaticsSheet extends item.ItemSheet5e {
         await super._onRender(context, options);
 
         this.element.querySelector(".cr input")?.addEventListener('input', event => this._onCRChange(event));
+        this.element.querySelector(".qtd input")?.addEventListener('input', event => this._onQuantityChange(event));
 
         if (this.editingDescriptionTarget) {
             this.element.querySelectorAll("prose-mirror").forEach(editor => editor.addEventListener("save", () => {
@@ -109,7 +116,6 @@ export default class TaticsSheet extends item.ItemSheet5e {
     /** @inheritdoc */
     async _prepareContext(options) {
         const context = await super._prepareContext(options);
-
         // Prepare the context with the configuration values from the system.
         context.CONFIG = dnd5e.config;
 
@@ -200,6 +206,19 @@ export default class TaticsSheet extends item.ItemSheet5e {
      * @protected
      */
     async _prepareDetailsContext(context, options) {
+        context.activationTypes = [
+            ...Object.entries(CONFIG.DND5E.activityActivationTypes).map(([value, config]) => ({
+                value,
+                label: game.i18n.localize(config.label),
+                group: game.i18n.localize(config.group)
+            })),
+            { value: "", label: game.i18n.localize("DND5E.NoneActionLabel") }
+        ];
+
+        context.events = this._prepareEvents();
+
+        context.actions = this._prepareActions();
+
         return context;
     }
 
@@ -236,18 +255,68 @@ export default class TaticsSheet extends item.ItemSheet5e {
     /* -------------------------------------------- */
 
     /**
-   * Prepare actor portrait for display.
-   * @param {ApplicationRenderContext} context  Context being prepared.
+   * Prepare item portrait for display.
    * @returns {object}
    * @protected
    */
-    _preparePortrait(context) {
+    _preparePortrait() {
         const defaultArtwork = Item.implementation.getDefaultArtwork(this.item._source)?.img;
         return {
             src: this.item.img ?? defaultArtwork,
             // TODO: Not sure the best way to update the parent texture from this sheet if this is a token actor.
             path: "img"
         };
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Prepare the commander's actions for display.
+   * @returns {object}
+   * @protected
+   */
+    _prepareActions() {
+        const items = this.item.getFlag('ldnd5e', 'actions') ?? {};
+
+        return Object.values(items).map(a => {
+            const action = fromUuidSync(a.uuid);
+
+            // Ignore non-existing actions.
+            if (!action) return;
+
+            return {
+                id: action.id,
+                name: action.name,
+                uuid: action.uuid,
+                img: action.img
+            };
+        }).filter(a => a !== undefined);
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Prepare item's events for display.
+   * @returns {object}
+   * @protected
+   */
+    _prepareEvents() {
+        const items = this.item.getFlag('ldnd5e', 'events') ?? {};
+
+        return Object.values(items).map(e => {
+            const event = fromUuidSync(e.uuid);
+
+            // Ignore non-existing events.
+            if (!event) return;
+
+            return {
+                id: event.id,
+                name: event.name,
+                uuid: event.uuid,
+                img: event.img,
+                quantity: e.quantity
+            };
+        }).filter(e => e !== undefined);
     }
 
     /* -------------------------------------------- */
@@ -287,8 +356,59 @@ export default class TaticsSheet extends item.ItemSheet5e {
     /* -------------------------------------------- */
 
     /**
+     * The user has changed the Event Quantity.
+     * @param {PointerEvent} event  The triggering event.
+     * @protected
+     */
+    async _onQuantityChange(event) {
+        const input = event.currentTarget;
+        const id = input.dataset.id;
+
+        const events = this.item.getFlag('ldnd5e', 'events') ?? {};
+        let val = parseInt(input.value);
+
+        const min = 0;
+        if (val < min) input.value = min;
+
+        if (isNaN(val)) return;
+
+        events[id].quantity = val;
+        await this.item.setFlag('ldnd5e', 'events', events);
+    }
+
+    /* -------------------------------------------- */
+
+    /** @override */
+    async _onDropItem(event, data) {
+        const windowContent = this.element.querySelector(".window-content");
+
+        const item = await Item.implementation.fromDropData(data);
+
+        // Ignore non-valid items or items that dont exist anymore.
+        if (!item || (item.type !== "ldnd5e.event" && item.type !== "feat")) {
+            ui.notifications.warn(game.i18n.format("ldnd5e.tatics.invalidItem", { name: item.name }));
+            return;
+        }
+
+        if (item.type === "ldnd5e.event") {
+            const events = this.item.getFlag('ldnd5e', 'events') ?? {};
+            events[item.id] = { quantity: 1, id: item.id, uuid: item.uuid };
+
+            await this.item.setFlag("ldnd5e", "events", events);
+        }
+        else if (item.type === "feat") {
+            const actions = this.item.getFlag('ldnd5e', 'actions') ?? {};
+            actions[item.id] = { id: item.id, uuid: item.uuid };
+
+            await this.item.setFlag("ldnd5e", "actions", actions);
+        }
+
+        this.render();
+    }
+
+    /**
    * Handle expanding the description editor.
-   * @this {ItemSheet5e}
+   * @this {TaticsSheet}
    * @param {Event} event         Triggering click event.
    * @param {HTMLElement} target  Button that was clicked.
    */
@@ -302,7 +422,7 @@ export default class TaticsSheet extends item.ItemSheet5e {
 
     /**
    * Handle toggling attributes.
-   * @this {ItemSheet5e}
+   * @this {TaticsSheet}
    * @param {Event} event         Triggering click event.
    * @param {HTMLElement} target  Button that was clicked.
    */
@@ -318,7 +438,7 @@ export default class TaticsSheet extends item.ItemSheet5e {
 
     /**
    * Handle toggling if this tatic is part of the main recovey action.
-   * @this {ItemSheet5e}
+   * @this {TaticsSheet}
    * @param {Event} event         Triggering click event.
    * @param {HTMLElement} target  Button that was clicked.
    */
@@ -331,8 +451,83 @@ export default class TaticsSheet extends item.ItemSheet5e {
     /* -------------------------------------------- */
 
     /**
+   * Handle showing of an action's sheet.
+   * @this {TaticsSheet}
+   * @param {Event} event         Triggering click event.
+   * @param {HTMLElement} target  Button that was clicked.
+   */
+    static async #showAction(event, target) {
+        const li = target.closest(".item.action");
+        const actionUuid = li.dataset.uuid;
+
+        const action = await fromUuid(actionUuid);
+        if (!action) return;
+
+        action.sheet.render(true);
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Handle removing of an action from this tatic.
+   * @this {TaticsSheet}
+   * @param {Event} event         Triggering click event.
+   * @param {HTMLElement} target  Button that was clicked.
+   */
+    static async #removeAction(event, target) {
+        const li = target.closest(".item.action");
+        const actionId = li.dataset.itemId;
+
+        const actions = this.item.getFlag('ldnd5e', 'actions') ?? {};
+        delete actions[actionId];
+
+        await this.item.setFlag("ldnd5e", "actions", actions);
+
+        this.render();
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Handle showing of an event's sheet.
+   * @this {TaticsSheet}
+   * @param {Event} event         Triggering click event.
+   * @param {HTMLElement} target  Button that was clicked.
+   */
+    static async #showEvent(event, target) {
+        const li = target.closest(".item.event");
+        const eventUuid = li.dataset.uuid;
+
+        const eventObj = await fromUuid(eventUuid);
+        if (!eventObj) return;
+
+        eventObj.sheet.render(true);
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Handle removing of an event from this tatic.
+   * @this {TaticsSheet}
+   * @param {Event} event         Triggering click event.
+   * @param {HTMLElement} target  Button that was clicked.
+   */
+    static async #removeEvent(event, target) {
+        const li = target.closest(".item.event");
+        const eventId = li.dataset.itemId;
+
+        const events = this.item.getFlag('ldnd5e', 'events') ?? {};
+        delete events[eventId];
+
+        await this.item.setFlag("ldnd5e", "events", events);
+        this.render();
+    }
+
+    /* -------------------------------------------- */
+
+    /**
    * Handle showing an activity.
-   * @this {ItemSheet5e}
+   * @this {TaticsSheet}
    * @param {Event} event         Triggering click event.
    * @param {HTMLElement} target  Button that was clicked.
    */
@@ -351,7 +546,7 @@ export default class TaticsSheet extends item.ItemSheet5e {
 
     /**
    * Handle deleting an activity.
-   * @this {ItemSheet5e}
+   * @this {TaticsSheet}
    * @param {Event} event         Triggering click event.
    * @param {HTMLElement} target  Button that was clicked.
    */
@@ -368,7 +563,7 @@ export default class TaticsSheet extends item.ItemSheet5e {
 
     /**
    * Handle activity's roll.
-   * @this {ItemSheet5e}
+   * @this {TaticsSheet}
    * @param {Event} event         Triggering click event.
    * @param {HTMLElement} target  Button that was clicked.
    */
@@ -386,5 +581,52 @@ export default class TaticsSheet extends item.ItemSheet5e {
                 );
             };
         }
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+     * Decrease an unit property value.
+     * @this {UnitSheet}
+     * @param {PointerEvent} event  The originating click event.
+     * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+     */
+    static async #decrease(event, target) {
+        const property = target.dataset.property;
+        const itemId = target.closest(".event")?.dataset.itemId;
+        if (!itemId) return;
+
+        const events = this.item.getFlag('ldnd5e', 'events') ?? {};
+        const value = events[itemId]?.quantity ?? 0;
+
+        // Prevent decreasing the quantity to 0.
+        if (value - 1 == 0) return;
+
+        events[itemId].quantity = value - 1;
+        await this.item.setFlag('ldnd5e', 'events', events);
+
+        this.render();
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+     * Increase an unit property value.
+     * @this {UnitSheet}
+     * @param {PointerEvent} event  The originating click event.
+     * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+     */
+    static async #increase(event, target) {
+        const property = target.dataset.property;
+        const itemId = target.closest(".event")?.dataset.itemId;
+        if (!itemId) return;
+
+        const events = this.item.getFlag('ldnd5e', 'events') ?? {};
+        const value = events[itemId]?.quantity ?? 0;
+
+        events[itemId].quantity = value + 1;
+        await this.item.setFlag('ldnd5e', 'events', events);
+
+        this.render();
     }
 }

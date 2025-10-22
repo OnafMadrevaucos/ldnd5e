@@ -2213,8 +2213,7 @@
 }
 
 .ldnd5e.unit .proficiencies .proficiency,
-.ldnd5e.event .attributes .attribute
-.ldnd5e.tatic .attributes .attribute,
+.ldnd5e.event .attributes .attribute .ldnd5e.tatic .attributes .attribute,
 .ldnd5e.tatic .main-recovery button {
   width: 1.75em;
   height: 1.75em;
@@ -2275,6 +2274,56 @@
   text-shadow: 0 0 10px var(--color-shadow-primary);
 }
 
+.ldnd5e.tatic .drop-area {
+  border: 1px dashed var(--color-border-light-2);
+  border-radius: 4px;
+  padding: 4px;
+}
+
+.ldnd5e.tatic .details.tab .form-group.stealth {
+  gap: 5px;
+}
+
+.ldnd5e.tatic .details.tab .item .item-row,
+.ldnd5e.tatic .details.tab .item-row * {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.ldnd5e.tatic .details.tab .item-row .item-name {
+  flex: 5;
+}
+.ldnd5e.tatic .details.tab .item-row .item-name .name:hover {
+  cursor: pointer;
+  text-shadow: 0 0 10px var(--color-shadow-primary);
+}
+
+.ldnd5e.tatic .details.tab .item-row .item-attribute {
+  width: 65px;
+}
+.ldnd5e.tatic .details.tab .item-row .item-attribute.qtd {
+  justify-content: flex-end;
+}
+.ldnd5e.tatic .details.tab .item-row .item-attribute span {
+  font-size: var(--font-size-16);
+  font-weight: bold;
+}
+
+.ldnd5e.tatic .details.tab .item-row .item-attribute>* {
+  text-align: center;
+}
+
+.ldnd5e.tatic .details.tab .item-row .item-controls {
+  width: auto;
+}
+
+.ldnd5e.tatic .details.tab .item-row .item-controls button {
+  position: inherit;
+}
+
 .ldnd5e.asset .asset-type a {
   font-size: var(--font-size-24);
 }
@@ -2298,15 +2347,19 @@
 .ldnd5e.event .attributes .attribute.baix.active {
   color: #1f1f1f;
 }
+
 .ldnd5e.event .attributes .attribute.infr.active {
   color: #ac3b3b;
 }
+
 .ldnd5e.event .attributes .attribute.limt.active {
   color: #4141ac;
 }
+
 .ldnd5e.event .attributes .attribute.prep.active {
   color: #edde0b;
 }
+
 .ldnd5e.event .attributes .attribute.imps.active {
   color: #48a740;
 }

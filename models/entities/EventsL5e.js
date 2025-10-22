@@ -2,7 +2,7 @@ export default class EventsL5e extends foundry.abstract.TypeDataModel {
 
     /** @inheritDoc */
     static metadata = Object.freeze({
-        hasEffects: false
+        hasEffects: false,
     });
 
     /** @inheritDoc */
@@ -12,7 +12,7 @@ export default class EventsL5e extends foundry.abstract.TypeDataModel {
             name: new fields.StringField({ required: true, label: "ldnd5e.events.name" }),
             info: new fields.SchemaField({
                 flavor: new fields.StringField({ textSearch: true, initial: "" }),
-                description: new fields.StringField({ textSearch: true, initial: "" }), 
+                description: new fields.StringField({ textSearch: true, initial: "" }),                
                 // Preço do efeito do Evento.
                 price: new fields.SchemaField({
                     value: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
@@ -22,8 +22,8 @@ export default class EventsL5e extends foundry.abstract.TypeDataModel {
                         initial: "gp",
                         choices: dnd5e.config.currencies,
                     }),
-                }), 
-            }),            
+                }),
+            }),
             attributes: new fields.SchemaField({
                 // Se o Evento causa baixas.
                 baix: new fields.BooleanField({ required: true, nullable: false, initial: false }),
@@ -35,12 +35,11 @@ export default class EventsL5e extends foundry.abstract.TypeDataModel {
                 prep: new fields.BooleanField({ required: true, nullable: false, initial: false }),
                 // Se o Evento gera um tipo de impasse.
                 imps: new fields.BooleanField({ required: true, nullable: false, initial: false }),
-            }),            
+            }),
             // Lista de Atividades que o Evento fornece.
             activities: new fields.ObjectField({ required: true, nullable: false }),
         };
     }
-
     /* -------------------------------------------- */
     /*  Utility Functions                           */
     /* -------------------------------------------- */
@@ -58,9 +57,9 @@ export default class EventsL5e extends foundry.abstract.TypeDataModel {
                     <div class="label">Mod.</div>
                     <div class="value">
                     ${Object.values(this.activities).reduce((a, b) => {
-                        const formula = `${b.number}d${b.die}${b.bonus}`;
+                    const formula = `${b.number}d${b.die}${b.bonus}`;
 
-                        return `${a}
+                    return `${a}
                             <span class="formula" data-type="activity" data-id="${b.id}" data-tooltip aria-label="${b.name}">${formula}</span>
                             <span class="damage-type" data-tooltip aria-label="${game.i18n.localize(`ldnd5e.tatics.activities.${b.type}`)}">
                                 <dnd5e-icon src="modules/ldnd5e/ui/icons/${b.type}.svg"></dnd5e-icon>
@@ -70,5 +69,17 @@ export default class EventsL5e extends foundry.abstract.TypeDataModel {
                 classes: "info-grid damage"
             });
         }
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+    * @inheritdoc
+    */
+    toDragData() {
+        return {
+            type: "ldnd5e.event",
+            uuid: this.uuid
+        };
     }
 }

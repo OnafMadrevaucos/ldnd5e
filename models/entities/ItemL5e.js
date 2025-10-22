@@ -7,7 +7,7 @@ const app = dnd5e.applications;
  * Sobrescreve e amplia a implementação padrão do Sistema DnD5e.
  * @extends {Item5e}
  */
-export default class ItemL5e extends dnd5e.documents.Item5e {
+export default class ItemL5e extends dnd5e.documents.Item5e {  
 
     /* -------------------------------------------- */
     /*  Data Preparation                            */
@@ -34,9 +34,9 @@ export default class ItemL5e extends dnd5e.documents.Item5e {
     /** @inheritDoc */
     prepareEmbeddedDocuments() {
         // Do not prepare embedded documents for tatics, for now...
-        if(this.type.includes("ldnd5e")) return;
-        
-        super.prepareEmbeddedDocuments();       
+        if (this.type.includes("ldnd5e")) return;
+
+        super.prepareEmbeddedDocuments();
     }
 
     /* -------------------------------------------- */

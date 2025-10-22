@@ -252,10 +252,20 @@
             "damage": "Dano à Moral",
             "configuration": "Configuração",
             "details": {
+                "impetusBonus": "Bônus de Ímpeto",
+                "isStealth": "Furtiva",
+                "stealthDC": "CD",
                 "use": "Uso em Batalha",
                 "single": "Uso Único",
-                "unique": "Tática Única"
+                "unique": "Tática Única",
+                "actions": "Ação de Comandante",
+                "actionsInfo": "Selecione uma ação que essa tática pode fornecer ao Comandante durante a batalha.",
+                "events": "Eventos da Tática",
+                "eventsInfo": "Selecione os eventos que essa tática pode ativar durante a batalha."
             },
+            "invalidItem": "'{name}' não é um item válido. O item deve ser um Evento ou uma Característica.",
+            "removeAction": "Remover Ação",
+            "removeEvent": "Remover Evento",
             "activity": "Atividade",
             "activityTitle": "Nova Atividade",
             "activityType": "Tipo de Atividade",

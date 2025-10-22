@@ -4,7 +4,7 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
 
     /** @inheritDoc */
     static metadata = Object.freeze({
-        hasEffects: false
+        hasEffects: false,
     });
 
 
@@ -41,6 +41,18 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
             // Flag indicando se a Tática é a habilidade de recuperação da unidade médica.
             mainRecovery: new fields.BooleanField({ required: true, nullable: false, initial: false }),
             details: new fields.SchemaField({
+                // Tempo de Ativação da Tática.
+                activation: new fields.StringField({
+                    required: true,
+                    nullable: false,
+                    initial: "",
+                }),
+                // Bonus de Ímpeto da Tática.
+                impetusBonus: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+                // Se a Tática é furtiva.
+                stealth: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+                // CD de Furtividade da Tática.
+                stealthDC: new fields.NumberField({ required: true, nullable: false, initial: 10 }),
                 // Se a Tática é de uso unico.
                 single: new fields.BooleanField({ required: true, nullable: false, initial: false }),
                 // Se a Tática é única.
@@ -66,17 +78,10 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
     /* -------------------------------------------- */
 
     /**@inheritdoc */
-    prepareBaseData() {
-        // Nothing to do.
-    }
-
-    /* -------------------------------------------- */
-
-    /**@inheritdoc */
     prepareDerivedData() {
         this.labels = {};
 
-        if(this.details.unique) {
+        if (this.details.unique) {
             this.quantity = 1;
         }
 
@@ -94,13 +99,15 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
 
     /** @inheritDoc */
     async getSheetData(context) {
-        const unit = this.parent.actor;
-        const impetus = unit?.system.abilities.frt.value ?? 0;
+        const unit = this.parent.actor;    
+        const impetus = (unit?.system.abilities.frt.value) ?? 0;
+
+        const total = impetus + this.details.impetusBonus; 
 
         context.info = [{
             label: "ldnd5e.tatics.impetus",
             classes: "info-lg",
-            value: dnd5e.utils.formatModifier(impetus)
+            value: dnd5e.utils.formatModifier(total)
         }];
 
         if (Object.keys(this.activities).length > 0) {
@@ -138,6 +145,18 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
     }
 
     /* -------------------------------------------- */
+
+    /**
+    * @inheritdoc
+    */
+    toDragData() {
+        return {
+            type: "ldnd5e.tatic",
+            uuid: this.uuid
+        };
+    }
+
+    /* -------------------------------------------- */
     /*  Dice Roll Functions                         */
     /* -------------------------------------------- */
 
@@ -172,10 +191,10 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
 
         const rollConfig = {
             attackMode,
-            event,  
-            data: this.getRollData(),         
+            event,
+            data: this.getRollData(),
             rolls: [{
-                parts: [formula],                
+                parts: [formula],
                 options: { type: taticType, targetField: 'a', fields: ['a', 'e'] }
             }],
         };
@@ -227,7 +246,7 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
             formula,
             total: rolls.reduce((a, b) => a + b.total, 0),
             rolls
-        };        
+        };
 
         return result;
     }

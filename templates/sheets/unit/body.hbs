@@ -86,7 +86,7 @@
                             <div class="item-detail item-controls"></div>
                         </div>
 
-                        <ol class="item-list unlist">
+                        <ol class="item-list assets-list unlist">
                             {{#each assets as |asset|}}
                             <li class="item asset" data-uuid="{{ asset.uuid }}" data-item-id="{{ asset.id }}"
                                 data-entry-id="{{ asset.id }}" data-item-name="{{ asset.name }}">
@@ -103,7 +103,7 @@
                                             <span class="title">{{ asset.name }}</span>
                                         </div>
                                     </div>
-
+                                    {{!-- Quantity --}}
                                     <div class="item-detail item-attribute qtd">
                                         <a class="adjustment-button always-interactive" data-action="decrease"
                                             data-property="system.quantity">
@@ -118,15 +118,17 @@
                                             <i class="fa-solid fa-plus" inert=""></i>
                                         </a>
                                     </div>
+                                    {{!-- Type --}}
                                     <div class="item-detail item-attribute type"
                                         data-tooltip="{{asset.assetType.label}}">
                                         <i class="{{asset.assetType.icon}}"></i>
                                     </div>
+                                    {{!-- Price --}}
                                     <div class="item-detail item-attribute price">
                                         <span class="price">{{ asset.price.value }}</span>
                                         <span><i class="currency {{asset.price.denomination}}"></i></span>
                                     </div>
-
+                                    {{!-- Remove Asset --}}
                                     <div class="item-detail item-controls always-visible">
                                         <button type="button"
                                             class="config-button item-control unbutton item-action always-interactive"
