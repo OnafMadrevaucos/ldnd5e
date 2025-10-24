@@ -215,13 +215,33 @@
             <div class="scoreboard">
 
                 <div class="score top">
-                    <span class="impetus">{{enemy.impetus}} <i class="ra ra-all-for-one" inert></i></span>
-                    <span class="atk-points">{{enemy.attack}} <i class="ra ra-broken-skull" inert></i></span>
+                    <span class="impetus">
+                        <input type="text" class="always-interactive" value="{{ enemy.impetus }}"
+                            placeholder="0" data-dtype="Number" data-property="scoreboard.top.impetus" inputmode="numeric"
+                            pattern="[+=\-]?\d*" min="0" aria-label="Impetus">
+                        <i class="ra ra-all-for-one" inert></i>
+                    </span>
+                    <span class="atk-points">
+                        <input type="text" class="always-interactive" value="{{ enemy.attack }}" placeholder="0"
+                            data-dtype="Number" data-property="scoreboard.top.attack" inputmode="numeric" pattern="[+=\-]?\d*"
+                            min="0" aria-label="Attack">
+                        <i class="ra ra-broken-skull" inert></i>
+                    </span>
                 </div>
 
                 <div class="score bottom">
-                    <span class="impetus">{{ally.impetus}} <i class="ra ra-all-for-one" inert></i></span>
-                    <span class="atk-points">{{ally.attack}} <i class="ra ra-broken-skull" inert></i></span>
+                    <span class="impetus">
+                        <input type="text" class="always-interactive" value="{{ ally.impetus }}"
+                            placeholder="0" data-dtype="Number" data-property="scoreboard.bottom.impetus" inputmode="numeric"
+                            pattern="[+=\-]?\d*" min="0" aria-label="Impetus">
+                        <i class="ra ra-all-for-one" inert></i>
+                    </span>
+                    <span class="atk-points">
+                        <input type="text" class="always-interactive" value="{{ ally.attack }}" placeholder="0"
+                            data-dtype="Number" data-property="scoreboard.bottom.attack" inputmode="numeric" pattern="[+=\-]?\d*"
+                            min="0" aria-label="Attack">
+                        <i class="ra ra-broken-skull" inert></i>
+                    </span>                    
                 </div>
 
             </div>

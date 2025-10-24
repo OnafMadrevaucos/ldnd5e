@@ -25,7 +25,7 @@
                 {{#each buttons as |button|}}
                 <a class="icon {{#if button.active}}active{{/if}}" data-action="showTooltip"
                     data-name="{{button.name}}">
-                    <img class="svg" src="{{button.icon.current}}">
+                    <i class="{{button.icon}}"></i>
                 </a>
                 {{/each}}
             </div>

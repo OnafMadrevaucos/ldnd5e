@@ -61,24 +61,12 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
     description: {
       name: "description",
       active: false,
-      icon: {
-        current: "modules/ldnd5e/ui/icons/description.svg",
-        src: {
-          active: "modules/ldnd5e/ui/icons/description-gold.svg",
-          inactive: "modules/ldnd5e/ui/icons/description.svg"
-        }
-      }
+      icon: 'ra ra-scroll-unfurled'
     },
     assets: {
       name: "assets",
       active: false,
-      icon: {
-        current: "modules/ldnd5e/ui/icons/assets.svg",
-        src: {
-          active: "modules/ldnd5e/ui/icons/assets-gold.svg",
-          inactive: "modules/ldnd5e/ui/icons/assets.svg"
-        }
-      }
+      icon: 'ra ra-knight-helmet'
     }
   };
 
@@ -152,31 +140,8 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
 
   /** @inheritDoc */
   _onClose() {
-    // Reset unit buttons state to default.
-    this.#unitButtons = {
-      description: {
-        name: "description",
-        active: false,
-        icon: {
-          current: "modules/ldnd5e/ui/icons/description.svg",
-          src: {
-            active: "modules/ldnd5e/ui/icons/description-gold.svg",
-            inactive: "modules/ldnd5e/ui/icons/description.svg"
-          }
-        }
-      },
-      assets: {
-        name: "assets",
-        active: false,
-        icon: {
-          current: "modules/ldnd5e/ui/icons/assets.svg",
-          src: {
-            active: "modules/ldnd5e/ui/icons/assets-gold.svg",
-            inactive: "modules/ldnd5e/ui/icons/assets.svg"
-          }
-        }
-      }
-    };
+    // Reset unit buttons before closing.
+    Object.values(this.#unitButtons).forEach(ub => ub.active = false);
 
     super._onClose();
   }
@@ -439,13 +404,6 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
       btnState.active = tooltip.classList.contains("active");
     }
 
-    for (const button of buttons) {
-      const name = button.dataset.name;
-      const btnState = this.unitButtons[name];
-
-      btnState.icon.current = btnState.active ? btnState.icon.src.active : btnState.icon.src.inactive;
-    }
-
     return this.unitButtons;
   }
 
@@ -633,14 +591,16 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
 
     buttons.forEach(btn => {
       const btnState = this.unitButtons[btn.dataset.name];
+      
 
-      if (btnState.name !== clickedName) btnState.active = false;
-      else btnState.active = !btnState.active;
-
-      btnState.icon.current = btnState.active ? btnState.icon.src.active : btnState.icon.src.inactive;
-
-      const img = btn.querySelector("img.svg");
-      img.src = btnState.icon.current;
+      if (btnState.name !== clickedName) {
+        btnState.active = false;
+        btn.classList.remove("active");
+      }
+      else {
+        btnState.active = !btnState.active;
+        btn.classList.toggle("active");
+      }      
     });
 
     tooltips.forEach(tooltip => {
@@ -648,7 +608,7 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
         tooltip.classList.remove("active");
       else
         tooltip.classList.toggle("active");
-    });
+    });    
   }
 
   /* -------------------------------------------- */

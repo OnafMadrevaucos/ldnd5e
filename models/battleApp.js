@@ -507,6 +507,9 @@ export default class BattleApp extends api.Application5e {
         deck.list = {
             hand: deck.hand.tatics.map(taticUuid => {
                 const tatic = fromUuidSync(taticUuid);
+                // Ignore if the tatic doesn't exist.
+                if (!tatic) return null;
+
                 const unit = tatic.actor;
 
                 return {
@@ -526,6 +529,9 @@ export default class BattleApp extends api.Application5e {
             piles: {
                 tatics: deck.piles.tatics.map(taticUuid => {
                     const tatic = fromUuidSync(taticUuid);
+                    // Ignore if the tatic doesn't exist.
+                    if (!tatic) return null;
+
                     const unit = tatic.actor;
 
                     return {
@@ -543,6 +549,9 @@ export default class BattleApp extends api.Application5e {
                 }).filter(tatic => tatic !== null && tatic !== undefined), // Filter out the nulls
                 discarded: deck.piles.discarded.map(taticUuid => {
                     const tatic = fromUuidSync(taticUuid);
+                    // Ignore if the tatic doesn't exist.
+                    if (!tatic) return null;
+
                     const unit = tatic.actor;
 
                     return {
@@ -559,15 +568,18 @@ export default class BattleApp extends api.Application5e {
                     };
                 }).filter(tatic => tatic !== null && tatic !== undefined), // Filter out the nulls
                 assets: deck.piles.assets.map(assetId => {
-                    const assets = fromUuidSync(assetId);
+                    const asset = fromUuidSync(assetId);
+                    // Ignore if the asset doesn't exist.
+                    if (!asset) return null;
+
                     const unit = tatic.actor;
 
                     return {
-                        uuid: assets.uuid,
-                        name: assets.name,
+                        uuid: asset.uuid,
+                        name: asset.name,
                         img: {
-                            src: assets.img,
-                            svg: assets.img.endsWith('.svg')
+                            src: asset.img,
+                            svg: asset.img.endsWith('.svg')
                         },
                         unit: {
                             id: unit.id,
@@ -696,6 +708,10 @@ export default class BattleApp extends api.Application5e {
 
         for (const select of this.element.querySelectorAll(".events-controls .row-effect")) {
             select.addEventListener("change", this._onRowEffectChange.bind(this));
+        }
+
+        for (const input of this.element.querySelectorAll('.score span input')) {
+            input.addEventListener('change', this._onScoreChange.bind(this));
         }
 
         new contextMenu(this.element, "li.unit", [], { onOpen: this._onOpenUnitContextMenu.bind(this), jQuery: false });
@@ -937,6 +953,16 @@ export default class BattleApp extends api.Application5e {
         this.render({ force: true });
     }
 
+    async _onScoreChange(event) {
+        const input = event.currentTarget;
+        const property = input.dataset.property;
+
+        if (foundry.utils.setProperty(this.world, property, Number(input.value))) {
+            await game.settings.set('ldnd5e', 'battle', this.world);
+            this.render({ force: true });
+        }
+    }
+
     /* -------------------------------------------- */
     /*  Drag & Drop                                 */
     /* -------------------------------------------- */
@@ -967,8 +993,8 @@ export default class BattleApp extends api.Application5e {
 
         const dragData = unit.toDragData();
         dragData.origin = {
-            field: li.closest(".field").dataset.side,
-            row: li.closest(".row").dataset.row
+            field: li.closest(".field")?.dataset.side ?? 'list',
+            row: li.closest(".row")?.dataset.row ?? null
         }
 
         event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
@@ -1138,8 +1164,9 @@ export default class BattleApp extends api.Application5e {
         const fieldSide = field.dataset.side;
         const rowNumber = unitRow.dataset.row;
 
-        // Check if the drop is on the same row and side. In this case, ignore the drop.
-        if (data.origin.field === fieldSide && data.origin.row === rowNumber) return;
+        // Check if the drop isn't from a list, if so, check if the drop is on the same row and side. 
+        // In this case, ignore the drop.
+        if (data.origin.field !== 'list' && data.origin.field === fieldSide && data.origin.row === rowNumber) return;
 
         let dragCounter = Number(unitRow.dataset.dragCounter);
         dragCounter = dragCounter > 0 ? dragCounter - 1 : 0;
@@ -1251,16 +1278,29 @@ export default class BattleApp extends api.Application5e {
     /**
    * Discard a tatic to the discard pile.
    * @this {BattleApp}
-   * @param {object} deck    The deck array.
-   * @param {object} tatic   The tatic to be discarded.
+   * @param {object} deck           The deck array.
+   * @param {object} tatic          The tatic to be discarded.
+   * @param {PointerEvent} event    The originating click event.
+   * @param {object} options        The options of the discarding.
+   * 
    * @async
    */
-    async _discardTatic(deck, tatic) {
+    async _discardTatic(deck, tatic, event, options = { basicAtk: false }) {
         for (let taticUuid of deck.hand.tatics) {
             if (taticUuid == tatic.uuid) {
                 deck.hand.tatics.splice(deck.hand.tatics.indexOf(taticUuid), 1);
                 break;
             }
+        }
+
+        const unit = tatic.actor;
+        if (unit && options.basicAtk) {
+            const result = await unit.system.rollBasicAttack({
+                prof: 'low',
+                event: event
+            });
+
+            if (result) await this._updateScore(result, {unit, tatic, event});
         }
 
         deck.piles.discarded.push(tatic.uuid);
@@ -1329,6 +1369,67 @@ export default class BattleApp extends api.Application5e {
             if (!tatic) return false;
             else return true;
         });
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Update deck entries.
+   * @this {BattleApp}
+   * @param {object} result     The result of a tatic use.
+   * @param {object} data       The data object of a tatic use.
+   */
+    async _updateScore(result, data) {
+        const unit = data.unit;
+
+        const scoreboard = this.world.scoreboard;
+        const allySide = this.local.side === 'none' ? 'top' : this.local.side;
+        const enemySide = allySide === 'top' ? 'bottom' : 'top';
+        const impetusBonus = unit.system.abilities.wll.value;
+
+        scoreboard[allySide].impetus += impetusBonus;
+
+        for (let res of result) {
+            if (!res) continue;
+
+            switch (res.damageType) {
+                case taticsData.activities.md: {
+                    if (res.targetField === 'a')
+                        scoreboard[allySide].attack += res.total;
+                    else if (res.targetField === 'e')
+                        scoreboard[enemySide].attack += res.total;
+                } break;
+                case taticsData.activities.mh: {
+                    if (res.targetField === 'a') {
+                        scoreboard[enemySide].attack -= res.total;
+                        scoreboard[enemySide].attack = Math.max(scoreboard[enemySide].attack, 0);
+                    } else if (res.targetField === 'e') {
+                        scoreboard[allySide].attack -= res.total;
+                        scoreboard[allySide].attack = Math.max(scoreboard[allySide].attack, 0);
+                    }
+                } break;
+                case taticsData.activities.ib: {
+                    if (res.targetField === 'a')
+                        scoreboard[allySide].impetus += res.total;
+                    else if (res.targetField === 'e')
+                        scoreboard[enemySide].impetus += res.total;
+                } break;
+                case taticsData.activities.id: {
+                    if (res.targetField === 'a') {
+                        scoreboard[allySide].impetus -= res.total;
+                        scoreboard[allySide].impetus = Math.max(scoreboard[allySide].impetus, 0);
+                    } else if (res.targetField === 'e') {
+                        scoreboard[enemySide].impetus -= res.total;
+                        scoreboard[enemySide].impetus = Math.max(scoreboard[enemySide].impetus, 0);
+                    }
+                } break;
+                default: break;
+            }
+        }
+
+        this._discardTatic(this.deck, data.tatic, data.event);
+
+        await game.settings.set('ldnd5e', 'battle', this.world);
     }
 
     /* -------------------------------------------- */
@@ -1595,7 +1696,7 @@ export default class BattleApp extends api.Application5e {
         const tatic = await fromUuid(taticUuid);
         if (!tatic) return;
 
-        await this._discardTatic(this.deck, tatic);
+        await this._discardTatic(this.deck, tatic, event, { basicAtk: true });
     }
 
     /* -------------------------------------------- */
@@ -1669,30 +1770,32 @@ export default class BattleApp extends api.Application5e {
         if (!tatic) return;
 
         const unit = game.actors.get(unitId);
-        if (!unit) return;
-
-        const allySide = this.local.side === 'none' ? 'top' : this.local.side;
-        const enemySide = allySide === 'top' ? 'bottom' : 'top';
-        const impetusBonus = unit.system.abilities.wll.value;
+        if (!unit) return;        
 
         if (!event.altKey) {
-            const choosedMode = await foundry.applications.api.DialogV2.wait({
-                window: { title: game.i18n.localize("ldnd5e.battle.extraRoll.title") },
-                content: `<p>${game.i18n.localize("ldnd5e.battle.extraRoll.message")}</p>`,
-                position: {
-                    width: 400
-                },
-                buttons: [
-                    {
-                        label: game.i18n.localize("ldnd5e.battle.extraRoll.main"),
-                        action: 'main'
+            const mainActivities = Object.values(tatic.system.activities).filter(a => a.mainRoll);
+
+            let choosedMode = 'full';
+            // If there are main activities, ask the user.            
+            if (mainActivities.length > 0) {
+                choosedMode = await foundry.applications.api.DialogV2.wait({
+                    window: { title: game.i18n.localize("ldnd5e.battle.extraRoll.title") },
+                    content: `<p>${game.i18n.localize("ldnd5e.battle.extraRoll.message")}</p>`,
+                    position: {
+                        width: 400
                     },
-                    {
-                        label: game.i18n.localize("ldnd5e.battle.extraRoll.extra"),
-                        action: 'extra'
-                    }
-                ]
-            })
+                    buttons: [
+                        {
+                            label: game.i18n.localize("ldnd5e.battle.extraRoll.main"),
+                            action: 'main'
+                        },
+                        {
+                            label: game.i18n.localize("ldnd5e.battle.extraRoll.extra"),
+                            action: 'extra'
+                        }
+                    ]
+                })
+            }
 
             if (!choosedMode) return;
 
@@ -1700,51 +1803,7 @@ export default class BattleApp extends api.Application5e {
             if (!(result instanceof Array)) result = [result];
 
             if (result) {
-                const scoreboard = this.world.scoreboard;
-
-                scoreboard[allySide].impetus += impetusBonus;
-
-                for (let res of result) {
-                    if (!res) continue;
-
-                    switch (res.damageType) {
-                        case taticsData.activities.md: {
-                            if (res.targetField === 'a')
-                                scoreboard[allySide].attack += res.total;
-                            else if (res.targetField === 'e')
-                                scoreboard[enemySide].attack += res.total;
-                        } break;
-                        case taticsData.activities.mh: {
-                            if (res.targetField === 'a') {
-                                scoreboard[enemySide].attack -= res.total;
-                                scoreboard[enemySide].attack = Math.max(scoreboard[enemySide].attack, 0);
-                            } else if (res.targetField === 'e') {
-                                scoreboard[allySide].attack -= res.total;
-                                scoreboard[allySide].attack = Math.max(scoreboard[allySide].attack, 0);
-                            }
-                        } break;
-                        case taticsData.activities.ib: {
-                            if (res.targetField === 'a')
-                                scoreboard[allySide].impetus += res.total;
-                            else if (res.targetField === 'e')
-                                scoreboard[enemySide].impetus += res.total;
-                        } break;
-                        case taticsData.activities.id: {
-                            if (res.targetField === 'a') {
-                                scoreboard[allySide].impetus -= res.total;
-                                scoreboard[allySide].impetus = Math.max(scoreboard[allySide].impetus, 0);
-                            } else if (res.targetField === 'e') {
-                                scoreboard[enemySide].impetus -= res.total;
-                                scoreboard[enemySide].impetus = Math.max(scoreboard[enemySide].impetus, 0);
-                            }
-                        } break;
-                        default: break;
-                    }
-                }
-
-                this._discardTatic(this.deck, tatic);
-
-                await game.settings.set('ldnd5e', 'battle', this.world);
+                await this._updateScore(result, {unit, tatic, event});
             }
         } else {
             tatic.sheet.render(true);

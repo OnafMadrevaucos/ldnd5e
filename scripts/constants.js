@@ -248,7 +248,10 @@ const armyData = {
 *    uTypes: object, 
 *    uAbilities: object,
 *    uCombatIcons: object
-*    categories: object
+*    categories: object,
+*    uProfLevel: object,
+*    uLevelProf: object,
+*    basicAtk: object
 * }}
 */
 const unitData = {
@@ -307,6 +310,15 @@ const unitData = {
       devotees: "devotees",
       fighters: "fighters",
       specialists: "specialists",
+   },
+
+   /**
+   * Defines the Unit Categories constants.      
+   */
+   basicAtk: {
+      low: "1d4",
+      medium: "1d6",
+      high: "1d8"
    }
 }
 
@@ -647,6 +659,8 @@ const i18nStrings = {
       assets: "ldnd5e.unit.assets",
       totalAssetsCost: "ldnd5e.unit.totalAssetsCost",
       removeAsset: "ldnd5e.unit.removeAsset",
+      proficienciesHint: "ldnd5e.unit.proficienciesHint",
+      basicAtk: "ldnd5e.unit.basicAtk",
    },
 
    assets: {

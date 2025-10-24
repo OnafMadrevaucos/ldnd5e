@@ -137,8 +137,8 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
         const company = this.system.info.company;
         this.system.attributes = {
             prestige: company?.system.attributes.prestige ?? { mod: "+0" },
-            prof: company?.system.attributes.affinity.bonus.prof ?? 0                     
-        };        
+            prof: company?.system.attributes.affinity.bonus.prof ?? 0
+        };
     }
 
     /* -------------------------------------------- */
@@ -152,7 +152,7 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
 
         this.system.tatics.forEach(tatic => {
             // Add price only for the tatics that are trained.
-            if(tatic.system.trainning) 
+            if (tatic.system.trainning)
                 this.fullPrice.value += (tatic.system.info.price.value * tatic.system.quantity);
         });
     }
@@ -417,5 +417,110 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
         Hooks.callAll(`dnd5e.roll${name}`, rolls, { ability: config.ability, subject: this });
 
         return oldFormat ? rolls[0] : rolls;
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Roll a Basic Attack.
+   * @param {Partial<BasicAttackProcessConfiguration>} config   Configuration information for the roll.
+   * @param {Partial<BasicRollDialogConfiguration>} dialog      Configuration for the roll dialog.
+   * @param {Partial<BasicRollMessageConfiguration>} message    Configuration for the roll message.
+   * @returns {Promise<Roll[]|null>}                            A Promise which resolves to the created Roll instance.
+   */
+    async rollBasicAttack(config = {}, dialog = {}, message = {}) {
+        const { prof, event } = config;
+
+        const title = game.i18n.localize('ldnd5e.unit.basicAtk');
+        const attackMode = "roll";
+        const rollType = "damage";
+        const formula = unitData.basicAtk[prof];
+
+        const rollConfig = {
+            attackMode,
+            event,
+            data: this.getRollData(),
+            rolls: [{
+                parts: [formula],
+                options: { type: 'md', targetField: 'a', fields: ['a', 'e'] }
+            }],
+        };
+
+        rollConfig.subject = this;
+
+        const dialogConfig = foundry.utils.mergeObject({
+            options: {
+                position: {
+                    width: 400,
+                    top: config.event ? config.event.clientY - 80 : null,
+                    left: window.innerWidth - 710
+                },
+                window: {
+                    title: title,
+                    subtitle: this.parent.name,
+                    icon: this.parent.img
+                }
+            }
+        }, dialog);
+
+        const messageConfig = {
+            create: true,
+            data: {
+                flags: {
+                    dnd5e: {
+                        messageType: "roll",
+                        roll: { type: rollType },
+                        targets: this.getTargetDescriptors()
+                    }
+                },
+                flavor: `${this.parent.name} - ${title}`,
+                speaker: message.speaker ?? ChatMessage.getSpeaker({ actor: this.parent.actor }),
+            }
+        };
+
+        const rolls = await CONFIG.Dice.TaticsRoll.build(rollConfig, dialogConfig, messageConfig);
+        if (!rolls?.length) return;
+
+        const result = {
+            unit: this.parent.actor,
+            damageType: "md",
+            targetField: rolls[0].options.targetField,
+            formula,
+            total: rolls.reduce((a, b) => a + b.total, 0),
+            rolls
+        };
+
+        return result;
+    }
+
+    /* -------------------------------------------- */
+    /*  Targeting                                   */
+    /* -------------------------------------------- */
+
+    /**
+     * Important information on a targeted token.
+     *
+     * @typedef {object} TargetDescriptor5e
+     * @property {string} uuid  The UUID of the target.
+     * @property {string} img   The target's image.
+     * @property {string} name  The target's name.
+     * @property {number} ac    The target's armor class, if applicable.
+     */
+
+    /**
+     * Grab the targeted tokens and return relevant information on them.
+     * @returns {TargetDescriptor[]}
+     */
+    getTargetDescriptors() {
+        const targets = new Map();
+        for (const token of game.user.targets) {
+            const { name } = token;
+            const { img, system, uuid, statuses } = token.actor ?? {};
+            if (uuid) {
+                const ac = statuses.has("coverTotal") ? null : system.attributes?.ac?.value;
+                targets.set(uuid, { name, img, uuid, ac: ac ?? null });
+            }
+        }
+        return Array.from(targets.values());
     }
 }

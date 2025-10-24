@@ -218,7 +218,9 @@
             "assetsTitle": "Unit's Assets",
             "assets": "Unit Assets",
             "totalAssetsCost": "Total Assets Cost",
-            "removeAsset": "Remove Asset"
+            "removeAsset": "Remove Asset",
+            "proficienciesHint": "<span class='title'>Basic Attacks Dmg.</span><span class='desc'>A basic attack can be made by discarding any tactic from a Unit.</span><span class='prof low'>Low<a><i class='fa-solid fa-1'></i><img src='systems/dnd5e/icons/svg/dice/d4.svg'></a></span><span class='prof med'>Med.<a><i class='fa-solid fa-1'></i><img src='systems/dnd5e/icons/svg/dice/d6.svg'></a></span><span class='prof hgh'>High<a><i class='fa-solid fa-1'></i><img src='systems/dnd5e/icons/svg/dice/d8.svg'></a></span>",
+            "basicAtk": "Basic Attack"
         },
         "assets": {
             "type": "Type",

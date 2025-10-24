@@ -218,7 +218,9 @@
             "assetsTitle": "Lista de Insumos",
             "assets": "Insumos",
             "totalAssetsCost": "Custo Total dos Insumos",
-            "removeAsset": "Remover Insumo"
+            "removeAsset": "Remover Insumo",
+            "proficienciesHint": "<span class='title'>Dano de Ataque Básico</span><span class='desc'>Um ataque básico pode ser realizado descartando qualquer tática de uma Unidade.</span><span class='prof low'>Baixo<a><i class='fa-solid fa-1'></i><img src='systems/dnd5e/icons/svg/dice/d4.svg'></a></span><span class='prof med'>Médio<a><i class='fa-solid fa-1'></i><img src='systems/dnd5e/icons/svg/dice/d6.svg'></a></span><span class='prof hgh'>Alto<a><i class='fa-solid fa-1'></i><img src='systems/dnd5e/icons/svg/dice/d8.svg'></a></span>",
+            "basicAtk": "Ataque Básico"
         },
         "assets": {
             "type": "Tipo",

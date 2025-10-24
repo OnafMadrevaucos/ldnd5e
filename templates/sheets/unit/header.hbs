@@ -54,27 +54,33 @@
             <ul class="proficiencies unlist flexrow">
 
                 <li class="proficiency-item" data-tooltip="{{uProf.rea.label}}">
-                    <button class="proficiency rea {{uProf.rea.value}}"
-                        data-action="changeProf" data-prof="rea" data-level="{{system.prof.rea}}">
+                    <button class="proficiency rea {{uProf.rea.value}}" data-action="changeProf" data-prof="rea"
+                        data-level="{{system.prof.rea}}">
                         <i class="ra ra-arrow-cluster"></i>
                     </button>
                 </li>
 
                 <li class="proficiency-item" data-tooltip="{{uProf.res.label}}">
-                    <button class="proficiency res {{uProf.res.value}}"
-                        data-action="changeProf" data-prof="res" data-level="{{system.prof.res}}">
+                    <button class="proficiency res {{uProf.res.value}}" data-action="changeProf" data-prof="res"
+                        data-level="{{system.prof.res}}">
                         <i class="ra ra-sword"></i>
                     </button>
                 </li>
 
                 <li class="proficiency-item" data-tooltip="{{uProf.van.label}}">
-                    <button class="proficiency van {{uProf.van.value}}"
-                        data-action="changeProf" data-prof="van" data-level="{{system.prof.van}}">
+                    <button class="proficiency van {{uProf.van.value}}" data-action="changeProf" data-prof="van"
+                        data-level="{{system.prof.van}}">
                         <i class="ra ra-broken-shield"></i>
                     </button>
                 </li>
 
+                <span class="hint" data-tooltip="<span class='tooltip-hint'>{{localize 'ldnd5e.unit.proficienciesHint'}}</span>">
+                    <i class="fa-solid fa-circle-info"></i>
+                </span>
+
             </ul>
+
+
 
             {{!-- Name --}}
             {{#if editable}}
