@@ -466,7 +466,11 @@ const i18nStrings = {
    titles: {
       ac: "ldnd5e.titles.ac",
       battle: "ldnd5e.titles.battle",
+      settings: "ldnd5e.titles.settings",
    },
+
+   saveChanges: "ldnd5e.saveChanges",
+
    npcsStatsTitle: "ldnd5e.npcsStatsTitle",
    adSystemTitle: "ldnd5e.adSystemTitle",
    arSystemTitle: "ldnd5e.arSystemTitle",
@@ -876,17 +880,13 @@ const i18nStrings = {
       noMainActivity: "ldnd5e.messages.noMainActivity",
    },
 
-   settings: {
-      hideFromGMName: "ldnd5e.settings.hideFromGMName",
-      hideFromGMHint: "ldnd5e.settings.hideFromGMHint",
+   settings: {      
       criticalName: "ldnd5e.settings.criticalName",
       criticalHint: "ldnd5e.settings.criticalHint",
       massCombatName: "ldnd5e.settings.massCombatName",
       massCombatHint: "ldnd5e.settings.massCombatHint",
-      exhaustionName: "ldnd5e.settings.exhaustionName",
-      exhaustionHint: "ldnd5e.settings.exhaustionHint",
-      battleDataName: "ldnd5e.settings.battleDataName",
-      battleDataHint: "ldnd5e.settings.battleDataHint",
+      massCombatConfigName: "ldnd5e.settings.massCombatConfigName",
+      massCombatConfigHint: "ldnd5e.settings.massCombatConfigHint",
       extraConditionsName: "ldnd5e.settings.extraConditionsName",
       extraConditionsHint: "ldnd5e.settings.extraConditionsHint",
    }

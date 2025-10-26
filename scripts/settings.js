@@ -1,3 +1,4 @@
+import SettingsApp from "../models/settingsApp.js";
 import { i18nStrings, battleData } from "../scripts/constants.js";
 
 export const registerSystemSettings = function () {
@@ -8,7 +9,8 @@ export const registerSystemSettings = function () {
         scope: "world",
         config: true,
         type: Boolean,
-        default: false
+        default: false,
+        restricted: true
     });
 
     // Massive Combat Rules
@@ -18,7 +20,20 @@ export const registerSystemSettings = function () {
         scope: "world",
         config: true,
         type: Boolean,
-        default: false
+        default: false,
+        restricted: true
+    });
+
+    // Massive Combat Rules Configuration Menu
+    game.settings.registerMenu("ldnd5e", "massiveCombatConfig", {
+        name: "ldnd5e.settings.massCombatConfigName",
+        label: "ldnd5e.settings.massCombatConfigLabel",
+        hint: "ldnd5e.settings.massCombatConfigHint",
+        scope: "world",
+        icon: "fas fa-cogs",
+        config: true,
+        type: SettingsApp,
+        restricted: true
     });
 
     // Weapons Special Effects
@@ -28,7 +43,8 @@ export const registerSystemSettings = function () {
         scope: "world",
         config: true,
         type: Boolean,
-        default: false
+        default: false,
+        restricted: true
     });
 
     // Global battle data.

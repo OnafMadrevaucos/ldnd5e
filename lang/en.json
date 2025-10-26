@@ -13,8 +13,10 @@
         "title": "Lemurian D&D 5º Ed. Control",
         "titles": {
             "ac": "Armor Damage Control",
-            "battle": "Battlefield Control"
+            "battle": "Battlefield Control",
+            "settings": "Massive Comabt Rules Configuration"
         },
+        "saveChanges": "Save Changes",
         "npcsStatsTitle": "Combat NPC Statistics",
         "adSystemTitle": "Absorved Damage System",
         "arSystemTitle": "Agile Reaction System",
@@ -395,8 +397,9 @@
             "criticalHint": "Makes a critical hit a little more deadly by multiplying the Damage Dice rolls (ignores any modifiers).",
             "massCombatName": "Massive Combat Rules",
             "massCombatHint": "Enables Character Sheets for the Massive Combat System.",
-            "exhaustionName": "New Exhaustion Rule (One D&D)",
-            "exhaustionHint": "Use new Exhaustion rule proposed by the One D&D system. '-1' on d20 rolls for each level of exhaustion.",
+            "massCombatConfigName": "Massive Combat Config",
+            "massCombatConfigLabel": "Configure Massive Combat",
+            "massCombatConfigHint": "Opens the advanced Massive Combat Configuration window.",
             "extraConditionsName": "Extra Conditions on Weapons",
             "extraConditionsHint": "Weapons can cause Extra Conditions on sucessful attacks."
         }

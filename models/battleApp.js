@@ -19,13 +19,21 @@ export default class BattleApp extends api.Application5e {
     static DEFAULT_OPTIONS = {
         classes: ["ldnd5e", "battle"],
         window: {
-            title: "ldnd5e.titles.battle"
+            title: "ldnd5e.titles.battle",
+            controls: [
+                {
+                    icon: "fas fa-arrow-rotate-right",
+                    label: "ldnd5e.battle.reset",
+                    action: "resetBattle"
+                }
+            ]
         },
         controls: {
-            dropdown: true // habilita o dropdown no header
+            dropdown: true // Habilita o dropdown no header.
         },
         actions: {
             startBattle: BattleApp.#startBattle,
+            resetBattle: BattleApp.#resetBattle,
             toggleDeckControls: BattleApp.#toggleDeckControls,
             toggleCompanySelect: BattleApp.#toggleCompanySelect,
             switchCompany: BattleApp.#switchCompany,
@@ -758,24 +766,6 @@ export default class BattleApp extends api.Application5e {
 
     /* -------------------------------------------- */
 
-    /**
-     * Gets the header controls for the application.
-     *
-     * @returns {array} An array of header controls.
-     * @protected
-     */
-    _getHeaderControls() {
-        return [
-            {
-                icon: "fas fa-arrow-rotate-right",
-                label: game.i18n.localize("ldnd5e.battle.reset"),
-                onClick: (event) => this._onResetBattle(event)
-            }
-        ];
-    }
-
-    /* -------------------------------------------- */
-
     _onChangeTab() {
 
     }
@@ -1300,7 +1290,7 @@ export default class BattleApp extends api.Application5e {
                 event: event
             });
 
-            if (result) await this._updateScore(result, {unit, tatic, event});
+            if (result) await this._updateScore(result, { unit, tatic, event });
         }
 
         deck.piles.discarded.push(tatic.uuid);
@@ -1452,6 +1442,36 @@ export default class BattleApp extends api.Application5e {
 
         await game.settings.set('ldnd5e', 'battle', this.world);
         this.render(true);
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Reset the battle data.
+   * @this {BattleApp}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+    static async #resetBattle(event, target) {
+        const blankData = game.settings.settings.get('ldnd5e.battle').default;
+
+        const result = await foundry.applications.api.DialogV2.confirm({
+            content: `
+          <p>
+            <strong>${game.i18n.localize("AreYouSure")}</strong> ${game.i18n.localize("ldnd5e.battle.resetConfirm")}
+          </p>
+        `,
+            window: {
+                icon: "fa-solid fa-trash",
+                title: "ldnd5e.battle.reset"
+            },
+            position: { width: 400 }
+        }, { rejectClose: false });
+
+        if (result) {
+            await game.settings.set('ldnd5e', 'battle', blankData);
+            this.render(true);
+        }
     }
 
     /* -------------------------------------------- */
@@ -1770,7 +1790,7 @@ export default class BattleApp extends api.Application5e {
         if (!tatic) return;
 
         const unit = game.actors.get(unitId);
-        if (!unit) return;        
+        if (!unit) return;
 
         if (!event.altKey) {
             const mainActivities = Object.values(tatic.system.activities).filter(a => a.mainRoll);
@@ -1803,7 +1823,7 @@ export default class BattleApp extends api.Application5e {
             if (!(result instanceof Array)) result = [result];
 
             if (result) {
-                await this._updateScore(result, {unit, tatic, event});
+                await this._updateScore(result, { unit, tatic, event });
             }
         } else {
             tatic.sheet.render(true);

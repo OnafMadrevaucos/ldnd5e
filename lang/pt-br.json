@@ -13,8 +13,10 @@
         "title": "Controle D&D 5º Ed. Lemuriano",
         "titles": {
             "ac": "Controle Dano de Armadura",
-            "battle": "Controle de Campo de Batalha"
+            "battle": "Controle de Campo de Batalha",
+            "settings": "Configurações de Combate Massivo"
         },
+        "saveChanges": "Salvar Alterações",
         "npcsStatsTitle": "Estatísticas PnJs em Combate",
         "adSystemTitle": "Sistema de Danos Absorvidos",
         "arSystemTitle": "Sistema de Reação Ágil",
@@ -388,14 +390,13 @@
             "noMainActivity": "A Tática não possui nenhuma Atividade marcada como principal."
         },
         "settings": {
-            "hideFromGMName": "Esconder Controles de Efeitos do GM",
-            "hideFromGMHint": "Esconde do GM os controles dos Active Effects das Avarias em Armaduras. Por padrão somente o GM possui acesso aos controles.",
             "criticalName": "Crítico Multiplica Dados",
             "criticalHint": "Faz um acerto crítico um pouco mais mortal ao multiplicar os resultados obtidos nos Dados de Dano (ignora qualquer modificador).",
             "massCombatName": "Regras de Combate Massivo",
             "massCombatHint": "Habilita as Fichas de Personagens para o Sistema de Combate Massivo.",
-            "exhaustionName": "Nova Regra de Exaustão (One D&D)",
-            "exhaustionHint": "Utilizar nova regra de Exaustão proposta pelo sistema One D&D. '-1' em rolagems com d20 para cada nível de exaustão.",
+            "massCombatConfigName": "Config. Sistema de Combate Massivo",
+            "massCombatConfigLabel": "Configurar Combate Massivo",
+            "massCombatConfigHint": "Abre a tela de configuração avançada do Sistema de Combate Massivo.",
             "extraConditionsName": "Condições Extras para Armas",
             "extraConditionsHint": "As armas podem causar Condições Extras em ataques bem sucedidos."
         }
