@@ -470,6 +470,7 @@ const i18nStrings = {
    },
 
    saveChanges: "ldnd5e.saveChanges",
+   resetData: "ldnd5e.resetData",
 
    npcsStatsTitle: "ldnd5e.npcsStatsTitle",
    adSystemTitle: "ldnd5e.adSystemTitle",
@@ -774,6 +775,7 @@ const i18nStrings = {
    },
 
    battle: {
+      world: 'ldnd5e.battle.world',
       stages: {
          setup: "ldnd5e.battle.stages.setup",
          prep: "ldnd5e.battle.stages.prep",
@@ -790,6 +792,7 @@ const i18nStrings = {
          enemy: "ldnd5e.battle.fields.enemy",
          ally: "ldnd5e.battle.fields.ally",
       },
+      commander: 'ldnd5e.battle.commander',
       deck: "ldnd5e.battle.deck",
       openDeck: "ldnd5e.battle.openDeck",
       closeDeck: "ldnd5e.battle.closeDeck",
@@ -814,6 +817,7 @@ const i18nStrings = {
       },
       reset: "ldnd5e.battle.reset",
       resetConfirm: "ldnd5e.battle.resetConfirm",
+      resetOK: "ldnd5e.battle.resetOK",
       restoreCard: "ldnd5e.battle.restoreCard",
       restoreAllCards: "ldnd5e.battle.restoreAllCards",
       discardCard: "ldnd5e.battle.discardCard",
@@ -824,6 +828,7 @@ const i18nStrings = {
          extra: "ldnd5e.battle.extraRoll.extra",
       },
       targetField: "ldnd5e.battle.targetField",
+      affinity: 'ldnd5e.battle.affinity',
    },
 
    categories: {

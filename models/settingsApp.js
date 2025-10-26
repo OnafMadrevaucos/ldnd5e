@@ -1,3 +1,5 @@
+import { unitData } from "../scripts/constants";
+
 const api = dnd5e.applications.api;
 
 export default class SettingsApp extends api.Application5e {
@@ -31,9 +33,9 @@ export default class SettingsApp extends api.Application5e {
         world: {
             template: "modules/ldnd5e/templates/settings/parts/world.hbs"
         },
-        comanders: {
-            template: "modules/ldnd5e/templates/settings/parts/comanders.hbs"
-        },               
+        affinity: {
+            template: "modules/ldnd5e/templates/settings/parts/affinity.hbs"
+        },
         buttons: {
             template: "modules/ldnd5e/templates/settings/buttons.hbs"
         },
@@ -62,8 +64,8 @@ export default class SettingsApp extends api.Application5e {
         switch (partId) {
             case "world":
                 return this._prepareWorldContext(context, options);
-            case "comanders":
-                return this._prepareComandersContext(context, options);
+            case "affinity":
+                return this._prepareCommandersContext(context, options);
             case "buttons":
                 return this._prepareButtonsContext(context, options);
             default:
@@ -81,7 +83,12 @@ export default class SettingsApp extends api.Application5e {
     /* -------------------------------------------- */
 
     /** @inheritDoc */
-    async _prepareComandersContext(context, options) {
+    async _prepareAffinityContext(context, options) {
+
+        context.classes = await this._prepareClasses();
+
+        context.categories = unitData.categories
+
         return context;
     }
 
@@ -91,6 +98,50 @@ export default class SettingsApp extends api.Application5e {
     async _prepareButtonsContext(context, options) {
         return context;
     }
+
+    /* -------------------------------------------- */
+
+    async _prepareClasses() {
+        const classes = new Map();
+
+        // Classes do mundo.
+        for (const item of game.items) {
+            if (["class"].includes(item.type)) {
+                classes.set(item.name, item);
+            }
+        }
+
+        // Classes em Compêndios.
+        const packs = game.packs.filter(p => p.documentName === "Item");
+        for (const pack of packs) {
+            const index = pack.index.filter(i => ["class"].includes(i.type));
+            for (const i of index) {
+                // Evita duplicatas com base no nome.
+                if (!classes.has(i.name)) {
+                    const doc = await pack.getDocument(i._id);
+                    classes.set(i.name, doc);
+                }
+            }
+        }
+
+        return Array.from(classes.values());
+    }
+
+    /* -------------------------------------------- */
+
+    _prepareAffinities() {
+        const affinities = Object.entries(dnd5e.config.abilities).map(([key, abl]) => {
+            return {
+                key,
+                label: abl.label,
+                classes: []
+            };
+        });
+
+        return affinities;
+    }
+
+    /* -------------------------------------------- */
 
     /**
    * Process form submission for the sheet
@@ -114,8 +165,24 @@ export default class SettingsApp extends api.Application5e {
    * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
    */
     static async #resetWorld(event, target) {
-        const world = game.settings.get('ldnd5e', 'battle');
-        const blankData = game.settings.settings.get('ldnd5e.battle').default;
-        await game.settings.set('ldnd5e', 'battle', blankData);
+        const ok = await foundry.applications.api.DialogV2.confirm({
+            content: `
+          <p>
+            <strong>${game.i18n.localize("AreYouSure")}</strong> ${game.i18n.localize("ldnd5e.battle.resetConfirm")}
+          </p>
+        `,
+            window: {
+                icon: "fa-solid fa-trash",
+                title: "ldnd5e.battle.reset"
+            },
+            position: { width: 400 }
+        }, { rejectClose: false });
+
+        if (ok) {
+            const blankData = game.settings.settings.get('ldnd5e.battle').default;
+            game.settings.set('ldnd5e', 'battle', blankData).then(() => {
+                ui.notifications.info(game.i18n.localize("ldnd5e.battle.resetOK"));
+            });
+        }
     }
 }

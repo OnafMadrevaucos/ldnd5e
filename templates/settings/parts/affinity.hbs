@@ -1,0 +1,22 @@
+<fieldset>
+    <legend>{{localize 'ldnd5e.battle.commander'}}</legend>
+
+    <div class="classes-group">
+        {{#each classes as |class|}}
+        <div class="form-group">
+            <label>{{class.name}}</label>
+
+            <div class="affinities-group flexrow">
+                {{#each affinities as |aff a|}}
+                <div class="attr-group">
+                    <span>{{aff.label}}</span>
+                    <dnd5e-checkbox value="true" checked={{aff.checked}}></dnd5e-checkbox>
+                </div>
+                {{/each}}
+            </div>
+
+        </div>
+        {{/each}}
+    </div>
+
+</fieldset>

@@ -17,6 +17,7 @@
             "settings": "Configurações de Combate Massivo"
         },
         "saveChanges": "Salvar Alterações",
+        "resetData": "Limpar Dados",
         "npcsStatsTitle": "Estatísticas PnJs em Combate",
         "adSystemTitle": "Sistema de Danos Absorvidos",
         "arSystemTitle": "Sistema de Reação Ágil",
@@ -298,6 +299,7 @@
             "acceptExtras": "Accept Extras"
         },
         "battle": {
+            "world": "Mundo",
             "phases": {
                 "setup": "Configuração",
                 "prep": "Preparação",
@@ -314,6 +316,7 @@
                 "enemy": "Inimigo",
                 "ally": "Aliado"
             },
+            "commander": "Comandante",
             "deck": "Baralho - {name}",
             "openDeck": "Abrir Baralho",
             "closeDeck": "Fechar Baralho",
@@ -339,6 +342,7 @@
             },
             "reset": "Resetar Campo de Batalha",
             "resetConfirm": "Isso irá limpar todos os dados da batalha atual.",
+            "resetOK": "Os dados da batalha foram limpos com sucesso.",
             "restoreCard": "Restaurar",
             "restoreAllCards": "Restaurar Todas",
             "discardCard": "Descartar",
@@ -348,7 +352,8 @@
                 "main": "Somente principais",
                 "extra": "Com extras"
             },
-            "targetField": "Campo Alvo"
+            "targetField": "Campo Alvo",
+            "affinity": "Afinidade de Classe"
         },
         "messages": {
             "bldgDmgLightArmor": "Armaduras Leves são imunes a avarias causadas por Dano Contundente.",

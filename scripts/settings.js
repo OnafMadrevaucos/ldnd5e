@@ -47,6 +47,14 @@ export const registerSystemSettings = function () {
         restricted: true
     });
 
+     // Units Affinity data.
+    game.settings.register("ldnd5e", "affinity", {
+        scope: "world",
+        config: false,
+        type: Array,
+        default: []
+    });
+
     // Global battle data.
     game.settings.register("ldnd5e", "battle", {
         name: "ldnd5e.settings.battleDataName",

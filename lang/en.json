@@ -17,6 +17,7 @@
             "settings": "Massive Comabt Rules Configuration"
         },
         "saveChanges": "Save Changes",
+        "resetData": "Reset Data",
         "npcsStatsTitle": "Combat NPC Statistics",
         "adSystemTitle": "Absorved Damage System",
         "arSystemTitle": "Agile Reaction System",
@@ -299,6 +300,7 @@
             "acceptExtras": "Accept Extras"
         },
         "battle": {
+            "world": "World",
             "stages": {
                 "setup": "Setup",
                 "prep": "Preparation",
@@ -315,6 +317,7 @@
                 "enemy": "Enemy",
                 "ally": "Ally"
             },
+            "commander": "Commander",
             "deck": "Deck - {name",
             "openDeck": "Open Deck",
             "closeDeck": "Close Deck",
@@ -340,6 +343,7 @@
             },
             "reset": "Reset Battlefield",
             "resetConfirm": "This will clear all the current battle data.",
+            "resetOK": "The battle data has been reseted successfully.",
             "restoreCard": "Restore",
             "restoreAllCards": "Restore all Cards",
             "discardCard": "Discard",
@@ -349,7 +353,8 @@
                 "main": "Main only",
                 "extra": "With extras"
             },
-            "targetField": "Target Field"
+            "targetField": "Target Field",
+            "affinity": "Class Affinity"
         },
         "messages": {
             "bldgDmgLightArmor": "Light Armor is immune to damage caused by Bludgening Damage.",
