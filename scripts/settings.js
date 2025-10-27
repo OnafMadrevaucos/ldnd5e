@@ -51,8 +51,8 @@ export const registerSystemSettings = function () {
     game.settings.register("ldnd5e", "affinity", {
         scope: "world",
         config: false,
-        type: Array,
-        default: []
+        type: Object,
+        default: {}
     });
 
     // Global battle data.

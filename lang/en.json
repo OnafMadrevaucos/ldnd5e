@@ -357,6 +357,7 @@
             "affinity": "Class Affinity"
         },
         "messages": {
+            "loadingAffinities": "LD&D 5e | Loading Class Affinities... {n} of {totalItems} ({pct}%)",
             "bldgDmgLightArmor": "Light Armor is immune to damage caused by Bludgening Damage.",
             "slshDmgHeavyArmor": "Heavy Armor is immune to damage caused by Slashing Damage.",
             "halDmgShield": "Shields cannot take Nearmiss Hits.",

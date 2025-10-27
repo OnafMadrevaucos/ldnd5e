@@ -223,9 +223,9 @@
   flex: 100%;
 }
 
-.ldnd5e:not(.sheet) input[type="text"],
-.ldnd5e:not(.sheet) input[type="number"],
-.ldnd5e:not(.sheet) select {
+.ldnd5e:not(.sheet):not(.dnd5e2) input[type="text"],
+.ldnd5e:not(.sheet):not(.dnd5e2) input[type="number"],
+.ldnd5e:not(.sheet):not(.dnd5e2) select {
   height: calc(100% - 2px);
   border: 1px solid #7a7971;
   background: rgba(0, 0, 0, 0.05);
@@ -281,7 +281,7 @@
   font-size: x-large;
 }
 
-.ldnd5e:not(.sheet) .form-group label {
+.ldnd5e:not(.sheet):not(.dnd5e2) .form-group label {
   flex: 2;
   color: #4b4a44;
   font-weight: bold;
@@ -364,6 +364,66 @@
   margin-left: 2px;
   margin-right: 2px;
 }
+
+/* ----------------------------------------- */
+/*  Settings Application                     */
+/* ----------------------------------------- */
+.ldnd5e.settings-app {
+  max-height: 650px;
+  overflow-y: hidden;
+}
+
+.ldnd5e.settings-app .window-content {
+  overflow-y: hidden;
+}
+
+.settings-app .affinity {
+  overflow-y: auto;
+}
+
+.settings-app .affinity .classes-group .form-group .name {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  border-right: var(--dnd5e-border-separator-faint);
+  margin-right: 30px;
+}
+
+.settings-app .affinity .classes-group .form-group .name label {
+  font-size: var(--font-size-24);
+  font-family: var(--font-h4);
+}
+
+.settings-app .affinity .classes-group .form-fields {
+  display: flex;
+  flex-direction: column;
+  padding-block: 5px;
+}
+
+.settings-app .affinity .classes-group .form-fields>div {
+  width: 100%;
+}
+
+.settings-app .affinity .classes-group .abilities .item-list {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  justify-content: space-evenly;
+}
+
+.settings-app .affinity .abilities .item-list .stacked {
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-app .affinity .abilities .item-list .stacked .ability {
+  font-variant: small-caps;
+}
+
+.settings-app .affinity .abilities .item-list .stacked .value {
+  align-self: center;
+}
+
 
 /* ----------------------------------------- */
 /*  Absorved Damage Control  V2.0            */

@@ -356,6 +356,8 @@
             "affinity": "Afinidade de Classe"
         },
         "messages": {
+            "loadingAffinities": "LD&D 5e | Carregando afinidades de Classes... {n} de {totalItems} ({pct}%)",
+
             "bldgDmgLightArmor": "Armaduras Leves são imunes a avarias causadas por Dano Contundente.",
             "slshDmgHeavyArmor": "Armaduras Pesadas são imunes a avarias causadas por Dano Cortante.",
             "halDmgShield": "Escudos não podem receber Acertos de Raspão.",

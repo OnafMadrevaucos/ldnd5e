@@ -1,4 +1,4 @@
-import { unitData } from "../scripts/constants";
+import { unitData } from "../scripts/constants.js";
 
 const api = dnd5e.applications.api;
 
@@ -18,11 +18,12 @@ export default class SettingsApp extends api.Application5e {
         },
         form: {
             handler: SettingsApp.#handleFormSubmission,
-            submitOnChange: true,
+            submitOnChange: false,
             closeOnSubmit: false
         },
         position: {
             width: 520,
+            height: 650
         },
     };
 
@@ -65,7 +66,7 @@ export default class SettingsApp extends api.Application5e {
             case "world":
                 return this._prepareWorldContext(context, options);
             case "affinity":
-                return this._prepareCommandersContext(context, options);
+                return this._prepareAffinityContext(context, options);
             case "buttons":
                 return this._prepareButtonsContext(context, options);
             default:
@@ -85,9 +86,16 @@ export default class SettingsApp extends api.Application5e {
     /** @inheritDoc */
     async _prepareAffinityContext(context, options) {
 
-        context.classes = await this._prepareClasses();
+        context.affinities = Object.values(await game.settings.get("ldnd5e", "affinity")).sort((a, b) =>
+            a.name.localeCompare(b.name, game.i18n.lang)
+        );
 
-        context.categories = unitData.categories
+        context.categories = Object.values(unitData.categories).map(c => {
+            return {
+                value: c,
+                label: game.i18n.localize(`ldnd5e.categories.${c}`)
+            };
+        });
 
         return context;
     }
@@ -129,20 +137,6 @@ export default class SettingsApp extends api.Application5e {
 
     /* -------------------------------------------- */
 
-    _prepareAffinities() {
-        const affinities = Object.entries(dnd5e.config.abilities).map(([key, abl]) => {
-            return {
-                key,
-                label: abl.label,
-                classes: []
-            };
-        });
-
-        return affinities;
-    }
-
-    /* -------------------------------------------- */
-
     /**
    * Process form submission for the sheet
    * @this {SettingsApp}                        The handler is called with the application as its bound scope
@@ -152,6 +146,17 @@ export default class SettingsApp extends api.Application5e {
    * @returns {Promise<void>}
    */
     static async #handleFormSubmission(event, form, formData) {
+        const data = foundry.utils.expandObject(formData.object);
+        const affinities = game.settings.get('ldnd5e', 'affinity');
+        Object.entries(data).forEach(([key, affinity]) => {
+            affinities[key].category = affinity.category;
+            for (let [idx, abl] of Object.entries(affinities[key].abilities)) {
+                affinities[key].abilities[idx].value = affinity.abilities[abl.key].value;
+            }
+        })
+
+        await game.settings.set('ldnd5e', 'affinity', affinities);
+        this.close();
     }
 
     /* -------------------------------------------- */

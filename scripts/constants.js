@@ -839,6 +839,8 @@ const i18nStrings = {
    },
 
    messages: {
+      loadingAffinities: "ldnd5e.messages.loadingAffinities",
+
       bldgDmgLightArmor: "ldnd5e.messages.bldgDmgLightArmor",
       slshDmgHeavyArmor: "ldnd5e.messages.slshDmgHeavyArmor",
       halDmgShield: "ldnd5e.messages.halDmgShield",

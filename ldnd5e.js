@@ -5,7 +5,7 @@ import { Debugger, CondHelper, RepeatHelper } from "./scripts/helpers.js";
 import { preloadTemplates } from "./scripts/templates.js";
 import { registerSystemSettings } from "./scripts/settings.js"
 
-import { constants, gmControl, battleControl } from "./scripts/constants.js";
+import { constants, i18nStrings, gmControl, battleControl } from "./scripts/constants.js";
 
 import ADControl from "./models/adControl.js";
 import ADControlV2 from "./models/adControlV2.js";
@@ -117,7 +117,7 @@ Hooks.once("init", function () {
         makeDefault: true,
         label: "Evento"
     });
-    
+
     Items.registerSheet('ldnd5e', TaticsSheet, {
         types: ['ldnd5e.tatic'],
         makeDefault: true,
@@ -137,10 +137,14 @@ Hooks.once("init", function () {
     Handlebars.registerHelper('repeat', RepeatHelper);
 });
 
-Hooks.once('ready', () => {
+Hooks.once('ready', async () => {
     // Verifica se algums módulos necessários estão ativos.
     if (!game.modules.get('lib-wrapper')?.active && game.user.isGM)
         ui.notifications.error("LD&D 5e necessita do módulo 'libWrapper'. Favor instalá-lo e ativá-lo.");
+
+    if (game.settings.get("ldnd5e", "massiveCombatRules")) {
+        await loadAffinities();
+    }
 });
 
 Hooks.on("renderActorDirectory", async (app, html, data) => {
@@ -151,7 +155,7 @@ Hooks.on("renderActorDirectory", async (app, html, data) => {
         const entry = app.options.collection.get(entryId);
 
         // Ignora a entrada se ela não existir.
-        if(!entry) continue;    
+        if (!entry) continue;
 
         if ([typeCompany, typeUnit].includes(entry.type) && entry.getFlag('ldnd5e', 'isMember')) {
             item.classList.add('member');
@@ -213,13 +217,13 @@ Hooks.on('getSceneControlButtons', (controls) => {
 
     // Add AC Control only for GM.
     if (game.user.isGM) {
-        gmControl.onClick = renderACControl;
+        gmControl.onChange = renderACControl;
         tokens.tools.ac = gmControl;
     }
 
     // Add Battle Control for all players.
     tokens.tools.battle = battleControl;
-    battleControl.onClick = renderBattleControl;
+    battleControl.onChange = renderBattleControl;
 });
 
 Hooks.on('combatTurn', ars.onNewCombatTurn);
@@ -345,6 +349,65 @@ Hooks.on('renderChatMessage', async (message, html, messageData) => {
 /** ---------------------------------------------------- */
 /** Funções Internas                                     */
 /** ---------------------------------------------------- */
+
+async function loadAffinities() {
+    let affinities = game.settings.settings.get('ldnd5e.affinity').default;
+    // Prepara o mapeamento das classes registradas do mundo.
+    const classes = new Map();
+
+    const localItems = Object.values(game.items).filter(i => i.type === "class");
+    const packs = game.packs.filter(p => p.documentName === "Item");
+
+    const totalItems = localItems.length + packs.length;
+    let n = 0;
+    let pct = 0;
+
+    const progress = ui.notifications.info(game.i18n.format(i18nStrings.messages.loadingAffinities, { n, totalItems, pct }), { progress: true });
+
+    // Classes do mundo.
+    for (const item of localItems) {
+        if (["class"].includes(item.type)) {
+            classes.set(item.identifier, item);
+        }
+        n++;
+        pct = (n / totalItems);
+        progress.update({ pct, message: game.i18n.format(i18nStrings.messages.loadingAffinities, { n, totalItems, pct }) });
+    }
+
+    // Classes em Compêndios.
+    for (const pack of packs) {
+        const index = pack.index.filter(i => ["class"].includes(i.type));
+        for (const i of index) {
+            const doc = await pack.getDocument(i._id);
+            // Evita duplicatas com base no nome.
+            if (!classes.has(doc.identifier)) {
+                classes.set(doc.identifier, doc);
+            }
+        }
+
+        n++;
+        pct = (n / totalItems);
+        progress.update({ pct, message: game.i18n.format(i18nStrings.messages.loadingAffinities, { n, totalItems, pct }) });
+    }
+
+    Array.from(classes.values()).forEach(c => {
+        affinities[c.identifier] = {
+            uuid: c.uuid,
+            identifier: c.identifier,
+            name: c.name,
+            img: c.img,
+            category: '',
+            abilities: Object.entries(dnd5e.config.abilities).map(([key, abl]) => {
+                return {
+                    key,
+                    label: abl.label,
+                    value: false
+                };
+            })
+        };
+    });
+    await game.settings.set("ldnd5e", "affinity", affinities);
+}
 
 function registerRPGAwesome() {
     const link = document.createElement("link");

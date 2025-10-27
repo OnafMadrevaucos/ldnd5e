@@ -1,20 +1,41 @@
-<fieldset>
-    <legend>{{localize 'ldnd5e.battle.commander'}}</legend>
+<fieldset class="affinity">
+    <legend>{{localize 'ldnd5e.battle.affinity'}}</legend>
 
     <div class="classes-group">
-        {{#each classes as |class|}}
+        {{#each affinities as |a|}}
         <div class="form-group">
-            <label>{{class.name}}</label>
-
-            <div class="affinities-group flexrow">
-                {{#each affinities as |aff a|}}
-                <div class="attr-group">
-                    <span>{{aff.label}}</span>
-                    <dnd5e-checkbox value="true" checked={{aff.checked}}></dnd5e-checkbox>
-                </div>
-                {{/each}}
+            <div class="name">
+                <img class="gold-icon" src="{{a.img}}">
+                <label class="class-name">{{a.name}}</label>
             </div>
+            
 
+            <div class="form-fields">
+                
+                <div class="form-group category">
+                    <label>{{localize 'ldnd5e.unit.category'}}</label>
+                    <select name="{{a.identifier}}.category">
+                        {{ selectOptions @root.categories labelAttr="label" valueAttr="value" blank=true selected=a.category }}
+                    </select>
+                </div>
+
+                <div class="form-group abilities">
+                    <ol class="item-list unlist">
+                        {{#each a.abilities as |ability|}}
+                        <li class="item ability" data-key="{{ability.key}}">
+                            <div class="item-row">
+                                <div class="item-detail hidden-width">
+                                    <div class="stacked">
+                                        <span class="ability">{{ability.key}}</span>
+                                        <dnd5e-checkbox class="value" name="{{../identifier}}.abilities.{{ability.key}}.value" tabindex="0" {{#if ability.value}} checked{{/if}}></dnd5e-checkbox>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        {{/each}}
+                    </ol>
+                </div>
+            </div>
         </div>
         {{/each}}
     </div>
