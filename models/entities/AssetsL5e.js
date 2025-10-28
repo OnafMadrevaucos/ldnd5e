@@ -27,7 +27,10 @@ export default class AssetsL5e extends foundry.abstract.TypeDataModel {
                         choices: dnd5e.config.currencies,
                     }),
                 }), 
-            }),                               
+            }),       
+            details: new fields.SchemaField({
+                charges: new fields.NumberField({ required: true, nullable: false, initial: 1, min: 0 }),
+            }),                        
             // Lista de Atividades que o Insumo fornece.
             activities: new fields.ObjectField({ required: true, nullable: false }),
         };

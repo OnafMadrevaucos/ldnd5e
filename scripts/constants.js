@@ -678,6 +678,7 @@ const i18nStrings = {
       },
       qtd: "ldnd5e.assets.qtd",
       price: "ldnd5e.assets.price",
+      charges: "ldnd5e.assets.charges",
    },
 
    events: {      
@@ -702,10 +703,13 @@ const i18nStrings = {
       damage: "ldnd5e.tatics.damage",
       configuration: "ldnd5e.tatics.configuration",
       details: {
+         use: 'ldnd5e.tatics.details.use',
+         collectImpetus: 'ldnd5e.tatics.details.collectImpetus',
          impetusBonus: 'ldnd5e.tatics.details.impetusBonus',
          isStealth: 'ldnd5e.tatics.details.isStealth',
-         stealthDC: 'ldnd5e.tatics.details.stealthDC',
-         use: 'ldnd5e.tatics.details.use',
+         stealthDC: 'ldnd5e.tatics.details.stealthDC',                 
+         property: 'ldnd5e.tatics.details.property',
+         passive: 'ldnd5e.tatics.details.passive', 
          single: 'ldnd5e.tatics.details.single',
          unique: 'ldnd5e.tatics.details.unique',
          actions: 'ldnd5e.tatics.details.actions',

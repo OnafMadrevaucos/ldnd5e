@@ -362,7 +362,7 @@ async function loadAffinities() {
     let n = 0;
     let pct = 0;
 
-    const progress = ui.notifications.info(game.i18n.format(i18nStrings.messages.loadingAffinities, { n, totalItems, pct }), { progress: true });
+    const progress = ui.notifications.info(game.i18n.format(i18nStrings.messages.loadingAffinities, { n, totalItems }), { progress: true });
 
     // Classes do mundo.
     for (const item of localItems) {
@@ -371,7 +371,7 @@ async function loadAffinities() {
         }
         n++;
         pct = (n / totalItems);
-        progress.update({ pct, message: game.i18n.format(i18nStrings.messages.loadingAffinities, { n, totalItems, pct }) });
+        progress.update({ pct, message: game.i18n.format(i18nStrings.messages.loadingAffinities, { n, totalItems }) });
     }
 
     // Classes em Compêndios.
@@ -387,7 +387,7 @@ async function loadAffinities() {
 
         n++;
         pct = (n / totalItems);
-        progress.update({ pct, message: game.i18n.format(i18nStrings.messages.loadingAffinities, { n, totalItems, pct }) });
+        progress.update({ pct, message: game.i18n.format(i18nStrings.messages.loadingAffinities, { n, totalItems }) });
     }
 
     Array.from(classes.values()).forEach(c => {

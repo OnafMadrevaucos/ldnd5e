@@ -234,7 +234,8 @@
                 "intl": "Intel"
             },
             "qtd": "Quantity",
-            "price": "Price"
+            "price": "Price",
+            "charges": "Charges"
         },
         "events": {
             "attr": {
@@ -257,10 +258,13 @@
             "damage": "Moral Damage",
             "configuration": "Configuration",
             "details": {
+                "use": "Field Use",
+                "collectImpetus": "Collect Impetus",
                 "impetusBonus": "Impetus Bonus",
                 "isStealth": "Stealth",
-                "stealthDC": "DC",
-                "use": "Field Use",
+                "stealthDC": "DC",                               
+                "property":"Tatic Properties",
+                "passive": "Passive", 
                 "single": "Single Use",
                 "unique": "Unique",
                 "actions": "Commander Action",
@@ -357,7 +361,7 @@
             "affinity": "Class Affinity"
         },
         "messages": {
-            "loadingAffinities": "LD&D 5e | Loading Class Affinities... {n} of {totalItems} ({pct}%)",
+            "loadingAffinities": "LD&D 5e | Loading Class Affinities... {n} of {totalItems}",
             "bldgDmgLightArmor": "Light Armor is immune to damage caused by Bludgening Damage.",
             "slshDmgHeavyArmor": "Heavy Armor is immune to damage caused by Slashing Damage.",
             "halDmgShield": "Shields cannot take Nearmiss Hits.",

@@ -47,12 +47,16 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
                     nullable: false,
                     initial: "",
                 }),
+                // A Tática acumula Ímpeto.
+                collectImpetus: new fields.BooleanField({ required: true, nullable: false, initial: true }),
                 // Bonus de Ímpeto da Tática.
                 impetusBonus: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
                 // Se a Tática é furtiva.
                 stealth: new fields.BooleanField({ required: true, nullable: false, initial: false }),
                 // CD de Furtividade da Tática.
                 stealthDC: new fields.NumberField({ required: true, nullable: false, initial: 10 }),
+                // Se a Tática é passiva.
+                passive: new fields.BooleanField({ required: true, nullable: false, initial: false }),
                 // Se a Tática é de uso unico.
                 single: new fields.BooleanField({ required: true, nullable: false, initial: false }),
                 // Se a Tática é única.
@@ -107,7 +111,7 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
         context.info = [{
             label: "ldnd5e.tatics.impetus",
             classes: "info-lg",
-            value: dnd5e.utils.formatModifier(total)
+            value: this.details.collectImpetus ? dnd5e.utils.formatModifier(total) : '—'
         }];
 
         if (Object.keys(this.activities).length > 0) {

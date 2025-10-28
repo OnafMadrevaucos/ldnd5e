@@ -234,7 +234,8 @@
                 "intl": "Intel."
             },
             "qtd": "Quantidade",
-            "price": "Preço"
+            "price": "Preço",
+            "charges": "Cargas"
         },
         "events": {
             "attr": {
@@ -257,10 +258,13 @@
             "damage": "Dano à Moral",
             "configuration": "Configuração",
             "details": {
+                "use": "Uso em Batalha",
+                "collectImpetus": "Acumula Ímpeto",
                 "impetusBonus": "Bônus de Ímpeto",
                 "isStealth": "Furtiva",
-                "stealthDC": "CD",
-                "use": "Uso em Batalha",
+                "stealthDC": "CD",                 
+                "property":"Tatic Properties",
+                "passive": "Passiva",
                 "single": "Uso Único",
                 "unique": "Tática Única",
                 "actions": "Ação de Comandante",
@@ -356,7 +360,7 @@
             "affinity": "Afinidade de Classe"
         },
         "messages": {
-            "loadingAffinities": "LD&D 5e | Carregando afinidades de Classes... {n} de {totalItems} ({pct}%)",
+            "loadingAffinities": "LD&D 5e | Carregando afinidades de Classes... {n} de {totalItems}",
 
             "bldgDmgLightArmor": "Armaduras Leves são imunes a avarias causadas por Dano Contundente.",
             "slshDmgHeavyArmor": "Armaduras Pesadas são imunes a avarias causadas por Dano Cortante.",

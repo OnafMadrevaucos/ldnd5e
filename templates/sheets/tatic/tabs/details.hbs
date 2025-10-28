@@ -6,13 +6,22 @@
         <div class="form-group split-group">
             <label>{{ localize "DND5E.ACTIVATION.FIELDS.activation.label" }}</label>
             <div class="form-fields">
-                <select name="system.details.activation">
+                <select name="system.details.activation" {{#unless editable}} disabled{{/unless}}>
                     {{ selectOptions activationTypes selected=system.details.activation valueAttr="value"
                     labelAttr="label" }}
                 </select>
             </div>
         </div>
 
+        <div class="form-group split-group">
+            <label>{{localize 'ldnd5e.tatics.details.collectImpetus'}}</label>
+            <div class="form-fields">
+                <dnd5e-checkbox name="system.details.collectImpetus" tabindex="1" {{#if system.details.collectImpetus}}
+                    checked{{/if}} {{#unless editable}} disabled{{/unless}}></dnd5e-checkbox>
+            </div>
+        </div>
+
+        {{#if system.details.collectImpetus}}
         <div class="form-group split-group">
             <label>{{ localize "ldnd5e.tatics.details.impetusBonus" }}</label>
             <div class="form-fields">
@@ -21,6 +30,7 @@
                     {{#unless editable}} disabled{{/unless}}>
             </div>
         </div>
+        {{/if}}
 
         <div class="form-group split-group stealth">
             <label>{{ localize "ldnd5e.tatics.details.isStealth" }}?</label>
@@ -31,26 +41,32 @@
             {{#if system.details.stealth}}
             <div class="form-fields">
                 <label>{{ localize "ldnd5e.tatics.details.stealthDC" }}:</label>
-                <input type="text" class="always-interactive" value="{{ system.details.stealthDC }}" placeholder="{{ localize "ldnd5e.tatics.details.stealthDC" }}"
-                    data-dtype="Number" name="system.details.stealthDC" inputmode="numeric" pattern="[+=\-]?\d*" min="0"
-                    {{#unless editable}} disabled{{/unless}}>
+                <input type="text" class="always-interactive" value="{{ system.details.stealthDC }}"
+                    placeholder="{{ localize " ldnd5e.tatics.details.stealthDC" }}" data-dtype="Number"
+                    name="system.details.stealthDC" inputmode="numeric" pattern="[+=\-]?\d*" min="0" {{#unless
+                    editable}} disabled{{/unless}}>
             </div>
             {{/if}}
-        </div>        
-
-        <div class="form-group split-group">
-            <label>{{localize 'ldnd5e.tatics.details.single'}}</label>
-            <div class="form-fields">
-                <dnd5e-checkbox name="system.details.single" tabindex="0" {{#if system.details.single}}
-                    checked{{/if}}{{#unless editable}} disabled{{/unless}}></dnd5e-checkbox>
-            </div>
         </div>
 
-        <div class="form-group split-group">
-            <label>{{localize 'ldnd5e.tatics.details.unique'}}</label>
+        <div class="form-group stacked checkbox-grid">
+            <label>{{localize 'ldnd5e.tatics.details.property'}}</label>
             <div class="form-fields">
-                <dnd5e-checkbox name="system.details.unique" tabindex="1" {{#if system.details.unique}} checked{{/if}}
-                    {{#unless editable}} disabled{{/unless}}></dnd5e-checkbox>
+                <label class="checkbox">
+                    <dnd5e-checkbox name="system.details.passive" tabindex="0" {{#if system.details.passive}}
+                        checked{{/if}}{{#unless editable}} disabled{{/unless}}></dnd5e-checkbox>
+                    <span>{{localize 'ldnd5e.tatics.details.passive'}}</span>
+                </label>
+                <label class="checkbox">
+                    <dnd5e-checkbox name="system.details.single" tabindex="0" {{#if system.details.single}}
+                        checked{{/if}}{{#unless editable}} disabled{{/unless}}></dnd5e-checkbox>
+                    <span>{{localize 'ldnd5e.tatics.details.single'}}</span>
+                </label>
+                <label class="checkbox">
+                    <dnd5e-checkbox name="system.details.unique" tabindex="0" {{#if system.details.unique}}
+                        checked{{/if}}{{#unless editable}} disabled{{/unless}}></dnd5e-checkbox>
+                    <span>{{localize 'ldnd5e.tatics.details.unique'}}</span>
+                </label>
             </div>
         </div>
 

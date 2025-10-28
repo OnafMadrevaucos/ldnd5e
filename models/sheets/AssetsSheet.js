@@ -76,6 +76,8 @@ export default class AssetsSheet extends item.ItemSheet5e {
     async _onRender(context, options) {
         await super._onRender(context, options);
 
+        this.element.querySelector(".charges input")?.addEventListener('input', event => this._onChargesChange(event));
+
         if (this.editingDescriptionTarget) {
             this.element.querySelectorAll("prose-mirror").forEach(editor => editor.addEventListener("save", () => {
                 this.editingDescriptionTarget = null;
@@ -249,6 +251,23 @@ export default class AssetsSheet extends item.ItemSheet5e {
             await this.item.update({ "system.activities": this.item.system.activities });
             this.render();
         }
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+     * The user has changed the CR.
+     * @param {PointerEvent} event  The triggering event.
+     * @protected
+     */
+    _onChargesChange(event) {
+        const input = event.currentTarget;
+
+        let val = parseInt(input.value);
+
+        const min = 0;
+        
+        if (val < min) input.value = min;
     }
 
     /* -------------------------------------------- */

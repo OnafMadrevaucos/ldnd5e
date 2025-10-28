@@ -24,9 +24,21 @@
 
     <div class="item-descriptions">
 
-        {{!-- flavor description --}}
-        {{> ".description" collapsible=item.isOwner label="ldnd5e.tatics.flavor" target="system.info.flavor"
-        enriched=enriched.flavor }}
+        {{#unless editable}}
+        <div class="description-viewer flexcol">
+            <span class="flavor" aria-placeholder="Flavor Text">{{system.info.flavor}}</span>
+        </div>
+        {{else}}
+        <div class="description-editor flexcol">
+            <div class="textbox textbox-half">
+                <h3 class="icon">
+                    <i class="fa-solid fa-quote-left"></i>
+                    <span>{{localize 'ldnd5e.unit.flavor'}}</span>
+                </h3>
+                <textarea class="untext" name="system.info.flavor">{{ system.info.flavor }}</textarea>
+            </div>
+        </div>
+        {{/unless}}
 
         {{!-- main description --}}
         {{> ".description" collapsible=item.isOwner label="ldnd5e.tatics.description" target="system.info.description"

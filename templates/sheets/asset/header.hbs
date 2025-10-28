@@ -19,7 +19,7 @@
 
     </div>
 
-    {{!-- Type & Price --}}
+    {{!-- Type, Price, Charges --}}
     <div class="right common-fields ">
 
         <div class="asset-type">
@@ -44,6 +44,16 @@
             <span class="value">{{ dnd5e-numberFormat system.info.price.value }}</span>
             <i class="currency {{ system.info.price.denomination }}"
                 aria-label="{{ lookup (lookup CONFIG.currencies system.info.price.denomination) 'label' }}"></i>
+            {{/if}}
+        </div>
+
+        <div class="charges">
+            {{#if editable}}
+            <input type="number" name="system.details.charges" class="charges uninput"
+                value="{{ system.details.charges }}">            
+            {{else}}
+            <span class="value">{{ dnd5e-numberFormat system.details.charges }}</span>
+            <i class="ra ra-burning-embers" data-tooltip="{{localize 'ldnd5e.assets.charges'}}"></i>
             {{/if}}
         </div>
 
