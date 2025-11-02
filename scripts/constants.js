@@ -712,14 +712,22 @@ const i18nStrings = {
          passive: 'ldnd5e.tatics.details.passive', 
          single: 'ldnd5e.tatics.details.single',
          unique: 'ldnd5e.tatics.details.unique',
+         giveBonus: 'ldnd5e.tatics.details.giveBonus',
          actions: 'ldnd5e.tatics.details.actions',
          actionsInfo: 'ldnd5e.tatics.details.actionsInfo',
          events: 'ldnd5e.tatics.details.events',
          eventsInfo: 'ldnd5e.tatics.details.eventsInfo',
+         bonusTitle: 'ldnd5e.tatics.details.bonusTitle',
+         bonus: {
+            frt: 'ldnd5e.tatics.details.bonus.frt',
+            mrl: 'ldnd5e.tatics.details.bonus.mrl',
+            wll: 'ldnd5e.tatics.details.bonus.wll'
+         }
       },
       invalidItem: "ldnd5e.tatics.invalidItem",
       removeAction: "ldnd5e.tatics.removeAction",
       removeEvent: "ldnd5e.tatics.removeEvent",
+      confirmChanges: "ldnd5e.tatics.confirmChanges",
       activity: "ldnd5e.tatics.activity",
       activityTitle: "ldnd5e.tatics.activityTitle",
       activityType: "ldnd5e.tatics.activityType",

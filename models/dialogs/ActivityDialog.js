@@ -1,26 +1,26 @@
 import { taticsData } from "../../scripts/constants.js";
-import TaticsL5e from "../entities/TaticsL5e.js";
 
 const api = dnd5e.applications.api;
 
-export default class ActivityDialog extends api.Dialog5e {
-    constructor(options = {}) {
+export default class ActivityDialog extends api.Application5e {
+    constructor(tatic, options = {}) {
         super(options);
 
         this.#mode = options.mode ?? "create";
 
         if (this.#mode === "edit") {
-            this.#data = options.tatic?.system.activities[options.activityId] ?? {};
+            this.#data = tatic.system.activities[options.activityId] ?? {};
         }
 
-        this.#changes = this.#data;
+        this.#tatic = tatic;
     }
 
     /* -------------------------------------------- */
 
     /** @override */
     static DEFAULT_OPTIONS = {
-        classes: ["tatic", "activity", "dialog"],
+        classes: ["ldnd5e", "tatic", "activity"],
+        tag: "form",
         window: {
             title: "ldnd5e.tatics.activityTitle"
         },
@@ -44,6 +44,9 @@ export default class ActivityDialog extends api.Dialog5e {
         },
         configuration: {
             template: "modules/ldnd5e/templates/dialogs/activity/configuration.hbs"
+        },
+        buttons: {
+            template: "modules/ldnd5e/templates/dialogs/activity/buttons.hbs"
         }
     };
 
@@ -98,9 +101,9 @@ export default class ActivityDialog extends api.Dialog5e {
 
     /**
      * Application mode.
-     * @type {BasicActivityData}
+     * @type {string}
      */
-    #mode = {};
+    #mode = "";
 
     get isEdit() {
         return this.#mode === "edit";
@@ -117,14 +120,25 @@ export default class ActivityDialog extends api.Dialog5e {
     }
 
     /**
-     * Application has changed some data.
-     * @type {BasicActivityData}
+     * Tatic data.
+     * @type {TaticsL5e}
      */
-    #changes = {};
+    #tatic = {};
 
-    get hasChanges() {
-        return !this._deepEqual(this.#data, this.#changes);
+    get tatic() {
+        return this.#tatic;
     }
+
+    /**
+     * Tatic data.
+     * @type {boolean}
+     */
+    #hasData = false;
+
+    get hasData() {
+        return this.#hasData;
+    }
+
 
     /* -------------------------------------------- */
     /*  Rendering                                   */
@@ -145,7 +159,7 @@ export default class ActivityDialog extends api.Dialog5e {
             default:
                 return context;
         }
-    }   
+    }
 
     /* -------------------------------------------- */
 
@@ -169,27 +183,6 @@ export default class ActivityDialog extends api.Dialog5e {
         return context;
     }
 
-    _deepEqual(obj1, obj2) {
-        if (obj1 === obj2) return true;
-
-        if (typeof obj1 !== "object" || obj1 === null ||
-            typeof obj2 !== "object" || obj2 === null) {
-            return false;
-        }
-
-        const keys1 = Object.keys(obj1);
-        const keys2 = Object.keys(obj2);
-
-        if (keys1.length !== keys2.length) return false;
-
-        for (let key of keys1) {
-            if (!keys2.includes(key) || !this._deepEqual(obj1[key], obj2[key])) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     /* -------------------------------------------- */
     /*  Form Handling                               */
     /* -------------------------------------------- */
@@ -203,21 +196,14 @@ export default class ActivityDialog extends api.Dialog5e {
      */
     static async #handleFormSubmission(event, form, formData) {
         if (event.type === "change") {
-            const nameInput = form.querySelector('.document-name');
-            const numberInput = form.querySelector('input[name="number"]');
-            const mainRollCheck = form.querySelector('dnd5e-checkbox');
-            const submittedData = formData.object;
-
-            this.#data = {
-                id: this.isEdit ? this.data.id : foundry.utils.randomID(),
-                name: submittedData.name || nameInput.placeholder,
-                number: submittedData.number || numberInput.placeholder,
-                die: submittedData.die,
-                bonus: submittedData.bonus,
-                type: submittedData.type,
-                mainRoll: mainRollCheck.checked
-            };            
-        } 
+            const _formData = foundry.utils.expandObject(formData.object);
+            this.#data = { 
+                id: (this.isEdit) ? this.#data.id : foundry.utils.randomID(),
+                ..._formData.header, ..._formData.config };
+        } else if (event.type === "submit") {          
+            this.#hasData = true;
+            this.close();
+        }
     }
 
     /* -------------------------------------------- */
@@ -226,34 +212,16 @@ export default class ActivityDialog extends api.Dialog5e {
 
     /**
      * Display the creation dialog.
-     * @param {TaticsL5e} tatic                        Item that will receive the activity.
-     * @param {object} [options={}]                    Additional options for the application.
-     * @returns {Promise<TaticsL5e|null>}              Transformation settings to apply.
+     * @param {TaticsL5e} tatic             Tatic object. 
+     * @param {object} [options={}]         Additional options for the application.
+     * @returns {Promise<boolean|null>}     Transformation settings to apply.
      */
-    static async createDialog(tatic, options = {}) {
-        return new Promise(resolve => {
-            options.tatic = tatic;
-            const dialog = new this(options);
-            dialog.addEventListener("close", event => {
-                const data = event.target.data;                
-
-                if (data.name === "" ) {
-                    ui.notifications.warn(game.i18n.localize("ldnd5e.tatics.invalidActivity.name"));
-                    resolve(null);
-                }
-
-                if (data.type === "0") {
-                    ui.notifications.warn(game.i18n.localize("ldnd5e.tatics.invalidActivity.type"));
-                    resolve(null);
-                }
-
-                if (!data.number) {
-                    ui.notifications.warn(game.i18n.localize("ldnd5e.tatics.invalidActivity.formula"));
-                    resolve(null);
-                }
-
-                resolve(data ?? null);
-            }, { once: true });
+    static async create(tatic, options = {}) {
+        return new Promise((resolve, reject) => {
+            const dialog = new this(tatic, options);
+            dialog.addEventListener("close", () => {
+                return dialog.hasData ? resolve(dialog.data) : resolve(null);
+            });
             dialog.render({ force: true });
         });
     }

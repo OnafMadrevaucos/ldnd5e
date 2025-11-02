@@ -72,11 +72,11 @@
             </filigree-box>
 
             <div class="extra-decks">
-                <button class="full-deck {{#if (eq state.sidebar.viewer " full")}}active{{/if}}" type="button"
+                <button class="deck-button full-deck {{#if (eq state.sidebar.viewer "full")}}active{{/if}}" type="button"
                     data-action="toggleExtraDeck" data-deck="full">
                     <img class="svg" src="{{icons.full}}">
                 </button>
-                <button class="discarded-deck {{#if (eq state.sidebar.viewer " discarded")}}active{{/if}}" type="button"
+                <button class="deck-button discarded-deck {{#if (eq state.sidebar.viewer "discarded")}}active{{/if}}" type="button"
                     data-action="toggleExtraDeck" data-deck="discarded">
                     <img class="svg" src="{{icons.discarded}}">
 
@@ -84,7 +84,7 @@
                         {{deck.counter.discarded}}
                     </a>
                 </button>
-                <button class="assets-deck {{#if (eq state.sidebar.viewer " assets")}}active{{/if}}" type="button"
+                <button class="deck-button assets-deck {{#if (eq state.sidebar.viewer "assets")}}active{{/if}}" type="button"
                     data-action="toggleExtraDeck" data-deck="assets">
                     <img class="svg" src="{{icons.assets}}">
                 </button>

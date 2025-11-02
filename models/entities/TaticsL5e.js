@@ -61,6 +61,17 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
                 single: new fields.BooleanField({ required: true, nullable: false, initial: false }),
                 // Se a Tática é única.
                 unique: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+                // Se a Tática fornece algum bônus a um atributo (A Tática deve ser uma passiva).
+                giveBonus: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+                // Possíveis bônus fornecidos pela Tática.
+                bonus: new fields.SchemaField({
+                    // Bonus de Fortitude da Tática.
+                    frt: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+                    // Bonus de Fortitude da Tática.
+                    mrl: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+                    // Bonus de Fortitude da Tática.
+                    wll: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+                })
             }),
             attributes: new fields.SchemaField({
                 // Se a Tática é uma ação de preparação.
@@ -103,10 +114,10 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
 
     /** @inheritDoc */
     async getSheetData(context) {
-        const unit = this.parent.actor;    
+        const unit = this.parent.actor;
         const impetus = (unit?.system.abilities.frt.value) ?? 0;
 
-        const total = impetus + this.details.impetusBonus; 
+        const total = impetus + this.details.impetusBonus;
 
         context.info = [{
             label: "ldnd5e.tatics.impetus",

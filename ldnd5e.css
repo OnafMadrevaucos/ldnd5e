@@ -2423,10 +2423,11 @@
 .ldnd5e.asset .common-fields .asset-type:has(select) {
   width: 100%;
 }
+
 .ldnd5e.asset .common-fields .charges .value {
   color: var(--dnd5e-color-gold);
   font-size: var(--font-size-18);
-  font-weight: bold;  
+  font-weight: bold;
 }
 
 .ldnd5e.asset .common-fields .charges i {
@@ -2458,48 +2459,33 @@
   color: #48a740;
 }
 
-
-
-
-.application.dnd5e2.dialog.activity.tatic {
-  background: url(ui/texture-gray1.webp) no-repeat top left, url(ui/texture-gray2.webp) no-repeat bottom right, var(--dnd5e-color-parchment);
-  border: 1px solid var(--dnd5e-color-gold);
-}
-
-.dialog.activity.tatic .window-content {
+.ldnd5e.activity.tatic .window-content {
   border-radius: 4px;
-  background: var(--tatic-activity-card);
-  box-shadow: 0 0 6px var(--dnd5e-shadow-45);
   border: var(--dnd5e-border-gold);
   margin-inline: 2em;
   margin-bottom: 2em;
 }
 
-.dialog.activity.tatic .window-content .document-name {
+.ldnd5e.activity.tatic .window-content .document-name {
   font-family: var(--dnd5e-font-roboto-slab);
   font-weight: bold;
   font-size: var(--font-size-24);
   text-align: center;
   background: none;
   border: none;
-  color: var(--color-dark-5);
 }
 
-.dialog.activity.tatic .window-content .document-name:focus {
+.ldnd5e.activity.tatic .window-content .document-name:focus {
   box-shadow: none;
 }
 
-.dialog.activity.tatic .window-content button.dialog-button,
-.dialog.activity.tatic .window-content [data-application-part="configuration"] label {
-  color: var(--color-dark-5);
+.ldnd5e.activity .main-roll {
+  display: flex;
+  gap: 5px;
+  justify-content: space-between;
 }
 
-.dialog.activity.tatic .window-content button.dialog-button:hover {
-  background: var(--tatic-activity-card);
-  box-shadow: 0 0 5px var(--color-shadow-primary);
-}
-
-.dialog.activity .main-roll dnd5e-checkbox {
+.ldnd5e.activity .main-roll dnd5e-checkbox {
   flex: 0;
 }
 
@@ -2663,7 +2649,7 @@
 }
 
 .ldnd5e.battle .field-container .notification {
-  position: fixed;
+  position: absolute;
   top: 10px;
   left: 0;
   width: 100%;
@@ -3486,6 +3472,12 @@
   height: 300px;
   display: flex;
   flex-direction: column;
+}
+
+.ldnd5e.battle .events-controls .hand .deck-button:hover,
+.ldnd5e.battle .events-controls .hand .deck-button.active {
+  cursor: pointer;
+  text-shadow: 0 0 6px var(--color-shadow-primary);
 }
 
 .ldnd5e.battle .events-controls .hand .event {

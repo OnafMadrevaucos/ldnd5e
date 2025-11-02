@@ -9,7 +9,8 @@
     <section class="content">
 
         <filigree-box class="hand events">
-            <h3>
+            <h3 class="hand-title deck-button {{#if (eq state.sidebar.viewer "events")}}active{{/if}}"
+                data-action="toggleExtraDeck" data-deck="events">
                 <i class="ra ra-hourglass" inert></i>
                 <span>{{localize 'ldnd5e.battle.eventHand'}}</span>
             </h3>
@@ -67,5 +68,37 @@
         </filigree-box>
 
     </section>
+
+    <div class="extra-decks-viewer {{#if (ne state.sidebar.viewer "")}}active{{/if}}"
+        data-deck="{{state.sidebar.viewer}}">
+
+        <div class="deck-section events {{#unless state.sidebar.events}}hidden{{/unless}}">
+            <h4 class="title">{{localize 'ldnd5e.battle.extraDecks.event'}}</h4>
+            <div class="deck-container">
+                <div class="cards-counter">{{deck.counter.events}} <i class="ra ra-diamonds-card"></i></div>
+                <ol class="cards-list unlist">
+                    {{#each deck.list.piles.events as |event|}}
+                    <li class="tatic-card" data-tatic-uuid="{{event.uuid}}" data-unit-id="{{event.unit.id}}">
+                        <div class="card-row">
+                            <img class="gold-icon {{#if event.img.svg}} svg{{/if}}" src="{{event.img.src}}">
+                            <div class="card-content">
+                                <a class="card-link rollable" data-action="showEvent">
+                                    <span class="name">{{event.name}}</span>
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                    {{/each}}
+                </ol>
+                <div class="deck-actions">
+                    <button class="shuffle-card" type="button" data-action="shuffleDeck" data-type="event">
+                        <i class="fas fa-shuffle"></i>
+                        {{localize 'ldnd5e.battle.shuffleDeck'}}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
 
 </section>

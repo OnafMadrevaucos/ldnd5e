@@ -1486,7 +1486,7 @@ export default class BattleApp extends api.Application5e {
     static async #toggleDeckControls(event, target) {
         const content = target.closest(".window-content");
 
-        const controls = content.querySelector(".battle-controls");
+        const controls = content.querySelector(".side-controls");
         const viewer = content.querySelector(".extra-decks-viewer");
 
         if (this.state.sidebar.control) controls.classList.remove("active");
@@ -1498,7 +1498,7 @@ export default class BattleApp extends api.Application5e {
         if (!controls.classList.contains("active")) {
             viewer.classList.remove("active");
 
-            const buttons = controls.querySelectorAll(".extra-decks button");
+            const buttons = controls.querySelectorAll(".extra-decks .deck-button");
 
             // Clear all active elements.
             for (let i = 0; i < buttons.length; i++) {
@@ -1566,8 +1566,8 @@ export default class BattleApp extends api.Application5e {
    * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
    */
     static async #toggleExtraDeck(event, target) {
-        const container = target.closest(".extra-decks");
-        const buttons = container.querySelectorAll("button");
+        const container = target.closest(".extra-decks");        
+        const buttons = container?.querySelectorAll("deck-button") ?? this.element.querySelectorAll(".hand.events .deck-button");
 
         const content = target.closest(".window-content");
         const viewer = content.querySelector(".extra-decks-viewer");
@@ -1633,6 +1633,31 @@ export default class BattleApp extends api.Application5e {
 
         if (this.state.sidebar.events) controls.classList.remove("active");
         else controls.classList.add("active");
+
+        const targetCardsSection = viewer.querySelector(`.deck-section.${targetDeck}`);
+        if (!targetCardsSection) return;
+
+        const oldActiveDeck = viewer.dataset.deck ?? '';
+        const targetDeck = target.dataset.deck ?? '';
+
+        // Show the target section.
+        targetCardsSection.classList.remove("hidden");
+
+        // If the viewer is already active.
+        if (viewer.classList.contains("active")) {
+            
+        }
+        // If the viewer is not active.
+        else {
+            viewer.classList.add("active");
+            target.classList.add("active");
+            // Set the active deck.
+            viewer.dataset.deck = targetDeck;
+        }
+
+        // Set the viewer.
+        this.state.sidebar.viewer = viewer.dataset.deck; 
+        await game.user.setFlag('ldnd5e', 'battle', this.app);
 
         // Set the events control.
         this.state.sidebar.events = controls.classList.contains("active");

@@ -67,10 +67,49 @@
                         checked{{/if}}{{#unless editable}} disabled{{/unless}}></dnd5e-checkbox>
                     <span>{{localize 'ldnd5e.tatics.details.unique'}}</span>
                 </label>
+                <label class="checkbox">
+                    <dnd5e-checkbox name="system.details.giveBonus" tabindex="0" {{#if system.details.giveBonus}}
+                        checked{{/if}}{{#unless canGiveBonus}} disabled{{/unless}}></dnd5e-checkbox>
+                    <span>{{localize 'ldnd5e.tatics.details.giveBonus'}}</span>
+                </label>
             </div>
         </div>
 
     </fieldset>
+
+    {{#if system.details.giveBonus}}
+    <fieldset class="tatic-action">
+        <legend>{{localize 'ldnd5e.tatics.details.bonusTitle'}}</legend>       
+
+        <div class="form-group">
+            <label>{{localize 'ldnd5e.tatics.details.bonus.frt'}}</label>
+            <div class="form-fields">
+                <input type="text" class="always-interactive" value="{{ system.details.bonus.frt }}"
+                    placeholder="0" data-dtype="Number" name="system.details.bonus.frt" inputmode="numeric"
+                    pattern="[+=\-]?\d*" {{#unless editable}} disabled{{/unless}}>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>{{localize 'ldnd5e.tatics.details.bonus.mrl'}}</label>
+            <div class="form-fields">
+                <input type="text" class="always-interactive" value="{{ system.details.bonus.mrl }}"
+                    placeholder="0" data-dtype="Number" name="system.details.bonus.mrl" inputmode="numeric"
+                    pattern="[+=\-]?\d*" {{#unless editable}} disabled{{/unless}}>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>{{localize 'ldnd5e.tatics.details.bonus.wll'}}</label>
+            <div class="form-fields">
+                <input type="text" class="always-interactive" value="{{ system.details.bonus.wll }}"
+                    placeholder="0" data-dtype="Number" name="system.details.bonus.wll" inputmode="numeric"
+                    pattern="[+=\-]?\d*" {{#unless editable}} disabled{{/unless}}>
+            </div>
+        </div>
+
+    </fieldset>
+    {{/if}}
 
     <fieldset class="tatic-action">
         <legend>{{localize 'ldnd5e.tatics.details.actions'}}</legend>

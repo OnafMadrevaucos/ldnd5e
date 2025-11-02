@@ -1,10 +1,9 @@
 <fieldset>
-    {{#debug this}}{{/debug}}
     <legend>{{ localize "ldnd5e.tatics.configuration" }}</legend>
     <div class="form-group">
         <label>{{localize 'ldnd5e.tatics.activityType'}}</label>
         <div class="form-fields">
-            <select name="type">
+            <select name="config.type">
                 {{ selectOptions activityTypes labelAttr="label" valueAttr="value" selected=data.type }}
             </select>
         </div>
@@ -17,15 +16,15 @@
                     <div class="form-group label-top">
                         <label>{{localize 'DND5E.Number'}}</label>
                         <div class="form-fields">
-                            <input type="number" name="number" value="{{#if isEdit}}{{data.number}}{{else}}1{{/if}}"
-                                min="0" step="1" placeholder="1">
+                            <input type="number" name="config.number"
+                                value="{{#if isEdit}}{{data.number}}{{else}}1{{/if}}" min="0" step="1" placeholder="1">
                         </div>
                     </div>
 
                     <div class="form-group label-top">
                         <label>{{localize 'DND5E.Die'}}</label>
                         <div class="form-fields">
-                            <select name="die" data-dtype="Number">
+                            <select name="config.die" data-dtype="Number">
                                 {{ selectOptions dice labelAttr="label" valueAttr="value" selected=data.die }}
                             </select>
                         </div>
@@ -33,7 +32,9 @@
 
                     <div class="form-group label-top">
                         <label>{{localize 'DND5E.Bonus'}}</label>
-                        <div class="form-fields"><input type="text" name="bonus" value="{{data.bonus}}"></div>
+                        <div class="form-fields">
+                            <input type="text" name="config.bonus" value="{{data.bonus}}">
+                        </div>
                     </div>
 
                 </div>
@@ -43,6 +44,6 @@
 
     <div class="form-group main-roll">
         <label>{{localize 'ldnd5e.unit.isMainRoll'}}</label>
-        <dnd5e-checkbox name="mainRoll" tabindex="0" {{#if data.mainRoll}}checked{{/if}}></dnd5e-checkbox>
+        <dnd5e-checkbox name="config.mainRoll" tabindex="0" {{#if data.mainRoll}}checked{{/if}}></dnd5e-checkbox>
     </div>
 </fieldset>

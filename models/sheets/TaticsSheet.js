@@ -215,6 +215,11 @@ export default class TaticsSheet extends item.ItemSheet5e {
             { value: "", label: game.i18n.localize("DND5E.NoneActionLabel") }
         ];
 
+        context.canGiveBonus = (this.item.system.details.passive && context.editable);
+
+        if (!this.item.system.details.passive)
+            await this.item.update({ "system.details.giveBonus": false });
+
         context.events = this._prepareEvents();
 
         context.actions = this._prepareActions();
@@ -325,13 +330,13 @@ export default class TaticsSheet extends item.ItemSheet5e {
 
     /**@inheritdoc */
     async _addDocument(event) {
-        const activity = await ActivityDialog.createDialog(this.item, { mode: "create" });
+        const activity = await ActivityDialog.create(this.item, { mode: "create" });
 
-        if (activity) {
-            this.item.system.activities[activity.id] = activity;
-            await this.item.update({ "system.activities": this.item.system.activities });
-            this.render();
-        }
+        // Ignore non-existing activities.
+        if (!activity) return;
+
+        this.item.system.activities[activity.id] = activity;
+        await this.item.update({ ["system.activities"]: this.item.system.activities });
     }
 
     /* -------------------------------------------- */
@@ -431,7 +436,7 @@ export default class TaticsSheet extends item.ItemSheet5e {
         const attributes = this.item.system.attributes;
         attributes[attr] = !attributes[attr];
 
-        await this.item.update({ "system.attributes": attributes });
+        await this.item.update({ ["system.attributes"]: attributes });
     }
 
     /* -------------------------------------------- */
@@ -445,7 +450,7 @@ export default class TaticsSheet extends item.ItemSheet5e {
     static async #toggleRecovery(event, target) {
         const mainRecovery = !this.item.system.mainRecovery;
 
-        await this.item.update({ "system.mainRecovery": mainRecovery });
+        await this.item.update({ ["system.mainRecovery"]: mainRecovery });
     }
 
     /* -------------------------------------------- */
@@ -535,11 +540,13 @@ export default class TaticsSheet extends item.ItemSheet5e {
         const activityId = target.closest(".activity")?.dataset.activityId;
         if (!activityId) return;
 
-        const activity = await ActivityDialog.createDialog(this.item, { activityId, mode: "edit" });
+        const activity = await ActivityDialog.create(this.item, { activityId, mode: "edit" });
+
+        // Ignore non-existing activities.
         if (!activity) return;
 
-        this.item.system.activities[activityId] = activity;
-        await this.item.update({ "system.activities": this.item.system.activities });
+        this.item.system.activities[activity.id] = activity;
+        await this.item.update({ ["system.activities"]: this.item.system.activities });
     }
 
     /* -------------------------------------------- */
@@ -554,9 +561,13 @@ export default class TaticsSheet extends item.ItemSheet5e {
         const activityId = target.closest(".activity")?.dataset.activityId;
         if (!activityId) return;
 
-        delete this.item.system.activities[activityId];
-        await this.item.update({ "system.activities": this.item.system.activities });
-        this.render();
+        console.log(this.item.system.activities);
+        await this.item.update({
+            [`system.activities.-=${activityId}`]: null
+        });
+        console.log(this.item.system.activities);
+
+        this.render({ force: true });
     }
 
     /* -------------------------------------------- */

@@ -497,6 +497,9 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
                 let idx = -1;
                 for (const uid of this.actor.system.units) {
                     const u = game.actors.get(uid);
+                    // Ignore if the unit doesn't exist.
+                    if(!u) continue;
+
                     if (u.system.info.type === type)
                         idx = this.actor.system.units.indexOf(uid);
                 }
@@ -509,6 +512,9 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
                 let idx = -1;
                 for (const uid of this.actor.system.units) {
                     const u = game.actors.get(uid);
+                    // Ignore if the unit doesn't exist.
+                    if(!u) continue;
+                    
                     if (u.system.info.type === type)
                         idx = this.actor.system.units.indexOf(uid);
                 }
