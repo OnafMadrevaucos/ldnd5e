@@ -326,7 +326,8 @@
                 "top": "Cima",
                 "bottom": "Baixo",
                 "enemy": "Inimigo",
-                "ally": "Aliado"
+                "ally": "Aliado",
+                "both": "Ambos"
             },
             "commander": "Comandante",
             "deck": "Baralho - {name}",
@@ -338,7 +339,8 @@
             "extraDecks": {
                 "full": "Pilha de Compra",
                 "discarded": "Pilha de Descarte",
-                "assets": "Insumos"
+                "assets": "Insumos",
+                "events": "Eventos Disponíveis"
             },
             "summary": "Resumo de Habilidades",
             "units": "Unidades da Companhia",

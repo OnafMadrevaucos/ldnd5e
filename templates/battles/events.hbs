@@ -1,84 +1,137 @@
-<section class="events-controls side-controls {{#if state.sidebar.events}}active{{/if}}">
-    <section class="header">
-        <button type="button" class="header-control icon fa-solid fa-xmark"
-            data-tooltip="{{localize 'ldnd5e.battle.closeDeck'}}" aria-label="{{localize 'ldnd5e.battle.close'}}"
-            data-action="toggleEventsControls">
-        </button>
-        <h2 class="title">{{localize 'ldnd5e.battle.events'}}</h2>
-    </section>
-    <section class="content">
+<div class="deck-controls">
+    <section class="events-controls side-controls {{#if state.sidebar.events}}active{{/if}}">
+        <section class="header">
+            <button type="button" class="header-control icon fa-solid fa-xmark"
+                data-tooltip="{{localize 'ldnd5e.battle.closeDeck'}}" aria-label="{{localize 'ldnd5e.battle.close'}}"
+                data-action="toggleEventsControls">
+            </button>
+            <h2 class="title">{{localize 'ldnd5e.battle.events'}}</h2>
+        </section>
+        <section class="content">
 
-        <filigree-box class="hand events">
-            <h3 class="hand-title deck-button {{#if (eq state.sidebar.viewer "events")}}active{{/if}}"
-                data-action="toggleExtraDeck" data-deck="events">
-                <i class="ra ra-hourglass" inert></i>
-                <span>{{localize 'ldnd5e.battle.eventHand'}}</span>
-            </h3>
-            <div class="event">
+            <filigree-box class="hand events">
+                <h3 class="hand-title deck-button {{#if (eq state.sidebar.viewer " events")}}active{{/if}}"
+                    data-action="toggleEventsDeck" data-deck="events">
+                    <i class="ra ra-hourglass" inert></i>
+                    <span>{{localize 'ldnd5e.battle.eventHand'}}</span>
+                </h3>
 
-            </div>
-            <div class="hand-actions">
-                <button class="draw-card" type="button" data-action="drawEvent" data-type="event">
-                    <i class="ra ra-perspective-dice-six"></i>
-                    {{localize 'ldnd5e.battle.drawEvent'}}
-                </button>
-            </div>
-        </filigree-box>
+                <div class="active-event{{#unless hasActiveEvent}} empty{{/unless}}" data-event-uuid="{{activeEvent.uuid}}">
+                    {{#with activeEvent as |event|}}
+                    <a class="active-event-link" data-action="showEvent"><i class="fas fa-eye"></i></a>
+                    <div class="header">
+                        <div class="event-name">
+                            <img class="item-image gold-icon" src="{{event.img}}" alt="{{ event.name }}">
+                            <div class="name {{#if event.hasActivities}}rollable{{/if}}" data-action="useEvent">{{
+                                event.name }}</div>
+                        </div>
 
-        <filigree-box class="rows-control">
-            <h3>
-                <i class="ra ra-sideswipe" inert></i>
-                <span>{{localize 'ldnd5e.battle.rowsControl'}}</span>
-            </h3>
-            <div class="rows-list unlist">
-                <div class="top-rows field-rows">
-                    <label class="field-name">{{localize 'ldnd5e.battle.fields.top'}}</label>
-
-                    {{#each fields.top.rows}}
-                    <div class="form-group row" data-row-number="{{number}}" data-row-field="top">
-                        <label>{{label}}</label>
-                        <div class="form-fields">
-                            <select class="row-effect">
-                                {{ selectOptions @root.rowEffects labelAttr="label" valueAttr="value"
-                                selected=effect.value }}
-                            </select>
+                        <ul class="attributes unlist flexrow">
+                            <li class="attribute-item" data-tooltip="ldnd5e.events.attr.baix">
+                                <button class="attribute baix {{#if event.system.attributes.baix}}active{{/if}}"
+                                    disabled>
+                                    <i class="ra ra-skull"></i>
+                                </button>
+                            </li>
+                            <li class="attribute-item" data-tooltip="ldnd5e.events.attr.infr">
+                                <button class="attribute infr {{#if system.attributes.infr}}active{{/if}}" disabled>
+                                    <i class="fas fa-comments"></i>
+                                </button>
+                            </li>
+                            <li class="attribute-item" data-tooltip="ldnd5e.events.attr.limt">
+                                <button class="attribute limt {{#if event.system.attributes.limt}}active{{/if}}"
+                                    disabled>
+                                    <i class="ra ra-player-shot"></i>
+                                </button>
+                            </li>
+                            <li class="attribute-item" data-tooltip="ldnd5e.events.attr.prep">
+                                <button class="attribute prep {{#if event.system.attributes.prep}}active{{/if}}"
+                                    disabled>
+                                    <i class="fas fa-flask"></i>
+                                </button>
+                            </li>
+                            <li class="attribute-item" data-tooltip="ldnd5e.events.attr.imps">
+                                <button class="attribute imps {{#if event.system.attributes.imps }}active{{/if}}"
+                                    disabled>
+                                    <i class="ra ra-crossed-axes"></i>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="body">
+                        <div class="description-viewer flexcol">
+                            <span class="flavor" aria-placeholder="Flavor Text">{{event.system.info.flavor}}</span>
+                            <hr class="ampersand">
+                            <span class="description"
+                                aria-placeholder="Description">{{event.system.info.description}}</span>
                         </div>
                     </div>
-                    {{/each}}
+                    {{/with}}
                 </div>
 
-                <div class="bottom-rows field-rows">
-                    <label class="field-name">{{localize 'ldnd5e.battle.fields.bottom'}}</label>
+                <div class="hand-actions">
+                    <button class="draw-card" type="button" data-action="drawEvent" data-type="event">
+                        <i class="ra ra-perspective-dice-six"></i>
+                        {{localize 'ldnd5e.battle.drawEvent'}}
+                    </button>
+                </div>
+            </filigree-box>
 
-                    {{#each fields.bottom.rows}}
-                    <div class="form-group row" data-row-number="{{number}}" data-row-field="bottom">
-                        <label>{{label}}</label>
-                        <div class="form-fields">
-                            <select class="row-effect">
-                                {{ selectOptions @root.rowEffects labelAttr="label" valueAttr="value"
-                                selected=effect.value }}
-                            </select>
+            <filigree-box class="rows-control">
+                <h3>
+                    <i class="ra ra-sideswipe" inert></i>
+                    <span>{{localize 'ldnd5e.battle.rowsControl'}}</span>
+                </h3>
+                <div class="rows-list unlist">
+                    <div class="top-rows field-rows">
+                        <label class="field-name">{{localize 'ldnd5e.battle.fields.top'}}</label>
+
+                        {{#each fields.top.rows}}
+                        <div class="form-group row" data-row-number="{{number}}" data-row-field="top">
+                            <label>{{label}}</label>
+                            <div class="form-fields">
+                                <select class="row-effect">
+                                    {{ selectOptions @root.rowEffects labelAttr="label" valueAttr="value"
+                                    selected=effect.value }}
+                                </select>
+                            </div>
                         </div>
+                        {{/each}}
                     </div>
-                    {{/each}}
+
+                    <div class="bottom-rows field-rows">
+                        <label class="field-name">{{localize 'ldnd5e.battle.fields.bottom'}}</label>
+
+                        {{#each fields.bottom.rows}}
+                        <div class="form-group row" data-row-number="{{number}}" data-row-field="bottom">
+                            <label>{{label}}</label>
+                            <div class="form-fields">
+                                <select class="row-effect">
+                                    {{ selectOptions @root.rowEffects labelAttr="label" valueAttr="value"
+                                    selected=effect.value }}
+                                </select>
+                            </div>
+                        </div>
+                        {{/each}}
+                    </div>
+
                 </div>
 
-            </div>
+            </filigree-box>
 
-        </filigree-box>
+        </section>
 
     </section>
 
-    <div class="extra-decks-viewer {{#if (ne state.sidebar.viewer "")}}active{{/if}}"
-        data-deck="{{state.sidebar.viewer}}">
+    <div class="extra-decks-viewer dropzone {{#if state.sidebar.eventsDeck}}active{{/if}}" data-deck="events">
 
         <div class="deck-section events {{#unless state.sidebar.events}}hidden{{/unless}}">
-            <h4 class="title">{{localize 'ldnd5e.battle.extraDecks.event'}}</h4>
+            <h4 class="title">{{localize 'ldnd5e.battle.extraDecks.events'}}</h4>
             <div class="deck-container">
                 <div class="cards-counter">{{deck.counter.events}} <i class="ra ra-diamonds-card"></i></div>
                 <ol class="cards-list unlist">
                     {{#each deck.list.piles.events as |event|}}
-                    <li class="tatic-card" data-tatic-uuid="{{event.uuid}}" data-unit-id="{{event.unit.id}}">
+                    <li class="tatic-card" data-tatic-uuid="{{event.uuid}}">
                         <div class="card-row">
                             <img class="gold-icon {{#if event.img.svg}} svg{{/if}}" src="{{event.img.src}}">
                             <div class="card-content">
@@ -91,7 +144,7 @@
                     {{/each}}
                 </ol>
                 <div class="deck-actions">
-                    <button class="shuffle-card" type="button" data-action="shuffleDeck" data-type="event">
+                    <button class="shuffle-card" type="button" data-action="shuffleEvents" data-type="event">
                         <i class="fas fa-shuffle"></i>
                         {{localize 'ldnd5e.battle.shuffleDeck'}}
                     </button>
@@ -100,5 +153,4 @@
         </div>
 
     </div>
-
-</section>
+</div>

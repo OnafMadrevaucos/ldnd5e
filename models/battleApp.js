@@ -38,15 +38,20 @@ export default class BattleApp extends api.Application5e {
             toggleCompanySelect: BattleApp.#toggleCompanySelect,
             switchCompany: BattleApp.#switchCompany,
             toggleExtraDeck: BattleApp.#toggleExtraDeck,
+            toggleEventsDeck: BattleApp.#toggleEventsDeck,
             toggleEventsControls: BattleApp.#toggleEventsControls,
             clickUnit: BattleApp.#clickUnit,
             drawCard: BattleApp.#drawCard,
+            drawEvent: BattleApp.#drawEvent,
             shuffleDeck: BattleApp.#shuffleDeck,
+            shuffleEvents: BattleApp.#shuffleEvents,
             discardTatic: BattleApp.#discardTatic,
             restoreTatic: BattleApp.#restoreTatic,
             restoreAllTatics: BattleApp.#restoreAllTatics,
             showTatic: BattleApp.#showTatic,
-            useTatic: BattleApp.#useTatic
+            useTatic: BattleApp.#useTatic,
+            showEvent: BattleApp.#showEvent,
+            useEvent: BattleApp.#useEvent,
         },
         form: {
             submitOnChange: true,
@@ -182,23 +187,11 @@ export default class BattleApp extends api.Application5e {
             || (userCompanyId === '')) && !game.user.isGM;
 
         // Get the user battle data.
-        let app = game.user.getFlag('ldnd5e', 'battle');
+        let app = game.settings.get('ldnd5e', 'appState');
 
         // Check if applitation data has not been created yet, or if the user is a viewer.
         if (!app || isViewer) {
-            app = {
-                mode: this.constructor.MODES.PLAY,
-                state: {
-                    sidebar: {
-                        control: false,
-                        viewer: '',
-                        events: false,
-                        tabs: false,
-                        overlay: false
-                    },
-                    currentCompanyIdx: 0
-                }
-            };
+            app = game.settings.settings.get('ldnd5e.appState').default;
         }
 
         const deck = await this._prepareLocalDeck(app, world, userCompanyId);
@@ -289,7 +282,7 @@ export default class BattleApp extends api.Application5e {
             piles: {
                 tatics: [],
                 discarded: [],
-                assets: []
+                assets: [],
             }
         };
 
@@ -388,6 +381,9 @@ export default class BattleApp extends api.Application5e {
         // Prepare all the unit context for display.
         this._prepareUnits(context);
 
+        // Prepare the commander's deck.
+        this._prepareDeck(context);
+
         return {
             ...context,
             state: this.state,
@@ -454,9 +450,6 @@ export default class BattleApp extends api.Application5e {
             assets: 'modules/ldnd5e/ui/icons/battle/assets-deck.svg',
         });
 
-        // Prepare the commander's deck.
-        this._prepareDeck(context);
-
         let company = null;
 
         if (this.local.user.isGM) {
@@ -499,6 +492,16 @@ export default class BattleApp extends api.Application5e {
             }))
         ];
 
+        const activeEventUuid = this.world.events.active;
+
+        const activeEvent = activeEventUuid ? fromUuidSync(activeEventUuid) : null;        
+        if (activeEvent) {
+            activeEvent.system.info.description = activeEvent.system.info.description.replace(/(<([^>]+)>)/ig, '');
+            activeEvent.hasActivities = Object.values(activeEvent.system.activities).length > 0;
+        }
+        
+        context.activeEvent = activeEvent;
+        context.hasActiveEvent = activeEvent !== null && activeEvent !== undefined && activeEvent !== '' && activeEvent !== 'null';
         return context;
     }
 
@@ -595,6 +598,20 @@ export default class BattleApp extends api.Application5e {
                         }
                     };
                 }).filter(asset => asset !== null && asset !== undefined), // Filter out the nulls
+                events: this.world.events.list.map(eventId => {
+                    const event = fromUuidSync(eventId);
+                    // Ignore if the asset doesn't exist.
+                    if (!event) return null;
+
+                    return {
+                        uuid: event.uuid,
+                        name: event.name,
+                        img: {
+                            src: event.img,
+                            svg: event.img.endsWith('.svg')
+                        },
+                    };
+                }).filter(event => event !== null && event !== undefined),
             }
         };
 
@@ -603,7 +620,8 @@ export default class BattleApp extends api.Application5e {
                 hand: deck.list.hand.length,
                 tatics: deck.list.piles.tatics.length,
                 discarded: deck.list.piles.discarded.length,
-                assets: deck.list.piles.assets.length
+                assets: deck.list.piles.assets.length,
+                events: deck.list.piles.events.length
             }
         });
 
@@ -688,6 +706,18 @@ export default class BattleApp extends api.Application5e {
         this.activateListeners();
     }
 
+    /* -------------------------------------------- */
+
+    /** @inheritDoc */
+    async _onClose(options = {}) {
+        // Reset the app state on close.
+        game.settings.set('ldnd5e', 'appState', game.settings.settings.get('ldnd5e.appState').default);
+
+        super._onClose();
+    }
+
+    /* -------------------------------------------- */
+
     /**
      * Activate listeners for context menu on units.
      * @return {void}
@@ -735,12 +765,11 @@ export default class BattleApp extends api.Application5e {
 
         const html = this.element;
         if (this.app.state.sidebar.control) {
+            const rootControl = html.querySelector('.deck-controls[data-application-part="controls"]');
 
-            const controls = html.querySelector('.deck-controls[data-application-part="controls"]');
-
-            const tabs = controls.querySelector('.company-tabs');
-            const viewer = controls.querySelector('.extra-decks-viewer');
-            const battle = controls.querySelector('.battle-controls');
+            const tabs = rootControl.querySelector('.company-tabs');
+            const viewer = rootControl.querySelector('.extra-decks-viewer');
+            const battle = rootControl.querySelector('.battle-controls');
 
             tabs.classList.remove('active');
             viewer.classList.remove('active');
@@ -749,19 +778,24 @@ export default class BattleApp extends api.Application5e {
             this.app.state.sidebar.control = false;
             this.app.state.sidebar.viewer = '';
             this.app.state.sidebar.tabs = false;
-
+            this.app.state.sidebar.eventsDeck = false;
         } else if (this.app.state.sidebar.events) {
-            const controls = html.querySelector('.events-controls[data-application-part="events"]');
+            const controls = html.querySelector('.deck-controls .events-controls');
+            const viewer = html.querySelector('.events-controls + .extra-decks-viewer');
+            const button = html.querySelector('.events-controls .deck-button');
 
             controls.classList.remove('active');
-            this.app.state.sidebar.control = false;
+            viewer.classList.remove('active');
+            button.classList.remove('active');
 
-
+            this.app.state.sidebar.events = false;
+            this.app.state.sidebar.eventsDeck = false;
         }
 
         event.target.classList.add('hidden');
         this.app.state.sidebar.overlay = false;
-        await game.user.setFlag('ldnd5e', 'battle', this.app);
+
+        await game.settings.set('ldnd5e', 'appState', this.app);
     }
 
     /* -------------------------------------------- */
@@ -1053,11 +1087,18 @@ export default class BattleApp extends api.Application5e {
         // Drop target.
         const dropzone = event.currentTarget;
 
-        if (dropzone.classList.contains("row")) {
-            await this._onRowDrop(event, dropzone);
-        }
-        else if (dropzone.classList.contains("side")) {
-            await this._onSideDrop(event, dropzone);
+        // Drop data.
+        const data = foundry.applications.ux.TextEditor.getDragEventData(event);
+
+        if (data.type === "Actor") {
+            if (dropzone.classList.contains("row")) {
+                await this._onRowDrop(event, data, dropzone);
+            }
+            else if (dropzone.classList.contains("side")) {
+                await this._onSideDrop(data, dropzone);
+            }
+        } else {
+            await this._onDropEvent(data);
         }
 
         // Re-render
@@ -1066,15 +1107,11 @@ export default class BattleApp extends api.Application5e {
 
     /**
      * Handle dropping an actor onto the battlefield.
-     * @param {DragEvent} event  The drop event.
+     * @param {DragEventData} data  The drop event data.
      * @param {HTMLElement} battleSide  The element receiving the drop.
      * @protected
      */
-    async _onSideDrop(event, battleSide) {
-        // Drop data.
-        const data = foundry.applications.ux.TextEditor.getDragEventData(event);
-        if (data.type !== "Actor") return;
-
+    async _onSideDrop(data, battleSide) {
         // Obtain Actor.
         const actor = await fromUuid(data.uuid);
         if (!actor) return;
@@ -1131,17 +1168,14 @@ export default class BattleApp extends api.Application5e {
     /**
      * Handle dropping an actor onto the battlefield.
      * @param {DragEvent} event  The drop event.
+     * @param {DragEventData} data  The drop event data.
      * @param {HTMLElement} unitRow  The element receiving the drop.
      * @protected
      */
-    async _onRowDrop(event, unitRow) {
+    async _onRowDrop(event, data, unitRow) {
         const fields = this.element.querySelector('.fields');
         const rows = fields.querySelectorAll('.row');
         const rowsNumbers = fields.querySelectorAll('.row-number');
-
-        // Drop data.
-        const data = foundry.applications.ux.TextEditor.getDragEventData(event);
-        if (data.type !== "Actor") return;
 
         rows.forEach(row => {
             delete row.dataset.prof;
@@ -1218,6 +1252,19 @@ export default class BattleApp extends api.Application5e {
         await game.settings.set('ldnd5e', 'battle', this.world);
     }
 
+    /**
+     * Handle the drop of a event onto the battle board.
+     * @param {DragEventData} data - The event data.
+     */
+    async _onDropEvent(data) {
+        // User must be a GM.
+        if (!game.user.isGM) return;
+
+        const world = this.world;
+        world.events.list.push(data.uuid);
+        await game.settings.set('ldnd5e', 'battle', world);
+    }
+
     /* -------------------------------------------- */
     /*  Utility Function                            */
     /* -------------------------------------------- */
@@ -1235,7 +1282,7 @@ export default class BattleApp extends api.Application5e {
 
         if (update) {
             this.app.state.sidebar.overlay = !overlay.classList.contains('hidden');
-            await game.user.setFlag('ldnd5e', 'battle', this.app);
+            await game.settings.set('ldnd5e', 'appState', this.app);
         }
     }
 
@@ -1261,6 +1308,46 @@ export default class BattleApp extends api.Application5e {
         });
 
         return deck;
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Shuffles a Events's array using Fisher-Yates algorithm.
+   * @this {BattleApp}
+   * @param {Array} events    The events' deck array.
+   * @returns {Array}               The shuffled deck array.
+   */
+    _shuffleEvents(events) {
+        let m = events.length, i;
+
+        while (m) {
+            // Escolhe um índice aleatório entre 0 e m-1
+            i = Math.floor(Math.random() * m--);
+
+            // Troca o elemento atual (m) com o escolhido (i)
+            [events[m], events[i]] = [events[i], events[m]];
+        }
+
+        return events;
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Deactivateand event.
+   * @this {BattleApp}
+   * @param {PointerEvent} event    The originating click event.
+   * @param {object} options        The options of the discarding.
+   * 
+   * @async
+   */
+    async _deactivateEvent() {
+        const events = this.world.events;
+        events.active = null;
+
+        await game.settings.set('ldnd5e', 'battle', this.world);
+        this.render({ force: true });
     }
 
     /* -------------------------------------------- */
@@ -1370,12 +1457,14 @@ export default class BattleApp extends api.Application5e {
    * @param {object} data       The data object of a tatic use.
    */
     async _updateScore(result, data) {
+
+        const type = data.item.type;
         const unit = data.unit;
 
         const scoreboard = this.world.scoreboard;
         const allySide = this.local.side === 'none' ? 'top' : this.local.side;
         const enemySide = allySide === 'top' ? 'bottom' : 'top';
-        const impetusBonus = unit.system.abilities.wll.value;
+        const impetusBonus = (type === 'ldnd5e.tatic') ? unit.system.abilities.wll.value : 0;
 
         scoreboard[allySide].impetus += impetusBonus;
 
@@ -1388,6 +1477,11 @@ export default class BattleApp extends api.Application5e {
                         scoreboard[allySide].attack += res.total;
                     else if (res.targetField === 'e')
                         scoreboard[enemySide].attack += res.total;
+                    else if (res.targetField === 'b') {
+                        scoreboard[allySide].attack += res.total;
+                        scoreboard[enemySide].attack += res.total;
+                    }
+
                 } break;
                 case taticsData.activities.mh: {
                     if (res.targetField === 'a') {
@@ -1397,12 +1491,23 @@ export default class BattleApp extends api.Application5e {
                         scoreboard[allySide].attack -= res.total;
                         scoreboard[allySide].attack = Math.max(scoreboard[allySide].attack, 0);
                     }
+                    else if (res.targetField === 'b') {
+                        scoreboard[enemySide].attack -= res.total;
+                        scoreboard[enemySide].attack = Math.max(scoreboard[enemySide].attack, 0);
+
+                        scoreboard[allySide].attack -= res.total;
+                        scoreboard[allySide].attack = Math.max(scoreboard[allySide].attack, 0);
+                    }
                 } break;
                 case taticsData.activities.ib: {
                     if (res.targetField === 'a')
                         scoreboard[allySide].impetus += res.total;
                     else if (res.targetField === 'e')
                         scoreboard[enemySide].impetus += res.total;
+                    else if (res.targetField === 'b') {
+                        scoreboard[allySide].impetus += res.total;
+                        scoreboard[enemySide].impetus += res.total;
+                    }
                 } break;
                 case taticsData.activities.id: {
                     if (res.targetField === 'a') {
@@ -1412,12 +1517,20 @@ export default class BattleApp extends api.Application5e {
                         scoreboard[enemySide].impetus -= res.total;
                         scoreboard[enemySide].impetus = Math.max(scoreboard[enemySide].impetus, 0);
                     }
+                    else if (res.targetField === 'b') {
+                        scoreboard[allySide].impetus -= res.total;
+                        scoreboard[allySide].impetus = Math.max(scoreboard[allySide].impetus, 0);
+                        
+                        scoreboard[enemySide].impetus -= res.total;
+                        scoreboard[enemySide].impetus = Math.max(scoreboard[enemySide].impetus, 0);
+                    }
                 } break;
                 default: break;
             }
         }
 
-        this._discardTatic(this.deck, data.tatic, data.event);
+        if (type === 'ldnd5e.tatic') this._discardTatic(this.deck, data.item, data.event);
+        else if (type === 'ldnd5e.event') this._deactivateEvent();
 
         await game.settings.set('ldnd5e', 'battle', this.world);
     }
@@ -1453,7 +1566,8 @@ export default class BattleApp extends api.Application5e {
    * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
    */
     static async #resetBattle(event, target) {
-        const blankData = game.settings.settings.get('ldnd5e.battle').default;
+        const defaultWorld = game.settings.settings.get('ldnd5e.battle').default;
+        const defaultClient = game.settings.settings.get('ldnd5e.appState').default;
 
         const result = await foundry.applications.api.DialogV2.confirm({
             content: `
@@ -1469,7 +1583,8 @@ export default class BattleApp extends api.Application5e {
         }, { rejectClose: false });
 
         if (result) {
-            await game.settings.set('ldnd5e', 'battle', blankData);
+            await game.settings.set('ldnd5e', 'battle', defaultWorld);
+            await game.settings.set('ldnd5e', 'appState', defaultClient);
             this.render(true);
         }
     }
@@ -1532,7 +1647,7 @@ export default class BattleApp extends api.Application5e {
 
         this.state.sidebar.tabs = companyTabs.classList.contains("active");
 
-        await game.user.setFlag('ldnd5e', 'battle', this.app);
+        await game.settings.set('ldnd5e', 'appState', this.app);
     }
 
     /* -------------------------------------------- */
@@ -1553,7 +1668,7 @@ export default class BattleApp extends api.Application5e {
 
         this.app.state.currentCompanyIdx = Number(target.dataset.idx ?? 0);
 
-        await game.user.setFlag('ldnd5e', 'battle', this.app);
+        await game.settings.set('ldnd5e', 'appState', this.app);
         this.render({ force: true });
     }
 
@@ -1566,11 +1681,11 @@ export default class BattleApp extends api.Application5e {
    * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
    */
     static async #toggleExtraDeck(event, target) {
-        const container = target.closest(".extra-decks");        
-        const buttons = container?.querySelectorAll("deck-button") ?? this.element.querySelectorAll(".hand.events .deck-button");
+        const container = target.closest(".extra-decks");
+        const buttons = container.querySelectorAll(".deck-button");
 
         const content = target.closest(".window-content");
-        const viewer = content.querySelector(".extra-decks-viewer");
+        const viewer = content.querySelector(".battle-controls + .extra-decks-viewer");
 
         const oldActiveDeck = viewer.dataset.deck ?? '';
         const targetDeck = target.dataset.deck ?? '';
@@ -1616,7 +1731,7 @@ export default class BattleApp extends api.Application5e {
 
         // Set the viewer.
         this.state.sidebar.viewer = viewer.dataset.deck;
-        await game.user.setFlag('ldnd5e', 'battle', this.app);
+        await game.settings.set('ldnd5e', 'appState', this.app);
     }
 
     /* -------------------------------------------- */
@@ -1629,39 +1744,84 @@ export default class BattleApp extends api.Application5e {
    */
     static async #toggleEventsControls(event, target) {
         const content = target.closest(".window-content");
-        const controls = content.querySelector(".events-controls");
+        const controls = content.querySelector(".deck-controls .events-controls");
 
         if (this.state.sidebar.events) controls.classList.remove("active");
         else controls.classList.add("active");
 
-        const targetCardsSection = viewer.querySelector(`.deck-section.${targetDeck}`);
-        if (!targetCardsSection) return;
+        const viewer = content.querySelector(".extra-decks-viewer[data-deck='events']");
 
-        const oldActiveDeck = viewer.dataset.deck ?? '';
+        // If its closing, hide the viewer as well.
+        if (!controls.classList.contains("active")) {
+            viewer.classList.remove("active");
+
+            const buttons = controls.querySelectorAll(".deck-button");
+
+            // Clear all active elements.
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove("active");
+            }
+
+            // Hide the viewer.
+            this.state.sidebar.eventsDeck = false;
+        }
+
+        // Set the events control.
+        this.state.sidebar.events = controls.classList.contains("active");
+        this._toggleOverLay();
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Toggles the extra deck viewer.
+   * @this {BattleApp}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+    static async #toggleEventsDeck(event, target) {
+        const buttons = this.element.querySelectorAll(".hand.events .deck-button");
+
+        const content = target.closest(".window-content");
+        const viewer = content.querySelector(".events-controls + .extra-decks-viewer");
+
         const targetDeck = target.dataset.deck ?? '';
 
+        const cardsSections = viewer.querySelectorAll(".deck-section");
+
+        // Clear all active elements.
+        for (let i = 0; i < buttons.length; i++) {
+            buttons[i].classList.remove("active");
+            cardsSections[i].classList.add("hidden");
+        }
+
+        const eventsSection = viewer.querySelector('.deck-section');
+        if (!eventsSection) return;
+
         // Show the target section.
-        targetCardsSection.classList.remove("hidden");
+        eventsSection.classList.remove("hidden");
 
         // If the viewer is already active.
         if (viewer.classList.contains("active")) {
-            
+            // Check if the target button is active.
+            if ('events' === targetDeck) {
+                // If the deck is the same, close the viewer.
+                viewer.classList.remove("active");
+                target.classList.remove("active");
+            }
+            // If the deck is different, change the active deck.
+            else {
+                target.classList.add("active");
+            }
         }
         // If the viewer is not active.
         else {
             viewer.classList.add("active");
             target.classList.add("active");
-            // Set the active deck.
-            viewer.dataset.deck = targetDeck;
         }
 
-        // Set the viewer.
-        this.state.sidebar.viewer = viewer.dataset.deck; 
-        await game.user.setFlag('ldnd5e', 'battle', this.app);
-
-        // Set the events control.
-        this.state.sidebar.events = controls.classList.contains("active");
-        this._toggleOverLay();
+        this.state.sidebar.eventsDeck = viewer.classList.contains("active");
+        await game.settings.set('ldnd5e', 'appState', this.app);
     }
 
     /* -------------------------------------------- */
@@ -1717,6 +1877,36 @@ export default class BattleApp extends api.Application5e {
     /* -------------------------------------------- */
 
     /**
+   * Draws cards until the hand is full.
+   * @this {BattleApp}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+    static async #drawEvent(event, target) {
+        const events = this.world.events;
+
+        if (events.list.length == 0) {
+            ui.notifications.info(game.i18n.localize("ldnd5e.messages.emptyDeck"));
+            return;
+        }
+
+        // Draw the top event from the deck.
+        const eventUuid = events.list.shift();
+        // Put the drawn event at the bottom of the deck.
+        events.list.push(eventUuid);
+        // Set the drawn event as the active event.
+        events.active = eventUuid;
+
+        // Allways shuffle the deck after drawing an event.
+        this._shuffleEvents(events.list);
+
+        await game.settings.set('ldnd5e', 'battle', this.world);
+        this.render({ force: true });
+    }
+
+    /* -------------------------------------------- */
+
+    /**
    * Shuffles all cards in the deck.
    * @this {BattleApp}
    * @param {PointerEvent} event  The originating click event.
@@ -1724,6 +1914,19 @@ export default class BattleApp extends api.Application5e {
    */
     static async #shuffleDeck(event, target) {
         this._shuffleDeck(this.deck);
+        this.render({ force: true, focus: false });
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Shuffles all cards in the deck.
+   * @this {BattleApp}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+    static async #shuffleEvents(event, target) {
+        this._shuffleEvents(this.world.events.list);
         this.render({ force: true, focus: false });
     }
 
@@ -1848,10 +2051,81 @@ export default class BattleApp extends api.Application5e {
             if (!(result instanceof Array)) result = [result];
 
             if (result) {
-                await this._updateScore(result, { unit, tatic, event });
+                await this._updateScore(result, { unit, item: tatic, event });
             }
         } else {
             tatic.sheet.render(true);
         }
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Show the event sheet.
+   * @this {BattleApp}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+    static async #showEvent(event, target) {
+        const eventUuid = target.closest('.active-event').dataset.eventUuid;
+
+        const eventDoc = await fromUuid(eventUuid);
+        if (!eventDoc) return;
+
+        eventDoc.sheet.render(true);
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Show the event sheet.
+   * @this {BattleApp}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+    static async #useEvent(event, target) {
+        const eventUuid = target.closest('.active-event').dataset.eventUuid;
+
+        const eventDoc = await fromUuid(eventUuid);
+        const activities = Object.values(eventDoc.system.activities);
+
+        if (!eventDoc || activities.length == 0) return;
+
+        const mainActivities = activities.filter(a => a.mainRoll);
+
+        let choosedMode = 'full';
+        // If there are main activities, ask the user.            
+        if (mainActivities.length > 0) {
+            choosedMode = await foundry.applications.api.DialogV2.wait({
+                window: { title: game.i18n.localize("ldnd5e.battle.extraRoll.title") },
+                content: `<p>${game.i18n.localize("ldnd5e.battle.extraRoll.message")}</p>`,
+                position: {
+                    width: 400
+                },
+                buttons: [
+                    {
+                        label: game.i18n.localize("ldnd5e.battle.extraRoll.main"),
+                        action: 'main'
+                    },
+                    {
+                        label: game.i18n.localize("ldnd5e.battle.extraRoll.extra"),
+                        action: 'extra'
+                    }
+                ]
+            })
+        }
+
+        if (!choosedMode) return;
+
+        let result = await eventDoc.use({ event, mode: choosedMode });
+        // Ignore if there is no result.
+        if (!result) return;
+        // If the result is not an array, wrap it in one.
+        if (!(result instanceof Array)) result = [result];
+
+        if (result) {
+            await this._updateScore(result, { unit: null, item: eventDoc, event });
+        }
+
     }
 }

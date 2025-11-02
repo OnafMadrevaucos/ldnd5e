@@ -2439,22 +2439,27 @@
   font-size: var(--font-size-16);
 }
 
+.ldnd5e.battle .active-event .header .attributes .attribute.baix.active,
 .ldnd5e.event .attributes .attribute.baix.active {
   color: #1f1f1f;
 }
 
+.ldnd5e.battle .active-event .header .attributes .attribute.infr.active,
 .ldnd5e.event .attributes .attribute.infr.active {
   color: #ac3b3b;
 }
 
+.ldnd5e.battle .active-event .header .attributes .attribute.limt.active,
 .ldnd5e.event .attributes .attribute.limt.active {
   color: #4141ac;
 }
 
+.ldnd5e.battle .active-event .header .attributes .attribute.prep.active,
 .ldnd5e.event .attributes .attribute.prep.active {
   color: #edde0b;
 }
 
+.ldnd5e.battle .active-event .header .attributes .attribute.imps.active,
 .ldnd5e.event .attributes .attribute.imps.active {
   color: #48a740;
 }
@@ -3480,8 +3485,72 @@
   text-shadow: 0 0 6px var(--color-shadow-primary);
 }
 
-.ldnd5e.battle .events-controls .hand .event {
+.ldnd5e.battle .events-controls .hand .active-event {
   height: 100%;
+  box-shadow: 2px 2px 2px 0px var(--dnd5e-shadow-45);
+  border-radius: 4px;
+  color: var(--dnd5e-color-blue-gray-2);
+  margin: 5px 15px;
+  background: url(ui/texture-gray1.webp) no-repeat top left, url(ui/texture-gray2.webp) no-repeat bottom right, var(--dnd5e-color-parchment);
+}
+
+.ldnd5e.battle .events-controls .hand .active-event.empty {
+  background: transparent;
+  box-shadow: none;
+}
+
+
+.ldnd5e.battle .hand .active-event .active-event-link {
+  position: absolute;
+  margin: 5px;
+  right: 15px;
+}
+
+.ldnd5e.battle .hand .active-event .header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ldnd5e.battle .active-event .header .event-name {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ldnd5e.battle .active-event .header .event-name .name.rollable:hover {
+  cursor: pointer;
+  text-shadow: 0 0 6px var(--color-shadow-primary);
+}
+
+.ldnd5e.battle .active-event .header .attributes {
+  gap: 5px;
+}
+
+.ldnd5e.battle .active-event .header .attributes .attribute {
+  box-shadow: none;
+  background: var(--dnd5e-color-beige);
+}
+
+.ldnd5e.battle .active-event .header .event-name .name {
+  font-size: var(--font-size-24);
+  font-family: var(--dnd5e-font-modesto);
+  font-weight: bold;
+}
+
+.ldnd5e.battle .active-event .body {
+  padding-inline: 15px;
+}
+
+.ldnd5e.battle .active-event .body span {
+  font-size: var(--font-size-12);
+}
+
+.ldnd5e.battle .active-event .body span.flavor {
+  font-size: var(--font-size-11);
+  font-style: italic;
+  font-weight: bold;
+  text-align: end;
 }
 
 .ldnd5e.battle .events-controls .rows-control {
@@ -3508,7 +3577,6 @@
 .ldnd5e.battle .rows-control .rows-list .field-rows .row {
   display: flex;
   flex-direction: row;
-  height: var(--font-size-24);
   margin-top: 2px;
 }
 

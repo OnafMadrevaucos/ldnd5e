@@ -47,7 +47,7 @@ export const registerSystemSettings = function () {
         restricted: true
     });
 
-     // Units Affinity data.
+    // Units Affinity data.
     game.settings.register("ldnd5e", "affinity", {
         scope: "world",
         config: false,
@@ -55,10 +55,29 @@ export const registerSystemSettings = function () {
         default: {}
     });
 
+    // Local battle data.
+    game.settings.register("ldnd5e", "appState", {        
+        scope: "client",
+        config: false,
+        type: Object,
+        default: {
+            mode: 0, // 'PLAY' Mode.
+            state: {
+                sidebar: {
+                    control: false,
+                    viewer: '',
+                    events: false,
+                    eventsDeck: false,
+                    tabs: false,
+                    overlay: false
+                },
+                currentCompanyIdx: 0
+            }
+        }
+    });
+
     // Global battle data.
-    game.settings.register("ldnd5e", "battle", {
-        name: "ldnd5e.settings.battleDataName",
-        hint: "ldnd5e.settings.battleDataHint",
+    game.settings.register("ldnd5e", "battle", {        
         scope: "world",
         config: false,
         type: Object,
@@ -78,7 +97,10 @@ export const registerSystemSettings = function () {
                 max: 0,
                 current: 0
             },
-            events: [],
+            events: {
+                active: null,
+                list: []
+            },
             sides: {
                 top: [],
                 bottom: []

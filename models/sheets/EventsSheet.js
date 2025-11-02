@@ -231,7 +231,7 @@ export default class EventsSheet extends item.ItemSheet5e {
 
     /**@inheritdoc */
     async _addDocument(event) {
-        const activity = await ActivityDialog.createDialog(this.item, { mode: "create" });
+        const activity = await ActivityDialog.create(this.item, { mode: "create" });
 
         if (activity) {
             this.item.system.activities[activity.id] = activity;
@@ -266,7 +266,7 @@ export default class EventsSheet extends item.ItemSheet5e {
         const activityId = target.closest(".activity")?.dataset.activityId;
         if (!activityId) return;
 
-        const activity = await ActivityDialog.createDialog(this.item, { activityId, mode: "edit" });
+        const activity = await ActivityDialog.create(this.item, { activityId, mode: "edit" });
         if (!activity) return;
 
         this.item.system.activities[activityId] = activity;
@@ -285,8 +285,9 @@ export default class EventsSheet extends item.ItemSheet5e {
         const activityId = target.closest(".activity")?.dataset.activityId;
         if (!activityId) return;
 
-        delete this.item.system.activities[activityId];
-        await this.item.update({ "system.activities": this.item.system.activities });
+        await this.item.update({
+            [`system.activities.-=${activityId}`]: null
+        });
         this.render();
     }
 

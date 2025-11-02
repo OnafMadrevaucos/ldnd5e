@@ -62,7 +62,8 @@ export default class TaticsRollConfigurationDialog extends app.dice.RollConfigur
             value: 'a',
             options: [
                 { value: 'a', label: game.i18n.localize('ldnd5e.battle.fields.ally') },
-                { value: 'e', label: game.i18n.localize('ldnd5e.battle.fields.enemy') }
+                { value: 'e', label: game.i18n.localize('ldnd5e.battle.fields.enemy') },
+                { value: 'b', label: game.i18n.localize('ldnd5e.battle.fields.both') }
             ]
         });
 

@@ -61,7 +61,7 @@ export default class ItemL5e extends dnd5e.documents.Item5e {
    * @param {Partial<BasicRollMessageConfiguration>} message   Configuration for the roll message.
    */
     async use(config = {}, dialog = {}, message = {}) {
-        if (this.type === "ldnd5e.tatic") {
+        if (this.type === "ldnd5e.tatic" || this.type === "ldnd5e.event") {
             const mode = config.mode ?? "full";
             const activities = Object.values(this.system.activities);
 

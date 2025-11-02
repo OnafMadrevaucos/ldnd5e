@@ -12,7 +12,7 @@ export default class EventsL5e extends foundry.abstract.TypeDataModel {
             name: new fields.StringField({ required: true, label: "ldnd5e.events.name" }),
             info: new fields.SchemaField({
                 flavor: new fields.StringField({ textSearch: true, initial: "" }),
-                description: new fields.StringField({ textSearch: true, initial: "" }),                
+                description: new fields.StringField({ textSearch: true, initial: "" }),
                 // Preço do efeito do Evento.
                 price: new fields.SchemaField({
                     value: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
@@ -72,6 +72,7 @@ export default class EventsL5e extends foundry.abstract.TypeDataModel {
     }
 
     /* -------------------------------------------- */
+    
 
     /**
     * @inheritdoc
@@ -81,5 +82,117 @@ export default class EventsL5e extends foundry.abstract.TypeDataModel {
             type: "ldnd5e.event",
             uuid: this.uuid
         };
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * @inheritdoc
+   * @param {object} [options]
+   * @param {boolean} [options.deterministic] Whether to force deterministic values for data properties that could be
+   *                                          either a die term or a flat term.
+   */
+    getRollData() {
+        let data = this;
+
+        data.flags = { ...this.flags };
+        data.name = this.name;
+
+        return data;
+    }
+
+    /* -------------------------------------------- */
+    /*  Dice Roll Functions                         */
+    /* -------------------------------------------- */
+
+    /**
+   * Roll an Activity Check.
+   * @param {Partial<AbilityRollProcessConfiguration>} config  Configuration information for the roll.
+   * @param {Partial<BasicRollDialogConfiguration>} dialog     Configuration for the roll dialog.
+   * @param {Partial<BasicRollMessageConfiguration>} message   Configuration for the roll message.
+   * @returns {Promise<DamageRoll[]|null>}                     A Promise which resolves to the created Roll instance.
+   */
+    async rollActivity(config = {}, dialog = {}, message = {}) {
+        const result = await this.#rollDice(config, dialog, message);
+        return result;
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+     * Perform a damage roll.
+     * @param {Partial<AbilityRollProcessConfiguration>} config  Configuration information for the roll.
+     * @param {Partial<BasicRollDialogConfiguration>} dialog     Configuration for the roll dialog.
+     * @param {Partial<BasicRollMessageConfiguration>} message   Configuration for the roll message.
+     * @returns {Promise<void>}
+     */
+    async #rollDice(config, dialog, message) {
+        const { activity, event } = config;
+
+        const attackMode = "roll";
+        const rollType = "damage";
+        const formula = `${activity.number}d${activity.die}${activity.bonus}`;
+        const eventType = activity.type;
+
+        const rollConfig = {
+            attackMode,
+            event,
+            data: this.getRollData(),
+            rolls: [{
+                parts: [formula],
+                options: { type: eventType, targetField: 'a', fields: ['a', 'e'] }
+            }],
+        };
+
+        rollConfig.subject = this;
+
+        const dialogConfig = foundry.utils.mergeObject({
+            options: {
+                position: {
+                    width: 400,
+                    top: config.event ? config.event.clientY - 80 : null,
+                    left: window.innerWidth - 710
+                },
+                window: {
+                    title: activity.name,
+                    subtitle: this.parent.name,
+                    icon: this.parent.img
+                }
+            }
+        }, dialog);
+
+        const messageConfig = {
+            create: true,
+            data: {
+                flags: {
+                    dnd5e: {
+                        messageType: "roll",
+                        roll: { type: rollType },
+                        targets: null
+                    }
+                },
+                flavor: `${this.parent.name} - ${activity.name}`,
+                speaker: message.speaker ?? ChatMessage.getSpeaker({ actor: game.user.character }),
+            }
+        };
+
+        const rolls = await CONFIG.Dice.TaticsRoll.build(rollConfig, dialogConfig, messageConfig);
+        if (!rolls?.length) return;
+
+        const result = {
+            unit: this.parent.actor,
+            activity: activity,
+            tatic: {
+                uuid: this.parent.uuid,
+                name: this.parent.name
+            },
+            damageType: eventType,
+            targetField: rolls[0].options.targetField,
+            formula,
+            total: rolls.reduce((a, b) => a + b.total, 0),
+            rolls
+        };
+
+        return result;
     }
 }

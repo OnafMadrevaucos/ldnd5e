@@ -184,9 +184,12 @@ export default class SettingsApp extends api.Application5e {
         }, { rejectClose: false });
 
         if (ok) {
-            const blankData = game.settings.settings.get('ldnd5e.battle').default;
-            game.settings.set('ldnd5e', 'battle', blankData).then(() => {
-                ui.notifications.info(game.i18n.localize("ldnd5e.battle.resetOK"));
+            const defaultWorld = game.settings.settings.get('ldnd5e.battle').default;
+            game.settings.set('ldnd5e', 'battle', defaultWorld).then(() => {
+                const defaultClient = game.settings.settings.get('ldnd5e.appState').default;
+                game.settings.set('ldnd5e', 'appState', defaultClient).then(() => {
+                    ui.notifications.info(game.i18n.localize("ldnd5e.battle.resetOK"));
+                });
             });
         }
     }

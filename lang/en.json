@@ -327,7 +327,8 @@
                 "top": "Top",
                 "bottom": "Bottom",
                 "enemy": "Enemy",
-                "ally": "Ally"
+                "ally": "Ally",
+                "both": "Both"
             },
             "commander": "Commander",
             "deck": "Deck - {name",
@@ -339,7 +340,8 @@
             "extraDecks": {
                 "full": "Draw Pile",
                 "discarded": "Discarded Pile",
-                "assets": "Assets Deck"
+                "assets": "Assets Deck",
+                "events": "Available Events"
             },
             "summary": "Abilities Summary",
             "units": "Company's Units",
