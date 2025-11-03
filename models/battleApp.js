@@ -37,6 +37,7 @@ export default class BattleApp extends api.Application5e {
             toggleDeckControls: BattleApp.#toggleDeckControls,
             toggleCompanySelect: BattleApp.#toggleCompanySelect,
             switchCompany: BattleApp.#switchCompany,
+            deleteCompany: BattleApp.#deleteCompany,
             toggleExtraDeck: BattleApp.#toggleExtraDeck,
             toggleEventsDeck: BattleApp.#toggleEventsDeck,
             toggleEventsControls: BattleApp.#toggleEventsControls,
@@ -906,7 +907,7 @@ export default class BattleApp extends api.Application5e {
                 const side = target.closest(".side").dataset.side;
                 const companyId = target.dataset.companyId;
 
-                this.world.sides[side] = this.world.sides[side].filter(c => c !== companyId);
+                this.world.sides[side] = this.world.sides[side].filter(c => c.id !== companyId);
                 worldChanged = true;
             } break;
         }
@@ -1386,12 +1387,15 @@ export default class BattleApp extends api.Application5e {
 
         const unit = tatic.actor;
         if (unit && options.basicAtk) {
-            const result = await unit.system.rollBasicAttack({
+            let result = await unit.system.rollBasicAttack({
                 prof: 'low',
                 event: event
             });
 
-            if (result) await this._updateScore(result, { unit, tatic, event });
+            if (result) {
+                if(!(result instanceof Array)) result = [result];                
+                await this._updateScore(result, { unit, item: tatic, event });
+            }
         }
 
         deck.piles.discarded.push(tatic.uuid);
@@ -1684,6 +1688,19 @@ export default class BattleApp extends api.Application5e {
 
         await game.settings.set('ldnd5e', 'appState', this.app);
         this.render({ force: true });
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * Delete a company from the battle.
+   * @this {BattleApp}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   * @async
+   */
+    static async #deleteCompany(event, target) {
+        const i = 0;
     }
 
     /* -------------------------------------------- */

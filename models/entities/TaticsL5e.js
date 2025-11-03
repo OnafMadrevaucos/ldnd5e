@@ -47,6 +47,8 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
                     nullable: false,
                     initial: "",
                 }),
+                // Dado mínimo de dano básico da Tática.
+                minimumDie: new fields.NumberField({ required: true, nullable: false, initial: 4 }),
                 // A Tática acumula Ímpeto.
                 collectImpetus: new fields.BooleanField({ required: true, nullable: false, initial: true }),
                 // Bonus de Ímpeto da Tática.
@@ -60,7 +62,7 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
                 // Se a Tática é de uso unico.
                 single: new fields.BooleanField({ required: true, nullable: false, initial: false }),
                 // Se a Tática é única.
-                unique: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+                unique: new fields.BooleanField({ required: true, nullable: false, initial: false }),                
                 // Se a Tática fornece algum bônus a um atributo (A Tática deve ser uma passiva).
                 giveBonus: new fields.BooleanField({ required: true, nullable: false, initial: false }),
                 // Possíveis bônus fornecidos pela Tática.
@@ -71,7 +73,7 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
                     mrl: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
                     // Bonus de Fortitude da Tática.
                     wll: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-                })
+                }),                
             }),
             attributes: new fields.SchemaField({
                 // Se a Tática é uma ação de preparação.

@@ -259,6 +259,8 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
         return data;
     }
 
+    /* -------------------------------------------- */
+
     /**
    * @inheritdoc
    */
@@ -267,6 +269,30 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
             type: "ldnd5e.unit",
             uuid: this.uuid
         };
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+   * @inheritdoc
+   */
+    verifyMinimumBasicAttack() {
+        let minimumDie = {
+            value: 4,
+            formula: '1d4'
+        };
+        const tatics = this.parent.items.filter(i => i.type === "ldnd5e.tatic");
+
+        tatics.forEach(tatic => {
+            if (tatic.system.details.minimumDie > minimumDie.value) {
+                minimumDie = {
+                    value: tatic.system.details.minimumDie,
+                    formula: `1d${tatic.system.details.minimumDie}`
+                };
+            }
+        });
+
+        return minimumDie;
     }
 
     /* -------------------------------------------- */
@@ -434,7 +460,13 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
         const title = game.i18n.localize('ldnd5e.unit.basicAtk');
         const attackMode = "roll";
         const rollType = "damage";
-        const formula = unitData.basicAtk[prof];
+        let formula = unitData.basicAtk[prof].formula;
+
+        // Verify if unit has an tatic that gives higher minimum basic attack die.
+        let minimumDie = this.verifyMinimumBasicAttack();
+        if(minimumDie.value > unitData.basicAtk[prof].value) {
+            formula = minimumDie.formula;
+        }
 
         const rollConfig = {
             attackMode,

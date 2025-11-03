@@ -316,9 +316,18 @@ const unitData = {
    * Defines the Unit Categories constants.      
    */
    basicAtk: {
-      low: "1d4",
-      medium: "1d6",
-      high: "1d8"
+      low: {
+         value: 4,
+         formula: "1d4"
+      },
+      medium: {
+         value: 6,
+         formula: "1d6"
+      },
+      high: {
+         value: 8,
+         formula: "1d8"
+      }
    }
 }
 
@@ -709,6 +718,7 @@ const i18nStrings = {
       configuration: "ldnd5e.tatics.configuration",
       details: {
          use: 'ldnd5e.tatics.details.use',
+         minimumDie: 'ldnd5e.tatics.details.minimumDie',
          collectImpetus: 'ldnd5e.tatics.details.collectImpetus',
          impetusBonus: 'ldnd5e.tatics.details.impetusBonus',
          isStealth: 'ldnd5e.tatics.details.isStealth',
@@ -906,6 +916,8 @@ const i18nStrings = {
       emptyDeck: "ldnd5e.messages.emptyDeck",
       noMainActivity: "ldnd5e.messages.noMainActivity",
 
+      startBattleTitle: "ldnd5e.messages.startBattleTitle",
+      startBattle: "ldnd5e.messages.startBattle",
       restartBattleTitle: "ldnd5e.messages.restartBattleTitle",
       restartBattle: "ldnd5e.messages.restartBattle",
       endBattleTitle: "ldnd5e.messages.endBattleTitle",
@@ -940,7 +952,7 @@ const gmControl =
 const battleControl = {
    name: constants.controls.battle,
    title: i18nStrings.titles.battle,
-   icon: 'fas fa-puzzle-piece',
+   icon: 'fas fa-chess',
    visible: true,
    button: true
 };

@@ -424,6 +424,9 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         // Update all units' company references.
         for(const uId of this.actor.system.units) {
             const unit = game.actors.get(uId);
+            // Ignore if the unit doesn't exist.
+            if(!unit) continue;
+
             await unit.update({ ['system.info.company']: this.actor });
         }
 
@@ -627,6 +630,9 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         // Remove the commander from all units.
         for (const unitId of this.actor.system.units) {
             const unit = game.actors.get(unitId);
+            // Ignore if the unit doesn't exist.
+            if(!unit) continue;
+
             await unit.update({ [`system.info.commander`]: null });
         }
     }

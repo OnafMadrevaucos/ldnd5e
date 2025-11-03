@@ -240,31 +240,40 @@ Hooks.on('combatStart', async (combat, updateData) => {
     // Verifica se o combate já está iniciado. Ignora se o combate estiver iniciado.
     if (world.stage.value === battleData.stages.started.value || world.stage.value === battleData.stages.endgame.value) return;
 
-    world.stage = battleData.stages.started;
+    const confirmed = await foundry.applications.api.DialogV2.confirm({
+        window: { title: game.i18n.localize("ldnd5e.messages.startBattleTitle") },
+        content: `<p>${game.i18n.localize("ldnd5e.messages.startBattle")}</p>`
+    });
 
-    let battleMaxRound = 0;
-    let sideMaxStamina = 0;
-    for (let data of world.sides.top) {
-        const company = await fromUuid(data.uuid);
-        sideMaxStamina += company.system.attributes.stamina.max;
+    if (confirmed) {
+        
+
+        world.stage = battleData.stages.started;
+
+        let battleMaxRound = 0;
+        let sideMaxStamina = 0;
+        for (let data of world.sides.top) {
+            const company = await fromUuid(data.uuid);
+            sideMaxStamina += company.system.attributes.stamina.max;
+        }
+
+        battleMaxRound = sideMaxStamina;
+        sideMaxStamina = 0;
+
+        for (let data of world.sides.bottom) {
+            const company = await fromUuid(data.uuid);
+            sideMaxStamina += company.system.attributes.stamina.max;
+        }
+
+        battleMaxRound = Math.max(battleMaxRound, sideMaxStamina);
+        world.turns.max = battleMaxRound;
+
+        world.turns.current = world.turns.max;
+        world.turns.elapsed = 0;
+
+        await game.settings.set('ldnd5e', 'battle', world);
+        if (world.application instanceof BattleApp) world.application.render({ force: true });
     }
-
-    battleMaxRound = sideMaxStamina;
-    sideMaxStamina = 0;
-
-    for (let data of world.sides.bottom) {
-        const company = await fromUuid(data.uuid);
-        sideMaxStamina += company.system.attributes.stamina.max;
-    }
-
-    battleMaxRound = Math.max(battleMaxRound, sideMaxStamina);
-    world.turns.max = battleMaxRound;
-
-    world.turns.current = world.turns.max;
-    world.turns.elapsed = 0;
-
-    await game.settings.set('ldnd5e', 'battle', world);
-    if (world.application instanceof BattleApp) world.application.render({ force: true });
 });
 Hooks.on('combatRound', async (combat, updateData, updateOptions) => {
     if (!game.settings.get('ldnd5e', 'massiveCombatRules')) return;

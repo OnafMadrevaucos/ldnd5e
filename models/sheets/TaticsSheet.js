@@ -81,6 +81,27 @@ export default class TaticsSheet extends item.ItemSheet5e {
         primary: "description"
     };
 
+    /**
+   * Activity types used to create a Tatic Activity.
+   * @type {typeof Array<object>}
+   */
+    get BasicDamageDice() {
+        return [
+            {
+                value: 4,
+                label: "d4"
+            },
+            {
+                value: 6,
+                label: "d6"
+            },
+            {
+                value: 8,
+                label: "d8"
+            }
+        ];
+    }
+
     /* -------------------------------------------- */
     /*  Rendering                                   */
     /* -------------------------------------------- */
@@ -215,6 +236,12 @@ export default class TaticsSheet extends item.ItemSheet5e {
             { value: "", label: game.i18n.localize("DND5E.NoneActionLabel") }
         ];
 
+        context.basicDamageDice = this.BasicDamageDice;
+
+        context.collectImpetus = (this.item.system.details.collectImpetus && !this.item.system.attributes.prep);
+        context.neverCollectImpetus = (!this.item.system.attributes.prep && context.editable);
+        context.isPassive = this.item.system.details.passive || this.item.system.attributes.prep;
+        context.canNotBePassive = (!this.item.system.attributes.prep && context.editable);
         context.canGiveBonus = (this.item.system.details.passive && context.editable);
 
         if (!this.item.system.details.passive)

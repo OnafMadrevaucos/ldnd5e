@@ -259,6 +259,7 @@
             "configuration": "Configuration",
             "details": {
                 "use": "Field Use",
+                "minimumDie": "Minimum Basic Attack",
                 "collectImpetus": "Collect Impetus",
                 "impetusBonus": "Impetus Bonus",
                 "isStealth": "Stealth",
@@ -288,7 +289,7 @@
             "activityType": "Activity Type",
             "activities": {
                 "md": "Moral Damage",
-                "mh": "Moral Heal",
+                "mh": "Nullify Damage",
                 "ib": "Impetus' Bonus",
                 "id": "Impetus' Penalty"
             },
@@ -410,6 +411,8 @@
             "fullHand": "You cannot draw any more cards because your hand is full.",
             "emptyDeck": "You cannot draw any more cards because the draw deck is empty.",
             "noMainActivity": "A Tática não possui nenhuma Atividade marcada como principal.",
+            "startBattleTitle": "Start Battle",
+            "startBattle": "An encounter has been started. Do you want to start the battle as well?",
             "restartBattleTitle": "Restart Battle",
             "restartBattle": "The current battle is in the End Game phase. Do you want to restart the battle?",
             "endBattleTitle": "End Battle",

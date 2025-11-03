@@ -14,14 +14,24 @@
         </div>
 
         <div class="form-group split-group">
-            <label>{{localize 'ldnd5e.tatics.details.collectImpetus'}}</label>
+            <label>{{ localize 'ldnd5e.tatics.details.minimumDie' }}</label>
             <div class="form-fields">
-                <dnd5e-checkbox name="system.details.collectImpetus" tabindex="1" {{#if system.details.collectImpetus}}
-                    checked{{/if}} {{#unless editable}} disabled{{/unless}}></dnd5e-checkbox>
+                <select name="system.details.minimumDie" {{#unless editable}} disabled{{/unless}}>
+                    {{ selectOptions basicDamageDice selected=system.details.minimumDie  valueAttr="value"
+                    labelAttr="label" }}
+                </select>
             </div>
         </div>
 
-        {{#if system.details.collectImpetus}}
+        <div class="form-group split-group">
+            <label>{{localize 'ldnd5e.tatics.details.collectImpetus'}}</label>
+            <div class="form-fields">
+                <dnd5e-checkbox name="system.details.collectImpetus" tabindex="1" {{#if collectImpetus}}
+                    checked{{/if}} {{#unless neverCollectImpetus}} disabled{{/unless}}></dnd5e-checkbox>
+            </div>
+        </div>
+
+        {{#if collectImpetus}}
         <div class="form-group split-group">
             <label>{{ localize "ldnd5e.tatics.details.impetusBonus" }}</label>
             <div class="form-fields">
@@ -53,8 +63,8 @@
             <label>{{localize 'ldnd5e.tatics.details.property'}}</label>
             <div class="form-fields">
                 <label class="checkbox">
-                    <dnd5e-checkbox name="system.details.passive" tabindex="0" {{#if system.details.passive}}
-                        checked{{/if}}{{#unless editable}} disabled{{/unless}}></dnd5e-checkbox>
+                    <dnd5e-checkbox name="system.details.passive" tabindex="0" {{#if isPassive}}
+                        checked{{/if}}{{#unless canNotBePassive}} disabled{{/unless}}></dnd5e-checkbox>
                     <span>{{localize 'ldnd5e.tatics.details.passive'}}</span>
                 </label>
                 <label class="checkbox">

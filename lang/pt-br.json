@@ -259,6 +259,7 @@
             "configuration": "Configuração",
             "details": {
                 "use": "Uso em Batalha",
+                "minimumDie": "Ataque Básico Mínimo",
                 "collectImpetus": "Acumula Ímpeto",
                 "impetusBonus": "Bônus de Ímpeto",
                 "isStealth": "Furtiva",
@@ -288,7 +289,7 @@
             "activityType": "Tipo de Atividade",
             "activities": {
                 "md": "Dano à Moral",
-                "mh": "Cura à Moral",
+                "mh": "Anular Dano",
                 "ib": "Bônus de Ímpeto",
                 "id": "Penalidade de Ímpeto"
             },
@@ -410,6 +411,8 @@
             "fullHand": "Você não pode comprar mais cartas porque sua mão está cheia.",
             "emptyDeck": "Você não pode comprar mais cartas porque o baralho está vazio.",
             "noMainActivity": "A Tática não possui nenhuma Atividade marcada como principal.",
+            "startBattleTitle": "Iniciar Batalha",
+            "startBattle": "Um encontro foi iniciado, deseja iniciar a batalha também?",
             "restartBattleTitle": "Reiniciar Batalha",
             "restartBattle": "A batalha atual está na Fase de Encerramento. Deseja reiniciar a batalha?",
             "endBattleTitle": "Encerrar Batalha",

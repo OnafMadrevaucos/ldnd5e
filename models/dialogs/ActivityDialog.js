@@ -139,6 +139,27 @@ export default class ActivityDialog extends api.Application5e {
         return this.#hasData;
     }
 
+    /* -------------------------------------------- */
+    /*  Life-Cycle Handlers                         */
+    /* -------------------------------------------- */
+
+    /** @inheritDoc */
+    _onRender(context, options) {
+        super._onRender(context, options);
+
+        this.activateListeners();
+    }
+
+    /* -------------------------------------------- */
+
+    /**
+     * Activate listeners for context menu on units.
+     * @return {void}
+     */
+    activateListeners() {
+        const select = this.element.querySelector('.activity-type');
+        select.addEventListener("change", this._onTypeChange.bind(this));        
+    }
 
     /* -------------------------------------------- */
     /*  Rendering                                   */
@@ -184,6 +205,18 @@ export default class ActivityDialog extends api.Application5e {
     }
 
     /* -------------------------------------------- */
+    /*  Event Listeners                             */
+    /* -------------------------------------------- */
+
+    async _onTypeChange(event) {
+        const type = event.target.value; 
+        const name = game.i18n.localize(`ldnd5e.tatics.activities.${type}`);    
+        
+        const input = this.element.querySelector('.document-name');
+        input.value = (input.value === '' || input.value === undefined) ? name : input.value;
+    }
+
+    /* -------------------------------------------- */
     /*  Form Handling                               */
     /* -------------------------------------------- */
 
@@ -197,10 +230,11 @@ export default class ActivityDialog extends api.Application5e {
     static async #handleFormSubmission(event, form, formData) {
         if (event.type === "change") {
             const _formData = foundry.utils.expandObject(formData.object);
-            this.#data = { 
+            this.#data = {
                 id: (this.isEdit) ? this.#data.id : foundry.utils.randomID(),
-                ..._formData.header, ..._formData.config };
-        } else if (event.type === "submit") {          
+                ..._formData.header, ..._formData.config
+            };
+        } else if (event.type === "submit") {
             this.#hasData = true;
             this.close();
         }
