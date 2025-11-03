@@ -5,7 +5,7 @@ import { Debugger, CondHelper, RepeatHelper } from "./scripts/helpers.js";
 import { preloadTemplates } from "./scripts/templates.js";
 import { registerSystemSettings } from "./scripts/settings.js"
 
-import { constants, i18nStrings, gmControl, battleControl } from "./scripts/constants.js";
+import { constants, i18nStrings, gmControl, battleControl, battleData } from "./scripts/constants.js";
 
 import ADControl from "./models/adControl.js";
 import ADControlV2 from "./models/adControlV2.js";
@@ -228,6 +228,111 @@ Hooks.on('getSceneControlButtons', (controls) => {
 
 Hooks.on('combatTurn', ars.onNewCombatTurn);
 Hooks.on('combatRound', ars.onNewCombatTurn);
+
+Hooks.on('combatStart', async (combat, updateData) => {
+    if (!game.settings.get('ldnd5e', 'massiveCombatRules')) return;
+
+    const world = game.settings.get('ldnd5e', 'battle');
+
+    // Ignora se um combate massivo não estiver sido iniciado.
+    if (world.stage.value === battleData.stages.setup.value) return;
+
+    // Verifica se o combate já está iniciado. Ignora se o combate estiver iniciado.
+    if (world.stage.value === battleData.stages.started.value || world.stage.value === battleData.stages.endgame.value) return;
+
+    world.stage = battleData.stages.started;
+
+    let battleMaxRound = 0;
+    let sideMaxStamina = 0;
+    for (let data of world.sides.top) {
+        const company = await fromUuid(data.uuid);
+        sideMaxStamina += company.system.attributes.stamina.max;
+    }
+
+    battleMaxRound = sideMaxStamina;
+    sideMaxStamina = 0;
+
+    for (let data of world.sides.bottom) {
+        const company = await fromUuid(data.uuid);
+        sideMaxStamina += company.system.attributes.stamina.max;
+    }
+
+    battleMaxRound = Math.max(battleMaxRound, sideMaxStamina);
+    world.turns.max = battleMaxRound;
+
+    world.turns.current = world.turns.max;
+    world.turns.elapsed = 0;
+
+    await game.settings.set('ldnd5e', 'battle', world);
+    if (world.application instanceof BattleApp) world.application.render({ force: true });
+});
+Hooks.on('combatRound', async (combat, updateData, updateOptions) => {
+    if (!game.settings.get('ldnd5e', 'massiveCombatRules')) return;
+
+    const world = game.settings.get('ldnd5e', 'battle');
+
+    // Verifica se o combate já está iniciado ou em sua fase de encerramento.
+    if (world.stage.value === battleData.stages.started.value || world.stage.value === battleData.stages.endgame.value) {
+
+        const scoreboard = world.scoreboard;
+
+        // Bottom lost the round.
+        if (scoreboard.bottom.impetus < scoreboard.top.impetus) {
+            const side = world.sides.bottom;
+
+            for (let sideData of side) {
+                const company = await fromUuid(sideData.uuid);
+                company.system.attributes.hp.value -= scoreboard.top.attack;
+
+                await company.update({ ['system.attributes.hp.value']: company.system.attributes.hp.value });
+            }
+        }
+        // Top lost the round.
+        else if (scoreboard.top.impetus < scoreboard.bottom.impetus) {
+            const side = world.sides.top;
+
+            for (let sideData of side) {
+                const company = await fromUuid(sideData.uuid);
+                company.system.attributes.hp.value -= scoreboard.bottom.attack;
+
+                await company.update({ ['system.attributes.hp.value']: company.system.attributes.hp.value });
+            }
+        }
+
+        scoreboard.top.impetus = 0;
+        scoreboard.bottom.impetus = 0;
+        scoreboard.top.attack = 0;
+        scoreboard.bottom.attack = 0;
+
+        const lastRound = world.turns.current;
+        world.turns.current += (updateOptions.direction * -1);
+        world.turns.current = Math.clamp(world.turns.current, 0, world.turns.max);
+
+        if (world.turns.current == 0) world.stage = battleData.stages.endgame;
+        else if (world.turns.current > 0 && lastRound == 0) {
+            const confirmed = await foundry.applications.api.DialogV2.confirm({
+                window: { title: game.i18n.localize("ldnd5e.messages.restartBattleTitle") },
+                content: `<p>${game.i18n.localize("ldnd5e.messages.restartBattle")}</p>`
+            });
+
+            if (confirmed) world.stage = battleData.stages.started;
+            else world.turns.current = lastRound;
+        }
+        else if (world.turns.current == world.turns.max && lastRound == world.turns.max) {
+            world.turns.current = 0;
+            world.turns.elapsed = 0;
+            world.turns.max = 0;
+            world.turns.pct = 0;
+            world.turns.max = 0;
+
+            world.stage = battleData.stages.prep;
+        }
+
+        await game.settings.set('ldnd5e', 'battle', world);
+
+        if (world.application instanceof BattleApp) world.application.render({ force: true });
+    }
+});
 
 /** ---------------------------------------------------- */
 /** Funções do Sistema D&D                               */
@@ -614,4 +719,33 @@ function patchRollDamage() {
 
         await wrapper(config, ...rest);
     });
+
+    libWrapper.register("ldnd5e", "Combat.prototype.endCombat", async function (wrapped, ...args) {
+        const result = await wrapped(...args);
+        const world = game.settings.get('ldnd5e', 'battle');
+
+        // Altera os turnos da batalha apenas se o combate estiver iniciado.
+        if (world.stage.value === battleData.stages.started.value || world.stage.value === battleData.stages.endgame.value) {
+
+            const confirmed = await foundry.applications.api.DialogV2.confirm({
+                window: { title: game.i18n.localize("ldnd5e.messages.endBattleTitle") },
+                content: `<p>${game.i18n.localize("ldnd5e.messages.endBattle")}</p>`
+            });
+
+            if (confirmed) {
+                world.turns.current = 0;
+                world.turns.elapsed = 0;
+                world.turns.max = 0;
+                world.turns.pct = 0;
+                world.turns.max = 0;
+
+                world.stage = battleData.stages.prep;
+
+                await game.settings.set('ldnd5e', 'battle', world);
+                if (world.application instanceof BattleApp) world.application.render({ force: true });
+            }
+        }
+
+        return result;
+    }, "WRAPPER");
 }

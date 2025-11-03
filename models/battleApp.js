@@ -167,6 +167,8 @@ export default class BattleApp extends api.Application5e {
         // Get the world battle data.
         let world = game.settings.get('ldnd5e', 'battle') ?? game.settings.settings.get('ldnd5e.battle').default;
 
+        world.application = this;
+
         let local = await this._prepareLocalData(world);
 
         this.#battle = {
@@ -424,9 +426,9 @@ export default class BattleApp extends api.Application5e {
         });
 
         Object.assign(context.turns, {
-            elapsed: context.turns.max - context.turns.current,
-            value: ((context.turns.max - context.turns.current) / context.turns.max),
-            pct: Math.clamp(((context.turns.max - context.turns.current) / context.turns.max) * 100, 0, 100)
+            elapsed: context.turns.current,
+            value: (context.turns.current / context.turns.max),
+            pct: Math.clamp((context.turns.current / context.turns.max) * 100, 0, 100)
         });
 
         return context;
@@ -494,12 +496,12 @@ export default class BattleApp extends api.Application5e {
 
         const activeEventUuid = this.world.events.active;
 
-        const activeEvent = activeEventUuid ? fromUuidSync(activeEventUuid) : null;        
+        const activeEvent = activeEventUuid ? fromUuidSync(activeEventUuid) : null;
         if (activeEvent) {
             activeEvent.system.info.description = activeEvent.system.info.description.replace(/(<([^>]+)>)/ig, '');
             activeEvent.hasActivities = Object.values(activeEvent.system.activities).length > 0;
         }
-        
+
         context.activeEvent = activeEvent;
         context.hasActiveEvent = activeEvent !== null && activeEvent !== undefined && activeEvent !== '' && activeEvent !== 'null';
         return context;
@@ -711,7 +713,15 @@ export default class BattleApp extends api.Application5e {
     /** @inheritDoc */
     async _onClose(options = {}) {
         // Reset the app state on close.
-        game.settings.set('ldnd5e', 'appState', game.settings.settings.get('ldnd5e.appState').default);
+        await game.settings.set('ldnd5e', 'appState', game.settings.settings.get('ldnd5e.appState').default);
+
+        const world = this.battle.world;
+
+        // Remove the app reference from the world.
+        world.application = null;
+
+        // Reset the app state on close.
+        await game.settings.set('ldnd5e', 'battle', world);
 
         super._onClose();
     }
@@ -1123,6 +1133,10 @@ export default class BattleApp extends api.Application5e {
 
         const companies = [];
         if (actor.type === 'ldnd5e.army') {
+            const sideName = battleSide.dataset.side;
+
+            if (!this.world.armies[sideName].includes(actor.uuid)) this.world.armies[sideName].push(actor.uuid);
+
             for (const companyId of actor.system.companies) {
                 const company = game.actors.get(companyId);
                 if (!company) continue;
@@ -1520,7 +1534,7 @@ export default class BattleApp extends api.Application5e {
                     else if (res.targetField === 'b') {
                         scoreboard[allySide].impetus -= res.total;
                         scoreboard[allySide].impetus = Math.max(scoreboard[allySide].impetus, 0);
-                        
+
                         scoreboard[enemySide].impetus -= res.total;
                         scoreboard[enemySide].impetus = Math.max(scoreboard[enemySide].impetus, 0);
                     }

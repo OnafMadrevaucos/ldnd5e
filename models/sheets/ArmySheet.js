@@ -346,7 +346,7 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
 
                 await company.update({
                     ['system.info.army']: this.actor,
-                    ['system.attributes.affinity.bonus.prestige']: this.actor.system.prestige.mod
+                    ['system.attributes.affinity.bonus.prestige']: this.actor.system.prestige.mod                    
                 });
             }
 
@@ -381,7 +381,8 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
             await this.actor.update({ ['system.companies']: companyCollection });
             await createdCompany.update({
                 ['system.info.army']: this.actor,
-                ['system.attributes.affinity.bonus.prestige']: this.actor.system.prestige.mod
+                ['system.attributes.affinity.bonus.prestige']: this.actor.system.prestige.mod,
+                ['system.attributes.hp.value']: createdCompany.system.attributes.hp.max
             });
 
             await game.actors.directory.render(true);

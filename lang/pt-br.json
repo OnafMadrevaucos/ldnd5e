@@ -315,7 +315,8 @@
             "phases": {
                 "setup": "Configuração",
                 "prep": "Preparação",
-                "combat": "Combate"
+                "started": "Combate",
+                "endgame": "Encerramento"
             },
             "notification": {
                 "title": "Sem Batalhas Iniciadas",
@@ -408,7 +409,11 @@
             "emptyBattleData": "Impossível continuar. Os dados da Batalha estão vazios.",
             "fullHand": "Você não pode comprar mais cartas porque sua mão está cheia.",
             "emptyDeck": "Você não pode comprar mais cartas porque o baralho está vazio.",
-            "noMainActivity": "A Tática não possui nenhuma Atividade marcada como principal."
+            "noMainActivity": "A Tática não possui nenhuma Atividade marcada como principal.",
+            "restartBattleTitle": "Reiniciar Batalha",
+            "restartBattle": "A batalha atual está na Fase de Encerramento. Deseja reiniciar a batalha?",
+            "endBattleTitle": "Encerrar Batalha",
+            "endBattle": "Você encerrou um combate, deseja encerrar também a batalha atual?"
         },
         "settings": {
             "criticalName": "Crítico Multiplica Dados",

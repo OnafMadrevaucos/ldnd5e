@@ -316,7 +316,8 @@
             "stages": {
                 "setup": "Setup",
                 "prep": "Preparation",
-                "combat": "Combat"
+                "started": "Combat",
+                "endgame": "End Game"
             },
             "notification": {
                 "title": "No Battle Started",
@@ -408,7 +409,11 @@
             "emptyBattleData": "Impossible to continue. The battle data is empty.",
             "fullHand": "You cannot draw any more cards because your hand is full.",
             "emptyDeck": "You cannot draw any more cards because the draw deck is empty.",
-            "noMainActivity": "A Tática não possui nenhuma Atividade marcada como principal."
+            "noMainActivity": "A Tática não possui nenhuma Atividade marcada como principal.",
+            "restartBattleTitle": "Restart Battle",
+            "restartBattle": "The current battle is in the End Game phase. Do you want to restart the battle?",
+            "endBattleTitle": "End Battle",
+            "endBattle": "You ended a combat, do you want to end the current battle as well?"
         },
         "settings": {
             "hideFromGMName": "Hide GM Effect Controls",

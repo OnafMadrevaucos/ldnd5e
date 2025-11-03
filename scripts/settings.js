@@ -82,6 +82,7 @@ export const registerSystemSettings = function () {
         config: false,
         type: Object,
         default: {
+            application: null,
             stage: battleData.stages.setup,
             scoreboard: {
                 top: {
@@ -100,6 +101,10 @@ export const registerSystemSettings = function () {
             events: {
                 active: null,
                 list: []
+            },
+            armies: {
+                top: [],
+                bottom: []
             },
             sides: {
                 top: [],

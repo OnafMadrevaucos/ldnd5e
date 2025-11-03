@@ -440,6 +440,11 @@ const battleData = {
          value: 'started',
          label: 'ldnd5e.battle.stages.started',
          icon: 'ra ra-crossed-swords'
+      },
+      endgame: {
+         value: 'endgame',
+         label: 'ldnd5e.battle.stages.endgame',
+         icon: 'fas fa-skull'
       }
    },
 
@@ -791,7 +796,8 @@ const i18nStrings = {
       stages: {
          setup: "ldnd5e.battle.stages.setup",
          prep: "ldnd5e.battle.stages.prep",
-         combat: "ldnd5e.battle.stages.combat",
+         started: "ldnd5e.battle.stages.started",
+         endgame: "ldnd5e.battle.stages.endgame",
       },
       notification: {
          title: "ldnd5e.battle.notification.title",
@@ -899,6 +905,11 @@ const i18nStrings = {
       fullHand: "ldnd5e.messages.fullHand",
       emptyDeck: "ldnd5e.messages.emptyDeck",
       noMainActivity: "ldnd5e.messages.noMainActivity",
+
+      restartBattleTitle: "ldnd5e.messages.restartBattleTitle",
+      restartBattle: "ldnd5e.messages.restartBattle",
+      endBattleTitle: "ldnd5e.messages.endBattleTitle",
+      endBattle: "ldnd5e.messages.endBattle",
    },
 
    settings: {      
