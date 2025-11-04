@@ -131,6 +131,7 @@ Hooks.once("init", function () {
     preloadTemplates();
 
     patchRollDamage();
+    patchEndCombat();
 
     Handlebars.registerHelper('debug', Debugger);
     Handlebars.registerHelper('cond', CondHelper);
@@ -246,7 +247,6 @@ Hooks.on('combatStart', async (combat, updateData) => {
     });
 
     if (confirmed) {
-        
 
         world.stage = battleData.stages.started;
 
@@ -272,7 +272,7 @@ Hooks.on('combatStart', async (combat, updateData) => {
         world.turns.elapsed = 0;
 
         await game.settings.set('ldnd5e', 'battle', world);
-        if (world.application instanceof BattleApp) world.application.render({ force: true });
+        world.application?.render({ force: false });
     }
 });
 Hooks.on('combatRound', async (combat, updateData, updateOptions) => {
@@ -339,7 +339,7 @@ Hooks.on('combatRound', async (combat, updateData, updateOptions) => {
 
         await game.settings.set('ldnd5e', 'battle', world);
 
-        if (world.application instanceof BattleApp) world.application.render({ force: true });
+        world.application?.render({ force: false });
     }
 });
 
@@ -357,24 +357,22 @@ Hooks.on('createActor', async (document, options, userId) => {
     patchActorCreate(document);
 });
 Hooks.on('updateActor', async (document, data, options, userId) => {
-    if (document.type == "ldnd5e.company") {
+    if (document.type == typeCompany) {
         const companyData = document.system;
-        const armyData = companyData.info.army;
 
-        if (armyData) {
-            Object.values(armyData.apps).forEach(app => {
-                app.render(true);
-            })
-        }
-    } else if (document.type == "ldnd5e.unit") {
+        if (companyData?.info.army)
+            await companyData.info.army.update({ ["system.trigger"]: !companyData.info.army.system.trigger });
+
+    } else if (document.type == typeUnit) {
         const unitData = document.system;
-        const companyData = unitData.info.company;
 
-        if (companyData) {
-            Object.values(companyData.apps).forEach(app => {
-                app.render(true);
-            })
-        }
+        if (unitData?.info.company)
+            await unitData.info.company.update({ ["system.trigger"]: !unitData.info.company.system.trigger });
+    }
+
+    if ([typeArmy, typeCompany, typeUnit].includes(document.type)) {
+        const world = game.settings.get('ldnd5e', 'battle');
+        world.application?.render({ force: false });
     }
 });
 Hooks.on('dnd5e.restCompleted', (actor, result, config) => {
@@ -416,22 +414,6 @@ Hooks.on('preDeleteActiveEffect', async (document, options, userId) => {
 // ------------------------------------------------------//
 
 // ROLLS ------------------------------------------------//
-Hooks.on('dnd5e.preRollAttack', (rolls, rollData) => {
-    patchAttackRollRoutines(rolls, rollData);
-});
-Hooks.on('dnd5e.preRollAbilityCheck', (rolls, rollData) => {
-    patchExtraRollRoutines(rolls, rollData);
-});
-Hooks.on('dnd5e.preRollSavingThrow', (rolls, rollData) => {
-    patchExtraRollRoutines(rolls, rollData);
-});
-Hooks.on('dnd5e.preRollSkill', (rolls, rollData) => {
-    patchExtraRollRoutines(rolls, rollData);
-});
-Hooks.on('dnd5e.preRollInitiative', (actor, roll) => {
-    patchIniciativeRollRoutines(actor, roll);
-});
-
 Hooks.on('dnd5e.preRollDamageV2', (config, dialog, message) => {
     const button = config.event.currentTarget;
     item.rolledVersatile = (button.dataset.action == 'twoHanded');
@@ -541,46 +523,6 @@ async function renderBattleControl() {
     const form = new BattleApp();
 
     return await form.render(true);
-}
-
-function patchExtraRollRoutines(rolls, rollData) {
-    const actor = rolls.subject;
-    const exh = actor.system.attributes.exhaustion;
-    const roll = rolls.rolls[0];
-
-    // Use Exhaustion One D&D Rule
-    if (game.settings.get('ldnd5e', 'oneDNDExhaustionRule')) {
-        // New Rule: '-1' in D20 Rolls for each Exhaustion Level.
-        if (exh > 0) {
-            if (roll.parts) roll.parts.push(`${(-1 * exh)}`);
-            else roll.parts = [`${(-1 * exh)}`];
-        }
-    }
-}
-
-function patchAttackRollRoutines(rolls, rollData) {
-    const actor = rolls.subject.actor;
-    const exh = actor.system.attributes.exhaustion;
-    const activity = rolls.subject;
-
-    // Use Exhaustion One D&D Rule
-    if (game.settings.get('ldnd5e', 'oneDNDExhaustionRule')) {
-        // New Rule: '-1' in D20 Rolls for each Exhaustion Level.
-        if (exh > 0) {
-            activity.attack.bonus = `${(-1 * exh)}`;
-        }
-    }
-}
-
-function patchIniciativeRollRoutines(actor, roll) {
-    const exh = actor.system.attributes.exhaustion;
-    // Use Exhaustion One D&D Rule
-    if (game.settings.get('ldnd5e', 'oneDNDExhaustionRule')) {
-        // New Rule: '-1' in D20 Rolls for each Exhaustion Level.
-        if (exh > 0) {
-            roll.parts.push(`${(-1 * exh)}`);
-        }
-    }
 }
 
 /**
@@ -728,7 +670,9 @@ function patchRollDamage() {
 
         await wrapper(config, ...rest);
     });
+}
 
+function patchEndCombat() {
     libWrapper.register("ldnd5e", "Combat.prototype.endCombat", async function (wrapped, ...args) {
         const result = await wrapped(...args);
         const world = game.settings.get('ldnd5e', 'battle');
@@ -751,10 +695,10 @@ function patchRollDamage() {
                 world.stage = battleData.stages.prep;
 
                 await game.settings.set('ldnd5e', 'battle', world);
-                if (world.application instanceof BattleApp) world.application.render({ force: true });
+                world.application?.render({ force: false });
             }
         }
 
         return result;
-    }, "WRAPPER");
+    }, "WRAPPER"); F
 }

@@ -55,7 +55,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
 
     /** @inheritDoc */
     async _onRender(context, options) {
-        await super._onRender(context, options);        
+        await super._onRender(context, options);
 
         // Set toggle state and add status class to frame
         this._renderModeToggle();
@@ -118,7 +118,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         const context = await super._prepareContext(options);
 
         // Set editable the current form mode.
-        context.editable = this.isEditable && (this._mode === this.constructor.MODES.EDIT);  
+        context.editable = this.isEditable && (this._mode === this.constructor.MODES.EDIT);
 
         // Prepare the actor data for rendering.
         Object.assign(context, {
@@ -389,14 +389,14 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
 
     /** @inheritdoc */
     async _onDropCommander(event, actor) {
-        if(this.isModel) {
+        if (this.isModel) {
             ui.notifications.warn(game.i18n.localize("ldnd5e.company.model"));
             return false;
         }
 
         const actorData = actor.system;
         const mainClass = actor.type === "npc" ? 'npc' : actorData.attributes.hd.classes.first();
-        
+
         const classIdentifier = mainClass?.system?.identifier || mainClass;
         const hitDice = actor.type === "npc" ? actorData.attributes.hd.denomination : actorData.attributes.hd.largestFace;
 
@@ -422,10 +422,10 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         await this.actor.update(changes);
 
         // Update all units' company references.
-        for(const uId of this.actor.system.units) {
+        for (const uId of this.actor.system.units) {
             const unit = game.actors.get(uId);
             // Ignore if the unit doesn't exist.
-            if(!unit) continue;
+            if (!unit) continue;
 
             await unit.update({ ['system.info.company']: this.actor });
         }
@@ -453,7 +453,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         for (const uId of this.actor.system.units) {
             const unit = game.actors.get(uId);
             // Ignore if the unit doesn't exist.
-            if(!unit) continue;
+            if (!unit) continue;
 
             unitCount[unit.system.info.type] += 1;
         }
@@ -501,7 +501,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
                 for (const uid of this.actor.system.units) {
                     const u = game.actors.get(uid);
                     // Ignore if the unit doesn't exist.
-                    if(!u) continue;
+                    if (!u) continue;
 
                     if (u.system.info.type === type)
                         idx = this.actor.system.units.indexOf(uid);
@@ -516,8 +516,8 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
                 for (const uid of this.actor.system.units) {
                     const u = game.actors.get(uid);
                     // Ignore if the unit doesn't exist.
-                    if(!u) continue;
-                    
+                    if (!u) continue;
+
                     if (u.system.info.type === type)
                         idx = this.actor.system.units.indexOf(uid);
                 }
@@ -572,10 +572,10 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
 
             // Ignore medical units, for it doesn't count as a combat unit.
             if (unit.system.info.type === unitData.uTypes.medical) continue;
-            
+
             unit.items.forEach(tatic => {
                 if (tatic.system.trainning) {
-                    for(let i = 0; i < tatic.system.quantity; i++)
+                    for (let i = 0; i < tatic.system.quantity; i++)
                         deck.piles.tatics.push(tatic.uuid);
                 }
             });
@@ -631,7 +631,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         for (const unitId of this.actor.system.units) {
             const unit = game.actors.get(unitId);
             // Ignore if the unit doesn't exist.
-            if(!unit) continue;
+            if (!unit) continue;
 
             await unit.update({ [`system.info.commander`]: null });
         }
@@ -692,19 +692,21 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
    * @param {PointerEvent} event  The originating click event.
    * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
    */
-    static async #roll(event, target) {        
+    static async #roll(event, target) {
         // Ignore if this is a model sheet.
-        if(this.isModel) return;
+        if (this.isModel) return;
 
         if (!target.classList.contains("rollable")) return;
 
         switch (target.dataset.type) {
             case "ability": {
                 const ability = target.closest("[data-ability]")?.dataset.ability;
-
-                if (target.classList.contains("saving-throw")) return this.actor.system.rollSavingThrow({ skill: ability, event }, {}, { speaker: ChatMessage.getSpeaker({ actor: this.actor }) });
-                else return this.actor.system.rollAbilityCheck({ ability: ability }, { event }, { speaker: ChatMessage.getSpeaker({ actor: this.actor }) });
-            };
+                return this.actor.system.rollAbilityCheck({ ability: ability }, { event }, { speaker: ChatMessage.getSpeaker({ actor: this.actor }) });
+            }
+            case "save": {
+                const ability = target.closest("[data-ability]")?.dataset.ability;
+                return this.actor.system.rollSavingThrow({ skill: ability, event }, {}, { speaker: ChatMessage.getSpeaker({ actor: this.actor }) });
+            }
             case "skill": {
                 const skill = target.closest("[data-key]")?.dataset.key;
                 return this.actor.system.rollSkill({ skill: skill }, { event }, { speaker: ChatMessage.getSpeaker({ actor: this.actor }) });
@@ -724,7 +726,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         event.preventDefault();
 
         // Ignore if this is a model sheet.
-        if(this.isModel) return;
+        if (this.isModel) return;
 
         const data = this.actor.system;
         const result = await MedicalRestaurationBrowser.create(this.actor, { force: true });

@@ -42,17 +42,6 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
                     value: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 })
                 })
             }),
-            abilities: new fields.SchemaField({
-                frt: new fields.SchemaField({
-                    value: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 }),
-                }),
-                mrl: new fields.SchemaField({
-                    value: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 }),
-                }),
-                wll: new fields.SchemaField({
-                    value: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 }),
-                })
-            }),
             attributes: new fields.SchemaField({
                 affinity: new fields.SchemaField({
                     class: new fields.StringField({ required: true }),
@@ -74,23 +63,8 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
                     max: new fields.NumberField({ required: true, nullable: false, integer: true, min: 0, initial: 0 }),
                 }),
             }),
-
-            combat: new fields.SchemaField({
-                dsp: new fields.SchemaField({
-                    value: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 }),
-                    save: new fields.SchemaField({
-                        value: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 }),
-                    }),
-                }),
-                enc: new fields.SchemaField({
-                    value: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 }),
-                }),
-                def: new fields.SchemaField({
-                    value: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 }),
-                }),
-            }),
-
             units: new fields.ArrayField(new fields.StringField({ textSearch: true, label: "ldnd5e.units" })),
+            trigger: new fields.BooleanField({ required: true, nullable: false, initial: true })
         };
 
         return data;
@@ -113,21 +87,12 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
             special: 1,
             medical: 1
         }
-
-        this.system = {
-            info: this.info,
-            currency: this.currency,
-            abilities: this.abilities,
-            attributes: this.attributes,
-            combat: this.combat,
-            units: this.units
-        }
     }
 
     /**@inheritdoc */
     prepareDerivedData() {
-        const army = this.system.info.army;
-        this.system.attributes.prestige = army?.system.prestige ?? { mod: "+0" };
+        const army = this.info.army;
+        this.attributes.prestige = army?.system.prestige ?? { mod: "+0" };
 
         // Prepare the company's abilities.
         this._prepareAbilities();
@@ -152,33 +117,36 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
    * @protected
    */
     _prepareAbilities() {
-        for (const [id, abl] of Object.entries(this.system.abilities)) {
-            let maxValue = Number.MIN_SAFE_INTEGER;
+        const abilities = {
+            frt: { value: Number.MIN_SAFE_INTEGER },
+            mrl: { value: Number.MIN_SAFE_INTEGER },
+            wll: { value: Number.MIN_SAFE_INTEGER }
+        };
+        // Obtain the max value between all units for thes. ability.
+        for (const uId of this.units) {
+            const unit = game.actors.get(uId);
 
-            // Safe max value for the ability.
-            abl.value = 0;
+            // Ignore if the unit doesn't exist.
+            if (!unit) continue;
 
-            // Obtain the max value between all units for thes. ability.
-            for (const uId of this.units) {
-                const unit = game.actors.get(uId);
+            // Ignore medical units, for it doesn't count as a combat unit.
+            if (unit.system.info.type === unitData.uTypes.medical) continue;
 
-                // Ignore if the unit doesn't exist.
-                if (!unit) continue;
+            for (const [id, abl] of Object.entries(unit.system.abilities)) {
+                // Safe max value for the ability.
+                abilities[id].value = Math.max(abilities[id].value, abl.value);
 
-                // Ignore medical units, for it doesn't count as a combat unit.
-                if (unit.system.info.type === unitData.uTypes.medical) continue;
 
-                const uAbl = unit.system?.abilities[id] ?? { value: 0 };
-                abl.value = maxValue = Math.max(maxValue, uAbl.value);
+                abilities[id].key = id;
+                abilities[id].label = game.i18n.localize(i18nStrings.uAbilities[id]);
+                abilities[id].icon = `modules/ldnd5e/ui/abilities/${id}.svg`;
+                abilities[id].mod = Math.abs(abilities[id].value);
+                abilities[id].sign = (abilities[id].value >= 0) ? "+" : "-";
+                if (!Number.isFinite(abilities[id].max)) abilities[id].max = CONFIG.DND5E.maxAbilityScore;
             }
-
-            abl.key = id;
-            abl.label = game.i18n.localize(i18nStrings.uAbilities[id]);
-            abl.icon = `modules/ldnd5e/ui/abilities/${id}.svg`;
-            abl.mod = Math.abs(abl.value);
-            abl.sign = (abl.value >= 0) ? "+" : "-";
-            if (!Number.isFinite(abl.max)) abl.max = CONFIG.DND5E.maxAbilityScore;
         }
+
+        this.abilities = abilities;
     }
 
     /* -------------------------------------------- */
@@ -188,15 +156,13 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
    * @protected
    */
     _prepareAttributes() {
-        const data = this.system;
-
         // Hit Dice largest face from the commander's original class.
-        const hitDice = data.attributes.affinity.hitDice;
+        const hitDice = this.attributes.affinity.hitDice;
 
         let stamina = 0;
         let totalHP = 0;
 
-        data.attributes.trainning = {
+        this.attributes.trainning = {
             value: 0,
             max: 0
         };
@@ -215,13 +181,13 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
             totalHP += (unit.system.abilities.mrl.value + unit.system.abilities.wll.value) * hitDice;
         }
 
-        data.attributes.stamina.max = stamina;
-        data.attributes.stamina.value = Math.min(data.attributes.stamina.value, data.attributes.stamina.max);
-        data.attributes.stamina.pct = (data.attributes.stamina.value / data.attributes.stamina.max) * 100;
+        this.attributes.stamina.max = stamina ?? 0;
+        this.attributes.stamina.value = Math.min(this.attributes.stamina.value, this.attributes.stamina.max);
+        this.attributes.stamina.pct = (this.attributes.stamina.value / this.attributes.stamina.max) * 100;
 
-        data.attributes.hp.max = totalHP;
-        data.attributes.hp.value = Math.min(data.attributes.hp.value, data.attributes.hp.max);
-        data.attributes.hp.pct = (data.attributes.hp.value / data.attributes.hp.max) * 100;
+        this.attributes.hp.max = totalHP;
+        this.attributes.hp.value = Math.min(this.attributes.hp.value, this.attributes.hp.max);
+        this.attributes.hp.pct = (this.attributes.hp.value / this.attributes.hp.max) * 100;
     }
 
     /* -------------------------------------------- */
@@ -231,55 +197,62 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
    * @protected
    */
     _prepareCombatSkills() {
-        const companyData = this.system;
-
-        // Army's prestige modifier.
-        const prestige = companyData.attributes.affinity.bonus.prestige;
+        const combat = {
+            dsp: {
+                value: Number.MIN_SAFE_INTEGER,
+                save: {
+                    value: Number.MIN_SAFE_INTEGER,
+                },
+            },
+            enc: {
+                value: Number.MIN_SAFE_INTEGER,
+            },
+            def: {
+                value: Number.MIN_SAFE_INTEGER,
+            },
+        };
+        const prestige = Number(this.attributes.prestige.mod ?? 0);
+        const commander = this.info.commander;
 
         // Commander's charisma modifier.
-        const bonus = companyData.attributes.affinity.bonus.value;
+        const bonus = this.attributes.affinity.bonus.value;
 
-        for (const [id, skl] of Object.entries(this.system.combat)) {
-            let unitCount = 0;
+        // Count the number of combat units.
+        for (const uId of this.units) {
+            const unit = game.actors.get(uId);
+            // Ignore if the unit doesn't exist.
+            if (!unit) continue;
 
-            // Count the number of combat units.
-            for (const uId of this.units) {
-                const unit = game.actors.get(uId);
+            // Ignore medical units, for it doesn't count as a combat unit.
+            if (unit.system.info.type === unitData.uTypes.medical) continue;
 
-                // Ignore if the unit doesn't exist.
-                if (!unit) continue;
+            for (const [id, skl] of Object.entries(unit.system.combat)) {
+                if (['dsp'].includes(id) && skl.value > combat[id].value) {
+                    combat[id].value = this.abilities.wll.value;
 
-                // Ignore medical units, for it doesn't count as a combat unit.
-                if (unit.system.info.type === unitData.uTypes.medical) continue;
+                    combat[id].bonus = commander?.system.abilities.cha.mod ?? 0.
+                    combat[id].bonus += prestige;
+                } else if (['enc'].includes(id) && skl.value > combat[id].value) {
+                    combat[id].value = this.abilities.frt.value;
 
-                unitCount++;
-            }
+                    combat[id].bonus = commander?.system.abilities.cha.mod ?? 0.
+                    combat[id].bonus += prestige;
+                } else if (['def'].includes(id) && skl.value > combat[id].value) {
+                    combat[id].value = this.abilities.mrl.value;
 
-            // Company has at least one combat unit. Compute the skill value.
-            if (unitCount > 0) {
-                if (['dsp'].includes(id)) {
-                    skl.value = this.system.abilities.wll.value;
-                    skl.bonus = bonus + prestige;
-                } else if (['enc'].includes(id)) {
-                    skl.value = this.system.abilities.frt.value;
-                    skl.bonus = bonus + prestige;
-                } else if (['def'].includes(id)) {
-                    skl.value = this.system.abilities.mrl.value;
-                    skl.bonus = bonus + prestige;
+                    combat[id].bonus = commander?.system.abilities.cha.mod ?? 0.
+                    combat[id].bonus += prestige;
                 }
-            }
-            // Company has no combat units, so it has no skill value. 
-            else {
-                skl.value = 0;
-                skl.bonus = 0;
-            }
 
-            skl.key = id;
-            skl.label = game.i18n.localize(i18nStrings.uCombat[id]);
-            skl.icon = unitData.uCombatIcons[id];
-            skl.mod = Math.abs(skl.value + skl.bonus);
-            skl.sign = (skl.value >= 0) ? "+" : "-";
+                combat[id].key = id;
+                combat[id].label = game.i18n.localize(i18nStrings.uCombat[id]);
+                combat[id].icon = unitData.uCombatIcons[id];
+                combat[id].mod = Math.abs(combat[id].value + combat[id].bonus);
+                combat[id].sign = (combat[id].value >= 0) ? "+" : "-";
+            }
         }
+
+        this.combat = combat;
     }
 
     /* -------------------------------------------- */
@@ -289,17 +262,14 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
    * @protected
    */
     _prepareSaves() {
-        const companyData = this.system;
-        const prof = companyData.attributes.affinity.bonus.prof;
+        const prof = this.attributes.affinity.bonus.prof;
 
-        // Army's prestige modifier.
-        const prestige = companyData.attributes.affinity.bonus.prestige;
+        const dsp = this.combat.dsp;
+        dsp.save.value = dsp.value;
 
-        const dsp = this.system.combat.dsp;
-        dsp.save.value = dsp.value + prof + prestige;
-
-        dsp.save.mod = Math.abs(dsp.save.value);
-        dsp.save.sign = (dsp.value >= 0) ? "+" : "-";
+        dsp.save.bonus = dsp.bonus + prof;
+        dsp.save.mod = Math.abs(dsp.save.value + dsp.save.bonus);
+        dsp.save.sign = (dsp.save.value >= 0) ? "+" : "-";
     }
 
     /* -------------------------------------------- */
@@ -309,10 +279,9 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
     * @protected
     */
     _prepareCurrency() {
-        const companyData = this.system;
-        Object.entries(companyData.currency).forEach(([k, v]) => {
-            companyData.currency[k].key = k;
-            companyData.currency[k].label = game.i18n.localize(DND5E.currencies[k].label);
+        Object.entries(this.currency).forEach(([k, v]) => {
+            this.currency[k].key = k;
+            this.currency[k].label = game.i18n.localize(DND5E.currencies[k].label);
         });
     }
 
@@ -331,11 +300,11 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
             medical: []
         };
 
-        for (const id of this.system.units) {
+        for (const id of this.units) {
             const unit = game.actors.get(id);
 
             // Ignore if the unit doesn't exist.
-            if(!unit) continue;
+            if (!unit) continue;
 
             units[unit.system.info.type].push(unit);
         }
@@ -355,11 +324,11 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
    */
     getRollData() {
         let data = {
-            army: this.system.info.army ?? null,
+            army: this.info.army ?? null,
 
-            abilities: this.system.abilities,
-            attributes: this.system.attributes,
-            skill: this.system.combat
+            abilities: this.abilities,
+            attributes: this.attributes,
+            skill: this.combat
         };
 
         data.prestige = data.attributes.affinity.bonus.prestige;
@@ -459,15 +428,15 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
         let oldFormat = false;
         const name = type === "check" ? "AbilityCheck" : (type === "skill" ? "SkillCheck" : "SavingThrow");
 
-        const ability = ["skill", "save"].includes(type) ? this.system.combat?.[config.skill] : this.system.abilities?.[config.ability];
+        const ability = ["skill", "save"].includes(type) ? this.combat?.[config.skill] : this.abilities?.[config.ability];
         const abilityLabel = ["skill", "save"].includes(type) ? game.i18n.localize(i18nStrings.uCombat[config.skill])
             : game.i18n.localize(i18nStrings.uAbilities[config.ability]) ?? "";
 
         const rollData = this.getRollData();
         let { parts, data } = CONFIG.Dice.BasicRoll.constructParts({
             mod: ability?.value,
-            prof: rollData.prof,
-            bonus: type === 'save' ? rollData.prestige : null,
+            bonus: ability?.bonus,
+            prof: (type === 'save' ? rollData.prof : null),
         }, rollData);
         const options = {};
 

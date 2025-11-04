@@ -334,7 +334,7 @@
                 "both": "Both"
             },
             "commander": "Commander",
-            "deck": "Deck - {name",
+            "deck": "Deck - {name}",
             "openDeck": "Open Deck",
             "closeDeck": "Close Deck",
             "hand": "Available Tatics",

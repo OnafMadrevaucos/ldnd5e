@@ -94,15 +94,6 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
     /**@inheritdoc */
     prepareBaseData() {
         this.military = true;
-
-        this.system = {
-            info: this.info,
-            prof: this.prof,
-            abilities: this.abilities,
-            combat: this.combat,
-            status: this.status,
-            tatics: this.parent.items
-        };
     }
 
     /* -------------------------------------------- */
@@ -134,8 +125,8 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
    * @protected
    */
     _prepareAttributes() {
-        const company = this.system.info.company;
-        this.system.attributes = {
+        const company = this.info.company;
+        this.attributes = {
             prestige: company?.system.attributes.prestige ?? { mod: "+0" },
             prof: company?.system.attributes.affinity.bonus.prof ?? 0
         };
@@ -148,9 +139,10 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
    * @protected
    */
     _prepareTotalPrice() {
-        this.fullPrice = foundry.utils.deepClone(this.system.info.price) || { value: 0, denomination: "gp" };
+        this.fullPrice = foundry.utils.deepClone(this.info.price) || { value: 0, denomination: "gp" };
+        const tatics = this.parent.items.filter(i => i.type === "ldnd5e.tatic");
 
-        this.system.tatics.forEach(tatic => {
+        tatics.forEach(tatic => {
             // Add price only for the tatics that are trained.
             if (tatic.system.trainning)
                 this.fullPrice.value += (tatic.system.info.price.value * tatic.system.quantity);
@@ -164,7 +156,7 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
    * @protected
    */
     _prepareAbilities() {
-        for (const [id, abl] of Object.entries(this.system.abilities)) {
+        for (const [id, abl] of Object.entries(this.abilities)) {
             abl.key = id;
             abl.label = game.i18n.localize(i18nStrings.uAbilities[id]);
             abl.mod = Math.abs(abl.value);
@@ -181,26 +173,26 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
    * @protected
    */
     _prepareSkills() {
-        const company = this.system.info.company;
+        const company = this.info.company;
         const prestige = Number(company?.system.attributes.prestige.mod ?? 0);
         const commander = company?.system.info.commander;
 
-        for (const [id, skl] of Object.entries(this.system.combat)) {
+        for (const [id, skl] of Object.entries(this.combat)) {
             skl.key = id;
             skl.label = game.i18n.localize(i18nStrings.uCombat[id]);
 
             if (['dsp'].includes(id)) {
-                skl.value = this.system.abilities.wll.value;
+                skl.value = this.abilities.wll.value;
 
                 skl.bonus = commander?.system.abilities.cha.mod ?? 0.
                 skl.bonus += prestige;
             } else if (['enc'].includes(id)) {
-                skl.value = this.system.abilities.frt.value;
+                skl.value = this.abilities.frt.value;
 
                 skl.bonus = commander?.system.abilities.cha.mod ?? 0.
                 skl.bonus += prestige;
             } else if (['def'].includes(id)) {
-                skl.value = this.system.abilities.mrl.value;
+                skl.value = this.abilities.mrl.value;
 
                 skl.bonus = commander?.system.abilities.cha.mod ?? 0.
                 skl.bonus += prestige;
@@ -222,13 +214,14 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
    * @protected
    */
     _prepareSaves() {
-        const prof = this.system.attributes.prof ?? 0;
+        const prof = this.attributes.prof ?? 0;
 
-        const dsp = this.system.combat.dsp;
+        const dsp = this.combat.dsp;
 
-        dsp.save.value = dsp.value + dsp.bonus + prof;
+        dsp.save.value = dsp.value;
 
-        dsp.save.mod = Math.abs(dsp.save.value);
+        dsp.save.bonus = dsp.bonus + prof;
+        dsp.save.mod = Math.abs(dsp.save.value + dsp.save.bonus);
         dsp.save.sign = (dsp.save.value >= 0) ? "+" : "-";
     }
 
@@ -240,13 +233,12 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
    * @inheritdoc  
    */
     getRollData() {
-
         let data = {
-            company: this.system.info.company ?? null,
+            company: this.info.company ?? null,
 
-            abilities: this.system.abilities,
-            attributes: this.system.attributes,
-            skill: this.system.combat
+            abilities: this.abilities,
+            attributes: this.attributes,
+            skill: this.combat
         };
 
         data.prestige = data.attributes.prestige;
@@ -382,15 +374,15 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
         let oldFormat = false;
         const name = type === "check" ? "AbilityCheck" : (type === "skill" ? "SkillCheck" : "SavingThrow");
 
-        const ability = ["skill", "save"].includes(type) ? this.system.combat?.[config.skill] : this.system.abilities?.[config.ability];
+        const ability = ["skill", "save"].includes(type) ? this.combat?.[config.skill] : this.abilities?.[config.ability];
         const abilityLabel = ["skill", "save"].includes(type) ? game.i18n.localize(i18nStrings.uCombat[config.skill])
             : game.i18n.localize(i18nStrings.uAbilities[config.ability]) ?? "";
 
         const rollData = this.getRollData();
         let { parts, data } = CONFIG.Dice.BasicRoll.constructParts({
-            mod: ability?.value,
-            prof: rollData.prof,
-            bonus: type === 'save' ? rollData.prestige : null,
+            mod: ability?.value,            
+            bonus: ability?.bonus,
+            prof: (type === 'save' ? rollData.prof : null),
         }, rollData);
         const options = {};
 

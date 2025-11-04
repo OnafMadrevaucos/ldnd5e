@@ -682,9 +682,11 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
     switch (target.dataset.type) {
       case "ability": {
         const ability = target.closest("[data-ability]")?.dataset.ability;
-
-        if (target.classList.contains("saving-throw")) return this.actor.system.rollSavingThrow({ skill: ability, event }, {}, { speaker: ChatMessage.getSpeaker({ actor: this.actor }) });
-        else return this.actor.system.rollAbilityCheck({ ability: ability }, { event }, { speaker: ChatMessage.getSpeaker({ actor: this.actor }) });
+        return this.actor.system.rollAbilityCheck({ ability: ability }, { event }, { speaker: ChatMessage.getSpeaker({ actor: this.actor }) });
+      };
+      case "save": {
+        const ability = target.closest("[data-ability]")?.dataset.ability;
+        return this.actor.system.rollSavingThrow({ skill: ability, event }, {}, { speaker: ChatMessage.getSpeaker({ actor: this.actor }) });        
       };
       case "skill": {
         const skill = target.closest("[data-key]")?.dataset.key;
