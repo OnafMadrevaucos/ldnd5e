@@ -184,6 +184,7 @@
             "commander": "Commander",
             "noCommander": "Drop an Actor here...",
             "removeCommander": "Remove Commander",
+            "removeUnit": "Remove Unit",
             "stamina": "Stamina",
             "rest": "Make Camp",
             "restRoll": "Restauration Roll",

@@ -37,7 +37,6 @@ export default class BattleApp extends api.Application5e {
             toggleDeckControls: BattleApp.#toggleDeckControls,
             toggleCompanySelect: BattleApp.#toggleCompanySelect,
             switchCompany: BattleApp.#switchCompany,
-            deleteCompany: BattleApp.#deleteCompany,
             toggleExtraDeck: BattleApp.#toggleExtraDeck,
             toggleEventsDeck: BattleApp.#toggleEventsDeck,
             toggleEventsControls: BattleApp.#toggleEventsControls,
@@ -1688,19 +1687,6 @@ export default class BattleApp extends api.Application5e {
 
         await game.settings.set('ldnd5e', 'appState', this.app);
         this.render({ force: true });
-    }
-
-    /* -------------------------------------------- */
-
-    /**
-   * Delete a company from the battle.
-   * @this {BattleApp}
-   * @param {PointerEvent} event  The originating click event.
-   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
-   * @async
-   */
-    static async #deleteCompany(event, target) {
-        const i = 0;
     }
 
     /* -------------------------------------------- */

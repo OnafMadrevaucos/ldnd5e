@@ -168,11 +168,13 @@
                     <img class="commander-portrait" role="button" aria-label="{{commander.name}}"
                         src="{{commander.img}}"></img>
                     <h4>{{commander.name}}</h4>
+                     {{#if editable}}
                     <button type="button" class="config-button unbutton" data-action="removeCommander"
                         data-tooltip="ldnd5e.army.removeCommander"
                         aria-label="{{ localize 'ldnd5e.army.removeCommander' }}">
                         <i class="fas fa-trash" inert></i>
                     </button>
+                    {{/if}}
                     {{else}}
                     <span class="empty">{{localize 'ldnd5e.army.noCommander'}}</span>
                     {{/if}}

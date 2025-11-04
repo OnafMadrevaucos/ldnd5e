@@ -183,6 +183,7 @@
             "commander": "Comandante",
             "noCommander": "Arraste um Actor até aqui...",
             "removeCommander": "Remover Comandante",
+            "removeUnit": "Remover Unidade",
             "stamina": "Stamina",
             "rest": "Acampar",
             "restRoll": "Rolagem de Restauração",

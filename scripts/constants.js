@@ -638,6 +638,7 @@ const i18nStrings = {
       full: "ldnd5e.company.full",
       commander: "ldnd5e.company.commander",
       removeCommander: "ldnd5e.company.removeCommander",
+      removeUnit: "ldnd5e.company.removeUnit",
       noCommander: "ldnd5e.company.noCommander",
       stamina: "ldnd5e.company.stamina",
       rest: "ldnd5e.company.rest",

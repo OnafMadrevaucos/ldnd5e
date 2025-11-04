@@ -276,12 +276,14 @@
                                         aria-label="{{ localize 'ldnd5e.unit.editTatic' }}">
                                         <i class="fas fa-pen-to-square" inert></i>
                                     </button>
+                                    {{#if @root.editable}}
                                     <button type="button"
                                         class="config-button item-control unbutton item-action always-interactive"
                                         data-action="removeTatic" data-tooltip="ldnd5e.unit.removeTatic"
                                         aria-label="{{ localize 'ldnd5e.unit.removeTatic' }}">
                                         <i class="fas fa-trash" inert></i>
                                     </button>
+                                    {{/if}}
                                 </div>
                             </div>
                             {{#if tatic.system.trainning}}

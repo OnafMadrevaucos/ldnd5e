@@ -69,11 +69,13 @@
                                 {{company.unitCount.medical}}
                             </div>
                             <div class="item-detail item-controls always-visible">
+                                 {{#if @root.editable}}
                                 <button type="button" class="config-button unbutton item-control item-action always-interactive" data-action="removeCompany"
                                     data-tooltip="ldnd5e.army.removeCompany"
                                     aria-label="{{ localize 'ldnd5e.army.removeCompany' }}">
                                     <i class="fas fa-trash" inert></i>
                                 </button>
+                                {{/if}}
                             </div>
                         </div>
                     </li>
