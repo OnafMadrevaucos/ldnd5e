@@ -87,10 +87,14 @@ export const registerSystemSettings = function () {
             scoreboard: {
                 top: {
                     attack: 0,
+                    defense: 0,
+                    casualties: 0,
                     impetus: 0
                 },
                 bottom: {
                     attack: 0,
+                    defense: 0,
+                    casualties: 0,
                     impetus: 0
                 }
             },

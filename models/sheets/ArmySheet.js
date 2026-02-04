@@ -375,6 +375,12 @@ export default class ArmySheet extends api.HandlebarsApplicationMixin(sheets.Act
             // Create a new company and add it to the army.
             const createdCompany = await Actor.create(companyData, { parent: null });
             await createdCompany.setFlag("ldnd5e", "isMember", true);
+            await createdCompany.setFlag("ldnd5e", "originalCompany", actor.id);
+            await createdCompany.unsetFlag("ldnd5e", "members");
+
+            const members = actor.getFlag("ldnd5e", "members") || [];
+            members.push(createdCompany.id);
+            await actor.setFlag("ldnd5e", "members", members);
 
             companyCollection.push(createdCompany.id);
 

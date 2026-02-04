@@ -7,17 +7,12 @@
         {{#each info}}
         <div {{#if classes}}class="{{ classes }}" {{/if}}>
             {{#if label}}
+            
             <div class="label">
                 <span>{{ localize label }}</span>
-                {{#if (and @root.editable config)}}
-                <button type="button" class="unbutton control-button" data-action="showConfiguration"
-                    data-config="{{ config }}" data-tooltip aria-label="{{ localize tooltip }}">
-                    <i class="fas fa-cog" inert></i>
-                </button>
-                {{/if}}
             </div>
             {{/if}}
-            <div class="value">{{{ value }}}</div>
+            <div class="value">{{{ value }}}</div>            
         </div>
         {{/each}}
     </div>

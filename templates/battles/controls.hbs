@@ -22,13 +22,17 @@
             <div class="scoreboard">
 
                 <div class="score top">
-                    <span class="impetus">{{enemy.impetus}} <i class="ra ra-all-for-one" inert></i></span>
-                    <span class="atk-points">{{enemy.attack}} <i class="ra ra-broken-skull" inert></i></span>
+                    <span class="impetus">{{enemy.impetus}} <i class="{{icons.impetus}}" inert></i></span>
+                    <span class="atk-points">{{enemy.attack}} <i class="{{icons.attack}}" inert></i></span>
+                    <span class="def-points">{{enemy.defense}} <i class="{{icons.defense}}" inert></i></span>
+                    <span class="cas-points">{{enemy.casualties}} <i class="{{icons.casualty}}" inert></i></span>
                 </div>
 
                 <div class="score bottom">
-                    <span class="impetus">{{ally.impetus}} <i class="ra ra-all-for-one" inert></i></span>
-                    <span class="atk-points">{{ally.attack}} <i class="ra ra-broken-skull" inert></i></span>
+                    <span class="impetus">{{ally.impetus}} <i class="{{icons.impetus}}" inert></i></span>
+                    <span class="atk-points">{{ally.attack}} <i class="{{icons.attack}}" inert></i></span>
+                    <span class="def-points">{{ally.defense}} <i class="{{icons.defense}}" inert></i></span>
+                    <span class="cas-points">{{ally.casualties}} <i class="{{icons.casualty}}" inert></i></span>
                 </div>
 
             </div>
@@ -47,9 +51,27 @@
                             <div class="card-row">
                                 <img class="gold-icon {{#if tatic.img.svg}} svg{{/if}}" src="{{tatic.img.src}}">
                                 <div class="card-content hand">
-                                    <a class="card-link rollable" data-action="useTatic" data-type="tatic">
-                                        <span class="name">{{tatic.name}}</span>
-                                    </a>
+                                    <div class="flexcol main-info">
+                                        <a class="card-link rollable" data-action="useTatic" data-type="tatic">
+                                            <span class="name">{{tatic.name}}</span>
+                                        </a>
+                                        <div class="flexrow combat-info">
+                                            <span class="attack">
+                                                {{ tatic.combat.attack.value }}
+                                                {{{ tatic.combat.attack.icon }}}
+                                            </span>
+                                            <span class="defense">                                                
+                                                {{ tatic.combat.defense.value }}
+                                                {{{ tatic.combat.defense.icon }}}
+                                            </span>
+                                            {{#if tatic.combat.casualties.active}}
+                                            <span class="casualties">                                                
+                                                {{ tatic.combat.casualties.value }}
+                                                {{{ tatic.combat.casualties.icon }}}
+                                            </span>
+                                            {{/if}}
+                                        </div>
+                                    </div>
                                     <div class="unit-info">
                                         {{#with tatic.unit}}
                                         <span class="impetus">
@@ -204,7 +226,7 @@
             </div>
         </div>
 
-        <div class="deck-section discarded {{#unless (eq state.sidebar.viewer "discarded")}}hidden{{/unless}}">
+        <div class="deck-section discarded {{#unless (eq state.sidebar.viewer " discarded")}}hidden{{/unless}}">
             <h4 class="title">{{localize 'ldnd5e.battle.extraDecks.discarded'}}</h4>
             <div class="deck-container">
                 <div class="cards-counter">{{deck.counter.discarded}} <i class="ra ra-diamonds-card"></i></div>
@@ -238,7 +260,7 @@
             </div>
         </div>
 
-        <div class="deck-section assets {{#unless (eq state.sidebar.viewer "assets")}}hidden{{/unless}}">
+        <div class="deck-section assets {{#unless (eq state.sidebar.viewer " assets")}}hidden{{/unless}}">
             <h4 class="title">{{localize 'ldnd5e.battle.extraDecks.assets'}}</h4>
             <div class="deck-container">
                 <div class="cards-counter">{{deck.counter.assets}} <i class="ra ra-diamonds-card"></i></div>

@@ -1,4 +1,5 @@
 import { i18nStrings } from "../../scripts/constants.js";
+import { taticsData } from "../../scripts/constants.js";
 
 export default class TaticsL5e extends foundry.abstract.TypeDataModel {
 
@@ -62,7 +63,7 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
                 // Se a Tática é de uso unico.
                 single: new fields.BooleanField({ required: true, nullable: false, initial: false }),
                 // Se a Tática é única.
-                unique: new fields.BooleanField({ required: true, nullable: false, initial: false }),                
+                unique: new fields.BooleanField({ required: true, nullable: false, initial: false }),
                 // Se a Tática fornece algum bônus a um atributo (A Tática deve ser uma passiva).
                 giveBonus: new fields.BooleanField({ required: true, nullable: false, initial: false }),
                 // Possíveis bônus fornecidos pela Tática.
@@ -73,7 +74,7 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
                     mrl: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
                     // Bonus de Fortitude da Tática.
                     wll: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-                }),                
+                }),
             }),
             attributes: new fields.SchemaField({
                 // Se a Tática é uma ação de preparação.
@@ -85,7 +86,16 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
                 // Se a Tática se mantém permanentemente durante a batalha.
                 pers: new fields.BooleanField({ required: true, nullable: false, initial: false }),
             }),
-            // Lista de Atividades que a Tática fornece.
+            // Capacidade de ataque e defesa que a Tática fornece.
+            combat: new fields.SchemaField({
+                attack: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+                defense: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+                casualties: new fields.SchemaField({
+                    active: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+                    value: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+                })
+            }),
+            // Lista de Atividades Especiais que a Tática fornece.
             activities: new fields.ObjectField({ required: true, nullable: false }),
         };
     }
@@ -121,27 +131,30 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
 
         const total = impetus + this.details.impetusBonus;
 
-        context.info = [{
-            label: "ldnd5e.tatics.impetus",
-            classes: "info-lg",
-            value: this.details.collectImpetus ? dnd5e.utils.formatModifier(total) : '—'
-        }];
-
-        if (Object.keys(this.activities).length > 0) {
-            context.info.push({
-                value: Object.values(this.activities).reduce((a, b) => {
-                    const formula = `${b.number}d${b.die}${b.bonus}`;
-
-                    return `${a}
-                    <span class="formula rollable" data-action="roll" data-type="activity" data-id="${b.id}" data-tooltip aria-label="${b.name}">${formula}</span>
-                    <span class="damage-type" data-tooltip aria-label="${game.i18n.localize(`ldnd5e.tatics.activities.${b.type}`)}">
-                        <dnd5e-icon src="modules/ldnd5e/ui/icons/${b.type}.svg"></dnd5e-icon>
-                    </span>
-                    `;
-                }, ""),
-                classes: "info-grid damage"
-            });
+        let attackIcons = "";
+        for (let i = 0; i < this.combat.attack; i++) {
+            attackIcons += `<i class="ra ${taticsData.combatIcons.attack}"></i>`;
         }
+
+        let defenseIcons = this.#prepareDefenseIcons(this.combat.casualties.active);
+
+        context.info = [
+            {
+                label: "ldnd5e.tatics.impetus",
+                classes: "info-lg",
+                value: this.details.collectImpetus ? dnd5e.utils.formatModifier(total) : '—',
+            },
+            {
+                label: "ldnd5e.tatics.combat.attack",
+                classes: "info-lg combat-icons",
+                value: attackIcons || '—',
+            },
+            {
+                label: "ldnd5e.tatics.combat.defense",
+                classes: "info-lg combat-icons",
+                value: defenseIcons || '—',
+            }
+        ];
     }
 
     /* -------------------------------------------- */
@@ -185,8 +198,14 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
    * @returns {Promise<DamageRoll[]|null>}                     A Promise which resolves to the created Roll instance.
    */
     async rollActivity(config = {}, dialog = {}, message = {}) {
-        const result = await this.#rollDice(config, dialog, message);
-        return result;
+        const results = [];
+
+        for (const activity of config.activity) {
+            const result = await this.#rollDice({activity, event: config.event}, dialog, message);
+            results.push(result);
+        }
+
+        return results;
     }
 
     /* -------------------------------------------- */
@@ -203,7 +222,7 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
 
         const attackMode = "roll";
         const rollType = "damage";
-        const formula = `${activity.number}d${activity.die}${activity.bonus}`;
+        const formula = `${activity.number}`;
         const taticType = activity.type;
 
         const rollConfig = {
@@ -297,5 +316,36 @@ export default class TaticsL5e extends foundry.abstract.TypeDataModel {
             }
         }
         return Array.from(targets.values());
+    }
+
+    /* -------------------------------------------- */
+    /*  Internal Helpers                            */
+    /* -------------------------------------------- */
+
+    #prepareDefenseIcons(hasCasualties = false) {
+        let defenseIcons = "";
+
+        for (let i = 0; i < this.combat.defense; i++) {
+            defenseIcons += `<i class="ra ${taticsData.combatIcons.defense}"></i>`;
+        }
+
+        if (hasCasualties) {
+            for (let i = 0; i < this.combat.casualties.value; i++) {
+                defenseIcons = replaceLast(defenseIcons, taticsData.combatIcons.defense, taticsData.combatIcons.casualty);
+            }
+        }
+
+        return defenseIcons;
+
+        function replaceLast(str, search, replacement) {
+            const index = str.lastIndexOf(search);
+            if (index === -1) return str;
+
+            return (
+                str.slice(0, index) +
+                replacement +
+                str.slice(index + search.length)
+            );
+        }
     }
 }

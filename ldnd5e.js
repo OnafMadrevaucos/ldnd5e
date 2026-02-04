@@ -145,6 +145,7 @@ Hooks.once('ready', async () => {
 
     if (game.settings.get("ldnd5e", "massiveCombatRules")) {
         await loadAffinities();
+        await verifyActors();
     }
 });
 
@@ -250,24 +251,32 @@ Hooks.on('combatStart', async (combat, updateData) => {
 
         world.stage = battleData.stages.started;
 
+        // Número máximo de rodadas da Batalha.
         let battleMaxRound = 0;
+        // O valor máximo de Stamina de cada lado.
         let sideMaxStamina = 0;
+        // Calcula o valor máximo de Stamina do lado superior.
         for (let data of world.sides.top) {
             const company = await fromUuid(data.uuid);
-            sideMaxStamina += company.system.attributes.stamina.max;
+            sideMaxStamina = Math.max(sideMaxStamina, company.system.attributes.stamina.max);
         }
 
+        // Armazena o maior valor de Stamina do lado superior.
         battleMaxRound = sideMaxStamina;
         sideMaxStamina = 0;
 
+        // Calcula o valor máximo de Stamina do lado inferior.
         for (let data of world.sides.bottom) {
             const company = await fromUuid(data.uuid);
-            sideMaxStamina += company.system.attributes.stamina.max;
+            sideMaxStamina = Math.max(sideMaxStamina, company.system.attributes.stamina.max);
         }
 
+        // Calcula o maior valor de Stamina entre os dois lados.
         battleMaxRound = Math.max(battleMaxRound, sideMaxStamina);
+        // Define o valor máximo de Turnos da Batalha.
         world.turns.max = battleMaxRound;
 
+        // Define o valor atual de Turnos da Batalha.
         world.turns.current = world.turns.max;
         world.turns.elapsed = 0;
 
@@ -375,6 +384,135 @@ Hooks.on('updateActor', async (document, data, options, userId) => {
         world.application?.render({ force: false });
     }
 });
+Hooks.on('preDeleteActor', async (document, data, options, userId) => {
+    const isMember = document.getFlag('ldnd5e', 'isMember');
+
+    // O actor é o Original.
+    if (!isMember) {
+        // O actor é uma Companhia ou Unidade.
+        if ([typeCompany].includes(document.type)) {
+            // Obtém os membros da Companhia.
+            const members = document.getFlag('ldnd5e', 'members');
+
+            // Remove os membros associados.
+            for (let memberId of members) {
+                const member = game.actors.get(memberId, { invalid: true });
+
+                // Percorre todas as Unidades da Companhia.
+                for (let unitId of member.system.units) {
+                    // Obtém a Unidade clonada.
+                    const unit = game.actors.get(unitId, { invalid: true });
+                    // Obtém o ID da Unidade original.
+                    const originalId = unit?.getFlag('ldnd5e', 'originalUnit');
+                    if (originalId) {
+                        // Verifica se a Unidade original ainda existe.
+                        const originalUnit = game.actors.get(originalId, { invalid: true });
+                        if (originalUnit) {
+                            // Obtém os membros da Unidade original.
+                            const originalMembers = originalUnit.getFlag('ldnd5e', 'members');
+                            // Remove a Unidade clonada dos membros da Unidade original.
+                            const index = originalMembers.findIndex(m => m == unit.id);
+                            if (index > -1) {
+                                originalMembers.splice(index, 1);
+                                await originalUnit.setFlag('ldnd5e', 'members', originalMembers);
+                            }
+                        }
+                    }
+
+                    // Remove a Unidade clonada válida.
+                    if (unit && !unit.invalid) await unit.delete();
+                };
+
+                // Remove a Companhia clonada.
+                if (member) await member.delete();
+            }
+        } else if ([typeUnit].includes(document.type)) {
+            // Obtém os membros da Unidade.
+            const members = document.getFlag('ldnd5e', 'members') || [];
+
+            // Remove as Unidades clonadas.
+            for (let memberId of members) {
+                const member = game.actors.get(memberId, { invalid: true });
+
+                if (member) await member.delete();
+            }
+        }
+    }
+    // O actor é uma Companhia ou Unidade clonada. 
+    else {
+        // O actor é uma Companhia clonada.
+        if ([typeCompany].includes(document.type)) {
+            // Obtém a Companhia original.
+            const originalCompanyId = document.getFlag('ldnd5e', 'originalCompany');
+            if (originalCompanyId) {
+                // Verifica se a Companhia original ainda existe.
+                const originalCompany = game.actors.get(originalCompanyId, { invalid: true });
+                if (originalCompany) {
+                    // Obtém os membros da Companhia original.
+                    const members = originalCompany.getFlag('ldnd5e', 'members');
+
+                    // Remove a Companhia clonada dos membros da Companhia original.
+                    const index = members.findIndex(m => m == document.id);
+                    if (index > -1) {
+                        const memberId = members.splice(index, 1)[0];
+                        const member = game.actors.get(memberId, { invalid: true });
+
+                        // Percorre todas as Unidades da Companhia clonada.
+                        for (let unitId of member.system.units) {
+                            // Obtém a Unidade clonada.
+                            const unit = game.actors.get(unitId, { invalid: true });
+                            // Obtém o ID da Unidade original.
+                            const originalId = unit?.getFlag('ldnd5e', 'originalUnit');
+                            if (originalId) {
+                                // Verifica se a Unidade original ainda existe.
+                                const originalUnit = game.actors.get(originalId);
+                                if (originalUnit) {
+                                    // Obtém os membros da Unidade original.
+                                    const originalMembers = originalUnit.getFlag('ldnd5e', 'members');
+                                    // Remove a Unidade clonada dos membros da Unidade original.
+                                    const index = originalMembers.findIndex(m => m == unit.id);
+                                    if (index > -1) {
+                                        originalMembers.splice(index, 1);
+                                        await originalUnit.setFlag('ldnd5e', 'members', originalMembers);
+                                    }
+                                }
+                            }
+
+                            // Remove a Unidade clonada.
+                            if (unit) await unit.delete();
+                        }
+
+                        try {
+                            await originalCompany.setFlag('ldnd5e', 'members', members);
+                        } catch (error) { }
+                    }
+                }
+            }
+        }
+        // O actor é uma Unidade clonada.
+        else if ([typeUnit].includes(document.type)) {
+            // Obtém a Unidade original.
+            const originalUnitId = document.getFlag('ldnd5e', 'originalUnit');
+            if (originalUnitId) {
+                // Verifica se a Unidade original ainda existe.
+                const originalUnit = game.actors.get(originalUnitId, { invalid: true });
+                if (originalUnit) {
+                    // Obtém os membros da Unidade original.
+                    const members = originalUnit.getFlag('ldnd5e', 'members');
+                    const index = members.findIndex(m => m == document.id);
+                    if (index > -1) {
+                        members.splice(index, 1);
+                        
+                        try {
+                            await originalUnit.setFlag('ldnd5e', 'members', members);
+                        } catch (error) { }
+                    }
+                }
+            }
+        }
+    }
+});
+
 Hooks.on('dnd5e.restCompleted', (actor, result, config) => {
     patchLongRest(actor, result, config);
 });
@@ -505,6 +643,34 @@ async function loadAffinities() {
     await game.settings.set("ldnd5e", "affinity", affinities);
 }
 
+async function verifyActors() {
+    const militaryActors = game.actors.filter(a => [typeCompany, typeUnit].includes(a.type) && !a.getFlag('ldnd5e', 'isMember'));
+
+    const totalItems = militaryActors.length;
+    let n = 0;
+    let pct = 0;
+
+    const progress = ui.notifications.info(game.i18n.format(i18nStrings.messages.verifyActors, { n, totalItems }), { progress: true });
+
+    for (let actor of militaryActors) {
+        const members = actor.getFlag('ldnd5e', 'members') || [];
+        for (let memberId of members) {
+            const member = game.actors.get(memberId);
+
+            if (!member) {
+                members.splice(members.indexOf(memberId), 1);
+                await actor.setFlag('ldnd5e', 'members', members);
+                console.warn(game.i18n.format(i18nStrings.messages.invalidActorFound, { id: memberId }));
+            }
+
+        }
+
+        n++;
+        pct = (n / totalItems);
+        progress.update({ pct, message: game.i18n.format(i18nStrings.messages.verifyActors, { n, totalItems }) });
+    }
+}
+
 function registerRPGAwesome() {
     const link = document.createElement("link");
     link.rel = "stylesheet";
@@ -615,6 +781,14 @@ async function patchItemPreDelete(actor, item) {
     }
 }
 
+async function deleteCompany(document) {
+
+}
+
+async function deleteUnit(document) {
+
+}
+
 /** ---------------------------------------------------- */
 /** Funções de Wrapper                                   */
 /** ---------------------------------------------------- */
@@ -700,5 +874,5 @@ function patchEndCombat() {
         }
 
         return result;
-    }, "WRAPPER"); F
+    }, "WRAPPER");
 }

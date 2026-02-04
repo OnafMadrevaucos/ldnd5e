@@ -1,4 +1,5 @@
 import TaticsL5e from "../entities/TaticsL5e.js";
+import { taticsData } from "../../scripts/constants.js";
 
 const api = dnd5e.applications.api;
 
@@ -122,12 +123,7 @@ export default class ActivityChoiceDialog extends api.Application5e {
 
         let activities = (Object.values(this.#tatic.system.activities) ?? [])
             .map(this._prepareActivityContext.bind(this))
-            .sort((a, b) => a.sort - b.sort);
-
-        // If mode is 'with extra', filter out main activities.
-        if (this.mode === 'extra') {
-            activities = activities.filter(a => !a.mainRoll);
-        }
+            .sort((a, b) => a.sort - b.sort);        
 
         context.mode = this.mode;
         context.controlHint = controlHint;
@@ -163,11 +159,7 @@ export default class ActivityChoiceDialog extends api.Application5e {
         const { id, name, type, mainRoll } = activity;
         return {
             id, name,
-            icon: {
-                src: `modules/ldnd5e/ui/icons/${type}.svg`,
-                svg: true
-            },
-            mainRoll
+            icon: taticsData.activityIcons[type],
         };
     }
 

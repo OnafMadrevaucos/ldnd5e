@@ -85,7 +85,7 @@
         {{!-- CR --}}
         <div class="cr">
             {{#if editable}}
-            <input type="number" name="system.info.cr" class="uninput" value="{{ system.info.cr }}">
+            <input type="number" name="system.info.cr" class="uninput" value="{{ system.info.cr }}" min="0" max="5">
             {{else}}
             {{#repeat system.info.cr}}
             <i class="ra ra-target-arrows"></i>

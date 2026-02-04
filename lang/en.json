@@ -103,8 +103,8 @@
         },
         "uCombat": {
             "dsp": "Discipline",
-            "enc": "Encourage",
-            "def": "Defend"
+            "prp": "Preparation",
+            "res": "Resilience"
         },
         "uProf": {
             "van": "Vanguard",
@@ -223,7 +223,7 @@
             "assets": "Unit Assets",
             "totalAssetsCost": "Total Assets Cost",
             "removeAsset": "Remove Asset",
-            "proficienciesHint": "<span class='title'>Basic Attacks Dmg.</span><span class='desc'>A basic attack can be made by discarding any tactic from a Unit.</span><span class='prof low'>Low<a><i class='fa-solid fa-1'></i><img src='systems/dnd5e/icons/svg/dice/d4.svg'></a></span><span class='prof med'>Med.<a><i class='fa-solid fa-1'></i><img src='systems/dnd5e/icons/svg/dice/d6.svg'></a></span><span class='prof hgh'>High<a><i class='fa-solid fa-1'></i><img src='systems/dnd5e/icons/svg/dice/d8.svg'></a></span>",
+            "proficienciesHint": "<span class='title'>Bônus de Posicionamento</span><span class='desc'>De acordo com a posição ocupada pela Unidade, ela recebe algum tipo de modificador de combate a depender de seu nível de proficiência.</span><hr class='ampersand'></hr><span class='prof'>Vanguarda<a><i class='fa-solid fa-plus'></i><i class='fa-solid fa-1'></i><i class='ra ra-sword'></i> por nível.</a></span><span class='prof'>Reserva<a><i class='fa-solid fa-plus'></i><i class='fa-solid fa-1'></i><i class='ra ra-castle-flag'></i> por nível.</a></span><span class='prof'>Retaguarda<a><i class='fa-solid fa-minus'></i><i class='fa-solid fa-1'></i><i class='ra ra-bone-bite'></i> por nível.</a></span>",
             "basicAtk": "Basic Attack"
         },
         "assets": {
@@ -248,6 +248,7 @@
             }
         },
         "tatics": {
+            "value": "Value",
             "flavor": "Flavor",
             "description": "Description",
             "impetus": "Impetus' Bonus",
@@ -258,6 +259,11 @@
             "trainning": "Train.",
             "damage": "Moral Damage",
             "configuration": "Configuration",
+            "combat": {
+                "attack": "Base Attack",
+                "defense": "Base Defense",
+                "casualties": "Casualties"
+            },
             "details": {
                 "use": "Field Use",
                 "minimumDie": "Minimum Basic Attack",
@@ -279,7 +285,10 @@
                     "frt": "Fortitute Bonus",
                     "mrl": "Morale Bonus",
                     "wll": "Will Bonus"
-                }
+                },
+                "hasCasualties": "Causes Casualties?",
+                "casualtiesInfo": "Each Casualty point represents 1 point of guaranteed Moral Damage to the Unit regardless of wether the Company's unit wins or not the Clash Round.",
+                "casualtiesNumber": "Casualties Number"
             },
             "invalidItem": "'{name}' is not a valid item. The item must be an Event or a Treat.",
             "removeAction": "Remove Action",
@@ -289,10 +298,14 @@
             "activityTitle": "Tatic Activity",
             "activityType": "Activity Type",
             "activities": {
-                "md": "Moral Damage",
-                "mh": "Nullify Damage",
-                "ib": "Impetus' Bonus",
-                "id": "Impetus' Penalty"
+                "aa": "Add Attack",
+                "ra": "Remove Attack",
+                "ai": "Add Impetus",
+                "ri": "Remove Impetus",
+                "ad": "Add Defense",
+                "rd": "Remove Defense",
+                "ac": "Add Casualties",
+                "rc": "Remove Casualties"
             },
             "invalidActivity": {
                 "name": "The Activity name is invalid.",
@@ -311,7 +324,12 @@
             "useTatic": "Tatic Use",
             "mainRecovery": "Main Recovery",
             "mainRoll": "Main Roll",
-            "acceptExtras": "Accept Extras"
+            "acceptExtras": "Use Tatic",
+            "sections": {
+                "description": "Description",
+                "details": "Details",
+                "combat": "Combat"
+            }
         },
         "battle": {
             "world": "World",
@@ -322,7 +340,7 @@
                 "endgame": "End Game"
             },
             "notification": {
-                "title": "No Battle Started",
+                "title": "No Battles Started",
                 "message": "Drag any company or army below to define the battle's sides and its start.",
                 "start": "Start Battle!"
             },
@@ -375,6 +393,10 @@
         },
         "messages": {
             "loadingAffinities": "LD&D 5e | Loading Class Affinities... {n} of {totalItems}",
+            "verifyActors": "LD&D 5e | Verifying integrity of Military Actors... {n} of {totalItems}",
+
+            "invalidActorFound": "The '{id}' is an invalid Actor and has been removed.",
+
             "bldgDmgLightArmor": "Light Armor is immune to damage caused by Bludgening Damage.",
             "slshDmgHeavyArmor": "Heavy Armor is immune to damage caused by Slashing Damage.",
             "halDmgShield": "Shields cannot take Nearmiss Hits.",
@@ -406,6 +428,8 @@
             "noArmorEffect": "{actor}'s Armor Active Effect is malfunctioning. Active Effect has been recreated.",
             "noShieldEffect": "The Active Effect for {actor}'s Shields is malfunctioning. Active Effect has been recreated.",
             "noEffectErrors": "No Actor had errors in their Active Effects.",
+            "unitNotFound": "The unit was not found. It may have been removed or deleted.",
+            "companyWithNoCommander": "The '{company}' needs a Commander to participate in the battle.",
             "invalidActorOnBattle": "{actor} is invalid and cannot be added to the battle.",
             "cannotStartBattle": "Both sides of the battle must have at least one company or army assigned in order to start the battle.",
             "emptyBattleData": "Impossible to continue. The battle data is empty.",

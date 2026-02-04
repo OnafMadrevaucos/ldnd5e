@@ -7,7 +7,7 @@ const app = dnd5e.applications;
  * Sobrescreve e amplia a implementação padrão do Sistema DnD5e.
  * @extends {Item5e}
  */
-export default class ItemL5e extends dnd5e.documents.Item5e {  
+export default class ItemL5e extends dnd5e.documents.Item5e {
 
     /* -------------------------------------------- */
     /*  Data Preparation                            */
@@ -67,55 +67,18 @@ export default class ItemL5e extends dnd5e.documents.Item5e {
 
             const { chooseActivity, ...activityConfig } = config;
 
-            // Normal roll method.
-            if (mode === 'full') {
-                let event = config.event;
-                if (activities?.length) {
-                    let activity = activities[0];
-                    let dialogConfig = dialog;
-                    let messageConfig = message;
-                    if (((activities.length > 1)) && !event?.shiftKey) {
-                        activity = await ActivityChoiceDialog.create(this, { mode });
-                    }
-                    if (!activity) return false;
-
-                    let usageConfig = { activity, ...activityConfig };
-                    const result = await this.system.rollActivity(usageConfig, dialogConfig, messageConfig);
-
-                    return result;
+            let event = config.event;
+            if (activities?.length) {
+                let activity = activities[0];
+                let dialogConfig = dialog;
+                let messageConfig = message;
+                if (((activities.length > 1)) && !event?.shiftKey) {
+                    activity = await ActivityChoiceDialog.create(this, { mode });
                 }
-            }
-            // Rolls only the main activities.
-            else {
-                let result = [];
+                if (!activity) return false;
 
-                let extraActivities = [];
-                if (mode === 'extra') {
-                    if (((activities.length > 1)) && !event?.shiftKey) {
-                        extraActivities = await ActivityChoiceDialog.create(this, { mode });
-                    }
-                }
-
-                // If extra activities are null, it represent that the user canceled the dialog. Abort.
-                if (!extraActivities) return;
-
-                const mainActivities = activities.filter(a => a.mainRoll);
-                if (mode === 'main' && mainActivities.length === 0) {
-                    ui.notifications.info(game.i18n.localize("ldnd5e.messages.noMainActivity"));
-                }
-                else {
-                    for (const activity of activities) {
-                        if (activity.mainRoll) {
-                            const usageConfig = { activity, ...activityConfig };
-                            result.push(await this.system.rollActivity(usageConfig, dialog, message));
-                        }
-                    }
-                }
-
-                for (const activity of extraActivities) {
-                    const usageConfig = { activity, ...activityConfig };
-                    result.push(await this.system.rollActivity(usageConfig, dialog, message));
-                }
+                let usageConfig = { activity, ...activityConfig };
+                const result = await this.system.rollActivity(usageConfig, dialogConfig, messageConfig);
 
                 return result;
             }

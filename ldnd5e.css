@@ -1414,7 +1414,7 @@
 .ldnd5e .basic-skills {
   flex: 1.5;
   align-self: baseline;
-  height: 15em;
+  height: 100%;
 }
 
 .ldnd5e .basic-skills filigree-box:not(:first-of-type) {
@@ -2405,6 +2405,25 @@
   position: inherit;
 }
 
+.ldnd5e.tatic .description.tab .info-block .combat-icons {
+  flex: 1;
+  text-align: center;
+}
+
+.ldnd5e.tatic .description.tab .info-block .combat-icons i {
+  font-size: var(--font-h5-size);
+  color: var(--dnd5e-color-gold);
+}
+
+.ldnd5e.tatic .description.tab .info-block .combat-icons i.ra-bone-bite {
+  color: var(--dnd5e-color-maroon);
+}
+
+.ldnd5e.tatic .activities.tab .card .icon {
+  font-size: var(--font-size-24);
+  color: var(--dnd5e-color-gold);
+}
+
 .ldnd5e.asset .asset-type a {
   font-size: var(--font-size-24);
 }
@@ -2484,6 +2503,21 @@
   box-shadow: none;
 }
 
+.ldnd5e.activity.tatic .window-content fieldset[data-application-part="configuration"] .activity-config {
+  padding: 0;
+}
+
+.ldnd5e.activity.tatic .window-content .activity-config .activity-value * {
+  flex: 1;
+}
+
+.ldnd5e.activity.tatic .window-content .activity-config .activity-value i {
+  flex: 0;
+  color: var(--dnd5e-color-gold);
+  padding-inline: 2px;
+  font-size: var(--font-h5-size);
+}
+
 .ldnd5e.activity .main-roll {
   display: flex;
   gap: 5px;
@@ -2514,6 +2548,12 @@
   text-align: center;
   font-size: var(--font-size-24);
   margin-bottom: 0.75em;
+}
+
+.dialog.activity-choice.tatic .item .icon {  
+  font-size: var(--font-h5-size);
+  color: var(--dnd5e-color-gold);
+  line-height: 1em;
 }
 
 .dialog.activity-choice .unlist li.item {
@@ -2775,9 +2815,9 @@
 .ldnd5e.battle .fields .sidebar .scoreboard {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 30px;
   position: absolute;
-  top: 18em;
+  top: 7.5em;
   text-align: center;
 }
 
@@ -2796,8 +2836,12 @@
   border: none;
 }
 
+.ldnd5e.battle .scoreboard .score span.impetus i {
+  color: var(--dnd5e-color-gold);
+}
+
 .ldnd5e.battle .scoreboard .score.top i {
-  color: var(--color-warm-3);
+  color: var(--dnd5e-color-maroon);
 }
 
 .ldnd5e.battle .scoreboard .score.bottom i {
@@ -3070,6 +3114,14 @@
   padding: 5px;
 }
 
+.ldnd5e.battle .side-controls .content .scoreboard .score {
+  font-size: var(--font-size-12);
+}
+
+.ldnd5e.battle .side-controls .content .scoreboard .score .impetus i {
+  color: var(--dnd5e-color-gold);
+}
+
 .ldnd5e.battle .side-controls filigree-box .unlist {
   padding: 10px 20px;
 }
@@ -3202,8 +3254,8 @@
 
 .ldnd5e.battle .battle-controls .extra-decks button .pip-counter {
   position: absolute;
-  top: 47%;
-  right: 42%;
+  top: 39%;
+  right: 41%;
   border-radius: 50%;
   width: var(--font-size-18);
   height: var(--font-size-18);
@@ -3432,9 +3484,26 @@
   flex-direction: row;
 }
 
-.ldnd5e.battle .tatic-card .card-row .card-content .name {
+.ldnd5e.battle .tatic-card .card-row .card-content .main-info {
+  flex: 2;
+}
+
+.ldnd5e.battle .tatic-card .card-content .main-info .name {
   flex: 1;
   font-weight: bold;
+}
+
+.ldnd5e.battle .tatic-card .card-content .main-info .combat-info {
+  margin-top: 0.25em;
+  text-align: center;
+}
+
+.ldnd5e.battle .tatic-card .card-content .main-info .combat-info .ra {
+  color: var(--dnd5e-color-gold);
+}
+
+.ldnd5e.battle .tatic-card .card-content .main-info .combat-info .casualties .ra {
+  color: var(--dnd5e-color-maroon);
 }
 
 .ldnd5e.battle .tatic-card .card-row .card-content .unit-info {
@@ -4018,7 +4087,7 @@
 
 #tooltip span.tooltip-hint span.prof {
   width: 100%;
-  max-width: 100px;
+  max-width: 175px;
   align-items: center;
   align-self: center;
   justify-content: space-between;

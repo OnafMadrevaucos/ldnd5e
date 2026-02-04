@@ -58,42 +58,7 @@ export default class ActivityDialog extends api.Application5e {
    */
     static get activityTypes() {
         return taticsData.activities;
-    }
-
-    /* -------------------------------------------- */
-
-    /**
-   * Activity types used to create a Tatic Activity.
-   * @type {typeof Array<string>}
-   */
-    static get DamageDice() {
-        return [
-            {
-                value: 4,
-                label: "d4"
-            },
-            {
-                value: 6,
-                label: "d6"
-            },
-            {
-                value: 8,
-                label: "d8"
-            },
-            {
-                value: 10,
-                label: "d10"
-            },
-            {
-                value: 12,
-                label: "d12"
-            },
-            {
-                value: 20,
-                label: "d20"
-            }
-        ];
-    }
+    } 
 
     /* -------------------------------------------- */
     /*  Properties                                  */
@@ -191,13 +156,15 @@ export default class ActivityDialog extends api.Application5e {
      * @returns {Promise<ApplicationRenderContext>}
      * @protected
      */
-    async _prepareConfigurationContext(context, options) {
-        context.dice = this.constructor.DamageDice;
+    async _prepareConfigurationContext(context, options) {        
         context.activityTypes = [
             { value: "0", label: "-" },
             ...Object.values(this.constructor.activityTypes)
                 .map(type => {
-                    return { value: type, label: game.i18n.localize(`ldnd5e.tatics.activities.${type}`) };
+                    return { 
+                        value: type, 
+                        label: game.i18n.localize(`ldnd5e.tatics.activities.${type}`)
+                    };
                 })
         ];
 
@@ -214,6 +181,9 @@ export default class ActivityDialog extends api.Application5e {
         
         const input = this.element.querySelector('.document-name');
         input.value = (input.value === '' || input.value === undefined) ? name : input.value;
+
+        const icon = this.element.querySelector('.activity-value i');
+        icon.className = taticsData.activityIcons[type] || "";
     }
 
     /* -------------------------------------------- */

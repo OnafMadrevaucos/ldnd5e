@@ -62,7 +62,7 @@
                 <span class="row-number" data-row="3" data-row-type="rea" data-tooltip="ldnd5e.uProf.rea">3 <i
                         class="ra ra-arrow-cluster" inert></i></span>
                 <span class="row-number" data-row="2" data-row-type="res" data-tooltip="ldnd5e.uProf.res">2 <i
-                        class="ra ra-sword" inert></i></span>
+                        class="ra ra-broadhead-arrow" inert></i></span>
                 <span class="row-number" data-row="1" data-row-type="van" data-tooltip="ldnd5e.uProf.van">1 <i
                         class="ra ra-broken-shield" inert></i></span>
             </div>
@@ -135,7 +135,7 @@
                 <span class="row-number" data-row="1" data-row-type="van" data-tooltip="ldnd5e.uProf.van">1 <i
                         class="ra ra-broken-shield" inert></i></span>
                 <span class="row-number" data-row="2" data-row-type="res" data-tooltip="ldnd5e.uProf.res">2 <i
-                        class="ra ra-sword" inert></i></span>
+                        class="ra ra-broadhead-arrow" inert></i></span>
                 <span class="row-number" data-row="3" data-row-type="rea" data-tooltip="ldnd5e.uProf.rea">3 <i
                         class="ra ra-arrow-cluster" inert></i></span>
             </div>
@@ -215,33 +215,71 @@
             <div class="scoreboard">
 
                 <div class="score top">
+                    {{#if @root.isGM}}
                     <span class="impetus">
-                        <input type="text" class="always-interactive" value="{{ enemy.impetus }}"
-                            placeholder="0" data-dtype="Number" data-property="scoreboard.top.impetus" inputmode="numeric"
+                        <input type="text" class="always-interactive" value="{{ enemy.impetus }}" placeholder="0"
+                            data-dtype="Number" data-property="scoreboard.top.impetus" inputmode="numeric"
                             pattern="[+=\-]?\d*" min="0" aria-label="Impetus">
-                        <i class="ra ra-all-for-one" inert></i>
+                        <i class="{{icons.impetus}}" inert></i>
                     </span>
                     <span class="atk-points">
                         <input type="text" class="always-interactive" value="{{ enemy.attack }}" placeholder="0"
-                            data-dtype="Number" data-property="scoreboard.top.attack" inputmode="numeric" pattern="[+=\-]?\d*"
-                            min="0" aria-label="Attack">
-                        <i class="ra ra-broken-skull" inert></i>
+                            data-dtype="Number" data-property="scoreboard.top.attack" inputmode="numeric"
+                            pattern="[+=\-]?\d*" min="0" aria-label="Attack">
+                        <i class="{{icons.attack}}" inert></i>
                     </span>
+                    <span class="def-points">
+                        <input type="text" class="always-interactive" value="{{ enemy.defense }}" placeholder="0"
+                            data-dtype="Number" data-property="scoreboard.top.defense" inputmode="numeric"
+                            pattern="[+=\-]?\d*" min="0" aria-label="Defense">
+                        <i class="{{icons.defense}}" inert></i>
+                    </span>
+                    <span class="cas-points">
+                        <input type="text" class="always-interactive" value="{{ enemy.casualties }}" placeholder="0"
+                            data-dtype="Number" data-property="scoreboard.top.casualties" inputmode="numeric"
+                            pattern="[+=\-]?\d*" min="0" aria-label="Casualties">
+                        <i class="{{icons.casualty}}" inert></i>
+                    </span>
+                    {{else}}
+                    <span class="impetus">{{enemy.impetus}} <i class="{{icons.impetus}}" inert></i></span>
+                    <span class="atk-points">{{enemy.attack}} <i class="{{icons.attack}}" inert></i></span>
+                    <span class="def-points">{{enemy.defense}} <i class="{{icons.defense}}" inert></i></span>
+                    <span class="cas-points">{{enemy.casualties}} <i class="{{icons.casualty}}" inert></i></span>
+                    {{/if}}
                 </div>
 
                 <div class="score bottom">
+                    {{#if @root.isGM}}
                     <span class="impetus">
-                        <input type="text" class="always-interactive" value="{{ ally.impetus }}"
-                            placeholder="0" data-dtype="Number" data-property="scoreboard.bottom.impetus" inputmode="numeric"
+                        <input type="text" class="always-interactive" value="{{ ally.impetus }}" placeholder="0"
+                            data-dtype="Number" data-property="scoreboard.bottom.impetus" inputmode="numeric"
                             pattern="[+=\-]?\d*" min="0" aria-label="Impetus">
-                        <i class="ra ra-all-for-one" inert></i>
+                        <i class="{{icons.impetus}}" inert></i>
                     </span>
                     <span class="atk-points">
                         <input type="text" class="always-interactive" value="{{ ally.attack }}" placeholder="0"
-                            data-dtype="Number" data-property="scoreboard.bottom.attack" inputmode="numeric" pattern="[+=\-]?\d*"
-                            min="0" aria-label="Attack">
-                        <i class="ra ra-broken-skull" inert></i>
-                    </span>                    
+                            data-dtype="Number" data-property="scoreboard.bottom.attack" inputmode="numeric"
+                            pattern="[+=\-]?\d*" min="0" aria-label="Attack">
+                        <i class="{{icons.attack}}" inert></i>
+                    </span>
+                    <span class="def-points">
+                        <input type="text" class="always-interactive" value="{{ ally.defense }}" placeholder="0"
+                            data-dtype="Number" data-property="scoreboard.bottom.defense" inputmode="numeric"
+                            pattern="[+=\-]?\d*" min="0" aria-label="Defense">
+                        <i class="{{icons.defense}}" inert></i>
+                    </span>
+                    <span class="cas-points">
+                        <input type="text" class="always-interactive" value="{{ ally.casualties }}" placeholder="0"
+                            data-dtype="Number" data-property="scoreboard.bottom.casualties" inputmode="numeric"
+                            pattern="[+=\-]?\d*" min="0" aria-label="Casualties">
+                        <i class="{{icons.casualty}}" inert></i>
+                    </span>
+                    {{else}}
+                    <span class="impetus">{{enemy.impetus}} <i class="{{icons.impetus}}" inert></i></span>
+                    <span class="atk-points">{{enemy.attack}} <i class="{{icons.attack}}" inert></i></span>
+                    <span class="def-points">{{enemy.defense}} <i class="{{icons.defense}}" inert></i></span>
+                    <span class="cas-points">{{enemy.casualties}} <i class="{{icons.casualty}}" inert></i></span>
+                    {{/if}}
                 </div>
 
             </div>

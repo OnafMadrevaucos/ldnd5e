@@ -102,8 +102,8 @@
         },
         "uCombat": {
             "dsp": "Disciplina",
-            "enc": "Encorajar",
-            "def": "Defender"
+            "prp": "Preparo",
+            "res": "Resiliência"
         },
         "uProf": {
             "van": "Vanguarda",
@@ -223,7 +223,7 @@
             "assets": "Insumos",
             "totalAssetsCost": "Custo Total dos Insumos",
             "removeAsset": "Remover Insumo",
-            "proficienciesHint": "<span class='title'>Dano de Ataque Básico</span><span class='desc'>Um ataque básico pode ser realizado descartando qualquer tática de uma Unidade.</span><span class='prof low'>Baixo<a><i class='fa-solid fa-1'></i><img src='systems/dnd5e/icons/svg/dice/d4.svg'></a></span><span class='prof med'>Médio<a><i class='fa-solid fa-1'></i><img src='systems/dnd5e/icons/svg/dice/d6.svg'></a></span><span class='prof hgh'>Alto<a><i class='fa-solid fa-1'></i><img src='systems/dnd5e/icons/svg/dice/d8.svg'></a></span>",
+            "proficienciesHint": "<span class='title'>Bônus de Posicionamento</span><span class='desc'>De acordo com a posição ocupada pela Unidade, ela recebe algum tipo de modificador de combate a depender de seu nível de proficiência.</span><hr class='ampersand'></hr><span class='prof'>Vanguarda<a><i class='fa-solid fa-plus'></i><i class='fa-solid fa-1'></i><i class='ra ra-sword'></i> por nível.</a></span><span class='prof'>Reserva<a><i class='fa-solid fa-plus'></i><i class='fa-solid fa-1'></i><i class='ra ra-castle-flag'></i> por nível.</a></span><span class='prof'>Retaguarda<a><i class='fa-solid fa-minus'></i><i class='fa-solid fa-1'></i><i class='ra ra-bone-bite'></i> por nível.</a></span>",
             "basicAtk": "Ataque Básico"
         },
         "assets": {
@@ -248,6 +248,7 @@
             }
         },
         "tatics": {
+            "value": "Valor",
             "flavor": "Floreio",
             "description": "Descrição",
             "impetus": "Bônus de Ímpeto",
@@ -258,6 +259,11 @@
             "trainning": "Treina.",
             "damage": "Dano à Moral",
             "configuration": "Configuração",
+            "combat": {
+                "attack": "Ataque Base",
+                "defense": "Defesa Base",
+                "casualties": "Baixas"
+            },
             "details": {
                 "use": "Uso em Batalha",
                 "minimumDie": "Ataque Básico Mínimo",
@@ -279,7 +285,10 @@
                     "frt": "Bônus de Fortitute",
                     "mrl": "Bônus de Moral",
                     "wll": "Bônus de Vontade"
-                }
+                },
+                "hasCasualties": "Gera Baixas?",
+                "casualtiesInfo": "Cada ponto de Baixa representa 1 ponto de dano garantido à Moral da Unidade, independentemente se a Companhia da Unidade vença ou não a Rodada de Embate.",
+                "casualtiesNumber": "Número de Baixas"
             },
             "invalidItem": "'{name}' não é um item válido. O item deve ser um Evento ou uma Característica.",
             "removeAction": "Remover Ação",
@@ -289,10 +298,14 @@
             "activityTitle": "Atividade de Tática",
             "activityType": "Tipo de Atividade",
             "activities": {
-                "md": "Dano à Moral",
-                "mh": "Anular Dano",
-                "ib": "Bônus de Ímpeto",
-                "id": "Penalidade de Ímpeto"
+                "aa": "Adicionar Ataque",
+                "ra": "Remover Ataque",
+                "ai": "Adicionar Ímpeto",
+                "ri": "Remover Ímpeto",
+                "ad": "Adicionar Defesa",
+                "rd": "Remover Defesa",
+                "ac": "Adicionar Baixas",
+                "rc": "Remover Baixas"
             },
             "invalidActivity": {
                 "name": "O nome da Atividade é inválido.",
@@ -310,7 +323,12 @@
             "clash": "Embate",
             "useTatic": "Uso de Tática",
             "mainRecovery": "Recuperação Principal",
-            "acceptExtras": "Accept Extras"
+            "acceptExtras": "Usar Tática",
+            "sections": {
+                "description": "Descrição",
+                "details": "Detalhes",
+                "combat": "Combate"
+            }
         },
         "battle": {
             "world": "Mundo",
@@ -321,7 +339,7 @@
                 "endgame": "Encerramento"
             },
             "notification": {
-                "title": "Sem Batalhas Iniciadas",
+                "title": "Sem Batalhas em Andamento",
                 "message": "Arraste qualquer companhia ou exército para cá para definir os lados da batalha e habilitar o seu início.",
                 "start": "Iniciar Batalha!"
             },
@@ -374,6 +392,9 @@
         },
         "messages": {
             "loadingAffinities": "LD&D 5e | Carregando afinidades de Classes... {n} de {totalItems}",
+            "verifyActors": "LD&D 5e | Verificando integridade dos Atores Militares... {n} de {totalItems}",
+            
+            "invalidActorFound": "O '{id}' é de um Actor inválido e foi removido.",
 
             "bldgDmgLightArmor": "Armaduras Leves são imunes a avarias causadas por Dano Contundente.",
             "slshDmgHeavyArmor": "Armaduras Pesadas são imunes a avarias causadas por Dano Cortante.",
@@ -406,6 +427,8 @@
             "noArmorEffect": "O Active Effect para Armaduras de {actor} está com defeito. Active Effect foi recriado.",
             "noShieldEffect": "O Active Effect para Escudos de {actor} está com defeito. Active Effect foi recriado.",
             "noEffectErrors": "Nenhum Actor apresentou erros em seus Active Effects.",
+            "unitNotFound": "A unidade não foi encontrada. Ela pode ter sido removida ou excluída.",
+            "companyWithNoCommander": "A '{company}' necessita de um Comandante para participar da batalha.",
             "invalidActorOnBattle": "{actor} não é um combatente válido e não pode ser adicionado ao campo de batalha.",
             "cannotStartBattle": "Ambos os lados da batalha deve ter pelo menos uma companhia ou exército atribuído para que a batalha possa ser iniciada.",
             "emptyBattleData": "Impossível continuar. Os dados da Batalha estão vazios.",

@@ -278,8 +278,8 @@ const unitData = {
    */
    uCombatIcons: {
       dsp: "ra ra-crowned-heart",
-      enc: "ra ra-muscle-up",
-      def: "ra ra-shield"
+      prp: "ra ra-muscle-up",
+      res: "ra ra-player-despair"
    },
 
    /**
@@ -357,36 +357,15 @@ const assetsData = {
       cint: "fas fa-eye-slash",
       equp: "ra ra-sword",
       intl: "fas fa-eye"
-   },
-
-   /**
-    * Defines the Tatics Activity Icons constants.
-    * */
-   activityIcons: {
-      md: {
-         src: 'modules/ldnd5e/ui/icons/md.svg',
-         svg: true
-      },
-      mh: {
-         src: 'modules/ldnd5e/ui/icons/mh.svg',
-         svg: true
-      },
-      ib: {
-         src: 'modules/ldnd5e/ui/icons/ib.svg',
-         svg: true
-      },
-      id: {
-         src: 'modules/ldnd5e/ui/icons/id.svg',
-         svg: true
-      },
-   }
+   }   
 }
 
 /**
 * Defines the Tatics constants.
 *
 * @enum {{
-*    activities: object, 
+*    activities: object,
+*    combatIcons: object 
 * }}
 */
 const taticsData = {
@@ -394,32 +373,38 @@ const taticsData = {
    * Defines the Tatics Activities constants.      
    */
    activities: {
-      md: "md",
-      mh: "mh",
-      ib: "ib",
-      id: "id",
+      aa: "aa",
+      ra: "ra",
+      ad: "ad",
+      rd: "rd",
+      ac: "ac",
+      rc: "rc",
+      ai: "ai",
+      ri: "ri"
+   },
+
+   /**
+    * Defines the Tatics Combat Icons constants.
+   * */
+   combatIcons: {
+      impetus: "ra ra-all-for-one",
+      attack: "ra ra-sword",
+      defense: "ra ra-castle-flag",
+      casualty: "ra ra-bone-bite"
    },
 
    /**
     * Defines the Tatics Activity Icons constants.
     * */
    activityIcons: {
-      md: {
-         src: 'modules/ldnd5e/ui/icons/md.svg',
-         svg: true
-      },
-      mh: {
-         src: 'modules/ldnd5e/ui/icons/mh.svg',
-         svg: true
-      },
-      ib: {
-         src: 'modules/ldnd5e/ui/icons/ib.svg',
-         svg: true
-      },
-      id: {
-         src: 'modules/ldnd5e/ui/icons/id.svg',
-         svg: true
-      },
+      aa: 'ra ra-crossed-swords',
+      ra: 'ra ra-lightning-sword',
+      ad: 'ra ra-heart-tower',
+      rd: 'ra ra-demolish',
+      ac: 'ra ra-blade-bite',
+      rc: 'ra ra-monster-skull',
+      ai: 'ra ra-horn-call',
+      ri: 'ra ra-player-pain',
    }
 }
 
@@ -717,6 +702,10 @@ const i18nStrings = {
       trainning: "ldnd5e.tatics.trainning",
       damage: "ldnd5e.tatics.damage",
       configuration: "ldnd5e.tatics.configuration",
+      combat: {         
+         attack: "ldnd5e.tatics.combat.attack",
+         damage: "ldnd5e.tatics.combat.damage",
+      },
       details: {
          use: 'ldnd5e.tatics.details.use',
          minimumDie: 'ldnd5e.tatics.details.minimumDie',
@@ -738,7 +727,10 @@ const i18nStrings = {
             frt: 'ldnd5e.tatics.details.bonus.frt',
             mrl: 'ldnd5e.tatics.details.bonus.mrl',
             wll: 'ldnd5e.tatics.details.bonus.wll'
-         }
+         },
+         hasCausalties: 'ldnd5e.tatics.details.hasCasualties',
+         casualtiesInfo: 'ldnd5e.tatics.details.casualtiesInfo',
+         casualtiesNumber: 'ldnd5e.tatics.details.casualtiesNumber'
       },
       invalidItem: "ldnd5e.tatics.invalidItem",
       removeAction: "ldnd5e.tatics.removeAction",
@@ -748,10 +740,14 @@ const i18nStrings = {
       activityTitle: "ldnd5e.tatics.activityTitle",
       activityType: "ldnd5e.tatics.activityType",
       activities: {
-         md: "ldnd5e.tatics.activities.md",
-         mh: "ldnd5e.tatics.activities.mh",
-         ib: "ldnd5e.tatics.activities.ib",
-         id: "ldnd5e.tatics.activities.id",
+         aa: "ldnd5e.tatics.activities.aa",
+         ra: "ldnd5e.tatics.activities.ra",
+         ai: "ldnd5e.tatics.activities.ai",
+         ri: "ldnd5e.tatics.activities.ri",
+         ad: "ldnd5e.tatics.activities.ad",
+         rd: "ldnd5e.tatics.activities.rd",
+         ac: "ldnd5e.tatics.activities.ac",
+         rc: "ldnd5e.tatics.activities.rc",
       },
       invalidActivity: {
          name: "ldnd5e.tatics.invalidActivity.name",
@@ -770,7 +766,12 @@ const i18nStrings = {
       useTatic: "ldnd5e.tatics.useTatic",
       mainRecovery: "ldnd5e.tatics.mainRecovery",
       mainRoll: "ldnd5e.tatics.mainRoll",
-      acceptExtras: "ldnd5e.tatics.acceptExtras",      
+      acceptExtras: "ldnd5e.tatics.acceptExtras",     
+      sections: {
+         description: "ldnd5e.tatics.sections.description",
+         details: "ldnd5e.tatics.sections.details",
+         combat: "ldnd5e.tatics.sections.combat",
+      } 
    },
 
    unitType: "ldnd5e.unit",
@@ -787,8 +788,8 @@ const i18nStrings = {
    },
    uCombat: {
       dsp: "ldnd5e.uCombat.dsp",
-      enc: "ldnd5e.uCombat.enc",
-      def: "ldnd5e.uCombat.def",
+      prp: "ldnd5e.uCombat.prp",
+      res: "ldnd5e.uCombat.res",
    },
    uProf: {
       van: "ldnd5e.uProf.van",
@@ -871,6 +872,9 @@ const i18nStrings = {
 
    messages: {
       loadingAffinities: "ldnd5e.messages.loadingAffinities",
+      verifyActors: "ldnd5e.messages.verifyActors",
+
+      invalidActorFound: "ldnd5e.messages.invalidActorFound",
 
       bldgDmgLightArmor: "ldnd5e.messages.bldgDmgLightArmor",
       slshDmgHeavyArmor: "ldnd5e.messages.slshDmgHeavyArmor",
@@ -908,6 +912,10 @@ const i18nStrings = {
       noArmorEffect: "ldnd5e.messages.noArmorEffect",
       noShieldEffect: "ldnd5e.messages.noShieldEffect",
       noEffectErrors: "ldnd5e.messages.noEffectErrors",
+
+      unitNotFound: "ldnd5e.messages.unitNotFound",
+
+      companyWithNoCommander: "ldnd5e.messages.companyWithNoCommander",
 
       invalidActorOnBattle: "ldnd5e.messages.invalidActorOnBattle",
 

@@ -92,7 +92,7 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
     /**@inheritdoc */
     prepareDerivedData() {
         const army = this.info.army;
-        this.attributes.prestige = army?.system.prestige ?? { mod: "+0" };
+        this.attributes.prestige = army?.system.prestige ?? { base: 10, bonus: 0, mod: "+0" };
 
         // Prepare the company's abilities.
         this._prepareAbilities();
@@ -156,11 +156,13 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
    * @protected
    */
     _prepareAttributes() {
-        // Hit Dice largest face from the commander's original class.
-        const hitDice = this.attributes.affinity.hitDice;
+        const prestige = Number(this.attributes.prestige.mod ?? 0);
+        const commander = this.info.commander;
+
+        const bonus = commander?.system.abilities.cha.mod ?? 0
 
         let stamina = 0;
-        let totalHP = 0;
+        let totalHP = prestige + bonus;
 
         this.attributes.trainning = {
             value: 0,
@@ -178,7 +180,8 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
             if (unit.system.info.type === unitData.uTypes.medical) continue;
 
             stamina += unit.system.abilities.frt.value;
-            totalHP += (unit.system.abilities.mrl.value + unit.system.abilities.wll.value) * hitDice;
+
+            totalHP += unit.system.abilities.mrl.value;
         }
 
         this.attributes.stamina.max = stamina ?? 0;
@@ -204,11 +207,17 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
                     value: Number.MIN_SAFE_INTEGER,
                 },
             },
-            enc: {
+            prp: {
                 value: Number.MIN_SAFE_INTEGER,
+                save: {
+                    value: Number.MIN_SAFE_INTEGER,
+                },
             },
-            def: {
+            res: {
                 value: Number.MIN_SAFE_INTEGER,
+                save: {
+                    value: Number.MIN_SAFE_INTEGER,
+                },
             },
         };
         const prestige = Number(this.attributes.prestige.mod ?? 0);
@@ -228,17 +237,17 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
 
             for (const [id, skl] of Object.entries(unit.system.combat)) {
                 if (['dsp'].includes(id) && skl.value > combat[id].value) {
-                    combat[id].value = this.abilities.wll.value;
+                    combat[id].value = this.abilities.mrl.value;
 
                     combat[id].bonus = commander?.system.abilities.cha.mod ?? 0.
                     combat[id].bonus += prestige;
-                } else if (['enc'].includes(id) && skl.value > combat[id].value) {
+                } else if (['prp'].includes(id) && skl.value > combat[id].value) {
                     combat[id].value = this.abilities.frt.value;
 
                     combat[id].bonus = commander?.system.abilities.cha.mod ?? 0.
                     combat[id].bonus += prestige;
-                } else if (['def'].includes(id) && skl.value > combat[id].value) {
-                    combat[id].value = this.abilities.mrl.value;
+                } else if (['res'].includes(id) && skl.value > combat[id].value) {
+                    combat[id].value = this.abilities.wll.value;
 
                     combat[id].bonus = commander?.system.abilities.cha.mod ?? 0.
                     combat[id].bonus += prestige;
@@ -262,14 +271,32 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
    * @protected
    */
     _prepareSaves() {
-        const prof = this.attributes.affinity.bonus.prof;
+        const prof = this.attributes.affinity.bonus.prof;     
 
-        const dsp = this.combat.dsp;
-        dsp.save.value = dsp.value;
+        for (const [id, skl] of Object.entries(this.combat)) {
+            skl.key = id;
+            skl.label = game.i18n.localize(i18nStrings.uCombat[id]);
 
-        dsp.save.bonus = dsp.bonus + prof;
-        dsp.save.mod = Math.abs(dsp.save.value + dsp.save.bonus);
-        dsp.save.sign = (dsp.save.value >= 0) ? "+" : "-";
+            if (['dsp'].includes(id)) {
+                skl.save.value = this.combat[id].value;
+
+                skl.save.bonus = skl.bonus + prof;
+                skl.save.mod = Math.abs(skl.save.value + skl.save.bonus);
+                skl.save.sign = (skl.save.value >= 0) ? "+" : "-";            
+            } else if (['prp'].includes(id)) {
+                skl.save.value = this.combat[id].value;
+
+                skl.save.bonus = skl.bonus + prof;
+                skl.save.mod = Math.abs(skl.save.value + skl.save.bonus);
+                skl.save.sign = (skl.save.value >= 0) ? "+" : "-";
+            } else if (['res'].includes(id)) {
+                skl.save.value = this.combat[id].value;
+
+                skl.save.bonus = skl.bonus + prof;
+                skl.save.mod = Math.abs(skl.save.value + skl.save.bonus);
+                skl.save.sign = (skl.save.value >= 0) ? "+" : "-";
+            } 
+        }
     }
 
     /* -------------------------------------------- */

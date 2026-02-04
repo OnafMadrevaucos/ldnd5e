@@ -48,15 +48,8 @@
                             value="{{system.attributes.stamina.value}}" min="0" placeholder="0" data-dtype="Number">
                         {{else}}
                         <span class="value">{{system.attributes.stamina.value}}</span>
-                        {{/if}}
-                        <span class="separator">/</span>
-                        <span class="max">{{system.attributes.stamina.max}}</span>
-                    </div>
-                    <div class="progress-bar stamina-bar" role="meter" aria-valuemin="0"
-                        aria-valuenow="{{system.attributes.stamina.value}}"
-                        aria-valuemax="{{system.attributes.stamina.max}}"
-                        aria-valuetext="{{system.attributes.stamina.pct}}%"
-                        style="--bar-percentage: {{system.attributes.stamina.pct}}%;"></div>
+                        {{/if}}                        
+                    </div>                    
                 </div>
 
             </filigree-box>
@@ -67,15 +60,16 @@
                     <span class="roboto-upper">{{ localize "DND5E.ClassSaves" }}</span>
                 </h3>
                 <ul class="saves-list unlist">
-                    <li data-ability="dsp" class="save">
+                    {{#each skills as |skill|}}
+                    <li data-ability="{{skill.key}}" class="save">
                         <a class="name saving-throw rollable" data-action="roll" data-type="save"><i
-                                class="{{skills.dsp.icon}}"></i>{{skills.dsp.label}}</a>
+                                class="{{skill.icon}}"></i>{{skill.label}}</a>
                         <div class="bonus">
-                            <span class="sign">{{skills.dsp.save.sign}}</span>
-                            {{skills.dsp.save.mod}}
+                            <span class="sign">{{skill.save.sign}}</span>
+                            {{skill.save.mod}}
                         </div>
                     </li>
-
+                    {{/each}}
                 </ul>
 
             </filigree-box>

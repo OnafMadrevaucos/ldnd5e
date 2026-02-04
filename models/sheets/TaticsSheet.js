@@ -53,8 +53,8 @@ export default class TaticsSheet extends item.ItemSheet5e {
             template: "systems/dnd5e/templates/shared/horizontal-tabs.hbs",
             templates: ["templates/generic/tab-navigation.hbs"]
         },
-        activities: {
-            template: "modules/ldnd5e/templates/sheets/tatic/tabs/activities.hbs",
+        combat: {
+            template: "modules/ldnd5e/templates/sheets/tatic/tabs/combat.hbs",
             scrollable: [""]
         },
         details: {
@@ -63,14 +63,18 @@ export default class TaticsSheet extends item.ItemSheet5e {
         description: {
             template: "modules/ldnd5e/templates/sheets/tatic/tabs/description.hbs",
         },
+        activities: {
+            template: "modules/ldnd5e/templates/sheets/tatic/tabs/activities.hbs",
+        },
     };
 
     /* -------------------------------------------- */
 
     /** @override */
     static TABS = [
-        { tab: "description", label: "DND5E.ITEM.SECTIONS.Description" },
-        { tab: "details", label: "DND5E.ITEM.SECTIONS.Details" },
+        { tab: "description", label: "ldnd5e.tatics.sections.description" },
+        { tab: "details", label: "ldnd5e.tatics.sections.details" },
+        { tab: "combat", label: "ldnd5e.tatics.sections.combat" },
         { tab: "activities", label: "DND5E.ITEM.SECTIONS.Activities" },
     ];
 
@@ -110,7 +114,10 @@ export default class TaticsSheet extends item.ItemSheet5e {
     async _onRender(context, options) {
         await super._onRender(context, options);
 
-        this.element.querySelector(".cr input")?.addEventListener('input', event => this._onCRChange(event));
+        this.element.querySelector(".cr input")?.addEventListener('input', event => this._onClampedInputChange(event));
+        this.element.querySelector(".tatic-combat input")?.addEventListener('input', event => this._onClampedInputChange(event));
+        this.element.querySelector(".tatic-casualties input")?.addEventListener('input', event => this._onClampedInputChange(event));
+
         this.element.querySelector(".qtd input")?.addEventListener('input', event => this._onQuantityChange(event));
 
         if (this.editingDescriptionTarget) {
@@ -167,9 +174,10 @@ export default class TaticsSheet extends item.ItemSheet5e {
 
         switch (partId) {
             case "header": await this._prepareHeaderContext(context, options); break;
-            case "activities": await this._prepareActivitiesContext(context, options); break;
+            case "combat": await this._prepareCombatContext(context, options); break;
             case "details": await this._prepareDetailsContext(context, options); break;
             case "description": await this._prepareDescriptionContext(context, options); break;
+            case "activities": await this._prepareActivitiesContext(context, options); break;
         }
 
         return context;
@@ -195,25 +203,14 @@ export default class TaticsSheet extends item.ItemSheet5e {
     /* -------------------------------------------- */
 
     /**
-     * Prepare rendering context for the activities tab.
+     * Prepare rendering context for the combat tab.
      * @param {ApplicationRenderContext} context  Context being prepared.
      * @param {HandlebarsRenderOptions} options   Options which configure application rendering behavior.
      * @returns {ApplicationRenderContext}
      * @protected
      */
-    async _prepareActivitiesContext(context, options) {
-        context.activities = (Object.values(this.item.system.activities) ?? [])
-            .map(activity => {
-                const { id, name, type, mainRoll } = activity;
-                return {
-                    id: id,
-                    name: name,
-                    img: taticsData.activityIcons[type],
-                    mainRoll
-                };
-            });
-
-
+    async _prepareCombatContext(context, options) {  
+        context.hasCasualties = this.item.system.combat.casualties.active;    
         return context;
     }
 
@@ -285,6 +282,29 @@ export default class TaticsSheet extends item.ItemSheet5e {
     }
 
     /* -------------------------------------------- */
+
+    /**
+     * Prepare rendering context for the activities tab.
+     * Prepare rendering context for the combat tab.
+     * @param {ApplicationRenderContext} context  Context being prepared.
+     * @param {HandlebarsRenderOptions} options   Options which configure application rendering behavior.
+     * @returns {ApplicationRenderContext}
+     * @protected
+     */
+    async _prepareActivitiesContext(context, options) {
+        context.activities = (Object.values(this.item.system.activities) ?? [])
+            .map(activity => {
+                const { id, name, type, mainRoll } = activity;
+                return {
+                    id: id,
+                    name: name,
+                    icon: taticsData.activityIcons[type],
+                    mainRoll
+                };
+            });
+
+        return context;
+    }
 
     /**
    * Prepare item portrait for display.
@@ -373,13 +393,13 @@ export default class TaticsSheet extends item.ItemSheet5e {
      * @param {PointerEvent} event  The triggering event.
      * @protected
      */
-    _onCRChange(event) {
+    _onClampedInputChange(event) {
         const input = event.currentTarget;
 
         let val = parseInt(input.value);
 
-        const min = 0;
-        const max = 5;
+        const min = Number(input.min);
+        const max = Number(input.max);
 
         if (val > max) input.value = max;
         if (val < min) input.value = min;

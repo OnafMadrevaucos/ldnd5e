@@ -62,11 +62,17 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
                         value: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 }),
                     }),
                 }),
-                enc: new fields.SchemaField({
+                prp: new fields.SchemaField({
                     value: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 }),
+                    save: new fields.SchemaField({
+                        value: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 }),
+                    }),
                 }),
-                def: new fields.SchemaField({
+                res: new fields.SchemaField({
                     value: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 }),
+                    save: new fields.SchemaField({
+                        value: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 }),
+                    }),
                 }),
             }),
             status: new fields.SchemaField({
@@ -126,8 +132,9 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
    */
     _prepareAttributes() {
         const company = this.info.company;
+        const army = company?.system.info.army ?? null;
         this.attributes = {
-            prestige: company?.system.attributes.prestige ?? { mod: "+0" },
+            prestige: army?.system.prestige ?? { base: 10, bonus: 0, mod: "+0" },
             prof: company?.system.attributes.affinity.bonus.prof ?? 0
         };
     }
@@ -174,7 +181,9 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
    */
     _prepareSkills() {
         const company = this.info.company;
-        const prestige = Number(company?.system.attributes.prestige.mod ?? 0);
+        const army = company?.system.info.army ?? null;
+
+        const prestige = Number(army?.system.prestige.bonus ?? 0);
         const commander = company?.system.info.commander;
 
         for (const [id, skl] of Object.entries(this.combat)) {
@@ -182,17 +191,17 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
             skl.label = game.i18n.localize(i18nStrings.uCombat[id]);
 
             if (['dsp'].includes(id)) {
-                skl.value = this.abilities.wll.value;
+                skl.value = this.abilities.mrl.value;
 
                 skl.bonus = commander?.system.abilities.cha.mod ?? 0.
                 skl.bonus += prestige;
-            } else if (['enc'].includes(id)) {
+            } else if (['prp'].includes(id)) {
                 skl.value = this.abilities.frt.value;
 
                 skl.bonus = commander?.system.abilities.cha.mod ?? 0.
                 skl.bonus += prestige;
-            } else if (['def'].includes(id)) {
-                skl.value = this.abilities.mrl.value;
+            } else if (['res'].includes(id)) {
+                skl.value = this.abilities.wll.value;
 
                 skl.bonus = commander?.system.abilities.cha.mod ?? 0.
                 skl.bonus += prestige;
@@ -214,15 +223,32 @@ export default class UnitL5e extends foundry.abstract.TypeDataModel {
    * @protected
    */
     _prepareSaves() {
-        const prof = this.attributes.prof ?? 0;
+        const prof = this.attributes.prof ?? 0;        
 
-        const dsp = this.combat.dsp;
+        for (const [id, skl] of Object.entries(this.combat)) {
+            skl.key = id;
+            skl.label = game.i18n.localize(i18nStrings.uCombat[id]);
 
-        dsp.save.value = dsp.value;
+            if (['dsp'].includes(id)) {
+                skl.save.value = this.combat[id].value;
 
-        dsp.save.bonus = dsp.bonus + prof;
-        dsp.save.mod = Math.abs(dsp.save.value + dsp.save.bonus);
-        dsp.save.sign = (dsp.save.value >= 0) ? "+" : "-";
+                skl.save.bonus = skl.bonus + prof;
+                skl.save.mod = Math.abs(skl.save.value + skl.save.bonus);
+                skl.save.sign = (skl.save.value >= 0) ? "+" : "-";            
+            } else if (['prp'].includes(id)) {
+                skl.save.value = this.combat[id].value;
+
+                skl.save.bonus = skl.bonus + prof;
+                skl.save.mod = Math.abs(skl.save.value + skl.save.bonus);
+                skl.save.sign = (skl.save.value >= 0) ? "+" : "-";
+            } else if (['res'].includes(id)) {
+                skl.save.value = this.combat[id].value;
+
+                skl.save.bonus = skl.bonus + prof;
+                skl.save.mod = Math.abs(skl.save.value + skl.save.bonus);
+                skl.save.sign = (skl.save.value >= 0) ? "+" : "-";
+            } 
+        }
     }
 
     /* -------------------------------------------- */

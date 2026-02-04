@@ -1,3 +1,4 @@
+import { taticsData } from "./constants.js";
 function _verifyRepairCost(cost, owner) {
     const curr = das.convertCurrency(foundry.utils.deepClone(owner.system.currency));
     const price = das.convertCurrency({ pp: 0, gp: cost, ep: 0, sp: 0, cp: 0 });

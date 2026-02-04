@@ -344,12 +344,22 @@ export default class BattleApp extends api.Application5e {
 
         context.score = {
             enemy: {
-                attack: this.world.scoreboard.top.attack,
-                impetus: this.world.scoreboard.top.impetus
+                attack: this.world.scoreboard.top.attack ?? 0,
+                defense: this.world.scoreboard.top.defense ?? 0,
+                casualties: this.world.scoreboard.top.casualties ?? 0,
+                impetus: this.world.scoreboard.top.impetus ?? 0,
             },
             ally: {
-                attack: this.world.scoreboard.bottom.attack,
-                impetus: this.world.scoreboard.bottom.impetus
+                attack: this.world.scoreboard.bottom.attack ?? 0,
+                defense: this.world.scoreboard.bottom.defense ?? 0,
+                casualties: this.world.scoreboard.bottom.casualties ?? 0,
+                impetus: this.world.scoreboard.bottom.impetus ?? 0
+            },
+            icons: {
+                attack: taticsData.combatIcons.attack,
+                defense: taticsData.combatIcons.defense,
+                casualty: taticsData.combatIcons.casualty,
+                impetus: taticsData.combatIcons.impetus
             }
         }
 
@@ -525,6 +535,12 @@ export default class BattleApp extends api.Application5e {
 
                 const unit = tatic.actor;
 
+                const combat = {
+                    attack: tatic.system.combat.attack,
+                    defense: Math.max(tatic.system.combat.defense - tatic.system.combat.casualties.value, 0),
+                    casualties: tatic.system.combat.casualties
+                };
+
                 return {
                     uuid: tatic.uuid,
                     name: tatic.name,
@@ -536,6 +552,21 @@ export default class BattleApp extends api.Application5e {
                         id: unit.id,
                         name: unit.name,
                         impetus: unit.system.abilities.wll
+                    },
+                    combat: {
+                        attack: {
+                            value: combat.attack > 0 ? combat.attack : '—',
+                            icon: `<i class="${taticsData.combatIcons.attack}"></i>`
+                        },
+                        defense: {
+                            value: combat.defense > 0 ? combat.defense : '—',
+                            icon: `<i class="${taticsData.combatIcons.defense}"></i>`
+                        },
+                        casualties: {
+                            active: combat.casualties.active,
+                            value: combat.casualties.value,
+                            icon: `<i class="${taticsData.combatIcons.casualty}"></i>`
+                        },
                     }
                 };
             }).filter(tatic => tatic !== null && tatic !== undefined), // Filter out the nulls
@@ -1142,7 +1173,10 @@ export default class BattleApp extends api.Application5e {
                 if (!company) continue;
 
                 let commander = company.system.info.commander;
-                if (!commander) continue;
+                if (!commander) {
+                    ui.notifications.warn(game.i18n.format("ldnd5e.messages.companyWithNoCommander", { company: company.name }), { localize: true });
+                    continue;
+                };
 
                 companies.push({
                     uuid: company.uuid,
@@ -1377,6 +1411,7 @@ export default class BattleApp extends api.Application5e {
    * @async
    */
     async _discardTatic(deck, tatic, event, options = { basicAtk: false }) {
+        // Remove a Tática que foi usada da mão.
         for (let taticUuid of deck.hand.tatics) {
             if (taticUuid == tatic.uuid) {
                 deck.hand.tatics.splice(deck.hand.tatics.indexOf(taticUuid), 1);
@@ -1384,6 +1419,7 @@ export default class BattleApp extends api.Application5e {
             }
         }
 
+        // Obtém o Actor dono da Tática.
         const unit = tatic.actor;
         if (unit && options.basicAtk) {
             let result = await unit.system.rollBasicAttack({
@@ -1392,13 +1428,15 @@ export default class BattleApp extends api.Application5e {
             });
 
             if (result) {
-                if(!(result instanceof Array)) result = [result];                
+                if (!(result instanceof Array)) result = [result];
                 await this._updateScore(result, { unit, item: tatic, event });
             }
         }
 
+        // Adiciona a Tática ao monte das Táticas descartadas.
         deck.piles.discarded.push(tatic.uuid);
 
+        // Atualiza o deck.
         this._updateDeck();
     }
 
@@ -1477,19 +1515,28 @@ export default class BattleApp extends api.Application5e {
 
         const type = data.item.type;
         const unit = data.unit;
+        const item = data.item;
 
         const scoreboard = this.world.scoreboard;
         const allySide = this.local.side === 'none' ? 'top' : this.local.side;
         const enemySide = allySide === 'top' ? 'bottom' : 'top';
-        const impetusBonus = (type === 'ldnd5e.tatic') ? unit.system.abilities.wll.value : 0;
+
+        const impetusBonus = (type === 'ldnd5e.tatic') ? unit.system.abilities.wll.value + item.system.details.impetusBonus : 0;
+        const combatBonus = (type === 'ldnd5e.tatic') ? item.system.combat : { attack: 0, defense: 0 };
 
         scoreboard[allySide].impetus += impetusBonus;
+        scoreboard[allySide].attack += combatBonus.attack;
+        scoreboard[allySide].defense += combatBonus.defense;
+
+        if(combatBonus.casualties?.active)
+            scoreboard[allySide].casualties += combatBonus.casualties.value;
 
         for (let res of result) {
             if (!res) continue;
 
             switch (res.damageType) {
-                case taticsData.activities.md: {
+                // Adiciona Ataque
+                case taticsData.activities.aa: {
                     if (res.targetField === 'a')
                         scoreboard[allySide].attack += res.total;
                     else if (res.targetField === 'e')
@@ -1498,25 +1545,86 @@ export default class BattleApp extends api.Application5e {
                         scoreboard[allySide].attack += res.total;
                         scoreboard[enemySide].attack += res.total;
                     }
-
                 } break;
-                case taticsData.activities.mh: {
+
+                // Remove Ataque
+                case taticsData.activities.ra: {
                     if (res.targetField === 'a') {
-                        scoreboard[enemySide].attack -= res.total;
-                        scoreboard[enemySide].attack = Math.max(scoreboard[enemySide].attack, 0);
+                        scoreboard[allySide].attack -= res.total;
+                        scoreboard[allySide].attack = Math.max(scoreboard[allySide].attack, 0);
                     } else if (res.targetField === 'e') {
-                        scoreboard[allySide].attack -= res.total;
-                        scoreboard[allySide].attack = Math.max(scoreboard[allySide].attack, 0);
-                    }
-                    else if (res.targetField === 'b') {
                         scoreboard[enemySide].attack -= res.total;
                         scoreboard[enemySide].attack = Math.max(scoreboard[enemySide].attack, 0);
-
+                    } else if (res.targetField === 'b') {
                         scoreboard[allySide].attack -= res.total;
                         scoreboard[allySide].attack = Math.max(scoreboard[allySide].attack, 0);
+                        scoreboard[enemySide].attack -= res.total;
+                        scoreboard[enemySide].attack = Math.max(scoreboard[enemySide].attack, 0);
                     }
                 } break;
-                case taticsData.activities.ib: {
+
+                // Adiciona Defesa
+                case taticsData.activities.ad: {
+                    if (res.targetField === 'a')
+                        scoreboard[allySide].defense += res.total;
+                    else if (res.targetField === 'e')
+                        scoreboard[enemySide].defense += res.total;
+                    else if (res.targetField === 'b') {
+                        scoreboard[allySide].defense += res.total;
+                        scoreboard[enemySide].defense += res.total;
+                    }
+                } break;
+
+                // Remove Defesa
+                case taticsData.activities.rd: {
+                    if (res.targetField === 'a') {
+                        scoreboard[allySide].defense -= res.total;
+                        scoreboard[allySide].defense = Math.max(scoreboard[allySide].defense, 0);
+                    }
+                    else if (res.targetField === 'e') {
+                        scoreboard[enemySide].defense -= res.total;
+                        scoreboard[enemySide].defense = Math.max(scoreboard[enemySide].defense, 0);
+                    }
+                    else if (res.targetField === 'b') {
+                        scoreboard[allySide].defense -= res.total;
+                        scoreboard[allySide].defense = Math.max(scoreboard[allySide].defense, 0);
+                        scoreboard[enemySide].defense -= res.total;
+                        scoreboard[enemySide].defense = Math.max(scoreboard[enemySide].defense, 0);
+                    }
+                } break;
+
+                // Adiciona Baixa
+                case taticsData.activities.ac: {
+                    if (res.targetField === 'a')
+                        scoreboard[allySide].casualties += res.total;
+                    else if (res.targetField === 'e')
+                        scoreboard[enemySide].casualties += res.total;
+                    else if (res.targetField === 'b') {
+                        scoreboard[allySide].casualties += res.total;
+                        scoreboard[enemySide].casualties += res.total;
+                    }
+                } break;
+
+                // Remove Baixa
+                case taticsData.activities.rc: {
+                    if (res.targetField === 'a'){
+                        scoreboard[allySide].casualties -= res.total;
+                        scoreboard[allySide].casualties = Math.max(scoreboard[allySide].casualties, 0);
+                    }
+                    else if (res.targetField === 'e'){
+                        scoreboard[enemySide].casualties -= res.total;
+                        scoreboard[enemySide].casualties = Math.max(scoreboard[enemySide].casualties, 0);
+                    }
+                    else if (res.targetField === 'b') {
+                        scoreboard[allySide].casualties -= res.total;
+                        scoreboard[allySide].casualties = Math.max(scoreboard[allySide].casualties, 0);
+                        scoreboard[enemySide].casualties -= res.total;
+                        scoreboard[enemySide].casualties = Math.max(scoreboard[enemySide].casualties, 0);
+                    }
+                } break;
+                
+                // Adiciona Ímpeto
+                case taticsData.activities.ai: {
                     if (res.targetField === 'a')
                         scoreboard[allySide].impetus += res.total;
                     else if (res.targetField === 'e')
@@ -1526,7 +1634,9 @@ export default class BattleApp extends api.Application5e {
                         scoreboard[enemySide].impetus += res.total;
                     }
                 } break;
-                case taticsData.activities.id: {
+
+                // Remove Ímpeto
+                case taticsData.activities.ri: {
                     if (res.targetField === 'a') {
                         scoreboard[allySide].impetus -= res.total;
                         scoreboard[allySide].impetus = Math.max(scoreboard[allySide].impetus, 0);
@@ -2040,31 +2150,7 @@ export default class BattleApp extends api.Application5e {
         if (!event.altKey) {
             const mainActivities = Object.values(tatic.system.activities).filter(a => a.mainRoll);
 
-            let choosedMode = 'full';
-            // If there are main activities, ask the user.            
-            if (mainActivities.length > 0) {
-                choosedMode = await foundry.applications.api.DialogV2.wait({
-                    window: { title: game.i18n.localize("ldnd5e.battle.extraRoll.title") },
-                    content: `<p>${game.i18n.localize("ldnd5e.battle.extraRoll.message")}</p>`,
-                    position: {
-                        width: 400
-                    },
-                    buttons: [
-                        {
-                            label: game.i18n.localize("ldnd5e.battle.extraRoll.main"),
-                            action: 'main'
-                        },
-                        {
-                            label: game.i18n.localize("ldnd5e.battle.extraRoll.extra"),
-                            action: 'extra'
-                        }
-                    ]
-                })
-            }
-
-            if (!choosedMode) return;
-
-            let result = await tatic.use({ event, mode: choosedMode });
+            let result = await tatic.use({ event });
             if (!(result instanceof Array)) result = [result];
 
             if (result) {

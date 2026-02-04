@@ -532,6 +532,12 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         // Create the new unit.        
         const createdUnit = await Actor.create(unitObj, { parent: null });
         await createdUnit.setFlag("ldnd5e", "isMember", true);
+        await createdUnit.setFlag("ldnd5e", "originalUnit", unit.id);
+        await createdUnit.unsetFlag("ldnd5e", "members");
+
+        const members = unit.getFlag("ldnd5e", "members") ?? [];
+        members.push(createdUnit.id);
+        await unit.setFlag("ldnd5e", "members", members);
 
         this.actor.system.units.push(createdUnit.id);
         await this.actor.update({ ['system.units']: this.actor.system.units });
@@ -652,8 +658,21 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         const unitId = item.dataset.itemId;
         const unit = game.actors.get(unitId);
 
-        // Open the company sheet.
-        unit.sheet.render(true);
+        if (!unit) {
+            ui.notifications.warn(game.i18n.localize("ldnd5e.messages.unitNotFound"), {
+                localize: true
+            });
+            // Remove the unit from the collection.
+            const unitCollection = foundry.utils.deepClone(this.actor.system.units);
+            // Remove the first instance of the unit from the collection.
+            unitCollection.splice(unitCollection.indexOf(unitId), 1);
+
+            // Update the collection.
+            await this.actor.update({ ['system.units']: unitCollection });
+        } else {
+            // Open the company sheet.
+            unit.sheet.render(true);
+        }
     }
 
     /* -------------------------------------------- */
@@ -672,6 +691,21 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         const unit = game.actors.get(unitId);
 
         if (!unit) return;
+
+        // Get the original unit id.
+        const original = unit.getFlag("ldnd5e", "originalUnit");
+        // If there is an original unit, remove this unit from the members list.
+        if (original) {
+            const originalUnit = game.actors.get(original);
+            if (originalUnit) {
+                const members = originalUnit.getFlag("ldnd5e", "members") ?? [];
+                const idx = members.indexOf(unit.id);
+                if (idx !== -1) {
+                    members.splice(idx, 1);
+                    await originalUnit.setFlag("ldnd5e", "members", members);
+                }
+            }
+        }
 
         // Remove the unit from the collection.
         const unitCollection = foundry.utils.deepClone(this.actor.system.units);
@@ -730,6 +764,8 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
 
         const data = this.actor.system;
         const result = await MedicalRestaurationBrowser.create(this.actor, { force: true });
+
+        if (result === null) return;
 
         const rolls = Object.values(result.rolls);
         const hasRestauration = rolls.length > 0;
