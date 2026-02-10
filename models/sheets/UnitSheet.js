@@ -1,4 +1,4 @@
-import { assetsData, constants, i18nStrings, unitData } from "../../scripts/constants.js";
+import { assetsData, constants, i18nStrings, unitData, taticsData } from "../../scripts/constants.js";
 import CategoryEditor from "../dialogs/CategoryEditor.js";
 
 const { api: api, sheets: sheets } = foundry.applications;
@@ -234,6 +234,9 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
    */
   async _prepareHeaderContext(context, options) {
     context.portrait = this._preparePortrait(context);
+
+    context.profHint = this._prepareProficiencyHint();
+
     return context;
   }
 
@@ -434,6 +437,282 @@ export default class UnitSheet extends api.HandlebarsApplicationMixin(sheets.Act
     });
 
     return assets;
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+ * Prepare actor proficiency hint for display.
+ * @param {ApplicationRenderContext} context  Context being prepared.
+ * @returns {object}
+ * @protected
+ */
+  _prepareProficiencyHint() {
+    const combatIcons = taticsData.combatIcons;
+    const always = game.i18n.localize('ldnd5e.unit.proficiencies.always');
+    const perLevel = game.i18n.localize('ldnd5e.unit.proficiencies.perLevel');
+    const noBonus = game.i18n.localize('ldnd5e.unit.proficiencies.noBonus');
+    const noPenalty = game.i18n.localize('ldnd5e.unit.proficiencies.noPenalty');
+
+    const hint = document.createElement('span');
+    hint.classList.add('tooltip-hint');
+
+    // Título da Hint.
+    const title = document.createElement('span');
+    title.classList.add('title');
+    title.textContent = game.i18n.localize('ldnd5e.unit.proficiencies.title');
+
+    // Adicionar títulos ao hint.
+    hint.appendChild(title);
+
+    // Descrição da Hint.
+    const description = document.createElement('span');
+    description.classList.add('desc');
+    description.textContent = game.i18n.localize('ldnd5e.unit.proficiencies.description');
+
+    // Adicionar descrições ao hint.
+    hint.appendChild(description);
+
+    // Linha separadora.
+    const hr = document.createElement('hr');
+    hr.classList.add('ampersand');
+    hint.appendChild(hr);
+
+    // Adicionar proficiências.
+    const mainContent = document.createElement('ul');
+    mainContent.classList.add('prof-list', 'unlist');
+
+    // Item de Proficiência de Vanguarda.
+    const vProf = document.createElement('li');
+    vProf.classList.add('prof', 'van');   
+
+    const vProfDiv = document.createElement('div');
+    vProfDiv.classList.add('field', 'flexcol');
+    vProfDiv.innerHTML = `<span class='field-name'>${game.i18n.localize('ldnd5e.uProf.van')}</span>`;
+
+    vProf.appendChild(vProfDiv);
+
+    const vProfUnitsDiv = document.createElement('div');
+    vProfUnitsDiv.classList.add('units-type', 'flexrow');
+
+    // Modificador de Proficiência para unidades Leves.
+    const vProfLight = document.createElement('div');
+    vProfLight.classList.add('unit', 'light', 'flexcol');
+    vProfLight.innerHTML = `<span class='type'>${game.i18n.localize('ldnd5e.uTypes.light')}</span>`;
+
+    // Bônus de Proficiência para unidades Leves.
+    const vProfLightBonus = document.createElement('a');
+    vProfLightBonus.classList.add('mod', 'bonus');    
+    vProfLightBonus.innerHTML = `<i class='fas fa-plus sign'></i><i class='fas fa-1'></i><i class='${combatIcons.attack} type'></i> ${perLevel}`;
+    
+    // Penalidade de Proficiência para unidades Leves.
+    const vProfLightPenalty = document.createElement('a');
+    vProfLightPenalty.classList.add('mod', 'penalty');
+    vProfLightPenalty.innerHTML += `<i class='fas fa-minus sign'></i><i class='fas fa-2'></i><i class='${combatIcons.defense} type'></i> ${always}`;
+    
+    vProfLight.appendChild(vProfLightBonus);
+    vProfLight.appendChild(vProfLightPenalty);
+
+    // Modificador de Proficiência para unidades Pesadas.
+    const vProfHeavy = document.createElement('div');
+    vProfHeavy.classList.add('unit', 'heavy', 'flexcol');
+    vProfHeavy.innerHTML = `<span class='type'>${game.i18n.localize('ldnd5e.uTypes.heavy')}</span>`;
+
+    // Bônus de Proficiência para unidades Pesadas.
+    const vProfHeavyBonus = document.createElement('a');
+    vProfHeavyBonus.classList.add('mod', 'bonus');    
+    vProfHeavyBonus.innerHTML = `<i class='fas fa-plus sign'></i><i class='fas fa-1'></i><i class='${combatIcons.defense} type'></i> ${perLevel}`;
+    
+    // Penalidade de Proficiência para unidades Pesadas.
+    const vProfHeavyPenalty = document.createElement('a');
+    vProfHeavyPenalty.classList.add('mod', 'penalty');
+    vProfHeavyPenalty.innerHTML += `${noPenalty}`;
+    
+    vProfHeavy.appendChild(vProfHeavyBonus);
+    vProfHeavy.appendChild(vProfHeavyPenalty);
+
+    // Modificador de Proficiência para unidades Especiais.
+    const vProfSpecial = document.createElement('div');
+    vProfSpecial.classList.add('unit', 'special', 'flexcol');
+    vProfSpecial.innerHTML = `<span class='type'>${game.i18n.localize('ldnd5e.uTypes.special')}</span>`;
+
+    // Bônus de Proficiência para unidades Especiais.
+    const vProfSpecialBonus = document.createElement('a');
+    vProfSpecialBonus.classList.add('mod', 'bonus');    
+    vProfSpecialBonus.innerHTML = `${noBonus}`;
+    
+    // Penalidade de Proficiência para unidades Especiais.
+    const vProfSpecialPenalty = document.createElement('a');
+    vProfSpecialPenalty.classList.add('mod', 'penalty');
+    vProfSpecialPenalty.innerHTML += `${noPenalty}`;
+    
+    vProfSpecial.appendChild(vProfSpecialBonus);
+    vProfSpecial.appendChild(vProfSpecialPenalty);
+
+    vProfUnitsDiv.appendChild(vProfLight);
+    vProfUnitsDiv.appendChild(vProfHeavy);
+    vProfUnitsDiv.appendChild(vProfSpecial);
+
+    vProfDiv.appendChild(vProfUnitsDiv);
+
+    // Adiciona a Proficiência de Vanguarda ao corpo da Tooltip.
+    mainContent.appendChild(vProf);
+
+    // Item de Proficiência de Reserva.
+    const rProf = document.createElement('li');
+    rProf.classList.add('prof', 'res');   
+
+    const rProfDiv = document.createElement('div');
+    rProfDiv.classList.add('field', 'flexcol');
+    rProfDiv.innerHTML = `<span class='field-name'>${game.i18n.localize('ldnd5e.uProf.res')}</span>`;
+
+    rProf.appendChild(rProfDiv);
+
+    const rProfUnitsDiv = document.createElement('div');
+    rProfUnitsDiv.classList.add('units-type', 'flexrow');
+
+    // Modificador de Proficiência para unidades Leves.
+    const rProfLight = document.createElement('div');
+    rProfLight.classList.add('unit', 'light', 'flexcol');
+    rProfLight.innerHTML = `<span class='type'>${game.i18n.localize('ldnd5e.uTypes.light')}</span>`;
+
+    // Bônus de Proficiência para unidades Leves.
+    const rProfLightBonus = document.createElement('a');
+    rProfLightBonus.classList.add('mod', 'bonus');    
+    rProfLightBonus.innerHTML = `<i class='fas fa-plus sign'></i><i class='fas fa-1'></i><i class='${combatIcons.attack} type'></i> ${perLevel}`;
+    
+    // Penalidade de Proficiência para unidades Leves.
+    const rProfLightPenalty = document.createElement('a');
+    rProfLightPenalty.classList.add('mod', 'penalty');
+    rProfLightPenalty.innerHTML += `<i class='fas fa-minus sign'></i><i class='fas fa-1'></i><i class='${combatIcons.defense} type'></i> ${always}`;
+    
+    rProfLight.appendChild(rProfLightBonus);
+    rProfLight.appendChild(rProfLightPenalty);
+
+    // Modificador de Proficiência para unidades Pesadas.
+    const rProfHeavy = document.createElement('div');
+    rProfHeavy.classList.add('unit', 'heavy', 'flexcol');
+    rProfHeavy.innerHTML = `<span class='type'>${game.i18n.localize('ldnd5e.uTypes.heavy')}</span>`;
+
+    // Bônus de Proficiência para unidades Pesadas.
+    const rProfHeavyBonus = document.createElement('a');
+    rProfHeavyBonus.classList.add('mod', 'bonus');    
+    rProfHeavyBonus.innerHTML = `<i class='fas fa-minus sign'></i><i class='fas fa-1'></i><i class='${combatIcons.casualty} type'></i> ${perLevel}`;
+    
+    // Penalidade de Proficiência para unidades Pesadas.
+    const rProfHeavyPenalty = document.createElement('a');
+    rProfHeavyPenalty.classList.add('mod', 'penalty');
+    rProfHeavyPenalty.innerHTML += `<i class='fas fa-minus sign'></i><i class='fas fa-2'></i><i class='${combatIcons.attack} type'></i> ${always}`;
+    
+    rProfHeavy.appendChild(rProfHeavyBonus);
+    rProfHeavy.appendChild(rProfHeavyPenalty);
+
+    // Modificador de Proficiência para unidades Especiais.
+    const rProfSpecial = document.createElement('div');
+    rProfSpecial.classList.add('unit', 'special', 'flexcol');
+    rProfSpecial.innerHTML = `<span class='type'>${game.i18n.localize('ldnd5e.uTypes.special')}</span>`;
+
+    // Bônus de Proficiência para unidades Especiais.
+    const rProfSpecialBonus = document.createElement('a');
+    rProfSpecialBonus.classList.add('mod', 'bonus');    
+    rProfSpecialBonus.innerHTML = `${noBonus}`;
+    
+    // Penalidade de Proficiência para unidades Especiais.
+    const rProfSpecialPenalty = document.createElement('a');
+    rProfSpecialPenalty.classList.add('mod', 'penalty');
+    rProfSpecialPenalty.innerHTML += `${noPenalty}`;
+    
+    rProfSpecial.appendChild(rProfSpecialBonus);
+    rProfSpecial.appendChild(rProfSpecialPenalty);
+
+    rProfUnitsDiv.appendChild(rProfLight);
+    rProfUnitsDiv.appendChild(rProfHeavy);
+    rProfUnitsDiv.appendChild(rProfSpecial);
+
+    rProfDiv.appendChild(rProfUnitsDiv);
+
+    // Adiciona a Proficiência de Reserva ao corpo da Tooltip.
+    mainContent.appendChild(rProf);
+
+    // Item de Proficiência de Retaguarda.
+    const reProf = document.createElement('li');
+    reProf.classList.add('prof', 'rea');   
+
+    const reProfDiv = document.createElement('div');
+    reProfDiv.classList.add('field', 'flexcol');
+    reProfDiv.innerHTML = `<span class='field-name'>${game.i18n.localize('ldnd5e.uProf.rea')}</span>`;
+
+    reProf.appendChild(reProfDiv);
+
+    const reProfUnitsDiv = document.createElement('div');
+    reProfUnitsDiv.classList.add('units-type', 'flexrow');
+
+    // Modificador de Proficiência para unidades Leves.
+    const reProfLight = document.createElement('div');
+    reProfLight.classList.add('unit', 'light', 'flexcol');
+    reProfLight.innerHTML = `<span class='type'>${game.i18n.localize('ldnd5e.uTypes.light')}</span>`;
+
+    // Bônus de Proficiência para unidades Leves.
+    const reProfLightBonus = document.createElement('a');
+    reProfLightBonus.classList.add('mod', 'bonus');    
+    reProfLightBonus.innerHTML = `<i class='fas fa-minus sign'></i><i class='fas fa-1'></i><i class='${combatIcons.casualty} type'></i> ${perLevel}`;
+    
+    // Penalidade de Proficiência para unidades Leves.
+    const reProfLightPenalty = document.createElement('a');
+    reProfLightPenalty.classList.add('mod', 'penalty');
+    reProfLightPenalty.innerHTML += `${noPenalty}`;
+    
+    reProfLight.appendChild(reProfLightBonus);
+    reProfLight.appendChild(reProfLightPenalty);
+
+    // Modificador de Proficiência para unidades Pesadas.
+    const reProfHeavy = document.createElement('div');
+    reProfHeavy.classList.add('unit', 'heavy', 'flexcol');
+    reProfHeavy.innerHTML = `<span class='type'>${game.i18n.localize('ldnd5e.uTypes.heavy')}</span>`;
+
+    // Bônus de Proficiência para unidades Pesadas.
+    const reProfHeavyBonus = document.createElement('a');
+    reProfHeavyBonus.classList.add('mod', 'bonus');    
+    reProfHeavyBonus.innerHTML = `<i class='fas fa-minus sign'></i><i class='fas fa-2'></i><i class='${combatIcons.casualty} type'></i> ${perLevel}`;
+    
+    // Penalidade de Proficiência para unidades Pesadas.
+    const reProfHeavyPenalty = document.createElement('a');
+    reProfHeavyPenalty.classList.add('mod', 'penalty');
+    reProfHeavyPenalty.innerHTML += `<i class='fas fa-minus sign'></i><i class='fas fa-4'></i><i class='${combatIcons.attack} type'></i> ${always}`;
+    
+    reProfHeavy.appendChild(reProfHeavyBonus);
+    reProfHeavy.appendChild(reProfHeavyPenalty);
+
+    // Modificador de Proficiência para unidades Especiais.
+    const reProfSpecial = document.createElement('div');
+    reProfSpecial.classList.add('unit', 'special', 'flexcol');
+    reProfSpecial.innerHTML = `<span class='type'>${game.i18n.localize('ldnd5e.uTypes.special')}</span>`;
+
+    // Bônus de Proficiência para unidades Especiais.
+    const reProfSpecialBonus = document.createElement('a');
+    reProfSpecialBonus.classList.add('mod', 'bonus');    
+    reProfSpecialBonus.innerHTML = `${noBonus}`;
+    
+    // Penalidade de Proficiência para unidades Especiais.
+    const reProfSpecialPenalty = document.createElement('a');
+    reProfSpecialPenalty.classList.add('mod', 'penalty');
+    reProfSpecialPenalty.innerHTML += `${noPenalty}`;
+    
+    reProfSpecial.appendChild(reProfSpecialBonus);
+    reProfSpecial.appendChild(reProfSpecialPenalty);
+
+    reProfUnitsDiv.appendChild(reProfLight);
+    reProfUnitsDiv.appendChild(reProfHeavy);
+    reProfUnitsDiv.appendChild(reProfSpecial);
+
+    reProfDiv.appendChild(reProfUnitsDiv);
+
+    // Adiciona a Proficiência de Retaguarda ao corpo da Tooltip.
+    mainContent.appendChild(reProf);
+    
+    hint.appendChild(mainContent);
+
+    return hint.outerHTML;
   }
 
   /* -------------------------------------------- */

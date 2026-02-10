@@ -69,7 +69,7 @@ export default class ItemL5e extends dnd5e.documents.Item5e {
 
             let event = config.event;
             if (activities?.length) {
-                let activity = activities[0];
+                let activity = activities;
                 let dialogConfig = dialog;
                 let messageConfig = message;
                 if (((activities.length > 1)) && !event?.shiftKey) {

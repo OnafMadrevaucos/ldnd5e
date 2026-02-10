@@ -357,7 +357,7 @@ const assetsData = {
       cint: "fas fa-eye-slash",
       equp: "ra ra-sword",
       intl: "fas fa-eye"
-   }   
+   }
 }
 
 /**
@@ -458,6 +458,90 @@ const battleData = {
       blizzard: 'fa-snowflake',
       fog: 'fa-smog',
       rain: 'fa-cloud-showers-heavy',
+   },
+
+   /**
+   * Defines the proficiency mods for each row and unit type.      
+   */
+   profMods: {
+      van: {
+         light: {
+            bonus: {
+               value: 1,
+               type: 'aa',
+               fixed: false
+            },
+            penalty: {
+               value: 2,
+               type: 'rd',
+               fixed: true
+            }
+         },
+         heavy: {
+            bonus: {
+               value: 1,
+               type: 'ad',
+               fixed: false
+            },
+            penalty: {
+               value: 0,
+               type: '',
+               fixed: false
+            }
+         },
+      },
+      res: {
+         light: {
+            bonus: {
+               value: 1,
+               type: 'aa',
+               fixed: false
+            },
+            penalty: {
+               value: 1,
+               type: 'rd',
+               fixed: true
+            }
+         },
+         heavy: {
+            bonus: {
+               value: 1,
+               type: 'rc',
+               fixed: false
+            },
+            penalty: {
+               value: -2,
+               type: 'ra',
+               fixed: true
+            }
+         },         
+      },
+      rea: {
+         light: {
+            bonus: {
+               value: 1,
+               type: 'rc',
+               fixed: false
+            },
+            penalty: {
+               value: 0,
+               type: '',
+               fixed: false
+            }
+         },
+         heavy: {
+            bonus: {
+               value: 2,
+               type: 'rc',
+               fixed: false
+            },
+            penalty: {
+               value: 4,
+               type: 'ra',
+               fixed: true
+            }
+         },
+      }
    }
 }
 
@@ -647,7 +731,7 @@ const i18nStrings = {
       categoryDescription: "ldnd5e.unit.categoryDescription",
       descriptionTitle: "ldnd5e.unit.descriptionTitle",
       flavor: "ldnd5e.unit.flavor",
-      description: "ldnd5e.unit.description",      
+      description: "ldnd5e.unit.description",
       price: "ldnd5e.unit.price",
       combat: "ldnd5e.unit.combat",
       tatics: "ldnd5e.unit.tatics",
@@ -664,12 +748,19 @@ const i18nStrings = {
       assets: "ldnd5e.unit.assets",
       totalAssetsCost: "ldnd5e.unit.totalAssetsCost",
       removeAsset: "ldnd5e.unit.removeAsset",
-      proficienciesHint: "ldnd5e.unit.proficienciesHint",
+      proficiencies: {
+         title: "ldnd5e.unit.proficiencies.title",
+         description: "ldnd5e.unit.proficiencies.description",
+         perLevel: "ldnd5e.unit.proficiencies.perLevel",
+         always: "ldnd5e.unit.proficiencies.always",
+         noBonus: "ldnd5e.unit.proficiencies.noBonus",
+         noPenalty: "ldnd5e.unit.proficiencies.noBonus"
+      },
       basicAtk: "ldnd5e.unit.basicAtk",
    },
 
    assets: {
-      type: "ldnd5e.assets.type",      
+      type: "ldnd5e.assets.type",
       types: {
          alch: "ldnd5e.assets.types.alch",
          cint: "ldnd5e.assets.types.cint",
@@ -681,7 +772,7 @@ const i18nStrings = {
       charges: "ldnd5e.assets.charges",
    },
 
-   events: {      
+   events: {
       attr: {
          baix: "ldnd5e.events.attr.baix",
          infr: "ldnd5e.events.attr.infr",
@@ -702,7 +793,7 @@ const i18nStrings = {
       trainning: "ldnd5e.tatics.trainning",
       damage: "ldnd5e.tatics.damage",
       configuration: "ldnd5e.tatics.configuration",
-      combat: {         
+      combat: {
          attack: "ldnd5e.tatics.combat.attack",
          damage: "ldnd5e.tatics.combat.damage",
       },
@@ -712,9 +803,9 @@ const i18nStrings = {
          collectImpetus: 'ldnd5e.tatics.details.collectImpetus',
          impetusBonus: 'ldnd5e.tatics.details.impetusBonus',
          isStealth: 'ldnd5e.tatics.details.isStealth',
-         stealthDC: 'ldnd5e.tatics.details.stealthDC',                 
+         stealthDC: 'ldnd5e.tatics.details.stealthDC',
          property: 'ldnd5e.tatics.details.property',
-         passive: 'ldnd5e.tatics.details.passive', 
+         passive: 'ldnd5e.tatics.details.passive',
          single: 'ldnd5e.tatics.details.single',
          unique: 'ldnd5e.tatics.details.unique',
          giveBonus: 'ldnd5e.tatics.details.giveBonus',
@@ -766,12 +857,12 @@ const i18nStrings = {
       useTatic: "ldnd5e.tatics.useTatic",
       mainRecovery: "ldnd5e.tatics.mainRecovery",
       mainRoll: "ldnd5e.tatics.mainRoll",
-      acceptExtras: "ldnd5e.tatics.acceptExtras",     
+      acceptExtras: "ldnd5e.tatics.acceptExtras",
       sections: {
          description: "ldnd5e.tatics.sections.description",
          details: "ldnd5e.tatics.sections.details",
          combat: "ldnd5e.tatics.sections.combat",
-      } 
+      }
    },
 
    unitType: "ldnd5e.unit",
@@ -933,7 +1024,7 @@ const i18nStrings = {
       endBattle: "ldnd5e.messages.endBattle",
    },
 
-   settings: {      
+   settings: {
       criticalName: "ldnd5e.settings.criticalName",
       criticalHint: "ldnd5e.settings.criticalHint",
       massCombatName: "ldnd5e.settings.massCombatName",
@@ -971,13 +1062,13 @@ export {
    UnarmoredClasses,
    NDs,
    gmControl,
-   battleControl, 
-   i18nStrings, 
+   battleControl,
+   i18nStrings,
 
-   suppliesData, 
-   armyData, 
-   unitData, 
-   assetsData, 
-   taticsData, 
+   suppliesData,
+   armyData,
+   unitData,
+   assetsData,
+   taticsData,
    battleData
 };

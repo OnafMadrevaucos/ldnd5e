@@ -252,7 +252,7 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
                     combat[id].bonus = commander?.system.abilities.cha.mod ?? 0.
                     combat[id].bonus += prestige;
                 }
-
+                
                 combat[id].key = id;
                 combat[id].label = game.i18n.localize(i18nStrings.uCombat[id]);
                 combat[id].icon = unitData.uCombatIcons[id];

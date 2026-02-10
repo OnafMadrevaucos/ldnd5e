@@ -1524,12 +1524,17 @@ export default class BattleApp extends api.Application5e {
         const impetusBonus = (type === 'ldnd5e.tatic') ? unit.system.abilities.wll.value + item.system.details.impetusBonus : 0;
         const combatBonus = (type === 'ldnd5e.tatic') ? item.system.combat : { attack: 0, defense: 0 };
 
+        this._computeRowProf(result, {...data, side: allySide});
+
         scoreboard[allySide].impetus += impetusBonus;
-        scoreboard[allySide].attack += combatBonus.attack;
-        scoreboard[allySide].defense += combatBonus.defense;
+        scoreboard[allySide].attack += combatBonus.attack + profMod.attack;
+        scoreboard[allySide].defense += combatBonus.defense + profMod.defense;
 
         if(combatBonus.casualties?.active)
             scoreboard[allySide].casualties += combatBonus.casualties.value;
+
+        if(profMod.casualties > 0) 
+            scoreboard[allySide].casualties += profMod.casualties;
 
         for (let res of result) {
             if (!res) continue;
@@ -1544,7 +1549,7 @@ export default class BattleApp extends api.Application5e {
                     else if (res.targetField === 'b') {
                         scoreboard[allySide].attack += res.total;
                         scoreboard[enemySide].attack += res.total;
-                    }
+                    }                    
                 } break;
 
                 // Remove Ataque
@@ -1660,6 +1665,42 @@ export default class BattleApp extends api.Application5e {
         else if (type === 'ldnd5e.event') this._deactivateEvent();
 
         await game.settings.set('ldnd5e', 'battle', this.world);
+    }
+
+    _computeRowProf(result, data) {
+        const prof = {
+            total: 0,
+            damageType: '',
+            targetField: 'a'
+        };
+
+        const type = data.item.type;
+        const unit = data.unit;
+        const item = data.item;
+        const side = data.side;
+
+        const field = this.world.fields[side];
+        let row = '';
+
+        let rowNum = 1;
+        for(let r of field.rows){
+            const u = r.units.find(u => u.id === unit.id);
+            
+            if(u) {
+                if(rowNum == 1) {
+                    row = 'van';                    
+                }
+                else if(rowNum == 2) {
+                    row = 'res';
+                }
+                else if(rowNum == 3) {
+                    row = 'rea';
+                }
+                break;
+            }
+
+            rowNum++;
+        };
     }
 
     /* -------------------------------------------- */

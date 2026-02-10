@@ -2550,7 +2550,7 @@
   margin-bottom: 0.75em;
 }
 
-.dialog.activity-choice.tatic .item .icon {  
+.dialog.activity-choice.tatic .item .icon {
   font-size: var(--font-h5-size);
   color: var(--dnd5e-color-gold);
   line-height: 1em;
@@ -4085,13 +4085,38 @@
   text-align: center;
 }
 
-#tooltip span.tooltip-hint span.prof {
-  width: 100%;
-  max-width: 175px;
+#tooltip span.tooltip-hint .unlist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#tooltip span.tooltip-hint .prof .field .field-name {
+  font-size: var(--font-h6-size);
+  color: var(--dnd5e-color-gold);
+  justify-content: center;
+}
+
+#tooltip span.tooltip-hint .prof .field .unit {
   align-items: center;
-  align-self: center;
-  justify-content: space-between;
+  padding-block: 10px;
   gap: 5px;
+}
+
+#tooltip span.tooltip-hint .field .unit .type {
+  font-size: var(--font-h6-size);
+  font-style: italic;
+  margin-bottom: 5px;
+}
+
+#tooltip span.tooltip-hint .field .unit .mod {
+  font-size: var(--font-size-11);
+  height: 2em;
+  line-height: 2em;
+}
+
+#tooltip span.tooltip-hint .field .unit .mod i {
+  padding-inline: 2px;
 }
 
 #tooltip span.tooltip-hint span.prof.low {
@@ -4105,6 +4130,7 @@
 #tooltip span.tooltip-hint span.prof.hgh {
   color: var(--ldnd5e-color-prof-high);
 }
+
 
 #tooltip span.tooltip-hint span.prof a {
   display: flex;

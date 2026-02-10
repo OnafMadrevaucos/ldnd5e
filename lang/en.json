@@ -223,7 +223,14 @@
             "assets": "Unit Assets",
             "totalAssetsCost": "Total Assets Cost",
             "removeAsset": "Remove Asset",
-            "proficienciesHint": "<span class='title'>Bônus de Posicionamento</span><span class='desc'>De acordo com a posição ocupada pela Unidade, ela recebe algum tipo de modificador de combate a depender de seu nível de proficiência.</span><hr class='ampersand'></hr><span class='prof'>Vanguarda<a><i class='fa-solid fa-plus'></i><i class='fa-solid fa-1'></i><i class='ra ra-sword'></i> por nível.</a></span><span class='prof'>Reserva<a><i class='fa-solid fa-plus'></i><i class='fa-solid fa-1'></i><i class='ra ra-castle-flag'></i> por nível.</a></span><span class='prof'>Retaguarda<a><i class='fa-solid fa-minus'></i><i class='fa-solid fa-1'></i><i class='ra ra-bone-bite'></i> por nível.</a></span>",
+            "proficiencies": {
+                "title": "Positioning Bonus",
+                "description": "Depending on the Unit's position, it receives some type of combat modifier based on its proficiency level, regardless of whether it wins the Combat Round or not.",
+                "perLevel": "per level.",
+                "always": "always.",
+                "noBonus": "No bonus.",
+                "noPenalty": "No penalty."
+            },
             "basicAtk": "Basic Attack"
         },
         "assets": {

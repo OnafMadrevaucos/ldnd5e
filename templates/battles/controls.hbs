@@ -151,15 +151,16 @@
                         <span class="roboto-upper">{{ localize "DND5E.ClassSaves" }}</span>
                     </h3>
                     <ul class="saves-list unlist">
-                        <li data-ability="dsp" class="save">
+                        {{#each skills as |skill|}}
+                        <li data-ability="{{skill.key}}" class="save">
                             <a class="name rollable" data-action="roll" data-type="save"><i
-                                    class="{{skills.dsp.icon}}"></i>{{skills.dsp.label}}</a>
+                                    class="{{skill.icon}}"></i>{{skill.label}}</a>
                             <div class="bonus">
-                                <span class="sign">{{skills.dsp.save.sign}}</span>
-                                {{skills.dsp.save.mod}}
+                                <span class="sign">{{skill.save.sign}}</span>
+                                {{skill.save.mod}}
                             </div>
                         </li>
-
+                        {{/each}}
                     </ul>
 
                 </filigree-box>
