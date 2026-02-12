@@ -224,7 +224,7 @@ export default class ADControlV2 extends api.Application5e {
       for (let actor of game.actors) {
          if (actor.type == "character") {
             // Se falso, o PC não irá aparecer na lista. 
-            const dasEnabled = actor.getFlag("ldnd5e", "dasEnabled");            
+            const dasEnabled = actor.getFlag("ldnd5e", "dasEnabled");
 
             // By default, show the actor only if the user has marked it to show.
             actor.showActor = dasEnabled;
@@ -236,7 +236,7 @@ export default class ADControlV2 extends api.Application5e {
             if (!equippedArmor) {
                let hasValidClass = false;
                for (let c of Object.keys(actor.classes)) {
-                  if (c == 'barbarian' || c == 'monk') {                     
+                  if (c == 'barbarian' || c == 'monk') {
                      hasValidClass = true;
                      break;
                   }
@@ -244,7 +244,7 @@ export default class ADControlV2 extends api.Application5e {
 
                // If actor is not a barbarian or a monk, don't add it to the visible list.
                if (!hasValidClass) actor.invalidArmor = true;
-            }            
+            }
 
             actor.exhaustLvl = {
                0: false,
@@ -458,19 +458,21 @@ export default class ADControlV2 extends api.Application5e {
       const actor = game.actors.get(actorID);
       const n = Number(target.closest(".exaust-pip").dataset.n);
 
-      const actorData = actor.system;
-      const exhaustionLimit = (game.settings.get('ldnd5e', 'oneDNDExhaustionRule') ? 10 : 6);
-      if (actorData.attributes.exhaustion != exhaustionLimit) {
-         // O nível de Exaustão ainda está abaixo do limite máximo.
-         if (n < exhaustionLimit)
-            await actor.update({ "system.attributes.exhaustion": n });
-         else // A criatura morreu de exaustão.
-            await actor.update({
-               "system.attributes.death.failure": 3,
-               "system.attributes.exhaustion": n,
-               "system.attributes.hp.value": 0
-            });
+      const exhaustionLimit = 6;
+
+      // O nível de Exaustão ainda está abaixo do limite máximo.
+      if (n < exhaustionLimit){
+         await actor.update({ "system.attributes.exhaustion": n });         
       }
+      else {
+         // A criatura morreu de exaustão.
+         await actor.update({
+            "system.attributes.death.failure": 3,
+            "system.attributes.exhaustion": n,
+            "system.attributes.hp.value": 0
+         });
+      }
+      await actor.setFlag("dnd5e", "exhaustionLevel", n);
 
       await this.render({ force: true });
    }

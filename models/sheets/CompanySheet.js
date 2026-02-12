@@ -144,6 +144,9 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         // Prepare the company's currency.
         this._prepareCurrency(context);
 
+        // Prepare the company's deck.
+        await this._buildDeck();
+
         return context;
     }
 
@@ -287,7 +290,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         const army = data.info.army;
 
         data.attributes.trainning = {
-            max: 0,
+            max: 5,
             value: 0
         };
 
@@ -432,8 +435,10 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
 
         // Link the company to it's commander's actor.
         await actor.setFlag('ldnd5e', 'company', this.actor.id);
-        // Build the commander's deck.
-        await this._buildDeck();
+        
+        //this.render({ force: true });
+
+        return true;
     }
 
     /** @inheritdoc */
@@ -543,7 +548,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
         await this.actor.update({ ['system.units']: this.actor.system.units });
         await createdUnit.update({ ['system.info.company']: this.actor });
 
-        await game.actors.directory.render(true);
+        await game.actors.directory.render(true);        
 
         return true;
     }
@@ -559,6 +564,10 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
     async _buildDeck() {
         const company = this.actor;
         const commander = company.system.info.commander;
+
+        // If there is no commander, abort.
+        if(!commander) return;
+
         const deck = {
             hand: {
                 tatics: [],
@@ -571,6 +580,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
             }
         };
 
+        // Loop through the units and add their tatics to the deck.
         for (const unitId of company.system.units) {
             const unit = game.actors.get(unitId);
 
@@ -587,6 +597,7 @@ export default class CompanySheet extends api.HandlebarsApplicationMixin(sheets.
             });
         }
 
+        // Set the deck on the commander.
         await commander.setFlag('ldnd5e', 'deck', deck);
     }
 

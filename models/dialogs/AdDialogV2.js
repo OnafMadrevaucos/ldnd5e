@@ -295,7 +295,7 @@ export default class AdDialogV2 extends api.Dialog5e {
             return;
         }
 
-        const result = das.computaSUB(item, actor, dlType, options);
+        const result = await das.computaSUB(item, actor, dlType, options);
         this.#ok = await das.prepareActiveEffects(item, actor, result, options);
     }
 
@@ -309,7 +309,7 @@ export default class AdDialogV2 extends api.Dialog5e {
      */
     static async #zerarClick(event, target) {
         const actor = this.actor;
-        const item = ((this.item.type !== 'feat' && this.item.armorType != das.TIPO_ARMOR.SHIELD) ? actor.system.attributes.ac.equippedArmor : data.item);
+        const item = ((this.item.type !== 'feat' && this.item.armorType != das.TIPO_ARMOR.SHIELD) ? actor.system.attributes.ac.equippedArmor : this.item);
         const itemData = item.system;
 
         if(itemData.armor.RealDL === 0) {
@@ -337,7 +337,7 @@ export default class AdDialogV2 extends api.Dialog5e {
             return;
         }
 
-        const result = das.computaZERAR(item, actor);
+        const result = await das.computaZERAR(item, actor);
         this.#ok = await das.prepareActiveEffects(item, actor, result, options);         
     }
 

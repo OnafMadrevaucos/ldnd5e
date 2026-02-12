@@ -118,14 +118,17 @@ export const registerSystemSettings = function () {
                 top: {
                     rows: {
                         1: {
+                            name: 'van',
                             units: [],
                             effect: ''
                         },
                         2: {
+                            name: 'res',
                             units: [],
                             effect: ''
                         },
                         3: {
+                            name: 'rea',
                             units: [],
                             effect: ''
                         }
@@ -134,14 +137,17 @@ export const registerSystemSettings = function () {
                 bottom: {
                     rows: {
                         1: {
+                            name: 'van',
                             units: [],
                             effect: ''
                         },
                         2: {
+                            name: 'res',
                             units: [],
                             effect: ''
                         },
                         3: {
+                            name: 'rea',
                             units: [],
                             effect: ''
                         }

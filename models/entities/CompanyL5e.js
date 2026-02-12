@@ -158,15 +158,16 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
     _prepareAttributes() {
         const prestige = Number(this.attributes.prestige.mod ?? 0);
         const commander = this.info.commander;
+        const cha = commander?.system.abilities.cha ?? { value: 10};
 
-        const bonus = commander?.system.abilities.cha.mod ?? 0
+        const bonus = Math.floor((cha?.value - 10) / 2)  ?? 0
 
-        let stamina = 0;
-        let totalHP = prestige + bonus;
+        let stamina = 2;
+        let totalHP = 5 + prestige + bonus;
 
         this.attributes.trainning = {
             value: 0,
-            max: 0
+            max: 5
         };
 
         // Count the number of combat units.
@@ -184,7 +185,7 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
             totalHP += unit.system.abilities.mrl.value;
         }
 
-        this.attributes.stamina.max = stamina ?? 0;
+        this.attributes.stamina.max = stamina ?? 2;
         this.attributes.stamina.value = Math.min(this.attributes.stamina.value, this.attributes.stamina.max);
         this.attributes.stamina.pct = (this.attributes.stamina.value / this.attributes.stamina.max) * 100;
 
@@ -237,19 +238,19 @@ export default class CompanyL5e extends foundry.abstract.TypeDataModel {
 
             for (const [id, skl] of Object.entries(unit.system.combat)) {
                 if (['dsp'].includes(id) && skl.value > combat[id].value) {
-                    combat[id].value = this.abilities.mrl.value;
+                    combat[id].value = this.abilities.mrl.value ?? 0;
 
-                    combat[id].bonus = commander?.system.abilities.cha.mod ?? 0.
+                    combat[id].bonus = commander?.system.abilities.cha.mod ?? 0;
                     combat[id].bonus += prestige;
                 } else if (['prp'].includes(id) && skl.value > combat[id].value) {
-                    combat[id].value = this.abilities.frt.value;
+                    combat[id].value = this.abilities.frt.value ?? 0;
 
-                    combat[id].bonus = commander?.system.abilities.cha.mod ?? 0.
+                    combat[id].bonus = commander?.system.abilities.cha.mod ?? 0;
                     combat[id].bonus += prestige;
                 } else if (['res'].includes(id) && skl.value > combat[id].value) {
-                    combat[id].value = this.abilities.wll.value;
+                    combat[id].value = this.abilities.wll.value ?? 0;
 
-                    combat[id].bonus = commander?.system.abilities.cha.mod ?? 0.
+                    combat[id].bonus = commander?.system.abilities.cha.mod ?? 0;
                     combat[id].bonus += prestige;
                 }
                 

@@ -43,12 +43,7 @@
                 <div class="stamina" data-tooltip="{{localize "ldnd5e.company.stamina"}}">
                     <div class="stamina-label roboto-upper">
                         <i class="fa-solid fa-bolt"></i>
-                        {{#if editable}}
-                        <input type="text" class="uninput" name="system.attributes.stamina.value"
-                            value="{{system.attributes.stamina.value}}" min="0" placeholder="0" data-dtype="Number">
-                        {{else}}
-                        <span class="value">{{system.attributes.stamina.value}}</span>
-                        {{/if}}                        
+                        <span class="value">{{system.attributes.stamina.max}}</span>                                               
                     </div>                    
                 </div>
 
@@ -171,7 +166,7 @@
                                     {{#if @root.editable}}
                                     <button type="button"
                                         class="config-button unbutton item-control item-action always-interactive"
-                                        data-action="removeUnit" data-tooltip="ldnd5e.company.removeUnit"
+                                        data-action="removeUnit" data-tooltip="{{localize 'ldnd5e.company.removeUnit'}}"
                                         aria-label="{{ localize 'ldnd5e.company.removeUnit' }}">
                                         <i class="fas fa-trash" inert></i>
                                     </button>

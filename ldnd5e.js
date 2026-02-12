@@ -300,7 +300,8 @@ Hooks.on('combatRound', async (combat, updateData, updateOptions) => {
 
             for (let sideData of side) {
                 const company = await fromUuid(sideData.uuid);
-                company.system.attributes.hp.value -= scoreboard.top.attack;
+                const defense = scoreboard.bottom.defense - scoreboard.bottom.casualties; 
+                company.system.attributes.hp.value -= Math.max(0, scoreboard.top.attack - defense);
 
                 await company.update({ ['system.attributes.hp.value']: company.system.attributes.hp.value });
             }
@@ -311,16 +312,22 @@ Hooks.on('combatRound', async (combat, updateData, updateOptions) => {
 
             for (let sideData of side) {
                 const company = await fromUuid(sideData.uuid);
-                company.system.attributes.hp.value -= scoreboard.bottom.attack;
+                const defense = scoreboard.top.defense - scoreboard.top.casualties;
+                company.system.attributes.hp.value -= Math.max(0, scoreboard.bottom.attack - defense);
 
                 await company.update({ ['system.attributes.hp.value']: company.system.attributes.hp.value });
             }
         }
 
+        // Limpa o scoreboard.
         scoreboard.top.impetus = 0;
         scoreboard.bottom.impetus = 0;
         scoreboard.top.attack = 0;
         scoreboard.bottom.attack = 0;
+        scoreboard.top.defense = 0;
+        scoreboard.bottom.defense = 0;
+        scoreboard.top.casualties = 0;
+        scoreboard.bottom.casualties = 0;
 
         const lastRound = world.turns.current;
         world.turns.current += (updateOptions.direction * -1);

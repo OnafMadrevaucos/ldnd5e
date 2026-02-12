@@ -64,12 +64,10 @@
                                                 {{ tatic.combat.defense.value }}
                                                 {{{ tatic.combat.defense.icon }}}
                                             </span>
-                                            {{#if tatic.combat.casualties.active}}
                                             <span class="casualties">                                                
                                                 {{ tatic.combat.casualties.value }}
                                                 {{{ tatic.combat.casualties.icon }}}
                                             </span>
-                                            {{/if}}
                                         </div>
                                     </div>
                                     <div class="unit-info">
@@ -227,7 +225,7 @@
             </div>
         </div>
 
-        <div class="deck-section discarded {{#unless (eq state.sidebar.viewer " discarded")}}hidden{{/unless}}">
+        <div class="deck-section discarded {{#unless (eq state.sidebar.viewer "discarded")}}hidden{{/unless}}">
             <h4 class="title">{{localize 'ldnd5e.battle.extraDecks.discarded'}}</h4>
             <div class="deck-container">
                 <div class="cards-counter">{{deck.counter.discarded}} <i class="ra ra-diamonds-card"></i></div>
@@ -261,7 +259,7 @@
             </div>
         </div>
 
-        <div class="deck-section assets {{#unless (eq state.sidebar.viewer " assets")}}hidden{{/unless}}">
+        <div class="deck-section assets {{#unless (eq state.sidebar.viewer "assets")}}hidden{{/unless}}">
             <h4 class="title">{{localize 'ldnd5e.battle.extraDecks.assets'}}</h4>
             <div class="deck-container">
                 <div class="cards-counter">{{deck.counter.assets}} <i class="ra ra-diamonds-card"></i></div>

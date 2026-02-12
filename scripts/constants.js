@@ -1016,6 +1016,9 @@ const i18nStrings = {
       emptyDeck: "ldnd5e.messages.emptyDeck",
       noMainActivity: "ldnd5e.messages.noMainActivity",
 
+      notPrep: "ldnd5e.messages.notPrep",
+      onlyPrep: "ldnd5e.messages.onlyPrep",
+
       startBattleTitle: "ldnd5e.messages.startBattleTitle",
       startBattle: "ldnd5e.messages.startBattle",
       restartBattleTitle: "ldnd5e.messages.restartBattleTitle",

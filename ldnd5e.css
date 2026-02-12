@@ -490,6 +490,7 @@
 
 .ad-control2 .items-list .item-name .owner-portrait {
   width: 32px;
+  max-width: 32px;
 }
 
 .ad-control2 .items-list .item .item-name .owner-portrait {
@@ -2481,6 +2482,29 @@
 .ldnd5e.battle .active-event .header .attributes .attribute.imps.active,
 .ldnd5e.event .attributes .attribute.imps.active {
   color: #48a740;
+}
+
+.ldnd5e.tatic .activities .activity {
+  padding: 6px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  box-shadow: 0 0 6px var(--dnd5e-shadow-15);
+}
+
+.ldnd5e.tatic .activities .activity>.icon {
+  --icon-size: 24px;
+  --icon-fill: var(--activity-icon-color);
+  flex: 0 0 50px;
+  height: 24px;
+}
+.ldnd5e.tatic .activities .activity>.name {
+  font-family: var(--dnd5e-font-roboto-slab);
+  font-weight: bold;
+  flex: 1;
+  font-size: var(--font-size-14);
+  cursor: var(--cursor-pointer);
+  text-align: center;
 }
 
 .ldnd5e.activity.tatic .window-content {

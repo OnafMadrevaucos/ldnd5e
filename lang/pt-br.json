@@ -442,6 +442,8 @@
             "fullHand": "Você não pode comprar mais cartas porque sua mão está cheia.",
             "emptyDeck": "Você não pode comprar mais cartas porque o baralho está vazio.",
             "noMainActivity": "A Tática não possui nenhuma Atividade marcada como principal.",
+            "notPrep": "Uma Tática de Preparação só pode ser utilizada durante a fase de Preparação.",
+            "onlyPrep": "Durante a fase de Preparação, somente Táticas de Preparação podem ser utilizadas.",
             "startBattleTitle": "Iniciar Batalha",
             "startBattle": "Um encontro foi iniciado, deseja iniciar a batalha também?",
             "restartBattleTitle": "Reiniciar Batalha",

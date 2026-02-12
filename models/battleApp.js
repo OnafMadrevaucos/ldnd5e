@@ -52,6 +52,7 @@ export default class BattleApp extends api.Application5e {
             useTatic: BattleApp.#useTatic,
             showEvent: BattleApp.#showEvent,
             useEvent: BattleApp.#useEvent,
+            roll: BattleApp.#roll,
         },
         form: {
             submitOnChange: true,
@@ -564,7 +565,7 @@ export default class BattleApp extends api.Application5e {
                         },
                         casualties: {
                             active: combat.casualties.active,
-                            value: combat.casualties.value,
+                            value: combat.casualties.value > 0 ? combat.casualties.value : '—',
                             icon: `<i class="${taticsData.combatIcons.casualty}"></i>`
                         },
                     }
@@ -1260,17 +1261,17 @@ export default class BattleApp extends api.Application5e {
             return;
         }
 
-        const rowName = unitRow.dataset.row;
+        const rowId = unitRow.dataset.row;
         const sideName = unitRow.closest(".field")?.dataset.side;
 
-        if (!rowName || !sideName) return;
+        if (!rowId || !sideName) return;
 
         switch (event.dataTransfer.effectAllowed) {
             case "move": {
-                await this._onDropUnit({ actor, sideName, rowName });
+                await this._onDropUnit({ actor, sideName, rowId });
             } break;
             default: {
-                await this._onDropUnit({ actor, sideName, rowName });
+                await this._onDropUnit({ actor, sideName, rowId });
             } break
         }
     }
@@ -1279,7 +1280,7 @@ export default class BattleApp extends api.Application5e {
      * Handle the drop of a unit onto the battle board.
      * @param {object} data - The event data.
      * @param {string} data.sideName - The name of the side.
-     * @param {string} data.rowName - The name of the row.
+     * @param {string} data.rowId - The id of the row.
      * @param {Actor} data.actor - The actor.
      */
     async _onDropUnit(data) {
@@ -1287,6 +1288,7 @@ export default class BattleApp extends api.Application5e {
         if (this.local.isViewer) return;
 
         const fields = this.#battle.world.fields;
+        const rowName = fields[data.sideName].rows[data.rowId].name;
 
         // Remove from the old row, if any.
         Object.values(fields).forEach(field => {
@@ -1295,7 +1297,11 @@ export default class BattleApp extends api.Application5e {
             });
         });
 
-        fields[data.sideName].rows[data.rowName].units.push(data.actor.id);
+        // Unset the battle row flag.
+        await data.actor.unsetFlag('ldnd5e', 'battleRow');
+        await data.actor.setFlag('ldnd5e', 'battleRow', { side: data.sideName, row: rowName });
+
+        fields[data.sideName].rows[data.rowId].units.push(data.actor.id);
         // Store.
         await game.settings.set('ldnd5e', 'battle', this.world);
     }
@@ -1524,17 +1530,14 @@ export default class BattleApp extends api.Application5e {
         const impetusBonus = (type === 'ldnd5e.tatic') ? unit.system.abilities.wll.value + item.system.details.impetusBonus : 0;
         const combatBonus = (type === 'ldnd5e.tatic') ? item.system.combat : { attack: 0, defense: 0 };
 
-        this._computeRowProf(result, {...data, side: allySide});
+        this._computeRowProf(result, { ...data, side: allySide });
 
         scoreboard[allySide].impetus += impetusBonus;
-        scoreboard[allySide].attack += combatBonus.attack + profMod.attack;
-        scoreboard[allySide].defense += combatBonus.defense + profMod.defense;
+        scoreboard[allySide].attack += combatBonus.attack;
+        scoreboard[allySide].defense += combatBonus.defense;
 
-        if(combatBonus.casualties?.active)
-            scoreboard[allySide].casualties += combatBonus.casualties.value;
-
-        if(profMod.casualties > 0) 
-            scoreboard[allySide].casualties += profMod.casualties;
+        if (combatBonus.casualties?.active)
+            scoreboard[allySide].casualties += combatBonus.casualties.value;        
 
         for (let res of result) {
             if (!res) continue;
@@ -1549,7 +1552,7 @@ export default class BattleApp extends api.Application5e {
                     else if (res.targetField === 'b') {
                         scoreboard[allySide].attack += res.total;
                         scoreboard[enemySide].attack += res.total;
-                    }                    
+                    }
                 } break;
 
                 // Remove Ataque
@@ -1612,11 +1615,11 @@ export default class BattleApp extends api.Application5e {
 
                 // Remove Baixa
                 case taticsData.activities.rc: {
-                    if (res.targetField === 'a'){
+                    if (res.targetField === 'a') {
                         scoreboard[allySide].casualties -= res.total;
                         scoreboard[allySide].casualties = Math.max(scoreboard[allySide].casualties, 0);
                     }
-                    else if (res.targetField === 'e'){
+                    else if (res.targetField === 'e') {
                         scoreboard[enemySide].casualties -= res.total;
                         scoreboard[enemySide].casualties = Math.max(scoreboard[enemySide].casualties, 0);
                     }
@@ -1627,7 +1630,7 @@ export default class BattleApp extends api.Application5e {
                         scoreboard[enemySide].casualties = Math.max(scoreboard[enemySide].casualties, 0);
                     }
                 } break;
-                
+
                 // Adiciona Ímpeto
                 case taticsData.activities.ai: {
                     if (res.targetField === 'a')
@@ -1668,39 +1671,30 @@ export default class BattleApp extends api.Application5e {
     }
 
     _computeRowProf(result, data) {
-        const prof = {
-            total: 0,
-            damageType: '',
-            targetField: 'a'
-        };
-
-        const type = data.item.type;
         const unit = data.unit;
-        const item = data.item;
-        const side = data.side;
 
-        const field = this.world.fields[side];
-        let row = '';
+        const unitRow = unit.getFlag('ldnd5e', 'battleRow');
+        if (unitRow) {
+            const unitType = unit.system.info.type;
+            const rowName = unitRow.row;
 
-        let rowNum = 1;
-        for(let r of field.rows){
-            const u = r.units.find(u => u.id === unit.id);
-            
-            if(u) {
-                if(rowNum == 1) {
-                    row = 'van';                    
+            const profMod = battleData.profMods[rowName][unitType];
+            if (profMod) {
+                result.push({
+                    total: profMod.bonus.value * (profMod.bonus.fixed ? 1 : unit.system.prof[rowName]),
+                    damageType: profMod.bonus.type,
+                    targetField: 'a'
+                });               
+                
+                if(profMod.penalty.value > 0) {
+                    result.push({
+                        total: profMod.penalty.value * (profMod.penalty.fixed ? 1 : unit.system.prof[rowName]),
+                        damageType: profMod.penalty.type,
+                        targetField: 'a'
+                    });
                 }
-                else if(rowNum == 2) {
-                    row = 'res';
-                }
-                else if(rowNum == 3) {
-                    row = 'rea';
-                }
-                break;
             }
-
-            rowNum++;
-        };
+        }
     }
 
     /* -------------------------------------------- */
@@ -2185,6 +2179,16 @@ export default class BattleApp extends api.Application5e {
         const tatic = await fromUuid(taticUuid);
         if (!tatic) return;
 
+        if(tatic.system.attributes.prep && this.world.stage.value != battleData.stages.prep.value) {
+            ui.notifications.warn(game.i18n.localize("ldnd5e.messages.notPrep"));
+            return;
+        }
+
+        if(!tatic.system.attributes.prep && this.world.stage.value == battleData.stages.prep.value) {
+            ui.notifications.warn(game.i18n.localize("ldnd5e.messages.onlyPrep"));
+            return;
+        }
+
         const unit = game.actors.get(unitId);
         if (!unit) return;
 
@@ -2270,6 +2274,34 @@ export default class BattleApp extends api.Application5e {
         if (result) {
             await this._updateScore(result, { unit: null, item: eventDoc, event });
         }
+    }
 
+    /**
+   * Roll any company's attribute or skills.
+   * @this {BattleApp}
+   * @param {PointerEvent} event  The originating click event.
+   * @param {HTMLElement} target  The capturing HTML element which defines the [data-action].
+   */
+    static async #roll(event, target) {
+        const type = target.dataset.type;
+        const companyId = this.local.company[this.currentCompanyIdx]?.uuid ?? null;
+
+        // Ignore if there is no company selected.
+        if (!companyId) return;
+
+        const company = await fromUuid(companyId);
+        if (!company) return;
+
+        switch (type) {             
+            case 'save': {
+                const ability = target.closest("[data-ability]")?.dataset.ability;
+                return company.system.rollSavingThrow({ skill: ability, event }, {}, { speaker: ChatMessage.getSpeaker({ actor: company }) });
+            } 
+            case 'skill': {
+                const skill = target.closest("[data-key]")?.dataset.key;
+                return company.system.rollSkill({ skill: skill }, { event }, { speaker: ChatMessage.getSpeaker({ actor: company }) });
+            }
+            default: break;
+        }
     }
 }
